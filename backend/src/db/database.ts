@@ -1,11 +1,12 @@
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
+import * as schema from "./schema";
 import pg from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-class Database {
-  private static instance: ReturnType<typeof drizzle> | null;
+export class Database {
+  private static instance: NodePgDatabase<typeof schema> | null;
   private static pool: pg.Pool;
 
   static getConnection() {
@@ -14,7 +15,8 @@ class Database {
         connectionString: process.env.DATABASE_URL,
       });
     }
-    Database.instance = drizzle(Database.pool);
+    Database.instance = drizzle(Database.pool, { schema });
+
     return Database.instance;
   }
 
