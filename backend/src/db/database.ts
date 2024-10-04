@@ -24,5 +24,3 @@ export class Database {
     await Database.pool.end();
   }
 }
-
-export default Database;
