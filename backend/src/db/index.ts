@@ -1,6 +1,2 @@
-import { Database } from "./database";
-
-export type DatabaseInstance = ReturnType<typeof Database.getConnection>;
-
-export * from "./database";
-export * from "./schema";
+export * from "./database.js";
+export * from "./schema.js";

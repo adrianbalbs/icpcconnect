@@ -10,7 +10,7 @@
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "dev": "node --loader=ts-node/esm --env-file=.env --watch src/index.ts",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "build": "npx tsc"
   },
   "keywords": [],
@@ -18,10 +18,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/cors": "^2.8.17",
+    "cors": "^2.8.5",
     "drizzle-orm": "^0.33.0",
     "express": "^4.21.0",
     "pg": "^8.13.0",
     "postgres": "^3.4.4",
+    "winston": "^3.14.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {

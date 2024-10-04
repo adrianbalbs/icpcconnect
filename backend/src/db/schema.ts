@@ -17,7 +17,7 @@ export const roleEnum = pgEnum("role", [
 ]);
 
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   givenName: varchar("given_name", { length: 35 }).notNull(),
   familyName: varchar("family_name", { length: 35 }).notNull(),
   password: varchar("password", { length: 128 }).notNull(),
@@ -128,7 +128,7 @@ export const siteCoordinatorRelations = relations(
 export type SiteCoordinator = InferSelectModel<typeof siteCoordinators>;
 
 export const teams = pgTable("teams", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
 });
