@@ -1,4 +1,4 @@
-import Database from "./database";
+import { Database } from "./database";
 
 export type DatabaseInstance = ReturnType<typeof Database.getConnection>;
 
