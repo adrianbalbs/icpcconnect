@@ -31,7 +31,7 @@ export function studentRouter(studentService: StudentService) {
         try {
           const student = await studentService.getStudentByStudentId(studentId);
           res.status(200).json(student);
-        } catch (err: any) {
+        } catch (err) {
           next(err);
         }
       },
@@ -48,7 +48,7 @@ export function studentRouter(studentService: StudentService) {
           const student = await studentService.getStudentById(id);
           logger.info(student);
           res.status(200).json(student);
-        } catch (err: any) {
+        } catch (err) {
           next(err);
         }
       },

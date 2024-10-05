@@ -1,4 +1,4 @@
-import { getTableColumns, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import {
   DatabaseConnection,
   students,
@@ -51,11 +51,13 @@ export class StudentService {
   }
 
   async getStudentById(userId: string) {
-    const { password, ...restUser } = getTableColumns(users);
-
     const student = await this.db
       .select({
-        ...restUser,
+        id: users.id,
+        givenName: users.givenName,
+        familyName: users.familyName,
+        email: users.email,
+        role: users.role,
         pronouns: students.pronouns,
         studentId: students.studentId,
         university: universities.name,
@@ -82,11 +84,13 @@ export class StudentService {
   }
 
   async getStudentByStudentId(studentId: string) {
-    const { password, ...restUser } = getTableColumns(users);
-
     const student = await this.db
       .select({
-        ...restUser,
+        id: users.id,
+        givenName: users.givenName,
+        familyName: users.familyName,
+        email: users.email,
+        role: users.role,
         pronouns: students.pronouns,
         studentId: students.studentId,
         university: universities.name,
@@ -97,6 +101,7 @@ export class StudentService {
       .innerJoin(students, eq(users.id, students.userId))
       .innerJoin(universities, eq(universities.id, students.university))
       .leftJoin(teams, eq(teams.id, students.team));
+
     if (!student.length) {
       throw new HTTPError(notFoundError);
     }

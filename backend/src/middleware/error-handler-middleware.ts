@@ -9,7 +9,6 @@ export const errorHandlerMiddleware: ErrorRequestHandler = (
   err: Error | HTTPError,
   _req,
   res,
-  _next,
 ) => {
   if (err instanceof HTTPError) {
     res.status(err.errorCode).json(getResponseFromHttpError(err));
