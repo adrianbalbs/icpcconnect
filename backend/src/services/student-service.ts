@@ -47,7 +47,7 @@ export class StudentService {
       university,
     });
 
-    return { id: id[0].userId };
+    return { userId: id[0].userId };
   }
 
   async getStudentById(userId: string) {
@@ -66,7 +66,7 @@ export class StudentService {
       .innerJoin(universities, eq(universities.id, students.university))
       .leftJoin(teams, eq(teams.id, students.team));
 
-    if (!student) {
+    if (!student.length) {
       throw new HTTPError(notFoundError);
     }
 
@@ -95,8 +95,7 @@ export class StudentService {
       .innerJoin(students, eq(users.id, students.userId))
       .innerJoin(universities, eq(universities.id, students.university))
       .leftJoin(teams, eq(teams.id, students.team));
-
-    if (!student) {
+    if (!student.length) {
       throw new HTTPError(notFoundError);
     }
 
