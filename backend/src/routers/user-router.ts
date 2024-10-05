@@ -39,7 +39,7 @@ export function userRouter(userService: UserService) {
           logger.info(`Responding to client in /student/${id}`);
           res.status(200).json(student);
         } catch (err: any) {
-          logger.info(
+          logger.error(
             `An error occured when trying to get /student ${formatError(err)}`,
           );
           next(err);
