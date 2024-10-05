@@ -4,11 +4,14 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "jest --testPathIgnorePatterns=integration",
+    "test:integration": "./integration-test.sh",
+    "test:all": "npm run test && npm run test:integration",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate:prod": "drizzle-kit migrate --config dist/drizzle.config.js",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
+    "lint": "eslint ./src/",
     "dev": "node --loader=ts-node/esm --env-file=.env --watch src/index.ts",
     "start": "node dist/src/index.js",
     "build": "npx tsc"
