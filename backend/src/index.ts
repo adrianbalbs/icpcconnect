@@ -1,9 +1,12 @@
 import express from "express";
 import cors from "cors";
 import { Database } from "./db/index.js";
-import { UserService } from "./services/index.js";
-import { userRouter } from "./routers/index.js";
-import { errorHandlerMiddleware } from "./middleware/index.js";
+import { StudentService } from "./services/index.js";
+import { studentRouter } from "./routers/index.js";
+import {
+  errorHandlerMiddleware,
+  loggingMiddlware,
+} from "./middleware/index.js";
 import { getLogger } from "./utils/logger.js";
 
 const logger = getLogger();
@@ -13,14 +16,15 @@ const app = express();
 const port = process.env.PORT || "3000";
 
 const databaseConnection = Database.getConnection();
-const userService = new UserService(databaseConnection);
+const studentService = new StudentService(databaseConnection);
 
 logger.info("Setup HTTP Server");
 app
   .use(cors())
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
-  .use("/api/users", userRouter(userService))
+  .use(loggingMiddlware)
+  .use("/api/students", studentRouter(studentService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {
