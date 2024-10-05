@@ -56,6 +56,7 @@ export class StudentService {
     const student = await this.db
       .select({
         ...restUser,
+        pronouns: students.pronouns,
         studentId: students.studentId,
         university: universities.name,
         team: teams.name,
@@ -86,6 +87,7 @@ export class StudentService {
     const student = await this.db
       .select({
         ...restUser,
+        pronouns: students.pronouns,
         studentId: students.studentId,
         university: universities.name,
         team: teams.name,
@@ -106,15 +108,29 @@ export class StudentService {
     const { role, givenName, familyName, password, email } = updatedDetails;
     const { studentId, university, pronouns } = updatedDetails;
 
-    await this.db
-      .update(users)
-      .set({ role, givenName, familyName, password, email })
-      .where(eq(users.id, userId));
+    const userUpdates = { role, givenName, familyName, password, email };
+    const filteredUserUpdates = Object.fromEntries(
+      Object.entries(userUpdates).filter(([_, v]) => v !== undefined),
+    );
 
-    await this.db
-      .update(students)
-      .set({ studentId, university, pronouns })
-      .where(eq(students.userId, userId));
+    const studentUpdates = { studentId, university, pronouns };
+    const filteredStudentUpdates = Object.fromEntries(
+      Object.entries(studentUpdates).filter(([_, v]) => v !== undefined),
+    );
+
+    if (Object.keys(filteredUserUpdates).length > 0) {
+      await this.db
+        .update(users)
+        .set(filteredUserUpdates)
+        .where(eq(users.id, userId));
+    }
+
+    if (Object.keys(filteredStudentUpdates).length > 0) {
+      await this.db
+        .update(students)
+        .set(filteredStudentUpdates)
+        .where(eq(students.userId, userId));
+    }
 
     return { userId };
   }
