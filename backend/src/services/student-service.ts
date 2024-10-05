@@ -1,21 +1,18 @@
-import { eq, getTableColumns } from "drizzle-orm";
+import { getTableColumns, eq } from "drizzle-orm";
 import {
   DatabaseConnection,
-  coaches,
-  siteCoordinators,
   students,
   teams,
   universities,
   users,
 } from "../db/index.js";
 import {
-  CreateCoachRequest,
-  CreateSiteCoordinatorRequest,
   CreateStudentRequest,
+  UpdateStudentRequest,
 } from "../schemas/index.js";
 import { HTTPError, notFoundError } from "../utils/errors.js";
 
-export class UserService {
+export class StudentService {
   private readonly db: DatabaseConnection;
 
   constructor(db: DatabaseConnection) {
@@ -53,36 +50,7 @@ export class UserService {
     return { id: id[0].userId };
   }
 
-  async createCoach(req: CreateCoachRequest) {}
-
-  async createSiteCoordinator(req: CreateSiteCoordinatorRequest) {}
-
-  async getAllUsers() {
-    return await this.db.select().from(users);
-  }
-
-  async getAllStudents() {
-    return await this.db
-      .select()
-      .from(users)
-      .innerJoin(students, eq(users.id, students.userId));
-  }
-
-  async getAllCoaches() {
-    return await this.db
-      .select()
-      .from(users)
-      .innerJoin(coaches, eq(users.id, coaches.userId));
-  }
-
-  async getAllSiteCoordinators() {
-    return await this.db
-      .select()
-      .from(users)
-      .innerJoin(siteCoordinators, eq(users.id, siteCoordinators.userId));
-  }
-
-  async getStudent(userId: string) {
+  async getStudentById(userId: string) {
     const { password, ...restUser } = getTableColumns(users);
 
     const student = await this.db
@@ -94,9 +62,9 @@ export class UserService {
       })
       .from(users)
       .where(eq(users.id, userId))
-      .innerJoin(students, eq(users.id, students.userId))
+      .leftJoin(students, eq(users.id, students.userId))
       .innerJoin(universities, eq(universities.id, students.university))
-      .innerJoin(teams, eq(teams.id, students.team));
+      .leftJoin(teams, eq(teams.id, students.team));
 
     if (!student) {
       throw new HTTPError(notFoundError);
@@ -105,19 +73,55 @@ export class UserService {
     return student[0];
   }
 
-  async getCoach(userId: string) {}
+  async getAllStudents() {
+    return await this.db
+      .select()
+      .from(users)
+      .innerJoin(students, eq(users.id, students.userId));
+  }
 
-  async getSiteCoordinator(userId: string) {}
+  async getStudentByStudentId(studentId: string) {
+    const { password, ...restUser } = getTableColumns(users);
 
-  async updateStudent() {}
+    const student = await this.db
+      .select({
+        ...restUser,
+        studentId: students.studentId,
+        university: universities.name,
+        team: teams.name,
+      })
+      .from(users)
+      .where(eq(students.studentId, studentId))
+      .innerJoin(students, eq(users.id, students.userId))
+      .innerJoin(universities, eq(universities.id, students.university))
+      .leftJoin(teams, eq(teams.id, students.team));
 
-  async updateCoach() {}
+    if (!student) {
+      throw new HTTPError(notFoundError);
+    }
 
-  async upateSiteCoordinator() {}
+    return student[0];
+  }
 
-  async deleteStudent(userId: string) {}
+  async updateStudent(userId: string, updatedDetails: UpdateStudentRequest) {
+    const { role, givenName, familyName, password, email } = updatedDetails;
+    const { studentId, university, pronouns } = updatedDetails;
 
-  async deleteCoach(userId: string) {}
+    await this.db
+      .update(users)
+      .set({ role, givenName, familyName, password, email })
+      .where(eq(users.id, userId));
 
-  async deleteSiteCoordinator(userId: string) {}
+    await this.db
+      .update(students)
+      .set({ studentId, university, pronouns })
+      .where(eq(students.userId, userId));
+
+    return { userId };
+  }
+
+  async deleteStudent(userId: string) {
+    await this.db.delete(users).where(eq(users.id, userId));
+    return { userId };
+  }
 }

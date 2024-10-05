@@ -15,6 +15,16 @@ export const CreateStudentRequestSchema = z.object({
 
 export type CreateStudentRequest = z.infer<typeof CreateStudentRequestSchema>;
 
+export const UpdateStudentRequestSchema =
+  CreateStudentRequestSchema.partial().extend({
+    studentId: z.string().optional(),
+    university: z.number().optional(),
+    pronouns: z.string().optional(),
+    team: z.string().optional(),
+  });
+
+export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
+
 export const CreateCoachRequestSchema = z.object({
   givenName: z.string(),
   familyName: z.string(),
