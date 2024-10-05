@@ -59,7 +59,7 @@ export type University = InferSelectModel<typeof universities>;
 export const students = pgTable("students", {
   userId: uuid("id")
     .primaryKey()
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   studentId: text("student_id").notNull(),
   pronouns: text("pronouns"),
