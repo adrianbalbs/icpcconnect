@@ -15,13 +15,12 @@ export const CreateStudentRequestSchema = z.object({
 
 export type CreateStudentRequest = z.infer<typeof CreateStudentRequestSchema>;
 
-export const UpdateStudentRequestSchema =
-  CreateStudentRequestSchema.partial().extend({
-    studentId: z.string().optional(),
-    university: z.number().optional(),
-    pronouns: z.string().optional(),
-    team: z.string().optional(),
-  });
+export const UpdateStudentRequestSchema = CreateStudentRequestSchema.extend({
+  studentId: z.string(),
+  university: z.number(),
+  pronouns: z.string(),
+  team: z.string().nullable(),
+});
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
 
