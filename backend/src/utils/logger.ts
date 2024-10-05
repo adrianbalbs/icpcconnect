@@ -17,7 +17,7 @@ export function getLogger(): Logger {
     format: combine(timestamp(), json()),
     transports: [
       new transports.Console({
-        silent: process.env.NODE_ENV === "test" && !process.env.LOG_LEVEL,
+        silent: process.env.NODE_ENV === "test",
       }),
     ],
   });
