@@ -1,6 +1,6 @@
 {
-  "id": "dbc8fe6a-f432-42fd-b8fd-840ad8c4ccf6",
-  "prevId": "3de86c19-5292-412d-96ca-c87c0b561830",
+  "id": "25f5351e-8d96-4428-bc69-7cffe1e146a8",
+  "prevId": "8106e645-b6c9-4cbc-9544-55484f165687",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -10,7 +10,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -59,7 +59,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -108,7 +108,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -122,11 +122,11 @@
           "name": "pronouns",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "team": {
           "name": "team",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -149,7 +149,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "students_team_teams_id_fk": {
@@ -188,9 +188,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -258,9 +259,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "given_name": {
           "name": "given_name",

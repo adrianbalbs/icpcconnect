@@ -1,8 +1,32 @@
 import express from "express";
+import cors from "cors";
+import { Database } from "./db/index.js";
+import { StudentService } from "./services/index.js";
+import { studentRouter } from "./routers/index.js";
+import {
+  errorHandlerMiddleware,
+  loggingMiddlware,
+} from "./middleware/index.js";
+import { getLogger } from "./utils/logger.js";
 
+const logger = getLogger();
+
+logger.info("Setup Express");
 const app = express();
 const port = process.env.PORT || "3000";
 
+const databaseConnection = Database.getConnection();
+const studentService = new StudentService(databaseConnection);
+
+logger.info("Setup HTTP Server");
+app
+  .use(cors())
+  .use(express.json())
+  .use(express.urlencoded({ extended: true }))
+  .use(loggingMiddlware)
+  .use("/api/students", studentRouter(studentService))
+  .use(errorHandlerMiddleware);
+
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  logger.info(`Started up HTTP Server on ${port}`);
 });

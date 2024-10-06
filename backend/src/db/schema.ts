@@ -5,6 +5,7 @@ import {
   pgTable,
   serial,
   text,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -16,7 +17,7 @@ export const roleEnum = pgEnum("role", [
 ]);
 
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   givenName: varchar("given_name", { length: 35 }).notNull(),
   familyName: varchar("family_name", { length: 35 }).notNull(),
   password: varchar("password", { length: 128 }).notNull(),
@@ -56,13 +57,13 @@ export const universityRelations = relations(universities, ({ one, many }) => ({
 export type University = InferSelectModel<typeof universities>;
 
 export const students = pgTable("students", {
-  userId: integer("id")
+  userId: uuid("id")
     .primaryKey()
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   studentId: text("student_id").notNull(),
-  pronouns: text("pronouns").notNull(),
-  team: integer("team").references(() => teams.id),
+  pronouns: text("pronouns"),
+  team: uuid("team").references(() => teams.id),
   university: integer("university").references(() => universities.id),
 });
 
@@ -81,7 +82,7 @@ export const studentRelations = relations(students, ({ one }) => ({
 export type Student = InferSelectModel<typeof students>;
 
 export const coaches = pgTable("coaches", {
-  userId: integer("id")
+  userId: uuid("id")
     .primaryKey()
     .references(() => users.id)
     .notNull(),
@@ -101,7 +102,7 @@ export const coachesRelations = relations(coaches, ({ one }) => ({
 export type Coach = InferSelectModel<typeof coaches>;
 
 export const siteCoordinators = pgTable("site_coordinators", {
-  userId: integer("id")
+  userId: uuid("id")
     .primaryKey()
     .references(() => users.id)
     .notNull(),
@@ -127,7 +128,7 @@ export const siteCoordinatorRelations = relations(
 export type SiteCoordinator = InferSelectModel<typeof siteCoordinators>;
 
 export const teams = pgTable("teams", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
 });

@@ -5,25 +5,25 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "coaches" (
-	"id" integer NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"university" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "site_coordinators" (
-	"id" integer NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"site" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "students" (
-	"id" integer NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"student_id" text NOT NULL,
-	"pronouns" text NOT NULL,
-	"team" integer,
+	"pronouns" text,
+	"team" uuid,
 	"university" integer
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "teams" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(50),
 	"university" integer
 );
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS "universities" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"given_name" varchar(35) NOT NULL,
 	"family_name" varchar(35) NOT NULL,
 	"password" varchar(128) NOT NULL,

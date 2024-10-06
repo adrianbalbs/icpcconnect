@@ -1,5 +1,5 @@
 {
-  "id": "3de86c19-5292-412d-96ca-c87c0b561830",
+  "id": "8106e645-b6c9-4cbc-9544-55484f165687",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,8 +10,8 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
-          "primaryKey": false,
+          "type": "uuid",
+          "primaryKey": true,
           "notNull": true
         },
         "university": {
@@ -59,8 +59,8 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
-          "primaryKey": false,
+          "type": "uuid",
+          "primaryKey": true,
           "notNull": true
         },
         "site": {
@@ -108,8 +108,8 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
-          "primaryKey": false,
+          "type": "uuid",
+          "primaryKey": true,
           "notNull": true
         },
         "student_id": {
@@ -122,11 +122,11 @@
           "name": "pronouns",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "team": {
           "name": "team",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -188,7 +188,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -258,7 +258,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },

@@ -1,6 +1,11 @@
 import { migrate } from "drizzle-orm/node-postgres/migrator";
-import { db, pool } from "./index.js";
+import { Database } from "./database.js";
+import { getLogger } from "../utils/logger.js";
 
-await migrate(db, { migrationsFolder: "./drizzle" });
+export async function runMigrations() {
+  const logger = getLogger();
+  logger.info("Running migrations...");
 
-await pool.end();
+  await migrate(Database.getConnection(), { migrationsFolder: "./drizzle" });
+  logger.info("Migrations completed.");
+}
