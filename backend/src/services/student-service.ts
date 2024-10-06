@@ -79,10 +79,24 @@ export class StudentService {
   }
 
   async getAllStudents() {
-    return await this.db
-      .select()
+    const allStudents = await this.db
+      .select({
+        id: users.id,
+        givenName: users.givenName,
+        familyName: users.familyName,
+        email: users.email,
+        role: users.role,
+        pronouns: students.pronouns,
+        studentId: students.studentId,
+        university: universities.name,
+        team: teams.name,
+      })
       .from(users)
-      .innerJoin(students, eq(users.id, students.userId));
+      .innerJoin(students, eq(users.id, students.userId))
+      .innerJoin(universities, eq(universities.id, students.university))
+      .leftJoin(teams, eq(teams.id, students.team));
+
+    return { allStudents };
   }
 
   async getStudentByStudentId(studentId: string) {
