@@ -3,6 +3,8 @@ import { validateData } from "../middleware/index.js";
 import {
   CreateStudentRequest,
   CreateStudentRequestSchema,
+  GetStudentBySidRequest,
+  GetStudentBySidRequestSchema,
   UpdateStudentRequest,
   UpdateStudentRequestSchema,
 } from "../schemas/index.js";
@@ -12,22 +14,31 @@ import { StudentService } from "../services/index.js";
 export function studentRouter(studentService: StudentService) {
   const logger = getLogger();
   return Router()
-    .get("/all", async (_req: Request, res: Response, next: NextFunction) => {
-      try {
-        const students = await studentService.getAllStudents();
-        res.status(200).json(students);
-      } catch (err) {
-        next(err);
-      }
-    })
     .get(
-      "/sid/:studentId",
+      "/students",
+      async (_req: Request, res: Response, next: NextFunction) => {
+        try {
+          const students = await studentService.getAllStudents();
+          res.status(200).json(students);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .get(
+      "/students",
+      validateData(GetStudentBySidRequestSchema, "query"),
       async (
-        req: Request<{ studentId: string }, unknown>,
+        req: Request<
+          Record<string, never>,
+          unknown,
+          unknown,
+          GetStudentBySidRequest
+        >,
         res: Response,
         next: NextFunction,
       ) => {
-        const { studentId } = req.params;
+        const { studentId } = req.query;
         try {
           const student = await studentService.getStudentByStudentId(studentId);
           res.status(200).json(student);
@@ -37,7 +48,7 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .get(
-      "/:id",
+      "/students/:id",
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -54,8 +65,8 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .post(
-      "/register",
-      validateData(CreateStudentRequestSchema),
+      "/students",
+      validateData(CreateStudentRequestSchema, "body"),
       async (
         req: Request<Record<string, never>, unknown, CreateStudentRequest>,
         res: Response,
@@ -71,8 +82,8 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .put(
-      "/update/:id",
-      validateData(UpdateStudentRequestSchema),
+      "/students/:id",
+      validateData(UpdateStudentRequestSchema, "body"),
       async (
         req: Request<{ id: string }, unknown, UpdateStudentRequest>,
         res: Response,

@@ -24,7 +24,7 @@ app
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
   .use(loggingMiddlware)
-  .use("/api/students", studentRouter(studentService))
+  .use("/api", studentRouter(studentService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {
