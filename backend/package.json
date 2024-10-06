@@ -7,7 +7,7 @@
     "test:unit": "jest --testPathIgnorePatterns=integration",
     "test:all": "npm run test && npm run test:integration",
     "test:integration": "./integration-test.sh",
-    "test:ci": "jest",
+    "test:ci": "jest --testPathIgnorePatterns=integration && jest --runInBand",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate:prod": "drizzle-kit migrate --config dist/drizzle.config.js",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
