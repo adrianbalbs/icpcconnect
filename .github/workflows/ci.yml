@@ -34,7 +34,7 @@ jobs:
       - run: npm run build
       - run: npm run lint
       - run: npm run db:migrate
-      - run: npm test:ci
+      - run: npm run test:ci
     env:
       NODE_ENV: test
       TEST_DB: postgres://postgres:postgres@localhost:5432/postgres
