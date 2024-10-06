@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test:unit": "jest --testPathIgnorePatterns=integration",
-    "test:all": "npm run test && npm run test:integration",
+    "test:all": "npm run test:unit && npm run test:integration",
     "test:integration": "./integration-test.sh",
     "test:ci": "jest --testPathIgnorePatterns=integration && jest --runInBand ./integration",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
