@@ -23,7 +23,7 @@ beforeAll(async () => {
   await seed(db);
   app = express()
     .use(express.json())
-    .use("/api/students", studentRouter(new StudentService(db)));
+    .use("/api", studentRouter(new StudentService(db)));
 });
 
 afterAll(async () => {
@@ -48,7 +48,7 @@ describe("studentRouter tests", () => {
       university: 1,
     };
     const response = await request(app)
-      .post("/api/students/register")
+      .post("/api/students")
       .send(req)
       .expect(200);
 
@@ -87,13 +87,10 @@ describe("studentRouter tests", () => {
     ];
 
     for (const student of students) {
-      await request(app)
-        .post("/api/students/register")
-        .send(student)
-        .expect(200);
+      await request(app).post("/api/students").send(student).expect(200);
     }
 
-    const response = await request(app).get("/api/students/all").expect(200);
+    const response = await request(app).get("/api/students").expect(200);
     expect(response.body.allStudents.length).toEqual(students.length);
   });
 
@@ -107,10 +104,7 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
     };
-    const user = await request(app)
-      .post("/api/students/register")
-      .send(req)
-      .expect(200);
+    const user = await request(app).post("/api/students").send(req).expect(200);
 
     const { userId } = user.body;
 
@@ -125,29 +119,6 @@ describe("studentRouter tests", () => {
     await request(app).get(`/api/students/${uuidv4()}`).expect(500);
   });
 
-  it("should get a student by student id", async () => {
-    const req: CreateStudentRequest = {
-      role: "student",
-      givenName: "Adrian",
-      familyName: "Balbalosa",
-      email: "adrianbalbs@comp3900.com",
-      studentId: "z5397730",
-      password: "helloworld",
-      university: 1,
-    };
-    await request(app).post("/api/students/register").send(req).expect(200);
-
-    const response = await request(app)
-      .get(`/api/students/sid/${req.studentId}`)
-      .expect(200);
-
-    expect(response.body.studentId).toEqual(req.studentId);
-  });
-
-  it("should throw if a student cannot be found with student id", async () => {
-    await request(app).get(`/api/students/z1234567`).expect(500);
-  });
-
   it("should update the students details", async () => {
     const newStudent: CreateStudentRequest = {
       role: "student",
@@ -159,7 +130,7 @@ describe("studentRouter tests", () => {
       university: 1,
     };
     const res = await request(app)
-      .post("/api/students/register")
+      .post("/api/students")
       .send(newStudent)
       .expect(200);
 
@@ -172,7 +143,7 @@ describe("studentRouter tests", () => {
     };
 
     const result = await request(app)
-      .put(`/api/students/update/${res.body.userId}`)
+      .put(`/api/students/${res.body.userId}`)
       .send(req)
       .expect(200);
     expect(result.body.pronouns).toEqual(req.pronouns);
@@ -189,19 +160,17 @@ describe("studentRouter tests", () => {
       university: 1,
     };
     const res = await request(app)
-      .post("/api/students/register")
+      .post("/api/students")
       .send(newStudent)
       .expect(200);
 
     await request(app).get(`/api/students/${res.body.userId}`).expect(200);
-    await request(app)
-      .delete(`/api/students/delete/${res.body.userId}`)
-      .expect(200);
+    await request(app).delete(`/api/students/${res.body.userId}`).expect(200);
 
     await request(app).get(`/api/students/${res.body.userId}`).expect(500);
   });
 
   it("should return an error when deleting a student that does not exist", async () => {
-    await request(app).delete(`/api/students/delete/${uuidv4()}`).expect(500);
+    await request(app).delete(`/api/students/${uuidv4()}`).expect(500);
   });
 });

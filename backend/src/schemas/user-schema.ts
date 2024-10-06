@@ -24,14 +24,6 @@ export const UpdateStudentRequestSchema = CreateStudentRequestSchema.extend({
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
 
-export const GetStudentBySidRequestSchema = z.object({
-  studentId: z.string(),
-});
-
-export type GetStudentBySidRequest = z.infer<
-  typeof GetStudentBySidRequestSchema
->;
-
 export const CreateCoachRequestSchema = z.object({
   givenName: z.string(),
   familyName: z.string(),

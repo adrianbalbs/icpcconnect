@@ -3,8 +3,6 @@ import { validateData } from "../middleware/index.js";
 import {
   CreateStudentRequest,
   CreateStudentRequestSchema,
-  GetStudentBySidRequest,
-  GetStudentBySidRequestSchema,
   UpdateStudentRequest,
   UpdateStudentRequestSchema,
 } from "../schemas/index.js";
@@ -20,28 +18,6 @@ export function studentRouter(studentService: StudentService) {
         try {
           const students = await studentService.getAllStudents();
           res.status(200).json(students);
-        } catch (err) {
-          next(err);
-        }
-      },
-    )
-    .get(
-      "/students",
-      validateData(GetStudentBySidRequestSchema, "query"),
-      async (
-        req: Request<
-          Record<string, never>,
-          unknown,
-          unknown,
-          GetStudentBySidRequest
-        >,
-        res: Response,
-        next: NextFunction,
-      ) => {
-        const { studentId } = req.query;
-        try {
-          const student = await studentService.getStudentByStudentId(studentId);
-          res.status(200).json(student);
         } catch (err) {
           next(err);
         }
@@ -65,7 +41,7 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .delete(
-      "/delete/:id",
+      "/students/:id",
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
