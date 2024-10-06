@@ -64,6 +64,22 @@ export function studentRouter(studentService: StudentService) {
         }
       },
     )
+    .delete(
+      "/delete/:id",
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const student = await studentService.deleteStudent(id);
+          res.status(200).json(student);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .post(
       "/students",
       validateData(CreateStudentRequestSchema, "body"),
