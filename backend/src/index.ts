@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import { Database } from "./db/index.js";
-import { StudentService } from "./services/index.js";
-import { studentRouter } from "./routers/index.js";
+import { StudentService, TeamService } from "./services/index.js";
+import { studentRouter, teamRouter } from "./routers/index.js";
 import {
   errorHandlerMiddleware,
   loggingMiddlware,
@@ -17,6 +17,7 @@ const port = process.env.PORT || "3000";
 
 const databaseConnection = Database.getConnection();
 const studentService = new StudentService(databaseConnection);
+const teamService = new TeamService(databaseConnection);
 
 logger.info("Setup HTTP Server");
 app
@@ -25,6 +26,7 @@ app
   .use(express.urlencoded({ extended: true }))
   .use(loggingMiddlware)
   .use("/api/students", studentRouter(studentService))
+  .use("/api/teams", teamRouter(teamService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {
