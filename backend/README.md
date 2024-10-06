@@ -7,3 +7,35 @@ This is a Express.js backend with Drizzle ORM.
 1. Make updates to the `src/db/schema.ts` file
 2. Run `npm run db:generate` to generate a migration file
 3. Run `docker compose up --build` to automatically apply the migrations
+
+## Testing
+
+There are two types of tests used in this repo: Unit Tests and Integration Tests. Unit tests
+are stored next to the file of the code being tested is, but will have a `*.test.ts` suffix appended
+to it. Integration tests are stored in the `src/integration` folder and are used to test any
+code that interacts with the database/other modules as a whole.
+
+To run the integration tests, make an `.env` folder in the root directory of this folder. Then add the
+following environment variable:
+
+```txt
+TEST_DB=postgres://testuser:testpassword@localhost:5556/testdb
+```
+
+Then you can run
+
+```txt
+npm run test:integration
+```
+
+To run all tests use:
+
+```txt
+npm run test:all
+```
+
+For unit tests, use:
+
+```txt
+npm run test:unit
+```
