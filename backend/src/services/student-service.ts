@@ -11,6 +11,7 @@ import {
   UpdateStudentRequest,
 } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
+import { passwordUtils } from "../utils/encrypt.js";
 
 export class StudentService {
   private readonly db: DatabaseConnection;
@@ -30,12 +31,13 @@ export class StudentService {
       university,
     } = req;
 
+    const hashedPassword = await passwordUtils().hash(password);
     const id = await this.db
       .insert(users)
       .values({
         givenName,
         familyName,
-        password,
+        password: hashedPassword,
         email,
         role,
       })
@@ -110,12 +112,22 @@ export class StudentService {
   }
 
   async updateStudent(userId: string, updatedDetails: UpdateStudentRequest) {
-    const { role, givenName, familyName, password, email } = updatedDetails;
-    const { studentId, university, pronouns, team } = updatedDetails;
+    const {
+      role,
+      givenName,
+      familyName,
+      password,
+      email,
+      studentId,
+      university,
+      pronouns,
+      team,
+    } = updatedDetails;
 
+    const hashedPassword = await passwordUtils().hash(password);
     await this.db
       .update(users)
-      .set({ role, givenName, familyName, password, email })
+      .set({ role, givenName, familyName, password: hashedPassword, email })
       .where(eq(users.id, userId));
 
     await this.db
