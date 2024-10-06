@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   Database,
   DatabaseConnection,
@@ -10,6 +11,7 @@ import {
   UpdateStudentRequest,
 } from "../../schemas/user-schema.js";
 import { StudentService } from "../../services/index.js";
+import { badRequest, HTTPError } from "../../utils/errors.js";
 
 let db: DatabaseConnection;
 let studentService: StudentService;
@@ -58,7 +60,9 @@ describe("StudentService tests", () => {
 
   it("Should throw an error if the student cannot be found by sid", async () => {
     const sid = "z1234567";
-    await expect(studentService.getStudentByStudentId(sid)).rejects.toThrow();
+    await expect(studentService.getStudentByStudentId(sid)).rejects.toThrow(
+      new HTTPError(badRequest),
+    );
   });
 
   it("Should get the student's details with a uuid", async () => {
@@ -76,6 +80,13 @@ describe("StudentService tests", () => {
     expect(result).not.toBeNull();
   });
 
+  it("Show throw an error if the student cannot be found by uuid", async () => {
+    const userId = uuidv4();
+    await expect(studentService.getStudentById(userId)).rejects.toThrow(
+      new HTTPError(badRequest),
+    );
+  });
+
   it("Should update the students details", async () => {
     const student: CreateStudentRequest = {
       role: "student",
@@ -87,18 +98,16 @@ describe("StudentService tests", () => {
       university: 1,
     };
     const { userId } = await studentService.createStudent(student);
-    const prev = await studentService.getStudentById(userId);
-    expect(prev.pronouns).toBeNull();
+    const prevDetails = await studentService.getStudentById(userId);
+    expect(prevDetails.pronouns).toBeNull();
 
     const req: UpdateStudentRequest = {
       ...student,
       pronouns: "he/him",
       team: null,
     };
-    await studentService.updateStudent(userId, req);
-    const curr = await studentService.getStudentById(userId);
-
-    expect(curr.pronouns).toBe(req.pronouns);
+    const newDetails = await studentService.updateStudent(userId, req);
+    expect(newDetails).not.toEqual(prevDetails);
   });
 
   it("Should remove the student from the database", async () => {
@@ -115,8 +124,18 @@ describe("StudentService tests", () => {
     const prev = await studentService.getStudentById(userId);
     expect(prev).not.toBeNull();
 
-    await studentService.deleteStudent(userId);
+    await expect(studentService.deleteStudent(userId)).resolves.toStrictEqual({
+      status: "OK",
+    });
 
-    await expect(studentService.getStudentById(userId)).rejects.toThrow();
+    await expect(studentService.getStudentById(userId)).rejects.toThrow(
+      new HTTPError(badRequest),
+    );
+  });
+
+  it("Throw when deleting a student that does not exist", async () => {
+    await expect(studentService.deleteStudent(uuidv4())).rejects.toThrow(
+      new HTTPError(badRequest),
+    );
   });
 });

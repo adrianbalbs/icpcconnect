@@ -10,7 +10,7 @@ import {
   CreateStudentRequest,
   UpdateStudentRequest,
 } from "../schemas/index.js";
-import { HTTPError, notFoundError } from "../utils/errors.js";
+import { badRequest, HTTPError } from "../utils/errors.js";
 
 export class StudentService {
   private readonly db: DatabaseConnection;
@@ -70,7 +70,7 @@ export class StudentService {
       .leftJoin(teams, eq(teams.id, students.team));
 
     if (!student.length) {
-      throw new HTTPError(notFoundError);
+      throw new HTTPError(badRequest);
     }
 
     return student[0];
@@ -103,7 +103,7 @@ export class StudentService {
       .leftJoin(teams, eq(teams.id, students.team));
 
     if (!student.length) {
-      throw new HTTPError(notFoundError);
+      throw new HTTPError(badRequest);
     }
 
     return student[0];
@@ -111,7 +111,7 @@ export class StudentService {
 
   async updateStudent(userId: string, updatedDetails: UpdateStudentRequest) {
     const { role, givenName, familyName, password, email } = updatedDetails;
-    const { studentId, university, pronouns } = updatedDetails;
+    const { studentId, university, pronouns, team } = updatedDetails;
 
     await this.db
       .update(users)
@@ -120,14 +120,33 @@ export class StudentService {
 
     await this.db
       .update(students)
-      .set({ studentId, university, pronouns })
+      .set({ studentId, university, pronouns, team })
       .where(eq(students.userId, userId));
 
-    return { userId };
+    return {
+      id: userId,
+      studentId,
+      role,
+      givenName,
+      familyName,
+      email,
+      university,
+      pronouns,
+      team,
+    };
   }
 
   async deleteStudent(userId: string) {
+    const student = await this.db
+      .select({ userId: users.id })
+      .from(users)
+      .where(eq(users.id, userId));
+
+    if (!student.length) {
+      throw new HTTPError(badRequest);
+    }
+
     await this.db.delete(users).where(eq(users.id, userId));
-    return { userId };
+    return { status: "OK" };
   }
 }
