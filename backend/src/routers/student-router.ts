@@ -12,32 +12,19 @@ import { StudentService } from "../services/index.js";
 export function studentRouter(studentService: StudentService) {
   const logger = getLogger();
   return Router()
-    .get("/all", async (_req: Request, res: Response, next: NextFunction) => {
-      try {
-        const students = await studentService.getAllStudents();
-        res.status(200).json(students);
-      } catch (err) {
-        next(err);
-      }
-    })
     .get(
-      "/sid/:studentId",
-      async (
-        req: Request<{ studentId: string }, unknown>,
-        res: Response,
-        next: NextFunction,
-      ) => {
-        const { studentId } = req.params;
+      "/students",
+      async (_req: Request, res: Response, next: NextFunction) => {
         try {
-          const student = await studentService.getStudentByStudentId(studentId);
-          res.status(200).json(student);
+          const students = await studentService.getAllStudents();
+          res.status(200).json(students);
         } catch (err) {
           next(err);
         }
       },
     )
     .get(
-      "/:id",
+      "/students/:id",
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -53,9 +40,25 @@ export function studentRouter(studentService: StudentService) {
         }
       },
     )
+    .delete(
+      "/students/:id",
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const student = await studentService.deleteStudent(id);
+          res.status(200).json(student);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .post(
-      "/register",
-      validateData(CreateStudentRequestSchema),
+      "/students",
+      validateData(CreateStudentRequestSchema, "body"),
       async (
         req: Request<Record<string, never>, unknown, CreateStudentRequest>,
         res: Response,
@@ -71,8 +74,8 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .put(
-      "/update/:id",
-      validateData(UpdateStudentRequestSchema),
+      "/students/:id",
+      validateData(UpdateStudentRequestSchema, "body"),
       async (
         req: Request<{ id: string }, unknown, UpdateStudentRequest>,
         res: Response,

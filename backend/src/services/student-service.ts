@@ -79,14 +79,7 @@ export class StudentService {
   }
 
   async getAllStudents() {
-    return await this.db
-      .select()
-      .from(users)
-      .innerJoin(students, eq(users.id, students.userId));
-  }
-
-  async getStudentByStudentId(studentId: string) {
-    const student = await this.db
+    const allStudents = await this.db
       .select({
         id: users.id,
         givenName: users.givenName,
@@ -99,16 +92,11 @@ export class StudentService {
         team: teams.name,
       })
       .from(users)
-      .where(eq(students.studentId, studentId))
       .innerJoin(students, eq(users.id, students.userId))
       .innerJoin(universities, eq(universities.id, students.university))
       .leftJoin(teams, eq(teams.id, students.team));
 
-    if (!student.length) {
-      throw new HTTPError(badRequest);
-    }
-
-    return student[0];
+    return { allStudents };
   }
 
   async updateStudent(userId: string, updatedDetails: UpdateStudentRequest) {
