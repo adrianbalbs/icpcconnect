@@ -15,7 +15,7 @@ export class AlgorithmService {
     }
 
     // Grabs all students from a particular university
-    // TODO: Need to link this to their registration details for determining scores
+    /** TODO: Need to link this to their registration details for determining scores
     async getStudentIdsByUniversity(universityId: number): Promise<string[]> {
     const studentIds = await this.db
         .select({
@@ -26,6 +26,7 @@ export class AlgorithmService {
     
     return studentIds.map((student) => student.studentId);
     }
+    */
 
     // Function to push a team to the db
 }

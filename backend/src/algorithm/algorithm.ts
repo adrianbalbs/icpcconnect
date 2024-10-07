@@ -14,6 +14,16 @@ enum Experience {
     prof
 }
 
+// MIGHT NOT BE USED
+// TODO: Add other general courses
+enum Courses {
+    intro_computing = 1,
+    data_struct_and_algos = 2,
+    discrete_math = 2,
+    algorithms = 4,
+    prog_chal = 5,
+}
+
 /** Weighting of Specific Values for Determining Score **/
 
 const CONTEST_WEIGHT = 5;
@@ -47,6 +57,17 @@ interface Group {
     totalScore: number
 }
 
+let studentsScores: StudentScore[] = [];
+
+/**
+ * GetStudentScore
+ * 
+ * Given a students information, it determines their weighted 
+ * strength score used for team matching
+ * 
+ * @param s: StudentInfo
+ * @returns null
+ */
 function GetStudentScore(s: StudentInfo) {
     let score = 0;
     score += s.contestExperience * CONTEST_WEIGHT;
@@ -57,12 +78,23 @@ function GetStudentScore(s: StudentInfo) {
     // Weight Codeforces Rating down from Range
     score += (s.codeforcesRating / 1000) * CODEFORCE_WEIGHT;
 
-    // Need to handle logic for courses
+    // TODO: Need to handle logic for courses
 }
 
-let studentsScores: StudentScore[] = [];
 let groups: Group[] = [];
 
+/**
+ * algorithm
+ * 
+ * Controls all the logic for team building / matching based on the
+ * student scores.
+ * 
+ * @returns null
+ * 
+ * TODO: 
+ *  - Implement logic for team building based on coding language experience
+ *  - Implement logic for team building based on spoken languages
+ */
 function algorithm() {
     while (true) {
         let group: Group = {
@@ -119,6 +151,8 @@ function algorithm() {
         }
 
         // All cases exhausted, no other teams could be made
+        // Pushes the people back onto the array to see who
+        // could not be assigned
         studentsScores.push(stu1);
         studentsScores.push(stu2);
         studentsScores.push(stu3);
@@ -126,6 +160,15 @@ function algorithm() {
     }
 }
 
+
+/**
+ * findNextSingle
+ * 
+ * Finds the next singular person within the scores, removes them from the list
+ * returns that students details
+ * 
+ * @returns StudentScore
+ */
 function findNextSingle(): StudentScore {
     for (let i = studentsScores.length - 1; i >= 0; i--) {
         if (studentsScores[i].ids.length == 1) {
