@@ -50,3 +50,10 @@ export const CreateSiteCoordinatorRequestSchema = z.object({
 export type CreateSiteCoordinatorRequest = z.infer<
   typeof CreateSiteCoordinatorRequestSchema
 >;
+
+export const UpdateSiteCoordinatorRequestSchema =
+  CreateSiteCoordinatorRequestSchema;
+
+export type UpdateSiteCoordinatorRequest = z.infer<
+  typeof UpdateSiteCoordinatorRequestSchema
+>;
