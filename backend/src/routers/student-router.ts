@@ -6,11 +6,9 @@ import {
   UpdateStudentRequest,
   UpdateStudentRequestSchema,
 } from "../schemas/index.js";
-import { getLogger } from "../utils/logger.js";
 import { StudentService } from "../services/index.js";
 
 export function studentRouter(studentService: StudentService) {
-  const logger = getLogger();
   return Router()
     .get(
       "/students",
@@ -33,7 +31,6 @@ export function studentRouter(studentService: StudentService) {
         const { id } = req.params;
         try {
           const student = await studentService.getStudentById(id);
-          logger.info(student);
           res.status(200).json(student);
         } catch (err) {
           next(err);
