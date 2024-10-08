@@ -22,6 +22,7 @@ export default function Login() {
             <div className={loginPage['login-polygon']}></div>
             <div className={loginPage['info-container']}>
                 <Image src={logo} alt="" width={400} />
+                <br/>
                 <div className={loginPage['form-container']}>
                     <input type="email" id="email" placeholder="Email" className={loginPage['input-field']} />
                     <input type="password" id="password" placeholder="Password" className={loginPage['input-field']} />
