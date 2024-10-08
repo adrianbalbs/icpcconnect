@@ -27,7 +27,7 @@ export default function Login() {
                     <input type="password" id="password" placeholder="Password" className={loginPage['input-field']} />
                     <a href="/forgot-password" className={loginPage.link}>Forgot Password?</a>
                 </div>
-                <a href={'/'} className={`${loginPage['auth-button']} ${loginPage['dark']} ${loginPage['long']}`}>Login</a>
+                <button onClick={handleLogin} className={`${loginPage['auth-button']} ${loginPage['dark']} ${loginPage['long']}`}>Login</button>
                 <div className={loginPage['horizontal-container']}>
                     <hr></hr>
                     or
