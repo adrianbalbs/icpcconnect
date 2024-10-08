@@ -75,7 +75,7 @@ export default function Register() {
                             <option value="site-coordinator">Western Sydney University</option>
                         </select>
                         <div className={registerPage['form-container']}>
-                            <input placeholder="Invite Code" className={registerPage['input-field']} />
+                            <input placeholder="Student ID" className={registerPage['input-field']} />
                             <input placeholder="Email" className={registerPage['input-field']} />
                         </div>
                         <div className={registerPage['horizontal-container']}>
