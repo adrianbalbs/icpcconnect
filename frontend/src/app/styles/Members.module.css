@@ -1,0 +1,31 @@
+.students {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 0 35px;
+  width: 100%;
+  font-size: 12px;
+}
+
+.staff {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 0 35px;
+  width: 100%;
+  font-size: 12px;
+}
+
+.gap {
+  margin-top: 70px;
+}
+
+.space {
+  height: 60px;
+}
+
+.overflow {
+  overflow: scroll;
+}
