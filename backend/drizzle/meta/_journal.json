@@ -15,6 +15,13 @@
       "when": 1728109323529,
       "tag": "0001_flippant_tyrannus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1728267615366,
+      "tag": "0002_absurd_green_goblin",
+      "breakpoints": true
     }
   ]
 }

@@ -6,10 +6,13 @@ export const seed = async (db: DatabaseConnection) => {
   const logger = getLogger();
 
   logger.info("Seeding University and Site information");
-  await db.insert(universities).values([
-    { name: "University of New South Wales", id: 1, hostedAt: 1 },
-    { name: "University of Sydney", id: 2 },
-    { name: "University of Technology Sydney", id: 3, hostedAt: 1 },
-    { name: "Macquarie University", id: 4, hostedAt: 1 },
-  ]);
+  await db
+    .insert(universities)
+    .values([
+      { name: "University of New South Wales", id: 1, hostedAt: 1 },
+      { name: "University of Sydney", id: 2 },
+      { name: "University of Technology Sydney", id: 3, hostedAt: 1 },
+      { name: "Macquarie University", id: 4, hostedAt: 1 },
+    ])
+    .onConflictDoNothing();
 };
