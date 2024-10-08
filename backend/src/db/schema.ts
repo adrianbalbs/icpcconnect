@@ -1,12 +1,15 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
   serial,
   text,
+  timestamp,
   uuid,
   varchar,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", [
@@ -77,9 +80,143 @@ export const studentRelations = relations(students, ({ one }) => ({
     fields: [students.team],
     references: [teams.id],
   }),
+  registrationDetails: one(registrationDetails),
 }));
 
 export type Student = InferSelectModel<typeof students>;
+
+export const levelEnum = pgEnum("level", ["A", "B"]);
+export const languageExperienceEnum = pgEnum("language_experience", [
+  "none",
+  "some",
+  "prof",
+]);
+
+export const registrationDetails = pgTable("registration_details", {
+  student: uuid("id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  level: levelEnum("level").notNull(),
+  contestExperience: integer("contest_experience").default(0).notNull(),
+  leetcodeRating: integer("leetcode_rating").default(0).notNull(),
+  codeforcesRating: integer("codeforces_rating").default(0).notNull(),
+  allergies: text("allergies").default("").notNull(),
+  photoConsent: boolean("photo_consent").notNull(),
+  cppExperience: languageExperienceEnum("cpp_experience").notNull(),
+  cExperience: languageExperienceEnum("c_experience").notNull(),
+  javaExperience: languageExperienceEnum("java_experience").notNull(),
+  pythonExperience: languageExperienceEnum("python_experience").notNull(),
+  timeSubmitted: timestamp("time_submitted").notNull().defaultNow(),
+});
+
+export type RegistrationDetails = InferSelectModel<typeof registrationDetails>;
+
+export const registrationDetailsRelations = relations(
+  registrationDetails,
+  ({ many, one }) => ({
+    languagesSpoken: many(spokenLanguages),
+    coursesCompleted: many(courses),
+    registeredBy: one(students, {
+      fields: [registrationDetails.student],
+      references: [students.userId],
+    }),
+  }),
+);
+
+export const spokenLanguages = pgTable("spoken_languages", {
+  code: text("code").primaryKey().notNull(),
+  name: text("name").notNull(),
+});
+
+export type SpokenLanguage = InferSelectModel<typeof spokenLanguages>;
+
+export const languagesSpokenByStudent = pgTable(
+  "languages_spoken_by_student",
+  {
+    studentId: uuid("student_id")
+      .references(() => registrationDetails.student)
+      .notNull(),
+    languageCode: text("language_code")
+      .references(() => spokenLanguages.code)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.studentId, table.languageCode] }),
+    };
+  },
+);
+
+export const languagesSpokenByStudentRelations = relations(
+  languagesSpokenByStudent,
+  ({ one }) => ({
+    student: one(registrationDetails, {
+      fields: [languagesSpokenByStudent.studentId],
+      references: [registrationDetails.student],
+    }),
+    user: one(spokenLanguages, {
+      fields: [languagesSpokenByStudent.languageCode],
+      references: [spokenLanguages.code],
+    }),
+  }),
+);
+
+export const spokenLanguagesRelations = relations(
+  spokenLanguages,
+  ({ many }) => ({
+    spokenBy: many(registrationDetails),
+  }),
+);
+
+export const courseTypeEnum = pgEnum("course_type", [
+  "Programming Fundamentals",
+  "Data Structures and Algorithms",
+  "Algorithm Design",
+  "Programming Challenges",
+]);
+
+export const courses = pgTable("courses", {
+  id: serial("id").primaryKey().notNull(),
+  type: courseTypeEnum("type").notNull(),
+});
+
+export const coursesRelations = relations(courses, ({ many }) => ({
+  takenBy: many(registrationDetails),
+}));
+
+export type Course = InferSelectModel<typeof courses>;
+
+export const coursesCompletedByStudent = pgTable(
+  "courses_completed_by_student",
+  {
+    studentId: uuid("student_id")
+      .references(() => registrationDetails.student)
+      .notNull(),
+    courseId: integer("course_id")
+      .references(() => courses.id)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.studentId, table.courseId] }),
+    };
+  },
+);
+
+export const coursesCompletedByStudentRelations = relations(
+  coursesCompletedByStudent,
+  ({ one }) => ({
+    student: one(registrationDetails, {
+      fields: [coursesCompletedByStudent.studentId],
+      references: [registrationDetails.student],
+    }),
+    user: one(courses, {
+      fields: [coursesCompletedByStudent.courseId],
+      references: [courses.id],
+    }),
+  }),
+);
 
 export const coaches = pgTable("coaches", {
   userId: uuid("id")
