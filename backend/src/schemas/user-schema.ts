@@ -35,6 +35,9 @@ export const CreateCoachRequestSchema = z.object({
 
 export type CreateCoachRequest = z.infer<typeof CreateCoachRequestSchema>;
 
+export const UpdateCoachRequestSchema = CreateCoachRequestSchema;
+export type UpdateCoachRequest = z.infer<typeof UpdateCoachRequestSchema>;
+
 export const CreateSiteCoordinatorRequestSchema = z.object({
   givenName: z.string(),
   familyName: z.string(),
@@ -46,4 +49,11 @@ export const CreateSiteCoordinatorRequestSchema = z.object({
 
 export type CreateSiteCoordinatorRequest = z.infer<
   typeof CreateSiteCoordinatorRequestSchema
+>;
+
+export const UpdateSiteCoordinatorRequestSchema =
+  CreateSiteCoordinatorRequestSchema;
+
+export type UpdateSiteCoordinatorRequest = z.infer<
+  typeof UpdateSiteCoordinatorRequestSchema
 >;

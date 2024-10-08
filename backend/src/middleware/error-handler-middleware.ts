@@ -4,6 +4,9 @@ import {
   HTTPError,
   internalServerError,
 } from "../utils/errors.js";
+import { formatError, getLogger } from "../utils/logger.js";
+
+const logger = getLogger();
 
 export const errorHandlerMiddleware: ErrorRequestHandler = (
   err: Error | HTTPError,
@@ -11,6 +14,7 @@ export const errorHandlerMiddleware: ErrorRequestHandler = (
   res,
 ) => {
   if (err instanceof HTTPError) {
+    logger.error(`Received HTTP Error: ${formatError(err)}`);
     res.status(err.errorCode).json(getResponseFromHttpError(err));
   }
   res.status(internalServerError.errorCode).json(internalServerError);

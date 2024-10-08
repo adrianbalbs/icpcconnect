@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status
 set -e
 
 cleanup() {
@@ -11,7 +10,6 @@ cleanup() {
 
 trap cleanup EXIT
 
-# Function to wait for PostgreSQL to be ready
 wait_for_postgres() {
     echo "Waiting for PostgreSQL to be ready..."
     while ! docker exec capstone-project-2024-t3-3900f15atomatofactory-test-db-1 pg_isready -U testuser -d test-db >/dev/null 2>&1; do
