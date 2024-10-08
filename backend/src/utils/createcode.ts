@@ -8,6 +8,9 @@ import {
     CreateAuthCodeRequest,
     CreateRoleCodeRequest
 } from "../schemas/index.js"
+import {
+    CodesService
+} from "../services/codes-service.js";
 
 const CODE_LENGTH = 6;
 
@@ -38,15 +41,16 @@ function createCode(length: number): number {
  * @param null
  * @returns number (the code)
  */
-function pushCodeCoach(): number {
+export async function pushCodeCoach(codesService: CodesService) {
     let coachCode: CreateRoleCodeRequest = {
         code: createCode(CODE_LENGTH),
         role: role.coach,
-        createdAt: Date.now()
+        createdAt:new Date(Date.UTC(Date.now()))
     }
-    // Insert into DB
+    
+    const code = codesService.createRoleCode(coachCode);
 
-    return coachCode.code;
+    return code;
 }   
 
 /**
@@ -58,16 +62,16 @@ function pushCodeCoach(): number {
  * @param null
  * @returns number (the code)
  */
-function pushCodeSiteCoord(): number {
-    let coachCode: CreateRoleCodeRequest = {
+export function pushCodeSiteCoord(codesService: CodesService) {
+    let siteCoordCode: CreateRoleCodeRequest = {
         code: createCode(CODE_LENGTH),
         role: role.site_coord,
-        createdAt: Date.now()
+        createdAt:new Date(Date.UTC(Date.now()))
     }
 
-    // Insert into DB
+    const code = codesService.createRoleCode(siteCoordCode);
 
-    return coachCode.code;
+    return code;
 }
 
 
@@ -80,14 +84,14 @@ function pushCodeSiteCoord(): number {
  * @param email: String
  * @returns number (the code)
  */
-function pushCodeAuth(email: string): number {
-    let coachCode: CreateAuthCodeRequest = {
+export function pushCodeAuth(codesService: CodesService, email: string) {
+    let authCode: CreateAuthCodeRequest = {
         code: createCode(CODE_LENGTH),
         email: email,
-        createdAt: Date.now(),
+        createdAt:new Date(Date.UTC(Date.now()))
     }
 
-    // Insert into DB
+    const code = codesService.createAuthCode(authCode);
 
-    return coachCode.code;
+    return code;
 }

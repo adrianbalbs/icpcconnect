@@ -30,7 +30,7 @@ export class CodesService {
         createdAt
     });
 
-    return { };
+    return { code: code };
   }
 
   async createAuthCode(req: CreateAuthCodeRequest) {
@@ -48,6 +48,18 @@ export class CodesService {
         createdAt
     });
 
-    return { };
+    return { code: code };
+  }
+
+  async getAllAuthCodes() {
+    return await this.db
+      .select()
+      .from(authCodes)
+  }
+
+  async getAllRoleCodes() {
+    return await this.db
+      .select()
+      .from(inviteCodes)
   }
 }
