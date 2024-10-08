@@ -1,8 +1,22 @@
+'use client'
 import loginPage from '../styles/Auth.module.css'
 import Image from 'next/image';
 import logo from '../assets/logo.png';
+import axios from 'axios';
+import { SERVER_URL } from '../utils/constants';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
+    const router = useRouter();
+    const handleLogin = async () => {
+        try {
+            const res = await axios.post(`${SERVER_URL}/store`);
+            router.push('/teams');
+        } catch (error) {
+            alert(error);
+        }
+    }
+    
     return (
         <>
             <div className={loginPage['login-polygon']}></div>
