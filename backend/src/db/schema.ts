@@ -104,7 +104,7 @@ export type Coach = InferSelectModel<typeof coaches>;
 export const siteCoordinators = pgTable("site_coordinators", {
   userId: uuid("id")
     .primaryKey()
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   site: integer("site")
     .references(() => universities.id)

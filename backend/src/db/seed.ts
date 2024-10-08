@@ -10,7 +10,7 @@ export const seed = async (db: DatabaseConnection) => {
     .insert(universities)
     .values([
       { name: "University of New South Wales", id: 1, hostedAt: 1 },
-      { name: "University of Sydney", id: 2 },
+      { name: "University of Sydney", id: 2, hostedAt: 1 },
       { name: "University of Technology Sydney", id: 3, hostedAt: 1 },
       { name: "Macquarie University", id: 4, hostedAt: 1 },
     ])
