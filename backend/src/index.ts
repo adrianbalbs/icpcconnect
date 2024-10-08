@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { Database } from "./db/index.js";
+import { Database, seed } from "./db/index.js";
 import {
   CoachService,
   SiteCoordinatorService,
@@ -24,6 +24,7 @@ const app = express();
 const port = process.env.PORT || "3000";
 
 const databaseConnection = Database.getConnection();
+await seed(databaseConnection);
 
 const studentService = new StudentService(databaseConnection);
 const coachService = new CoachService(databaseConnection);
