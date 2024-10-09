@@ -17,6 +17,7 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
+    const [inviteCode, setInviteCode] = useState('');
 
     const handleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setRole(e.target.value);
@@ -35,6 +36,7 @@ export default function Register() {
                         email,
                         verificationCode,
                         password,
+                        inviteCode,
                     };
                     const response = await axios.post(`${SERVER_URL}/register`, payload);
                     console.log('User registered:', response.data);
@@ -117,16 +119,23 @@ export default function Register() {
                     <>
                         <h1>Enter your details</h1>
                         <h1>{role}</h1>
-                        <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(e.target.value)}>
+                        <select id="select-university" name="Select University" className={registerPage['input-field']}>
                             <option value="" disabled selected>Select University</option>
                             <option value="student">UNSW</option>
                             <option value="coach">University of Sydney</option>
                             <option value="site-coordinator">Western Sydney University</option>
                         </select>
-                        <div className={registerPage['form-container']}>
-                            <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
-                            <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
-                        </div>
+                        {role === 'Student' ? (
+                            <div className={registerPage['form-container']}>
+                                <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
+                                <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                        ) : (
+                            <div className={registerPage['form-container']}>
+                                <input placeholder="Invite Code" className={registerPage['input-field']} value={inviteCode} onChange={(e) => setInviteCode(e.target.value)}/>
+                                <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                        )}
                         <div className={registerPage['horizontal-container']}>
                             <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
                             <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Next</button>
