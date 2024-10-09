@@ -14,20 +14,41 @@ export class AlgorithmService {
       this.db = db;
     }
 
-    // Grabs all students from a particular university
-    /** TODO: Need to link this to their registration details for determining scores
-    async getStudentIdsByUniversity(universityId: number): Promise<string[]> {
-    const studentIds = await this.db
-        .select({
-        studentId: students.userId,
-        })
-        .from(students)
-        .where(eq(students.university, universityId));
-    
-    return studentIds.map((student) => student.studentId);
-    }
-    */
+    /**
+     * TODO:
+     * Create a call to get all students and their relevant
+     * registration details.
+     * 
+     * NOTE: Relies on Registration Details being Implemented into the DB
+     * 
+     * Current format being used:
+     * 
+     * export interface StudentInfo {
+          id: number,
+          uniId: number,
+          contestExperience: number,
+          leetcodeRating: number,
+          codeforcesRating: number,
+          completedCourses : String[],
+          spokenLanguages: String[],
+          cppExperience: Experience,
+          cExpericence: Experience,
+          javaExperience: Experience,
+          pythonExperience: Experience,
+          paired_with: number | null,
+          markdone: boolean
+     * }
+     */
 
-    // Function to push a team to the db
+    /**
+     * TODO:
+     * Create a call that puts a team into the DB/
+     * Current format of algorithm return: Group[]
+     * 
+     * interface Group {
+          ids: [number, number, number],
+          totalScore: number
+     * }
+     */
 }
   
