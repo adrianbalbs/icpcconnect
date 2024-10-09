@@ -16,6 +16,17 @@ export const seed = async (db: DatabaseConnection) => {
     ])
     .onConflictDoNothing();
 
+  logger.info("Seeding Course Information");
+  await db
+    .insert(courses)
+    .values([
+      { id: 1, type: "Programming Fundamentals" },
+      { id: 2, type: "Data Structures and Algorithms" },
+      { id: 3, type: "Algorithm Design" },
+      { id: 4, type: "Programming Challenges" },
+    ])
+    .onConflictDoNothing();
+
   logger.info("Seeding Language Information");
   await db
     .insert(spokenLanguages)
@@ -211,16 +222,6 @@ export const seed = async (db: DatabaseConnection) => {
       { code: "yo", name: "Yoruba" },
       { code: "za", name: "Zhuang, Chuang" },
       { code: "zu", name: "Zulu" },
-    ])
-    .onConflictDoNothing();
-
-  logger.info("Seeding Course Information");
-  db.insert(courses)
-    .values([
-      { id: 1, type: "Programming Fundamentals" },
-      { id: 2, type: "Data Structures and Algorithms" },
-      { id: 3, type: "Algorithm Design" },
-      { id: 4, type: "Programming Challenges" },
     ])
     .onConflictDoNothing();
 };
