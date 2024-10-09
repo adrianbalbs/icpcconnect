@@ -28,23 +28,43 @@ export default function Register() {
         if (step === 5) {
             try {
                 if (password === confirmPassword && checked) {
-                    const payload = {
-                        firstName,
-                        lastName,
-                        role,
-                        university,
-                        studentId,
-                        email,
-                        verificationCode,
-                        password,
-                        inviteCode,
-                    };
                     let response;
+                    let roleName;
                     if (role === "Site Coordinator") {
+                        roleName = "site_coordinator";
+                        const payload = {
+                            firstName,
+                            lastName,
+                            role,
+                            university, // change this to uni_code later
+                            email,
+                            password,
+                            inviteCode,
+                        };
                         response = await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
                     } else if (role === "Coach") {
+                        const payload = {
+                            firstName,
+                            lastName,
+                            role,
+                            university, // change this to uni_code later
+                            email,
+                            password,
+                            inviteCode,
+                        };
+                        roleName = "coach";
                         response = await axios.post(`${SERVER_URL}/api/coaches`, payload);
                     } else {
+                        const payload = {
+                            firstName,
+                            lastName,
+                            role,
+                            studentId,
+                            university,
+                            email,
+                            password,
+                        };
+                        roleName = "student"
                         response = await axios.post(`${SERVER_URL}/api/students`, payload);
                     }
                     router.push('/login');
