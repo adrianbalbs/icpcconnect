@@ -104,14 +104,26 @@ export class ContestRegistrationService {
     const result = await this.db.query.registrationDetails.findFirst({
       where: eq(registrationDetails.student, studentId),
       with: {
-        languagesSpoken: true,
-        coursesCompleted: true,
+        languagesSpoken: {
+          with: {
+            language: true,
+          },
+        },
+        coursesCompleted: {
+          with: {
+            course: true,
+          },
+        },
       },
     });
     if (!result) {
       throw new HTTPError(notFoundError);
     }
-    return result;
+    return {
+      ...result,
+      languagesSpoken: result.languagesSpoken.map((ls) => ls.language),
+      coursesCompleted: result.coursesCompleted.map((ls) => ls.course),
+    };
   }
 
   async getAllStudentRegistrations() {
@@ -122,11 +134,25 @@ export class ContestRegistrationService {
             university: true,
           },
         },
-        languagesSpoken: true,
-        coursesCompleted: true,
+        languagesSpoken: {
+          with: {
+            language: true,
+          },
+        },
+        coursesCompleted: {
+          with: {
+            course: true,
+          },
+        },
       },
     });
-    return { registrations };
+    return {
+      registration: registrations.map((registration) => ({
+        ...registration,
+        languagesSpoken: registration.languagesSpoken.map((ls) => ls.language),
+        coursesCompleted: registration.coursesCompleted.map((ls) => ls.course),
+      })),
+    };
   }
 
   async updateRegistration(

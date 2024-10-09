@@ -43,6 +43,13 @@
       "when": 1728439093094,
       "tag": "0005_cultured_nomad",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1728449572990,
+      "tag": "0006_thick_rattler",
+      "breakpoints": true
     }
   ]
 }

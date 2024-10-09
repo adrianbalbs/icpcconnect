@@ -95,7 +95,7 @@ export const languageExperienceEnum = pgEnum("language_experience", [
 export const registrationDetails = pgTable("registration_details", {
   student: uuid("id")
     .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" })
+    .references(() => students.userId, { onDelete: "cascade" })
     .notNull(),
   level: levelEnum("level").notNull(),
   contestExperience: integer("contest_experience").default(0).notNull(),
@@ -115,8 +115,8 @@ export type RegistrationDetails = InferSelectModel<typeof registrationDetails>;
 export const registrationDetailsRelations = relations(
   registrationDetails,
   ({ many, one }) => ({
-    languagesSpoken: many(spokenLanguages),
-    coursesCompleted: many(courses),
+    languagesSpoken: many(languagesSpokenByStudent),
+    coursesCompleted: many(coursesCompletedByStudent),
     registeredBy: one(students, {
       fields: [registrationDetails.student],
       references: [students.userId],
@@ -155,7 +155,7 @@ export const languagesSpokenByStudentRelations = relations(
       fields: [languagesSpokenByStudent.studentId],
       references: [registrationDetails.student],
     }),
-    user: one(spokenLanguages, {
+    language: one(spokenLanguages, {
       fields: [languagesSpokenByStudent.languageCode],
       references: [spokenLanguages.code],
     }),
@@ -165,7 +165,7 @@ export const languagesSpokenByStudentRelations = relations(
 export const spokenLanguagesRelations = relations(
   spokenLanguages,
   ({ many }) => ({
-    spokenBy: many(registrationDetails),
+    spokenBy: many(languagesSpokenByStudent),
   }),
 );
 
@@ -182,7 +182,7 @@ export const courses = pgTable("courses", {
 });
 
 export const coursesRelations = relations(courses, ({ many }) => ({
-  takenBy: many(registrationDetails),
+  takenBy: many(coursesCompletedByStudent),
 }));
 
 export type Course = InferSelectModel<typeof courses>;
@@ -211,7 +211,7 @@ export const coursesCompletedByStudentRelations = relations(
       fields: [coursesCompletedByStudent.studentId],
       references: [registrationDetails.student],
     }),
-    user: one(courses, {
+    course: one(courses, {
       fields: [coursesCompletedByStudent.courseId],
       references: [courses.id],
     }),
