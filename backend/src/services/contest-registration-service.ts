@@ -102,14 +102,12 @@ export class ContestRegistrationService {
     studentId: string,
   ): Promise<GetRegistrationFormResponse> {
     const result = await this.db.query.registrationDetails.findFirst({
-      where: (registrationDetails, { eq }) =>
-        eq(registrationDetails.student, studentId),
+      where: eq(registrationDetails.student, studentId),
       with: {
         languagesSpoken: true,
         coursesCompleted: true,
       },
     });
-
     if (!result) {
       throw new HTTPError(notFoundError);
     }
