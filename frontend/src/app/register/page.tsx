@@ -190,7 +190,7 @@ export default function Register() {
                         <input type="password" placeholder="Confirm Password" className={registerPage['input-field']} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
                         <label htmlFor="tnc">
                             <input id="tnc" type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
-                            &nbsp;Yes, I agree to the <a className="link" href="/">Terms and Conditions of Use</a>
+                            &nbsp;Yes, I agree to the <a className="link" href="/https://icpc.global/regionals/rules">Terms and Conditions of Use</a>
                         </label>
                         {password !== confirmPassword && (
                             <p style={{ color: "red" }}>Passwords do not match.</p>
@@ -210,5 +210,3 @@ export default function Register() {
         </>
     );
 }
-
-
