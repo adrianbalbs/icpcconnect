@@ -18,6 +18,7 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [inviteCode, setInviteCode] = useState('');
+    const [checked, setChecked] = useState(false);
 
     const handleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setRole(e.target.value);
@@ -26,7 +27,7 @@ export default function Register() {
     const handleNext = async () => {
         if (step === 5) {
             try {
-                if (password === confirmPassword) {
+                if (password === confirmPassword && checked) {
                     const payload = {
                         firstName,
                         lastName,
@@ -38,11 +39,19 @@ export default function Register() {
                         password,
                         inviteCode,
                     };
-                    const response = await axios.post(`${SERVER_URL}/register`, payload);
-                    console.log('User registered:', response.data);
+                    let response;
+                    if (role === "Site Coordinator") {
+                        response = await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
+                    } else if (role === "Coach") {
+                        response = await axios.post(`${SERVER_URL}/api/coaches`, payload);
+                    } else {
+                        response = await axios.post(`${SERVER_URL}/api/students`, payload);
+                    }
                     router.push('/login');
-                } else {
+                } else if (password !== confirmPassword) {
                     console.log("Passwords do not match");
+                } else {
+                    console.log("Please agree to the terms and conditions.");
                 }
             } catch (error) {
                 console.error('Registration failed:', error);
@@ -119,7 +128,7 @@ export default function Register() {
                     <>
                         <h1>Enter your details</h1>
                         <h1>{role}</h1>
-                        <select id="select-university" name="Select University" className={registerPage['input-field']}>
+                        <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(e.target.value)}>
                             <option value="" disabled selected>Select University</option>
                             <option value="student">UNSW</option>
                             <option value="coach">University of Sydney</option>
@@ -159,13 +168,16 @@ export default function Register() {
                         <h1>{role}</h1>
                         <input type="password" placeholder="Password" className={registerPage['input-field']} value={password} onChange={(e) => setPassword(e.target.value)}/>
                         <input type="password" placeholder="Confirm Password" className={registerPage['input-field']} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+                        <label htmlFor="tnc">
+                            <input id="tnc" type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+                            &nbsp;Yes, I agree to the <a className="link" href="/">Terms and Conditions of Use</a>
+                        </label>
                         {password !== confirmPassword && (
                             <p style={{ color: "red" }}>Passwords do not match.</p>
                         )}
-                        <label htmlFor="tnc">
-                            <input id="tnc" type="checkbox" />
-                            &nbsp;Yes, I agree to the <a className="link" href="/">Terms and Conditions of Use</a>
-                        </label>
+                        {!checked && (
+                            <p style={{ color: "red" }}>Please agree to the terms and conditions.</p>
+                        )}
                         <div className={registerPage['horizontal-container']}>
                             <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
                             <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Register</button>
