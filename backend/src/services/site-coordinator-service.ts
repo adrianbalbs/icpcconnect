@@ -9,11 +9,11 @@ import {
   DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/api-res-interfaces.js";
+} from "../interfaces/index.js";
 import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,
-} from "../schemas/user-schema.js";
+} from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 

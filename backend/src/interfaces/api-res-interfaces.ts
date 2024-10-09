@@ -1,4 +1,4 @@
-import { UserRole } from "../schemas/user-schema.js";
+import { UserRole } from "../schemas/index.js";
 
 export interface IHttpError {
   errorCode: number;

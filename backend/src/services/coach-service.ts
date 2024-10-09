@@ -12,7 +12,7 @@ import {
   DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/api-res-interfaces.js";
+} from "../interfaces/index.js";
 
 export interface CoachProfileResponse extends UserProfileResponse {
   university: string;
