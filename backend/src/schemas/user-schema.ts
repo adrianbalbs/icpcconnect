@@ -3,6 +3,21 @@ import { z } from "zod";
 const UserRoleEnum = z.enum(["student", "coach", "site_coordinator", "admin"]);
 export type UserRole = z.infer<typeof UserRoleEnum>;
 
+
+export const CreateAdminRequestSchema = z.object({
+  givenName: z.string(),
+  familyName: z.string(),
+  password: z.string(),
+  email: z.string(),
+  role: UserRoleEnum.refine((val) => val === "admin", {
+    message: "Role must be admin",
+  })
+});
+
+export type CreateAdminRequest = z.infer<typeof CreateAdminRequestSchema>;
+
+export type UpdateAdminRequest = z.infer<typeof CreateAdminRequestSchema>;
+
 export const CreateStudentRequestSchema = z.object({
   givenName: z.string(),
   familyName: z.string(),
