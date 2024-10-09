@@ -9,7 +9,7 @@ import { CreateCoachRequest, UpdateCoachRequest } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import {
-  DeleteUserResponse,
+  DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
 } from "../interfaces/api-res-interfaces.js";
@@ -124,7 +124,7 @@ export class CoachService {
     };
   }
 
-  async deleteCoach(userId: string): Promise<DeleteUserResponse> {
+  async deleteCoach(userId: string): Promise<DeleteResponse> {
     const coach = await this.db
       .select({ userId: users.id })
       .from(users)

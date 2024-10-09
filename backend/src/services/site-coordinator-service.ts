@@ -6,7 +6,7 @@ import {
   users,
 } from "../db/index.js";
 import {
-  DeleteUserResponse,
+  DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
 } from "../interfaces/api-res-interfaces.js";
@@ -150,7 +150,7 @@ export class SiteCoordinatorService {
     };
   }
 
-  async deleteSiteCoordinator(userId: string): Promise<DeleteUserResponse> {
+  async deleteSiteCoordinator(userId: string): Promise<DeleteResponse> {
     const siteCoordinator = await this.db
       .select({ userId: users.id })
       .from(users)

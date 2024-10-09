@@ -17,6 +17,6 @@ export interface UserProfileResponse {
   role: UserRole;
 }
 
-export interface DeleteUserResponse {
+export interface DeleteResponse {
   status: "OK";
 }
