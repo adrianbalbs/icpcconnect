@@ -37,6 +37,8 @@ export interface GetRegistrationFormResponse {
   coursesCompleted: Course[];
 }
 
+export interface GetAllRegistrationFormItem
+  extends GetRegistrationFormResponse {}
 export type UpdateContestRegistrationFormResponse =
   UpdateContestRegistrationForm;
 
@@ -112,6 +114,21 @@ export class ContestRegistrationService {
       throw new HTTPError(notFoundError);
     }
     return result;
+  }
+
+  async getAllStudentRegistrations() {
+    const registrations = await this.db.query.registrationDetails.findMany({
+      with: {
+        registeredBy: {
+          columns: {
+            university: true,
+          },
+        },
+        languagesSpoken: true,
+        coursesCompleted: true,
+      },
+    });
+    return { registrations };
   }
 
   async updateRegistration(
