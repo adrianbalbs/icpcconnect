@@ -135,10 +135,10 @@ export const languagesSpokenByStudent = pgTable(
   "languages_spoken_by_student",
   {
     studentId: uuid("student_id")
-      .references(() => registrationDetails.student)
+      .references(() => registrationDetails.student, { onDelete: "cascade" })
       .notNull(),
     languageCode: text("language_code")
-      .references(() => spokenLanguages.code)
+      .references(() => spokenLanguages.code, { onDelete: "cascade" })
       .notNull(),
   },
   (table) => {
@@ -191,10 +191,10 @@ export const coursesCompletedByStudent = pgTable(
   "courses_completed_by_student",
   {
     studentId: uuid("student_id")
-      .references(() => registrationDetails.student)
+      .references(() => registrationDetails.student, { onDelete: "cascade" })
       .notNull(),
     courseId: integer("course_id")
-      .references(() => courses.id)
+      .references(() => courses.id, { onDelete: "cascade" })
       .notNull(),
   },
   (table) => {

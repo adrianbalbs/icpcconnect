@@ -36,6 +36,13 @@
       "when": 1728389008335,
       "tag": "0004_striped_surge",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1728439093094,
+      "tag": "0005_cultured_nomad",
+      "breakpoints": true
     }
   ]
 }
