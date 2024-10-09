@@ -17,20 +17,20 @@ import {
 import { badRequest, HTTPError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 
-export interface SiteCoordinatorProfileResponse extends UserProfileResponse {
+export type SiteCoordinatorProfileResponse = UserProfileResponse & {
   site: string;
   managedUniversities: { id: number; name: string }[];
 }
 
-export interface SiteCoordinatorUpdateResponse extends UserProfileResponse {
+export type SiteCoordinatorUpdateResponse = UserProfileResponse & {
   siteId: number;
 }
 
-export interface SiteCoordinatorItem extends UserProfileResponse {
+export type SiteCoordinatorItem = UserProfileResponse & {
   site: string;
 }
 
-export interface AllSiteCoordinators {
+export type AllSiteCoordinators = {
   siteCoordinators: SiteCoordinatorItem[];
 }
 

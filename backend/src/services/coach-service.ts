@@ -14,15 +14,15 @@ import {
   UserProfileResponse,
 } from "../interfaces/index.js";
 
-export interface CoachProfileResponse extends UserProfileResponse {
+export type CoachProfileResponse = UserProfileResponse & {
   university: string;
 }
 
-export interface CoachProfileUpdateResponse extends UserProfileResponse {
+export type CoachProfileUpdateResponse =  UserProfileResponse & {
   university: number;
 }
 
-export interface AllCoachesResponse {
+export type AllCoachesResponse = {
   coaches: CoachProfileResponse[];
 }
 

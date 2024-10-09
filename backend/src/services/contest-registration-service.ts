@@ -16,11 +16,11 @@ import { DeleteResponse } from "../interfaces/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { eq } from "drizzle-orm";
 
-export interface CreateRegistrationFormResponse {
+export type CreateRegistrationFormResponse = {
   studentId: string;
 }
 
-export interface GetRegistrationFormResponse {
+export type GetRegistrationFormResponse = {
   student: string;
   level: Level;
   contestExperience: number;
