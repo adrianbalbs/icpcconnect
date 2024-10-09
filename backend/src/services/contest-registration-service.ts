@@ -147,7 +147,7 @@ export class ContestRegistrationService {
       },
     });
     return {
-      registration: registrations.map((registration) => ({
+      registrations: registrations.map((registration) => ({
         ...registration,
         languagesSpoken: registration.languagesSpoken.map((ls) => ls.language),
         coursesCompleted: registration.coursesCompleted.map((ls) => ls.course),
