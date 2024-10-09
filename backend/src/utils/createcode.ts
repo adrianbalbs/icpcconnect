@@ -45,7 +45,6 @@ export async function pushCodeCoach(codesService: CodesService) {
     let coachCode: CreateRoleCodeRequest = {
         code: createCode(CODE_LENGTH),
         role: role.coach,
-        createdAt:new Date(Date.UTC(Date.now()))
     }
     
     const code = codesService.createRoleCode(coachCode);
@@ -62,11 +61,10 @@ export async function pushCodeCoach(codesService: CodesService) {
  * @param null
  * @returns number (the code)
  */
-export function pushCodeSiteCoord(codesService: CodesService) {
+export async function pushCodeSiteCoord(codesService: CodesService) {
     let siteCoordCode: CreateRoleCodeRequest = {
         code: createCode(CODE_LENGTH),
         role: role.site_coord,
-        createdAt:new Date(Date.UTC(Date.now()))
     }
 
     const code = codesService.createRoleCode(siteCoordCode);
@@ -84,11 +82,10 @@ export function pushCodeSiteCoord(codesService: CodesService) {
  * @param email: String
  * @returns number (the code)
  */
-export function pushCodeAuth(codesService: CodesService, email: string) {
+export async function pushCodeAuth(codesService: CodesService, email: string) {
     let authCode: CreateAuthCodeRequest = {
         code: createCode(CODE_LENGTH),
         email: email,
-        createdAt:new Date(Date.UTC(Date.now()))
     }
 
     const code = codesService.createAuthCode(authCode);

@@ -19,7 +19,6 @@ export class CodesService {
     const {
       code,
       role,
-      createdAt
     } = req;
 
     await this.db
@@ -27,7 +26,6 @@ export class CodesService {
       .values({
         code,
         role,
-        createdAt
     });
 
     return { code: code };
@@ -37,7 +35,6 @@ export class CodesService {
     const {
       code,
       email,
-      createdAt
     } = req;
 
     await this.db
@@ -45,7 +42,6 @@ export class CodesService {
       .values({
         code,
         email,
-        createdAt
     });
 
     return { code: code };
