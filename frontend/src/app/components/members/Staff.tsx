@@ -1,5 +1,5 @@
-import memberStyles from '../../styles/Members.module.css';
-import pageStyles from '../../styles/Page.module.css';
+import memberStyles from '@/styles/Members.module.css';
+import pageStyles from '@/styles/Page.module.css';
 
 export interface StaffProps {
   id: string;

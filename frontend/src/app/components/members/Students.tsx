@@ -1,14 +1,13 @@
 'use client';
 
 import axios from 'axios';
-import { SERVER_URL } from '@/app/utils/constants';
 import { useEffect, useState } from 'react';
-import pageStyles from '../../styles/Page.module.css';
-import memberStyles from '../../styles/Members.module.css';
+import { SERVER_URL } from '@/utils/constants';
+import pageStyles from '@/styles/Page.module.css';
+import memberStyles from '@/styles/Members.module.css';
 import Student, { StudentProps } from './Student';
 
-
-interface StudentInfo {
+export interface StudentInfo {
   id: string;
   givenName: string;
   familyName: string;
@@ -38,26 +37,26 @@ const Students: React.FC = () => {
     }
   ]);
 
-  // const getStudents = async () => {
-  //   try {
-  //     const res = await axios.get(`${SERVER_URL}/students`);
-  //     const allStudents: StudentInfo[] = res.data.allStudents;
-  //     const filteredInfo: StudentProps[]  = allStudents.map(student => ({
-  //       id: student.id,
-  //       name: student.givenName + ' ' + student.familyName,
-  //       team: student.team,
-  //       institution: student.university,
-  //       email: student.email,
-  //     }));
-  //     setStudents(filteredInfo);
-  //   } catch (error) {
-  //       alert(error);
-  //   }
-  // }
+  const getStudents = async () => {
+    try {
+      const res = await axios.get(`${SERVER_URL}/api/students`);
+      const allStudents: StudentInfo[] = res.data.allStudents;
+      const filteredInfo: StudentProps[]  = allStudents.map(student => ({
+        id: student.id,
+        name: student.givenName + ' ' + student.familyName,
+        team: student.team,
+        institution: student.university,
+        email: student.email,
+      }));
+      setStudents(filteredInfo);
+    } catch (error) {
+        alert(`Get students: ${error}`);
+    }
+  }
 
-  // useEffect(() => {
-  //   getStudents();
-  // }, []);
+  useEffect(() => {
+    getStudents();
+  }, []);
 
   return <div className={memberStyles.gap}>
     <div className={`${pageStyles.bold} ${memberStyles.students}`}>
@@ -67,7 +66,7 @@ const Students: React.FC = () => {
       <p>Email</p>
     </div>
     <hr className={pageStyles.divider}/>
-    {students.map(student => <Student {...student} />)}
+    {students.map(student => <Student key={student.id} {...student} />)}
     {/* <div className={`${memberStyles.students} ${memberStyles.space}`}>
       <p>Rachel Chen</p>
       <p>Randos</p>

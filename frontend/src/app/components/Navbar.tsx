@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import styles from '../styles/Page.module.css';
 import { styled } from '@mui/material/styles';
 import { Box, Tabs, Tab} from '@mui/material';
+import Menu from './profile/Menu';
 
 interface tabsProps {
   children?: React.ReactNode;
@@ -51,7 +52,7 @@ const StyledTab = styled((props: tabProps) => <Tab disableRipple {...props} />)(
 );
 
 const Navbar: React.FC = () => {
-  const [tab, setTab] = useState(-1);
+  const [tab, setTab] = useState(0);
   // const [initialLoad, setInitialLoad] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
@@ -70,7 +71,11 @@ const Navbar: React.FC = () => {
   // }, []);
 
   useEffect(() => {
-    pathname.includes('members') ? setTab(1) : setTab(0);
+    if (pathname.includes('teams')) {
+      setTab(0);
+    } else {
+      setTab(1);
+    }
   }, [pathname]);
 
   return <div className={styles.navbar}>
@@ -87,6 +92,7 @@ const Navbar: React.FC = () => {
         <StyledTab label="Members" />
       </StyledTabs>
     </Box>
+    <Menu />
   </div>
 }
 

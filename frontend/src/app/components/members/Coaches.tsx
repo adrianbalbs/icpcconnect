@@ -1,10 +1,10 @@
 'use client';
 
 import axios from 'axios';
-import { SERVER_URL } from '@/app/utils/constants';
 import { useEffect, useState } from 'react';
-import pageStyles from '../../styles/Page.module.css';
-import memberStyles from '../../styles/Members.module.css';
+import { SERVER_URL } from '@/utils/constants';
+import pageStyles from '@/styles/Page.module.css';
+import memberStyles from '@/styles/Members.module.css';
 import Staff, { StaffProps } from './Staff';
 
 interface CoachInfo {
@@ -32,25 +32,25 @@ const Coaches: React.FC = () => {
     }
   ]);
 
-  // const getCoaches = async () => {
-  //   try {
-  //     const res = await axios.get(`${SERVER_URL}/coaches`);
-  //     const allCoaches: CoachInfo[] = res.data.coaches;
-  //     const filteredInfo: StaffProps[]  = allCoaches.map(coach => ({
-  //       id: coach.id,
-  //       name: coach.givenName + ' ' + coach.familyName,
-  //       institution: coach.university,
-  //       email: coach.email,
-  //     }));
-  //     setCoaches(filteredInfo);
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // }
+  const getCoaches = async () => {
+    try {
+      const res = await axios.get(`${SERVER_URL}/api/coaches`);
+      const allCoaches: CoachInfo[] = res.data.coaches;
+      const filteredInfo: StaffProps[]  = allCoaches.map(coach => ({
+        id: coach.id,
+        name: coach.givenName + ' ' + coach.familyName,
+        institution: coach.university,
+        email: coach.email,
+      }));
+      setCoaches(filteredInfo);
+    } catch (error) {
+      alert(`Get coaches: ${error}`);
+    }
+  }
 
-  // useEffect(() => {
-  //   getCoaches();
-  // }, []);
+  useEffect(() => {
+    getCoaches();
+  }, []);
 
   return <div className={memberStyles.gap}>
     <div className={`${pageStyles.bold} ${memberStyles.staff}`}>
@@ -59,7 +59,7 @@ const Coaches: React.FC = () => {
       <p>Email</p>
     </div>
     <hr className={pageStyles.divider}/>
-    {coaches.map(coach => <Staff {...coach} />)}
+    {coaches.map(coach => <Staff key={coach.email} {...coach} />)}
   </div>
 }
 

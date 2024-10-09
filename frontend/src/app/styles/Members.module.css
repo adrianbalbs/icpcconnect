@@ -29,3 +29,13 @@
 .overflow {
   overflow: scroll;
 }
+
+.name {
+  font-weight: bold;
+  color: #7D84AF;
+  cursor: pointer;
+}
+
+.name:hover {
+  color: #969fdd;
+}
