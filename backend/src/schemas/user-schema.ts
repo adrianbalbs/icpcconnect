@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { passwordUtils } from "../utils/encrypt.js";
 
 const UserRoleEnum = z.enum(["student", "coach", "site_coordinator", "admin"]);
 export type UserRole = z.infer<typeof UserRoleEnum>;
@@ -80,3 +81,8 @@ export const UpdateSiteCoordinatorRequestSchema =
 export type UpdateSiteCoordinatorRequest = z.infer<
   typeof UpdateSiteCoordinatorRequestSchema
 >;
+
+export const LoginRequestSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+})
