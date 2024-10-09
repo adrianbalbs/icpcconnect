@@ -2,13 +2,9 @@
  * Team building algorithmic design
  */
 
-import {
-    AlgorithmService
-} from "../services/algorithm-service.js"
-
 /** Enums **/
 
-enum Experience {
+export enum Experience {
     none,
     some,
     prof
@@ -16,7 +12,7 @@ enum Experience {
 
 // MIGHT NOT BE USED
 // TODO: Add other general courses
-enum Courses {
+export enum Courses {
     intro_computing = 1,
     data_struct_and_algos = 2,
     discrete_math = 2,
@@ -26,14 +22,16 @@ enum Courses {
 
 /** Weighting of Specific Values for Determining Score **/
 
-const CONTEST_WEIGHT = 5;
-const LEET_WEIGHT = 2.5;
-const CODEFORCE_WEIGHT = 2.5;
-const COURSES_WEIGHT = 1.5;
+export enum Weights {
+    CONTEST_WEIGHT = 5,
+    LEET_WEIGHT = 4,
+    CODEFORCE_WEIGHT = 4,
+    COURSES_WEIGHT = 2,
+}
 
 /** Interfaces for Student Information and Scores **/
 
-interface StudentInfo {
+export interface StudentInfo {
     id: number,
     uniId: number,
     contestExperience: number,
@@ -44,20 +42,22 @@ interface StudentInfo {
     cppExperience: Experience,
     cExpericence: Experience,
     javaExperience: Experience,
-    pythonExperience: Experience
+    pythonExperience: Experience,
+
+    paired_with: number | null,
+    markdone: boolean
 }
 
-interface StudentScore {
+export interface StudentScore {
     ids: number[],
     studentScore: number,
 }
 
-interface Group {
+export interface Group {
     ids: number[],
     totalScore: number
 }
 
-let studentsScores: StudentScore[] = [];
 
 /**
  * GetStudentScore
@@ -68,20 +68,78 @@ let studentsScores: StudentScore[] = [];
  * @param s: StudentInfo
  * @returns null
  */
-function GetStudentScore(s: StudentInfo) {
+export function calculateScore(s: StudentInfo): number {
     let score = 0;
-    score += s.contestExperience * CONTEST_WEIGHT;
+    score += s.contestExperience * Weights.CONTEST_WEIGHT;
     
-    // Weight Leetcode Rating down from Range
-    score += (s.leetcodeRating / 1000) * LEET_WEIGHT;
+    // Weight Leetcode Rating down from Range (Roughly Between 1 & 3)
+    score += (s.leetcodeRating / 1000) * Weights.LEET_WEIGHT;
 
-    // Weight Codeforces Rating down from Range
-    score += (s.codeforcesRating / 1000) * CODEFORCE_WEIGHT;
+    // Weight Codeforces Rating down from Range (Roughly Between 1 & 3)
+    score += (s.codeforcesRating / 1000) * Weights.CODEFORCE_WEIGHT;
 
-    // TODO: Need to handle logic for courses
+    let courseScore = 0;
+
+    for (let course of s.completedCourses) {
+        switch (course) {
+            case 'intro_computing':
+                courseScore += Courses.intro_computing;
+            case 'data_struct_and_algos':
+                courseScore += Courses.data_struct_and_algos;
+            case 'discrete_math':
+                courseScore += Courses.discrete_math;
+            case 'algorithms':
+                courseScore += Courses.algorithms;
+            case 'prog_chal':
+                courseScore += Courses.prog_chal;
+        }
+    }
+
+    score += courseScore * Weights.COURSES_WEIGHT;
+
+    return score;
 }
 
-let groups: Group[] = [];
+/**
+ * getStudentScores
+ * 
+ * Given an array of all student information, calculates their relative strength score.
+ * 
+ * @param students: StudentInfo[]
+ * @returns StudentScore[]
+ */
+export function getStudentScores(students: StudentInfo[]): StudentScore[] {
+    let studentsScores: StudentScore[] = [];
+
+    let score: StudentScore = {
+        ids: [-42],
+        studentScore: -42
+    }
+
+    for (const s of students) {
+        if (s.markdone) { continue; } // Case of it already being considered within a pair
+
+        if (s.paired_with != null) {
+            let p: StudentInfo | undefined = students.find(student => student.id == s.paired_with)
+            if (p == undefined) { return [score] } // Should never happen
+            score = {
+                ids: [s.id, p.id],
+                studentScore: (calculateScore(s) + calculateScore(p)) / 2
+            }
+            p.markdone = true; 
+        } else {
+            score = {
+                ids: [s.id], 
+                studentScore: calculateScore(s),
+            }
+        }
+
+        s.markdone = true;
+        studentsScores.push(score);
+    }
+
+    return studentsScores;
+}
 
 /**
  * algorithm
@@ -89,13 +147,17 @@ let groups: Group[] = [];
  * Controls all the logic for team building / matching based on the
  * student scores.
  * 
- * @returns null
+ * @param studentsScores: StudentScore[]
+ * @returns Groups[]
  * 
  * TODO: 
  *  - Implement logic for team building based on coding language experience
  *  - Implement logic for team building based on spoken languages
  */
-function algorithm() {
+export function algorithm(studentsScores: StudentScore[]): Group[] {
+    studentsScores.sort((a, b) => a.studentScore - b.studentScore)
+    let groups: Group[] = [];
+
     while (true) {
         let group: Group = {
             ids: [],
@@ -103,11 +165,13 @@ function algorithm() {
         }
 
         let stu1: StudentScore | undefined = studentsScores.pop();
-        if (stu1 === undefined) { break; }
+        if (stu1 === undefined) {
+            return groups;
+        }
 
         // Stu1 = Pair
         if (stu1.ids.length == 2) {
-            let stu2 = findNextSingle();
+            let stu2 = findNextSingle(studentsScores);
 
             // No singular person exists to join this pair
             if (stu2.studentScore == -1) {
@@ -121,7 +185,10 @@ function algorithm() {
         }
 
         let stu2: StudentScore | undefined = studentsScores.pop();
-        if (stu2 === undefined) { studentsScores.push(stu1); break; }
+        if (stu2 === undefined) {
+            studentsScores.push(stu1);
+            return groups;
+        }
 
         // Stu1 = Single, Stu 2 = Pair
         if ((stu1.ids.length + stu2.ids.length) == 3) {
@@ -132,7 +199,11 @@ function algorithm() {
         }
 
         let stu3: StudentScore | undefined = studentsScores.pop();
-        if (stu3 === undefined) { studentsScores.push(stu1); studentsScores.push(stu2); break; }
+        if (stu3 === undefined) {
+            studentsScores.push(stu1);
+            studentsScores.push(stu2); 
+            return groups;
+        }
 
         // Stu1 = Single, Stu2 = Single, Stu3 = Single
         if ((stu1.ids.length + stu2.ids.length + stu3.ids.length) == 3) {
@@ -156,7 +227,7 @@ function algorithm() {
         studentsScores.push(stu1);
         studentsScores.push(stu2);
         studentsScores.push(stu3);
-        break;
+        return groups;
     }
 }
 
@@ -169,7 +240,7 @@ function algorithm() {
  * 
  * @returns StudentScore
  */
-function findNextSingle(): StudentScore {
+function findNextSingle(studentsScores: StudentScore[]): StudentScore {
     for (let i = studentsScores.length - 1; i >= 0; i--) {
         if (studentsScores[i].ids.length == 1) {
             let student: StudentScore = studentsScores[i];
@@ -183,55 +254,3 @@ function findNextSingle(): StudentScore {
         studentScore: -1,
     }
 }
-
-
-/** TESTING FUNCTIONS **/
-
-runTest();
-
-function runTest() {
-    let numSingle: number = getRandomArbitrary(50, 169);
-    let numPair: number = getRandomArbitrary(numSingle, numSingle + 69);
-
-    // Create singular students
-    for (let i = 0; i < numSingle; i++) {
-        let students: number[] = []
-        students.push(i)
-        let score: StudentScore = {
-            ids: students,
-            studentScore: Math.random() * 1000,
-        }
-        studentsScores.push(score);
-    }
-
-    // Create pairs of students
-    for (let j = 101; j < numPair; j = j + 2) {
-        let students: number[] = []
-        students.push(j)
-        students.push(j+1)
-        let score: StudentScore = {
-            ids: students,
-            studentScore: ((Math.random() * 1000) + (Math.random() * 1000)) / 2,
-        }
-        studentsScores.push(score);
-    }
-
-    studentsScores.sort((a, b) => a.studentScore - b.studentScore);
-
-    algorithm();
-
-    // Print leftover students or pairs (cannot have both)
-    console.log("Leftover Students:\n")
-    console.log(studentsScores);
-    console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
-
-    // Print all formed teams
-    console.log("Formed Teams:\n")
-    console.log(groups);
-}
-
-function getRandomArbitrary(min: number, max: number) {
-    return Math.random() * (max - min) + min;
-}
-
-/** END TESTING FUNCTIONS **/
