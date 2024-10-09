@@ -37,8 +37,6 @@ export interface GetRegistrationFormResponse {
   coursesCompleted: Course[];
 }
 
-export interface GetAllRegistrationFormItem
-  extends GetRegistrationFormResponse {}
 export type UpdateContestRegistrationFormResponse =
   UpdateContestRegistrationForm;
 
