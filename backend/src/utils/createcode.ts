@@ -4,6 +4,7 @@
  * F15ATOMATO-3     - Email Verification for Account Creation
  */
 
+import { AuthCodes, InviteCodes } from "../db/schema.js";
 import {
     CreateAuthCodeRequest,
     CreateRoleCodeRequest
@@ -91,4 +92,108 @@ export async function pushCodeAuth(codesService: CodesService, email: string) {
     const code = codesService.createAuthCode(authCode);
 
     return code;
+}
+
+/**
+ * checkCoachCode
+ * 
+ * Checks whether a given code is a valid coach invite code
+ * 
+ * @param codesService CodesService
+ * @param checkCode number
+ * @returns boolean
+ */
+export async function checkCoachCode(codesService: CodesService, checkCode: number): Promise<boolean> {
+    const codes: InviteCodes[] = await codesService.getAllRoleCodes();
+
+    for (const code of codes) {
+        if ((code.code == checkCode) && (code.role == role.coach)) {
+            let expireTime: Date = addDays(new Date(code.createdAt), 1);
+            let now: Date = new Date(Date.now())
+
+            // Is the right code and role but it is expired
+            if (expireTime.getTime() < now.getTime()) {
+                return false;
+            }
+
+            // Success!
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+/**
+ * checkSiteCoordCode
+ * 
+ * Checks whether a given code is a valid site coordinator invite code
+ * 
+ * @param codesService CodesService
+ * @param checkCode number
+ * @returns boolean
+ */
+export async function checkSiteCoordCode(codesService: CodesService, checkCode: number): Promise<boolean> {
+    const codes: InviteCodes[] = await codesService.getAllRoleCodes();
+
+    for (const code of codes) {
+        if ((code.code == checkCode) && (code.role == role.site_coord)) {
+            let expireTime: Date = addDays(new Date(code.createdAt), 1);
+            let now: Date = new Date(Date.now())
+
+            // Is the right code and role but it is expired
+            if (expireTime.getTime() < now.getTime()) {
+                return false;
+            }
+
+            // Success!
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * checkAuthCode
+ * 
+ * Checks whether an authentication code is valid
+ * 
+ * @param codesService CodesService
+ * @param checkCode number
+ * @param email string
+ * @returns 
+ */
+export async function checkAuthCode(codesService: CodesService, checkCode: number, email: string): Promise<boolean> {
+    const codes: AuthCodes[] = await codesService.getAllAuthCodes();
+
+    for (const code of codes) {
+        if ((code.code == checkCode) && (code.email == email)) {
+            let expireTime: Date = addHours(new Date(code.createdAt), 1);
+            let now: Date = new Date(Date.now())
+
+            // Is the right code and role but it is expired
+            if (expireTime.getTime() < now.getTime()) {
+                return false;
+            }
+
+            // Success!
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function addDays(date: Date, days: number): Date {
+    let result = new Date(date);
+    result.setDate(date.getDate() + days);
+    return result;
+}
+
+function addHours(date: Date, hours: number): Date {
+    let result = new Date(date);
+    result.setDate(date.getDate() + (hours * 60 * 60 * 1000));
+    return result;
 }
