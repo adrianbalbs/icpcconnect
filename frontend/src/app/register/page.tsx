@@ -34,11 +34,10 @@ export default function Register() {
                 university,
                 studentId,
                 email,
-                verificationCode,
                 password,
             };
             alert(`Successfully registered user ${firstName} ${lastName}`)
-            const response = await axios.post(`${SERVER_URL}/register`, payload);
+            const response = await axios.post(`${SERVER_URL}/api/students`, payload);
             console.log('User registered:', response.data);
             router.push('/login');
         } catch (error) {
@@ -70,7 +69,11 @@ export default function Register() {
         setStep((curStep) => curStep - 1)
         if (step === 3) {
             setEligibility(false);
-            role !== 'Student' ? setStep((curStep) => curStep - 1) : setStep(1);
+            if (role !== 'Student') {
+                setStep((curStep) => curStep - 1);
+            } else {
+                setStep(1);
+            }
         }
     }
 
@@ -107,7 +110,7 @@ export default function Register() {
                                     <a href='https://icpc.global/regionals/rules/'>https://icpc.global/regionals/rules/</a>,
                                     but the most notable criteria are:
                                     <ul>
-                                        <li>enrolled in a degree program at the team's institution</li>
+                                        <li>enrolled in a degree program at the team&apos;s institution</li>
                                         <li>taking at least 1/2 load, or co-op, exchange or intern student</li>
                                         <li>have not competed in two ICPC World Finals</li>
                                         <li>have not competed in ICPC regional contests in five different years</li>
@@ -117,8 +120,8 @@ export default function Register() {
                                     If any team members are not ICPC eligible, then the team will not be considered for qualification to Regional Finals.
                                 </p>
                                 <div className={registerPage['vertical-container']}>
-                                    <label><input type="radio" name="eligbility" value="true" onChange={(e) => setEligibility(true)} />Yes</label>
-                                    <label><input type="radio" name="eligbility" value="false" onChange={(e) => setEligibility(false)} />No</label>
+                                    <label><input type="radio" name="eligbility" value="true" onChange={() => setEligibility(true)} />Yes</label>
+                                    <label><input type="radio" name="eligbility" value="false" onChange={() => setEligibility(false)} />No</label>
                                 </div>
                                 <div className={registerPage['horizontal-container']}>
                                     <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
