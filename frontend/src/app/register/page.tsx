@@ -11,40 +11,56 @@ export default function Register() {
     const [role, setRole] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [university, setUniversity] = useState('');
+    const [university, setUniversity] = useState(0);
     const [studentId, setStudentId] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
+    const [eligibility, setEligibility] = useState(false);
+    const [checked, setChecked] = useState(false);
+
 
     const handleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setRole(e.target.value);
     }
 
-    const handleNext = async () => {
-        if (step === 5) {
-            try {
-                if (password === confirmPassword) {
-                    const payload = {
-                        firstName,
-                        lastName,
-                        role,
-                        university,
-                        studentId,
-                        email,
-                        verificationCode,
-                        password,
-                    };
-                    const response = await axios.post(`${SERVER_URL}/register`, payload);
-                    console.log('User registered:', response.data);
-                    router.push('/login');
-                } else {
-                    console.log("Passwords do not match");
-                }
-            } catch (error) {
-                console.error('Registration failed:', error);
-            }
+    const submitForm = async () => {
+        try {
+            const payload = {
+                firstName,
+                lastName,
+                role,
+                university,
+                studentId,
+                email,
+                verificationCode,
+                password,
+            };
+            alert(`Successfully registered user ${firstName} ${lastName}`)
+            const response = await axios.post(`${SERVER_URL}/register`, payload);
+            console.log('User registered:', response.data);
+            router.push('/login');
+        } catch (error) {
+            console.error('Registration failed:', error);
+        }
+    }
+
+    const handleNext = () => {
+        if (step === 5 && (password === '' || confirmPassword === '')) {
+            alert("Please enter a password.");
+        } else if (step === 5 && !checked) {
+            alert("Please agree to the Terms and Conditions.");
+        } else if (step === 5 && password === confirmPassword) {
+            submitForm();
+        } else if (step === 4 && verificationCode === '') {
+            alert("Please enter a verification code.");
+        } else if (step === 3 && (university === 0 || studentId === '' || email === '')) {
+            alert("Please fill in the page.");
+        } else if (step === 2 && role === 'Student' && !eligibility) {
+            alert("You have not declared yourself eligible for the competition.");
+        } else if (step === 1 && (firstName === '' || lastName === '' || role === '')) {
+            alert("Please fill in the page.");
         } else {
             setStep((curStep) => curStep + 1);
         }
@@ -53,6 +69,7 @@ export default function Register() {
     const handleBack = () => {
         setStep((curStep) => curStep - 1)
         if (step === 3) {
+            setEligibility(false);
             role !== 'Student' ? setStep((curStep) => curStep - 1) : setStep(1);
         }
     }
@@ -100,8 +117,8 @@ export default function Register() {
                                     If any team members are not ICPC eligible, then the team will not be considered for qualification to Regional Finals.
                                 </p>
                                 <div className={registerPage['vertical-container']}>
-                                    <label><input type="radio" value="1" />Yes</label>
-                                    <label><input type="radio" value="0" />No</label>
+                                    <label><input type="radio" name="eligbility" value="true" onChange={(e) => setEligibility(true)} />Yes</label>
+                                    <label><input type="radio" name="eligbility" value="false" onChange={(e) => setEligibility(false)} />No</label>
                                 </div>
                                 <div className={registerPage['horizontal-container']}>
                                     <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
@@ -117,11 +134,12 @@ export default function Register() {
                     <>
                         <h1>Enter your details</h1>
                         <h1>{role}</h1>
-                        <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(e.target.value)}>
-                            <option value="" disabled selected>Select University</option>
-                            <option value="student">UNSW</option>
-                            <option value="coach">University of Sydney</option>
-                            <option value="site-coordinator">Western Sydney University</option>
+                        <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(Number(e.target.value))}>
+                            <option value={0} disabled selected>Select University</option>
+                            <option value={1}>UNSW</option>
+                            <option value={2}>University of Sydney</option>
+                            <option value={3}>University of Technology Sydney</option>
+                            <option value={4}>Macquarie University</option>
                         </select>
                         <div className={registerPage['form-container']}>
                             <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
@@ -154,9 +172,12 @@ export default function Register() {
                             <p style={{ color: "red" }}>Passwords do not match.</p>
                         )}
                         <label htmlFor="tnc">
-                            <input id="tnc" type="checkbox" />
-                            &nbsp;Yes, I agree to the <a className="link" href="/">Terms and Conditions of Use</a>
+                            <input id="tnc" type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+                            &nbsp;Yes, I agree to the <a className="link">Terms and Conditions of Use</a>
                         </label>
+                        {!checked && (
+                            <p style={{ color: "red" }}>Please agree to the terms and conditions.</p>
+                        )}
                         <div className={registerPage['horizontal-container']}>
                             <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
                             <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Register</button>
