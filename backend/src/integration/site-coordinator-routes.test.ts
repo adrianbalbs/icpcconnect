@@ -44,7 +44,7 @@ describe("siteCoordinatorRouter tests", () => {
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
-      site: 1,
+      university: 1,
       verificationCode: "test",
     };
     const response = await request(app)
@@ -63,7 +63,7 @@ describe("siteCoordinatorRouter tests", () => {
         familyName: "Balbalosa",
         email: "adrianbalbs@comp3900.com",
         password: "helloworld",
-        site: 1,
+        university: 1,
         verificationCode: "test",
       },
       {
@@ -72,7 +72,7 @@ describe("siteCoordinatorRouter tests", () => {
         familyName: "User",
         email: "testuser@comp3900.com",
         password: "helloworld",
-        site: 1,
+        university: 1,
         verificationCode: "test",
       },
       {
@@ -81,7 +81,7 @@ describe("siteCoordinatorRouter tests", () => {
         familyName: "User2",
         email: "testuser2@comp3900.com",
         password: "helloworld",
-        site: 1,
+        university: 1,
         verificationCode: "test",
       },
     ];
@@ -108,7 +108,7 @@ describe("siteCoordinatorRouter tests", () => {
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
-      site: 1,
+      university: 1,
       verificationCode: "test",
     };
     const user = await request(app)
@@ -136,7 +136,7 @@ describe("siteCoordinatorRouter tests", () => {
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
-      site: 1,
+      university: 1,
       verificationCode: "test",
     };
     const res = await request(app)
@@ -167,7 +167,7 @@ describe("siteCoordinatorRouter tests", () => {
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
-      site: 1,
+      university: 1,
       verificationCode: "test",
     };
     const res = await request(app)

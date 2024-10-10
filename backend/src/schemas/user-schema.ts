@@ -66,7 +66,7 @@ export const CreateSiteCoordinatorRequestSchema = z.object({
   password: z.string(),
   email: z.string(),
   role: UserRoleEnum,
-  site: z.number(),
+  university: z.number(),
   verificationCode: z.string(),
 });
 

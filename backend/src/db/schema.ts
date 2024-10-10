@@ -243,7 +243,7 @@ export const siteCoordinators = pgTable("site_coordinators", {
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  site: integer("site")
+  university: integer("university")
     .references(() => universities.id)
     .notNull(),
 });
@@ -256,7 +256,7 @@ export const siteCoordinatorRelations = relations(
       references: [users.id],
     }),
     site: one(universities, {
-      fields: [siteCoordinators.site],
+      fields: [siteCoordinators.university],
       references: [universities.id],
     }),
   }),
