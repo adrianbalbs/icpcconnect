@@ -11,7 +11,7 @@ export default function Register() {
     const [roleName, setRoleName] = useState('');
     const [givenName, setgivenName] = useState('');
     const [familyName, setfamilyName] = useState('');
-    const [university, setUniversity] = useState('');
+    const [university, setUniversity] = useState(0);
     const [studentId, setStudentId] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -44,6 +44,7 @@ export default function Register() {
                             university, // change this to uni_code later
                             email,
                             password,
+                            verificationCode,
                             inviteCode,
                         };
                         await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
@@ -56,6 +57,7 @@ export default function Register() {
                             university, // change this to uni_code later
                             email,
                             password,
+                            verificationCode,
                             inviteCode,
                         };
                         await axios.post(`${SERVER_URL}/api/coaches`, payload);
@@ -67,6 +69,7 @@ export default function Register() {
                             role,
                             studentId,
                             university,
+                            verificationCode,
                             email,
                             password,
                         };
@@ -157,11 +160,12 @@ export default function Register() {
                     <>
                         <h1>Enter your details</h1>
                         <h1>{roleName}</h1>
-                        <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(e.target.value)}>
-                            <option value="" disabled selected>Select University</option>
-                            <option value="student">UNSW</option>
-                            <option value="coach">University of Sydney</option>
-                            <option value="site-coordinator">Western Sydney University</option>
+                        <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(Number(e.target.value))}>
+                            <option value={0} disabled selected>Select University</option>
+                            <option value={1}>UNSW</option>
+                            <option value={2}>University of Sydney</option>
+                            <option value={3}>University of Technology Sydney</option>
+                            <option value={4}>Macquarie University</option>
                         </select>
                         {roleName === 'Student' ? (
                             <div className={registerPage['form-container']}>
