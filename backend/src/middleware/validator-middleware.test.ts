@@ -24,7 +24,7 @@ describe("validateData middleware", () => {
 
   it("should call next() if the data is valid", () => {
     req.body = { name: "Adrian Balbalosa", age: 23 };
-    const middleware = validateData(SampleSchema);
+    const middleware = validateData(SampleSchema, "body");
     middleware(req as Request, res as Response, next);
     expect(next).toHaveBeenCalled();
     expect(res.status).not.toHaveBeenCalled();
@@ -32,7 +32,7 @@ describe("validateData middleware", () => {
 
   it("it should return a bad request error if the data is invalid", () => {
     req.body = { name: "", age: -5 };
-    const middleware = validateData(SampleSchema);
+    const middleware = validateData(SampleSchema, "body");
     middleware(req as Request, res as Response, next);
 
     expect(res.status).toHaveBeenCalledWith(badRequest.errorCode);
