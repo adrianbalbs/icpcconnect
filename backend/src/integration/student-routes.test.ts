@@ -14,6 +14,7 @@ import {
   CreateStudentRequest,
   UpdateStudentRequest,
 } from "../schemas/index.js";
+import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
@@ -23,7 +24,8 @@ beforeAll(async () => {
   await seed(db);
   app = express()
     .use(express.json())
-    .use("/api", studentRouter(new StudentService(db)));
+    .use("/api", studentRouter(new StudentService(db)))
+    .use(errorHandlerMiddleware);
 });
 
 afterAll(async () => {
@@ -121,7 +123,7 @@ describe("studentRouter tests", () => {
   });
 
   it("should throw if a student cannot be found", async () => {
-    await request(app).get(`/api/students/${uuidv4()}`).expect(500);
+    await request(app).get(`/api/students/${uuidv4()}`).expect(404);
   });
 
   it("should update the students details", async () => {
@@ -174,10 +176,10 @@ describe("studentRouter tests", () => {
     await request(app).get(`/api/students/${res.body.userId}`).expect(200);
     await request(app).delete(`/api/students/${res.body.userId}`).expect(200);
 
-    await request(app).get(`/api/students/${res.body.userId}`).expect(500);
+    await request(app).get(`/api/students/${res.body.userId}`).expect(404);
   });
 
   it("should return an error when deleting a student that does not exist", async () => {
-    await request(app).delete(`/api/students/${uuidv4()}`).expect(500);
+    await request(app).delete(`/api/students/${uuidv4()}`).expect(400);
   });
 });
