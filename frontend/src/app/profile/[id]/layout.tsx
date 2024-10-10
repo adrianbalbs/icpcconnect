@@ -21,6 +21,10 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
   const router = useRouter();
   const [info, setInfo] = useState({ name: 'Rachel Chen', role: 'admin', pronouns: 'she/her' });
 
+  if (localStorage.getItem('token') === null) {
+    router.replace('/login');
+  }
+
   const storeInfo = async () => {
     const data = await getInfo(params.id);
     if (data !== undefined) {
