@@ -18,7 +18,7 @@ import { eq } from "drizzle-orm";
 
 export type CreateRegistrationFormResponse = {
   studentId: string;
-}
+};
 
 export type GetRegistrationFormResponse = {
   student: string;
@@ -35,7 +35,7 @@ export type GetRegistrationFormResponse = {
   timeSubmitted: Date;
   languagesSpoken: SpokenLanguage[];
   coursesCompleted: Course[];
-}
+};
 
 export type UpdateContestRegistrationFormResponse =
   UpdateContestRegistrationForm;
@@ -117,7 +117,10 @@ export class ContestRegistrationService {
       },
     });
     if (!result) {
-      throw new HTTPError(notFoundError);
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Registration with id: ${studentId} does not exist`,
+      });
     }
     return {
       ...result,
@@ -216,7 +219,10 @@ export class ContestRegistrationService {
       .from(registrationDetails)
       .where(eq(registrationDetails.student, studentId));
     if (!res) {
-      throw new HTTPError(badRequest);
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Registration with id: ${studentId} does not exist`,
+      });
     }
     await this.db
       .delete(registrationDetails)

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { SERVER_URL } from '@/utils/constants';
-import pageStyles from '@/styles/Page.module.css';
-import memberStyles from '@/styles/Members.module.css';
-import Staff, { StaffProps } from './Staff';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { SERVER_URL } from "@/utils/constants";
+import pageStyles from "@/styles/Page.module.css";
+import memberStyles from "@/styles/Members.module.css";
+import Staff, { StaffProps } from "./Staff";
 
 interface CoachInfo {
   id: string;
@@ -19,26 +19,28 @@ interface CoachInfo {
 const Coaches: React.FC = () => {
   const [coaches, setCoaches] = useState<StaffProps[]>([
     {
-      id: '123',
-      name: 'Rebecca Liu',
-      institution: 'UNSW',
-      email: 'asdlakds'
+      id: "123",
+      name: "Rebecca Liu",
+      institution: "UNSW",
+      email: "asdlakds",
     },
     {
-      id: '123',
-      name: 'Rachel Chen',
-      institution: 'UNSW',
-      email: 'asdlakds'
-    }
+      id: "123",
+      name: "Rachel Chen",
+      institution: "UNSW",
+      email: "asdlakds",
+    },
   ]);
 
   const getCoaches = async () => {
     try {
-      const res = await axios.get(`${SERVER_URL}/api/coaches`);
+      const res = await axios.get<{ coaches: CoachInfo[] }>(
+        `${SERVER_URL}/api/coaches`,
+      );
       const allCoaches: CoachInfo[] = res.data.coaches;
-      const filteredInfo: StaffProps[]  = allCoaches.map(coach => ({
+      const filteredInfo: StaffProps[] = allCoaches.map((coach) => ({
         id: coach.id,
-        name: coach.givenName + ' ' + coach.familyName,
+        name: coach.givenName + " " + coach.familyName,
         institution: coach.university,
         email: coach.email,
       }));
@@ -46,21 +48,25 @@ const Coaches: React.FC = () => {
     } catch (error) {
       alert(`Get coaches: ${error}`);
     }
-  }
+  };
 
   useEffect(() => {
     getCoaches();
   }, []);
 
-  return <div className={memberStyles.gap}>
-    <div className={`${pageStyles.bold} ${memberStyles.staff}`}>
-      <p>Coach</p>
-      <p>Institution</p>
-      <p>Email</p>
+  return (
+    <div className={memberStyles.gap}>
+      <div className={`${pageStyles.bold} ${memberStyles.staff}`}>
+        <p>Coach</p>
+        <p>Institution</p>
+        <p>Email</p>
+      </div>
+      <hr className={pageStyles.divider} />
+      {coaches.map((coach) => (
+        <Staff key={coach.email} {...coach} />
+      ))}
     </div>
-    <hr className={pageStyles.divider}/>
-    {coaches.map(coach => <Staff key={coach.email} {...coach} />)}
-  </div>
-}
+  );
+};
 
 export default Coaches;

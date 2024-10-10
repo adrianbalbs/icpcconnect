@@ -11,6 +11,7 @@ import {
   users,
 } from "../db/index.js";
 import { CreateCoachRequest, UpdateCoachRequest } from "../schemas/index.js";
+import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
@@ -20,7 +21,8 @@ beforeAll(async () => {
   await seed(db);
   app = express()
     .use(express.json())
-    .use("/api", coachRouter(new CoachService(db)));
+    .use("/api", coachRouter(new CoachService(db)))
+    .use(errorHandlerMiddleware);
 });
 
 afterAll(async () => {
@@ -113,7 +115,7 @@ describe("coachRouter tests", () => {
   });
 
   it("should throw if a coach cannot be found", async () => {
-    await request(app).get(`/api/coaches/${uuidv4()}`).expect(500);
+    await request(app).get(`/api/coaches/${uuidv4()}`).expect(404);
   });
 
   it("should update the coaches details", async () => {
@@ -163,10 +165,10 @@ describe("coachRouter tests", () => {
     await request(app).get(`/api/coaches/${res.body.userId}`).expect(200);
     await request(app).delete(`/api/coaches/${res.body.userId}`).expect(200);
 
-    await request(app).get(`/api/coaches/${res.body.userId}`).expect(500);
+    await request(app).get(`/api/coaches/${res.body.userId}`).expect(404);
   });
 
   it("should throw when trying to delete a coach that does not exist", async () => {
-    await request(app).delete(`/api/coaches/${uuidv4()}`).expect(500);
+    await request(app).delete(`/api/coaches/${uuidv4()}`).expect(400);
   });
 });
