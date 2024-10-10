@@ -17,8 +17,9 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
+    const [inviteCode, setInviteCode] = useState('');
+    const [checked, setChecked] = useState(false);    
     const [eligibility, setEligibility] = useState(false);
-    const [checked, setChecked] = useState(false);
 
     const convertRole: { [key: string]: string } = {
         Student: "student",
@@ -32,21 +33,54 @@ export default function Register() {
 
     const submitForm = async () => {
         try {
-            const role = convertRole[roleName];
-            const payload = {
-                givenName,
-                familyName,
-                role,
-                university,
-                studentId,
-                verificationCode,
-                email,
-                password,
-            };
-            alert(`Successfully registered user ${givenName} ${familyName}`);
-            const response = await axios.post(`${SERVER_URL}/api/students`, payload);
-            console.log('User registered:', response.data);
-            router.push('/login');
+            if (password === confirmPassword && checked) {
+                let role = convertRole[roleName];
+                if (roleName === "Site Coordinator") {
+                    role = "site_coordinator";
+                    const payload = {
+                        givenName,
+                        familyName,
+                        role,
+                        university, // change this to uni_code later
+                        email,
+                        password,
+                        verificationCode,
+                        inviteCode,
+                    };
+                    await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
+                } else if (roleName === "Coach") {
+                    role = "coach";
+                    const payload = {
+                        givenName,
+                        familyName,
+                        role,
+                        university, // change this to uni_code later
+                        email,
+                        password,
+                        verificationCode,
+                        inviteCode,
+                    };
+                    await axios.post(`${SERVER_URL}/api/coaches`, payload);
+                } else {
+                    role = "student";
+                    const payload = {
+                        givenName,
+                        familyName,
+                        role,
+                        studentId,
+                        university,
+                        verificationCode,
+                        email,
+                        password,
+                    };
+                    await axios.post(`${SERVER_URL}/api/students`, payload);
+                }
+                router.push('/login');
+            } else if (password !== confirmPassword) {
+                console.log("Passwords do not match");
+            } else {
+                console.log("Please agree to the terms and conditions.");
+            }
         } catch (error) {
             console.error('Registration failed:', error);
         }
@@ -59,9 +93,11 @@ export default function Register() {
             alert("Please agree to the Terms and Conditions.");
         } else if (step === 5 && password === confirmPassword) {
             submitForm();
+        } else if (password !== confirmPassword) {
+            alert("Passwords do not match!");
         } else if (step === 4 && verificationCode === '') {
             alert("Please enter a verification code.");
-        } else if (step === 3 && (university === 0 || studentId === '' || email === '')) {
+        } else if (step === 3 && ((roleName === 'Student' && studentId === '') || (roleName !== 'Student' && inviteCode === '') || university === 0 || email === '')) {
             alert("Please fill in the page.");
         } else if (step === 2 && roleName === 'Student' && !eligibility) {
             alert("You have not declared yourself eligible for the competition.");
@@ -151,10 +187,17 @@ export default function Register() {
                             <option value={3}>University of Technology Sydney</option>
                             <option value={4}>Macquarie University</option>
                         </select>
-                        <div className={registerPage['form-container']}>
-                            <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
-                            <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
-                        </div>
+                        {roleName === 'Student' ? (
+                            <div className={registerPage['form-container']}>
+                                <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
+                                <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                        ) : (
+                            <div className={registerPage['form-container']}>
+                                <input placeholder="Invite Code" className={registerPage['input-field']} value={inviteCode} onChange={(e) => setInviteCode(e.target.value)}/>
+                                <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                        )}
                         <div className={registerPage['horizontal-container']}>
                             <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
                             <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Next</button>
