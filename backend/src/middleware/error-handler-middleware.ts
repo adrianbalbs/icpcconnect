@@ -16,7 +16,6 @@ export const errorHandlerMiddleware: ErrorRequestHandler = (
 ) => {
   logger.error(`Received ${formatError(err)}`);
   if (err instanceof HTTPError) {
-    logger.error(`Received HTTP Error: ${formatError(err)}`);
     res.status(err.errorCode).json(getResponseFromHttpError(err));
     return;
   }

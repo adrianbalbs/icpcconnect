@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { SERVER_URL } from '../utils/constants';
 import { useRouter } from 'next/navigation';
+import { collapseClasses } from '@mui/material';
 
 export default function Register() {
     const router = useRouter();
@@ -18,72 +19,91 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [inviteCode, setInviteCode] = useState('');
-    const [checked, setChecked] = useState(false);
+    const [checked, setChecked] = useState(false);    
+    const [eligibility, setEligibility] = useState(false);
 
-    const handleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setRoleName(e.target.value);
-    }
-    
     const convertRole: { [key: string]: string } = {
         Student: "student",
         "Site Coordinator": "site_coordinator",
         Coach: "coach",
     };
-    
-    const handleNext = async () => {
-        if (step === 5) {
-            try {
-                if (password === confirmPassword && checked) {
-                    let role = convertRole[roleName];
-                    if (roleName === "Site Coordinator") {
-                        role = "site_coordinator";
-                        const payload = {
-                            givenName,
-                            familyName,
-                            role,
-                            university, // change this to uni_code later
-                            email,
-                            password,
-                            verificationCode,
-                            inviteCode,
-                        };
-                        await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
-                    } else if (roleName === "Coach") {
-                        role = "coach";
-                        const payload = {
-                            givenName,
-                            familyName,
-                            role,
-                            university, // change this to uni_code later
-                            email,
-                            password,
-                            verificationCode,
-                            inviteCode,
-                        };
-                        await axios.post(`${SERVER_URL}/api/coaches`, payload);
-                    } else {
-                        role = "student";
-                        const payload = {
-                            givenName,
-                            familyName,
-                            role,
-                            studentId,
-                            university,
-                            verificationCode,
-                            email,
-                            password,
-                        };
-                        await axios.post(`${SERVER_URL}/api/students`, payload);
-                    }
-                    router.push('/login');
-                } else if (password !== confirmPassword) {
-                    console.log("Passwords do not match");
+
+    const handleRoleName = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setRoleName(e.target.value);
+    }
+
+    const submitForm = async () => {
+        try {
+            if (password === confirmPassword && checked) {
+                let role = convertRole[roleName];
+                if (roleName === "Site Coordinator") {
+                    role = "site_coordinator";
+                    const payload = {
+                        givenName,
+                        familyName,
+                        role,
+                        university, // change this to uni_code later
+                        email,
+                        password,
+                        verificationCode,
+                        inviteCode,
+                    };
+                    await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
+                } else if (roleName === "Coach") {
+                    role = "coach";
+                    const payload = {
+                        givenName,
+                        familyName,
+                        role,
+                        university, // change this to uni_code later
+                        email,
+                        password,
+                        verificationCode,
+                        inviteCode,
+                    };
+                    await axios.post(`${SERVER_URL}/api/coaches`, payload);
                 } else {
-                    console.log("Please agree to the terms and conditions.");
+                    role = "student";
+                    const payload = {
+                        givenName,
+                        familyName,
+                        role,
+                        studentId,
+                        university,
+                        verificationCode,
+                        email,
+                        password,
+                    };
+                    await axios.post(`${SERVER_URL}/api/students`, payload);
                 }
-            } catch (error) {
-                console.error('Registration failed:', error);
+                router.push('/login');
+            } else if (password !== confirmPassword) {
+                console.log("Passwords do not match");
+            } else {
+                console.log("Please agree to the terms and conditions.");
             }
+        } catch (error) {
+            console.error('Registration failed:', error);
+        }
+    }
+
+    const handleNext = () => {
+        if (step === 5 && (password === '' || confirmPassword === '')) {
+            alert("Please enter a password.");
+        } else if (step === 5 && !checked) {
+            alert("Please agree to the Terms and Conditions.");
+        } else if (step === 5 && password === confirmPassword) {
+            submitForm();
+        } else if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+        } else if (step === 4 && verificationCode === '') {
+            alert("Please enter a verification code.");
+        } else if (step === 3 && ((roleName === 'Student' && studentId === '') || (roleName !== 'Student' && inviteCode === '') || university === 0 || email === '')) {
+            alert("Please fill in the page.");
+        } else if (step === 2 && roleName === 'Student' && !eligibility) {
+            alert("You have not declared yourself eligible for the competition.");
+        } else if (step === 1 && (givenName === '' || familyName === '' || roleName === '')) {
+            alert("Please fill in the page.");
         } else {
             setStep((curStep) => curStep + 1);
         }
@@ -92,6 +112,7 @@ export default function Register() {
     const handleBack = () => {
         setStep((curStep) => curStep - 1)
         if (step === 3) {
+            setEligibility(false);
             if (roleName !== 'Student') {
                 setStep((curStep) => curStep - 1);
             } else {
@@ -111,7 +132,7 @@ export default function Register() {
                             <input placeholder="First Name" className={registerPage['input-field-short']} value={givenName} onChange={(e) => setgivenName(e.target.value)} />
                             <input placeholder="Last Name" className={registerPage['input-field-short']} value={familyName} onChange={(e) => setfamilyName(e.target.value)} />
                         </div>
-                        <select value={roleName} onChange={handleRole} id="select-role" name="Select Role" className={registerPage['input-field']}>
+                        <select value={roleName} onChange={handleRoleName} id="select-role" name="Select Role" className={registerPage['input-field']}>
                             <option value="" disabled selected>Select Role</option>
                             <option value="Student">Student</option>
                             <option value="Coach">Coach</option>
@@ -143,8 +164,8 @@ export default function Register() {
                                     If any team members are not ICPC eligible, then the team will not be considered for qualification to Regional Finals.
                                 </p>
                                 <div className={registerPage['vertical-container']}>
-                                    <label><input type="radio" value="1" />Yes</label>
-                                    <label><input type="radio" value="0" />No</label>
+                                    <label><input type="radio" name="eligbility" value="true" onChange={() => setEligibility(true)} />Yes</label>
+                                    <label><input type="radio" name="eligbility" value="false" onChange={() => setEligibility(false)} />No</label>
                                 </div>
                                 <div className={registerPage['horizontal-container']}>
                                     <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
@@ -201,13 +222,13 @@ export default function Register() {
                         <h1>{roleName}</h1>
                         <input type="password" placeholder="Password" className={registerPage['input-field']} value={password} onChange={(e) => setPassword(e.target.value)}/>
                         <input type="password" placeholder="Confirm Password" className={registerPage['input-field']} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
-                        <label htmlFor="tnc">
-                            <input id="tnc" type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
-                            &nbsp;Yes, I agree to the <a className="link" href="/https://icpc.global/regionals/rules">Terms and Conditions of Use</a>
-                        </label>
                         {password !== confirmPassword && (
                             <p style={{ color: "red" }}>Passwords do not match.</p>
                         )}
+                        <label htmlFor="tnc">
+                            <input id="tnc" type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+                            &nbsp;Yes, I agree to the <a className="link">Terms and Conditions of Use</a>
+                        </label>
                         {!checked && (
                             <p style={{ color: "red" }}>Please agree to the terms and conditions.</p>
                         )}
@@ -223,3 +244,5 @@ export default function Register() {
         </>
     );
 }
+
+
