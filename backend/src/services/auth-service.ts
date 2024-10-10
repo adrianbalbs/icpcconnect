@@ -2,7 +2,7 @@ import { eq, is } from "drizzle-orm";
 import { DatabaseConnection } from "../db/database.js";
 import { users } from "../db/schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
-import { HTTPError } from "../utils/errors.js";
+import { HTTPError, unauthorizedError } from "../utils/errors.js";
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 
 export interface LoginRequest {
@@ -28,22 +28,21 @@ export class AuthService {
             .where(eq(users.email, email))
             .execute();
 
-        if (user.length === 0) {
-            throw new HTTPError({ errorCode: 400, message: "Login Failed (Invalid Credentials)" })
+        if (!user.length) {
+            throw new HTTPError(unauthorizedError)
         }
         
         // Compare the provided password with the stored hash
         const storedHash = user[0].password;
-        const hashedPass = await passwordUtils().hash(password)
-        const isPasswordValid = await passwordUtils().compare(hashedPass, storedHash);
+        const isPasswordValid = await passwordUtils().compare(password, storedHash);
     
         if (isPasswordValid) {
-            const token = jwt.sign({ _id: user[0].id, name: user[0].role }, SECRET_KEY, {
+            const token = jwt.sign({ id: user[0].id, role: user[0].role }, SECRET_KEY, {
                 expiresIn: '2 days',
             });
             return { token: token };
         } else {
-            throw new HTTPError({ errorCode: 400, message: "Login Failed (Invalid Credentials)" })
+            throw new HTTPError(unauthorizedError)
         }
     }
 }
