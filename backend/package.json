@@ -45,8 +45,6 @@
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.13",
-    "@types/lodash": "^4.17.10",
-    "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
     "@types/pg": "^8.11.10",
     "@types/supertest": "^6.0.2",
