@@ -8,17 +8,18 @@ import {
   universities,
   users,
 } from "../db/index.js";
-import { DeleteUserResponse, NewUserResponse, UserProfileResponse } from "../interfaces/api-res-interfaces.js";
 import {
-  CreateAdminRequest,
-  UpdateAdminRequest
-} from "../schemas/index.js";
+  DeleteResponse,
+  NewUserResponse,
+  UserProfileResponse,
+} from "../interfaces/api-res-interfaces.js";
+import { CreateAdminRequest, UpdateAdminRequest } from "../schemas/index.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { HTTPError, badRequest } from "../utils/errors.js";
 
-export type AdminProfileUpdateResponse = UserProfileResponse
+export type AdminProfileUpdateResponse = UserProfileResponse;
 
-export type AdminProfileResponse = UserProfileResponse
+export type AdminProfileResponse = UserProfileResponse;
 
 export interface AllUsersResponse {
   users: UserProfileResponse[];
@@ -32,15 +33,10 @@ export class AdminService {
   }
 
   async createAdmin(req: CreateAdminRequest): Promise<NewUserResponse> {
-    const {
-      givenName,
-      familyName,
-      password,
-      email,
-    } = req;
+    const { givenName, familyName, password, email } = req;
 
     const hashedPassword = await passwordUtils().hash(password);
-    
+
     const id = await this.db
       .insert(users)
       .values({
@@ -48,14 +44,13 @@ export class AdminService {
         familyName,
         password: hashedPassword,
         email,
-        role: "admin"
+        role: "admin",
       })
       .returning({ userId: users.id });
 
     // Return the newly created admin's ID
     return { userId: id[0].userId };
   }
-
 
   async getAllMembers(): Promise<AllUsersResponse> {
     const allUsers = await this.db
@@ -64,7 +59,7 @@ export class AdminService {
         givenName: users.givenName,
         familyName: users.familyName,
         email: users.email,
-        role: users.role
+        role: users.role,
       })
       .from(users);
     return { users: allUsers };
@@ -131,11 +126,7 @@ export class AdminService {
     //       type: 'site_coordinator',
     //     })),
     //   ];
-    const allMembers = [
-      ...allStudents,
-      ...allCoaches,
-      ...allSiteCoordinator,
-    ];
+    const allMembers = [...allStudents, ...allCoaches, ...allSiteCoordinator];
     return allMembers;
   }
 
@@ -143,8 +134,7 @@ export class AdminService {
     userId: string,
     updatedDetails: UpdateAdminRequest,
   ): Promise<AdminProfileUpdateResponse> {
-    const { role, givenName, familyName, password, email } =
-      updatedDetails;
+    const { role, givenName, familyName, password, email } = updatedDetails;
 
     const hashedPassword = await passwordUtils().hash(password);
     await this.db
@@ -180,7 +170,7 @@ export class AdminService {
     return admin[0];
   }
 
-  async deleteAdmin(userId: string): Promise<DeleteUserResponse> {
+  async deleteAdmin(userId: string): Promise<DeleteResponse> {
     const admin = await this.db
       .select({ userId: users.id })
       .from(users)
@@ -192,5 +182,4 @@ export class AdminService {
     await this.db.delete(users).where(eq(users.id, userId));
     return { status: "OK" };
   }
-
 }
