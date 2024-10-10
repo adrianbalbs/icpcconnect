@@ -6,33 +6,33 @@ import {
   users,
 } from "../db/index.js";
 import {
-  DeleteUserResponse,
+  DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/api-res-interfaces.js";
+} from "../interfaces/index.js";
 import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,
-} from "../schemas/user-schema.js";
+} from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 
-export interface SiteCoordinatorProfileResponse extends UserProfileResponse {
-  site: string;
+export type SiteCoordinatorProfileResponse = UserProfileResponse & {
+  university: string;
   managedUniversities: { id: number; name: string }[];
-}
+};
 
-export interface SiteCoordinatorUpdateResponse extends UserProfileResponse {
-  siteId: number;
-}
+export type SiteCoordinatorUpdateResponse = UserProfileResponse & {
+  universityId: number;
+};
 
-export interface SiteCoordinatorItem extends UserProfileResponse {
-  site: string;
-}
+export type SiteCoordinatorItem = UserProfileResponse & {
+  university: string;
+};
 
-export interface AllSiteCoordinators {
+export type AllSiteCoordinators = {
   siteCoordinators: SiteCoordinatorItem[];
-}
+};
 
 export class SiteCoordinatorService {
   private readonly db: DatabaseConnection;
@@ -44,7 +44,7 @@ export class SiteCoordinatorService {
   async createSiteCoordinator(
     req: CreateSiteCoordinatorRequest,
   ): Promise<NewUserResponse> {
-    const { givenName, familyName, password, email, role, site } = req;
+    const { givenName, familyName, password, email, role, university } = req;
 
     const hashedPassword = await passwordUtils().hash(password);
 
@@ -61,7 +61,7 @@ export class SiteCoordinatorService {
 
     await this.db.insert(siteCoordinators).values({
       userId: res[0].userId,
-      site,
+      university,
     });
 
     return { userId: res[0].userId };
@@ -70,7 +70,7 @@ export class SiteCoordinatorService {
   async getSiteCoordinatorById(
     userId: string,
   ): Promise<SiteCoordinatorProfileResponse> {
-    const siteCoordinator = await this.db
+    const [siteCoordinator] = await this.db
       .select({
         id: users.id,
         givenName: users.givenName,
@@ -78,30 +78,34 @@ export class SiteCoordinatorService {
         email: users.email,
         role: users.role,
         siteId: universities.id,
-        site: universities.name,
+        university: universities.name,
       })
       .from(users)
       .where(eq(users.id, userId))
       .innerJoin(siteCoordinators, eq(users.id, siteCoordinators.userId))
-      .innerJoin(universities, eq(universities.id, siteCoordinators.site));
+      .innerJoin(
+        universities,
+        eq(universities.id, siteCoordinators.university),
+      );
 
-    if (!siteCoordinator.length) {
+    if (!siteCoordinator) {
       throw new HTTPError(badRequest);
     }
 
     const managedUniversities = await this.db
       .select({ id: universities.id, name: universities.name })
       .from(universities)
-      .where(eq(universities.hostedAt, siteCoordinator[0].siteId));
+      .where(eq(universities.hostedAt, siteCoordinator.siteId));
 
-    const { id, givenName, familyName, email, role, site } = siteCoordinator[0];
+    const { id, givenName, familyName, email, role, university } =
+      siteCoordinator;
     return {
       id,
       givenName,
       familyName,
       email,
       role,
-      site,
+      university,
       managedUniversities,
     };
   }
@@ -114,11 +118,14 @@ export class SiteCoordinatorService {
         familyName: users.familyName,
         email: users.email,
         role: users.role,
-        site: universities.name,
+        university: universities.name,
       })
       .from(users)
       .innerJoin(siteCoordinators, eq(users.id, siteCoordinators.userId))
-      .innerJoin(universities, eq(universities.id, siteCoordinators.site));
+      .innerJoin(
+        universities,
+        eq(universities.id, siteCoordinators.university),
+      );
     return { siteCoordinators: allsiteCoordinators };
   }
 
@@ -126,7 +133,7 @@ export class SiteCoordinatorService {
     userId: string,
     updatedDetails: UpdateSiteCoordinatorRequest,
   ): Promise<SiteCoordinatorUpdateResponse> {
-    const { role, givenName, familyName, password, email, site } =
+    const { role, givenName, familyName, password, email, university } =
       updatedDetails;
 
     const hashedPassword = await passwordUtils().hash(password);
@@ -137,7 +144,7 @@ export class SiteCoordinatorService {
 
     await this.db
       .update(siteCoordinators)
-      .set({ site })
+      .set({ university })
       .where(eq(siteCoordinators.userId, userId));
 
     return {
@@ -146,11 +153,11 @@ export class SiteCoordinatorService {
       givenName,
       familyName,
       email,
-      siteId: site,
+      universityId: university,
     };
   }
 
-  async deleteSiteCoordinator(userId: string): Promise<DeleteUserResponse> {
+  async deleteSiteCoordinator(userId: string): Promise<DeleteResponse> {
     const siteCoordinator = await this.db
       .select({ userId: users.id })
       .from(users)

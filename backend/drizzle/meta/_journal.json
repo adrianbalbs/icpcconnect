@@ -29,6 +29,34 @@
       "when": 1728279098512,
       "tag": "0003_boring_maria_hill",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1728389008335,
+      "tag": "0004_striped_surge",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1728439093094,
+      "tag": "0005_cultured_nomad",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1728449572990,
+      "tag": "0006_thick_rattler",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1728528189605,
+      "tag": "0007_light_pretty_boy",
+      "breakpoints": true
     }
   ]
 }
