@@ -27,7 +27,7 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
 
   // const generate = async () => {
   //   try {
-  //     const res = await axios.get(`${SERVER_URL}/type`);
+  //     const res = await axios.get(`${SERVER_URL}/api/${type}`);
   //     const newCode = res.data.code;
   //     setCode(newCode);
   //   } catch (error) {
