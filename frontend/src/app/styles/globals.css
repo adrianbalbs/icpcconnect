@@ -1,0 +1,22 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  font-size: 35px;
+  text-align: center;
+}
+
+hr {
+  width: 230px;
+  color: lightgray;
+  margin: 10px;
+}
+
+a {
+  text-decoration: none;
+}
+
+select {
+  background-color: white;
+}

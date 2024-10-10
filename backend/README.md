@@ -39,3 +39,13 @@ For unit tests, use:
 ```txt
 npm run test:unit
 ```
+
+## Testing in Windows Platform
+
+The test process is similar to the testing in linux platform. For now, it just supports integration test.
+
+To run the test, open the Power Shell terminal with administrator permissions, then run
+
+```txt
+npm run test:integration_windows
+```
