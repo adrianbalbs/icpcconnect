@@ -1,17 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
 body {
+  color: var(--foreground);
+  background: var(--background);
   font-family: Arial, sans-serif;
 }
 
-h1 {
-  font-size: 35px;
-  text-align: center;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
-hr {
-  width: 230px;
-  color: lightgray;
-  margin: 10px;
-}
+/* h1 {
+  font-size: 35px;
+  text-align: center;
+} */
 
 a {
   text-decoration: none;

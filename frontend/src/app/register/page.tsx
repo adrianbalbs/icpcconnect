@@ -1,8 +1,9 @@
-'use client'
-import registerPage from '../styles/Auth.module.css'
-import { useState } from 'react';
+'use client';
+
 import axios from 'axios';
-import { SERVER_URL } from '../utils/constants';
+import { useState } from 'react';
+import { SERVER_URL } from '@/utils/constants';
+import registerPage from '@/styles/Auth.module.css';
 import { useRouter } from 'next/navigation';
 
 export default function Register() {
@@ -126,7 +127,7 @@ export default function Register() {
             <div className={registerPage['info-container']}>
                 {step === 1 && (
                     <>
-                        <h1>Create an account</h1>
+                        <h1 className={registerPage.h1}>Create an account</h1>
                         <div className={registerPage['horizontal-container']}>
                             <input placeholder="First Name" className={registerPage['input-field-short']} value={givenName} onChange={(e) => setgivenName(e.target.value)} />
                             <input placeholder="Last Name" className={registerPage['input-field-short']} value={familyName} onChange={(e) => setfamilyName(e.target.value)} />
@@ -147,7 +148,7 @@ export default function Register() {
                     <>
                         {roleName === 'Student' ? (
                             <>
-                                <h1>Do you meet the ICPC eligibility rules?</h1>
+                                <h1 className={registerPage.h1}>Do you meet the ICPC eligibility rules?</h1>
                                 <p>
                                     The full eligbility rules can be found at &nbsp;
                                     <a href='https://icpc.global/regionals/rules/'>https://icpc.global/regionals/rules/</a>,
@@ -178,8 +179,8 @@ export default function Register() {
                 )}
                 {step === 3 && (
                     <>
-                        <h1>Enter your details</h1>
-                        <h1>{roleName}</h1>
+                        <h1 className={registerPage.h1}>Enter your details</h1>
+                        <h1 className={registerPage.h1}>{roleName}</h1>
                         <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(Number(e.target.value))}>
                             <option value={0} disabled selected>Select University</option>
                             <option value={1}>UNSW</option>
@@ -206,8 +207,8 @@ export default function Register() {
                 )}
                 {step === 4 && (
                     <>
-                        <h1>Verify email address</h1>
-                        <h1>{roleName}</h1>
+                        <h1 className={registerPage.h1}>Verify email address</h1>
+                        <h1 className={registerPage.h1}>{roleName}</h1>
                         <input placeholder="Enter Verification Code" className={registerPage['input-field']} value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
                         <div className={registerPage['horizontal-container']}>
                             <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
@@ -217,8 +218,8 @@ export default function Register() {
                 )}
                 {step === 5 && (
                     <>
-                        <h1>Create a password</h1>
-                        <h1>{roleName}</h1>
+                        <h1 className={registerPage.h1}>Create a password</h1>
+                        <h1 className={registerPage.h1}>{roleName}</h1>
                         <input type="password" placeholder="Password" className={registerPage['input-field']} value={password} onChange={(e) => setPassword(e.target.value)}/>
                         <input type="password" placeholder="Confirm Password" className={registerPage['input-field']} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
                         {password !== confirmPassword && (
