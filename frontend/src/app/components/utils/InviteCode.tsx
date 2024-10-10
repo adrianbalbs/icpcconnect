@@ -1,8 +1,8 @@
 'use client';
 
-// import axios from 'axios';
+import axios from 'axios';
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
-// import { SERVER_URL } from '@/utils/constants';
+import { SERVER_URL } from '@/utils/constants';
 import Button from '@mui/material/Button';
 import pageStyles from '@/styles/Page.module.css';
 import { purpleBtn } from '@/styles/Overriding';
@@ -25,15 +25,15 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
   const [code, setCode] = useState('');
   const [type, setType] = useState('');
 
-  // const generate = async () => {
-  //   try {
-  //     const res = await axios.get(`${SERVER_URL}/api/${type}`);
-  //     const newCode = res.data.code;
-  //     setCode(newCode);
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // }
+  const generate = async () => {
+    try {
+      const res = await axios.get(`${SERVER_URL}/api/${type}`);
+      const newCode = res.data.code;
+      setCode(newCode);
+    } catch (error) {
+      alert(`Get url: ${SERVER_URL}/api/${type} -- error -- ${error}`);
+    }
+  }
 
   const copyToClipboard = async () => {
     try {
@@ -64,9 +64,8 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
 
   const handleButton = () => {
     if (status === 'Generate') {
-      // generate();
+      generate();
       setStatus('Copy code');
-      setCode('hiasdlklklklfklshiasdlklklklfklskdflksddf');
     } else {
       copyToClipboard();
       handleClose();
