@@ -26,11 +26,14 @@ export const CreateStudentRequestSchema = z.object({
   role: UserRoleEnum,
   studentId: z.string(),
   university: z.number(),
+  verificationCode: z.string(),
 });
 
 export type CreateStudentRequest = z.infer<typeof CreateStudentRequestSchema>;
 
-export const UpdateStudentRequestSchema = CreateStudentRequestSchema.extend({
+export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
+  verificationCode: true,
+}).extend({
   studentId: z.string(),
   university: z.number(),
   pronouns: z.string(),
@@ -46,11 +49,15 @@ export const CreateCoachRequestSchema = z.object({
   email: z.string(),
   role: UserRoleEnum,
   university: z.number(),
+  verificationCode: z.string(),
 });
 
 export type CreateCoachRequest = z.infer<typeof CreateCoachRequestSchema>;
 
-export const UpdateCoachRequestSchema = CreateCoachRequestSchema;
+export const UpdateCoachRequestSchema = CreateCoachRequestSchema.omit({
+  verificationCode: true,
+});
+
 export type UpdateCoachRequest = z.infer<typeof UpdateCoachRequestSchema>;
 
 export const CreateSiteCoordinatorRequestSchema = z.object({
@@ -59,7 +66,8 @@ export const CreateSiteCoordinatorRequestSchema = z.object({
   password: z.string(),
   email: z.string(),
   role: UserRoleEnum,
-  site: z.number(),
+  university: z.number(),
+  verificationCode: z.string(),
 });
 
 export type CreateSiteCoordinatorRequest = z.infer<
@@ -67,7 +75,7 @@ export type CreateSiteCoordinatorRequest = z.infer<
 >;
 
 export const UpdateSiteCoordinatorRequestSchema =
-  CreateSiteCoordinatorRequestSchema;
+  CreateSiteCoordinatorRequestSchema.omit({ verificationCode: true });
 
 export type UpdateSiteCoordinatorRequest = z.infer<
   typeof UpdateSiteCoordinatorRequestSchema

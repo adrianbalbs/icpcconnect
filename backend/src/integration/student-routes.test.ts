@@ -46,6 +46,7 @@ describe("studentRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const response = await request(app)
       .post("/api/students")
@@ -65,6 +66,7 @@ describe("studentRouter tests", () => {
         studentId: "z5397730",
         password: "helloworld",
         university: 1,
+        verificationCode: "test",
       },
       {
         role: "student",
@@ -74,6 +76,7 @@ describe("studentRouter tests", () => {
         studentId: "z1234567",
         password: "helloworld",
         university: 1,
+        verificationCode: "test",
       },
       {
         role: "student",
@@ -83,6 +86,7 @@ describe("studentRouter tests", () => {
         studentId: "z1234568",
         password: "helloworld",
         university: 1,
+        verificationCode: "test",
       },
     ];
 
@@ -103,6 +107,7 @@ describe("studentRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const user = await request(app).post("/api/students").send(req).expect(200);
 
@@ -128,6 +133,7 @@ describe("studentRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const res = await request(app)
       .post("/api/students")
@@ -158,6 +164,7 @@ describe("studentRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const res = await request(app)
       .post("/api/students")

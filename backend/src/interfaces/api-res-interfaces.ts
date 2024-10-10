@@ -1,22 +1,22 @@
-import { UserRole } from "../schemas/user-schema.js";
+import { UserRole } from "../schemas/index.js";
 
 export interface IHttpError {
   errorCode: number;
   message: string;
 }
 
-export interface NewUserResponse {
+export type NewUserResponse = {
   userId: string;
-}
+};
 
-export interface UserProfileResponse {
+export type UserProfileResponse = {
   id: string;
   givenName: string;
   familyName: string;
   email: string;
   role: UserRole;
-}
+};
 
-export interface DeleteUserResponse {
+export type DeleteResponse = {
   status: "OK";
-}
+};
