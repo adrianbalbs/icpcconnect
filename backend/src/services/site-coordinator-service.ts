@@ -48,7 +48,7 @@ export class SiteCoordinatorService {
 
     const hashedPassword = await passwordUtils().hash(password);
 
-    const res = await this.db
+    const [siteCoordinator] = await this.db
       .insert(users)
       .values({
         givenName,
@@ -60,11 +60,11 @@ export class SiteCoordinatorService {
       .returning({ userId: users.id });
 
     await this.db.insert(siteCoordinators).values({
-      userId: res[0].userId,
+      userId: siteCoordinator.userId,
       university,
     });
 
-    return { userId: res[0].userId };
+    return { userId: siteCoordinator.userId };
   }
 
   async getSiteCoordinatorById(
@@ -89,7 +89,10 @@ export class SiteCoordinatorService {
       );
 
     if (!siteCoordinator) {
-      throw new HTTPError(badRequest);
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Site Coordinator with id: ${userId} does not exist`,
+      });
     }
 
     const managedUniversities = await this.db
@@ -158,12 +161,15 @@ export class SiteCoordinatorService {
   }
 
   async deleteSiteCoordinator(userId: string): Promise<DeleteResponse> {
-    const siteCoordinator = await this.db
+    const [siteCoordinator] = await this.db
       .select({ userId: users.id })
       .from(users)
       .where(eq(users.id, userId));
-    if (!siteCoordinator.length) {
-      throw new HTTPError(badRequest);
+    if (!siteCoordinator) {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Site Coordinator with id: ${userId} does not exist`,
+      });
     }
 
     await this.db.delete(users).where(eq(users.id, userId));

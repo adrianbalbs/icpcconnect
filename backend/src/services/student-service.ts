@@ -32,7 +32,7 @@ export class StudentService {
     } = req;
 
     const hashedPassword = await passwordUtils().hash(password);
-    const id = await this.db
+    const [student] = await this.db
       .insert(users)
       .values({
         givenName,
@@ -44,16 +44,16 @@ export class StudentService {
       .returning({ userId: users.id });
 
     await this.db.insert(students).values({
-      userId: id[0].userId,
+      userId: student.userId,
       studentId,
       university,
     });
 
-    return { userId: id[0].userId };
+    return { userId: student.userId };
   }
 
   async getStudentById(userId: string) {
-    const student = await this.db
+    const [student] = await this.db
       .select({
         id: users.id,
         givenName: users.givenName,
@@ -71,11 +71,14 @@ export class StudentService {
       .innerJoin(universities, eq(universities.id, students.university))
       .leftJoin(teams, eq(teams.id, students.team));
 
-    if (!student.length) {
-      throw new HTTPError(badRequest);
+    if (!student) {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Student with id: ${userId} does not exist`,
+      });
     }
 
-    return student[0];
+    return student;
   }
 
   async getAllStudents() {
@@ -137,13 +140,16 @@ export class StudentService {
   }
 
   async deleteStudent(userId: string) {
-    const student = await this.db
+    const [student] = await this.db
       .select({ userId: users.id })
       .from(users)
       .where(eq(users.id, userId));
 
-    if (!student.length) {
-      throw new HTTPError(badRequest);
+    if (!student) {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Student with id: ${userId} does not exist`,
+      });
     }
 
     await this.db.delete(users).where(eq(users.id, userId));
