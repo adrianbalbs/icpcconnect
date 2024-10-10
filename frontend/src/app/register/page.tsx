@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation';
 export default function Register() {
     const router = useRouter();
     const [step, setStep] = useState(1);
-    const [role, setRole] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [roleName, setRoleName] = useState('');
+    const [givenName, setgivenName] = useState('');
+    const [familyName, setfamilyName] = useState('');
     const [university, setUniversity] = useState('');
     const [studentId, setStudentId] = useState('');
     const [email, setEmail] = useState('');
@@ -21,51 +21,56 @@ export default function Register() {
     const [checked, setChecked] = useState(false);
 
     const handleRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setRole(e.target.value);
+        setRoleName(e.target.value);
     }
-
+    
+    const convertRole: { [key: string]: string } = {
+        Student: "student",
+        "Site Coordinator": "site_coordinator",
+        Coach: "coach",
+    };
+    
     const handleNext = async () => {
         if (step === 5) {
             try {
                 if (password === confirmPassword && checked) {
-                    let response;
-                    let roleName;
-                    if (role === "Site Coordinator") {
-                        roleName = "site_coordinator";
+                    let role = convertRole[roleName];
+                    if (roleName === "Site Coordinator") {
+                        role = "site_coordinator";
                         const payload = {
-                            firstName,
-                            lastName,
+                            givenName,
+                            familyName,
                             role,
                             university, // change this to uni_code later
                             email,
                             password,
                             inviteCode,
                         };
-                        response = await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
-                    } else if (role === "Coach") {
+                        await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
+                    } else if (roleName === "Coach") {
+                        role = "coach";
                         const payload = {
-                            firstName,
-                            lastName,
+                            givenName,
+                            familyName,
                             role,
                             university, // change this to uni_code later
                             email,
                             password,
                             inviteCode,
                         };
-                        roleName = "coach";
-                        response = await axios.post(`${SERVER_URL}/api/coaches`, payload);
+                        await axios.post(`${SERVER_URL}/api/coaches`, payload);
                     } else {
+                        role = "student";
                         const payload = {
-                            firstName,
-                            lastName,
+                            givenName,
+                            familyName,
                             role,
                             studentId,
                             university,
                             email,
                             password,
                         };
-                        roleName = "student"
-                        response = await axios.post(`${SERVER_URL}/api/students`, payload);
+                        await axios.post(`${SERVER_URL}/api/students`, payload);
                     }
                     router.push('/login');
                 } else if (password !== confirmPassword) {
@@ -84,7 +89,11 @@ export default function Register() {
     const handleBack = () => {
         setStep((curStep) => curStep - 1)
         if (step === 3) {
-            role !== 'Student' ? setStep((curStep) => curStep - 1) : setStep(1);
+            if (roleName !== 'Student') {
+                setStep((curStep) => curStep - 1);
+            } else {
+                setStep(1);
+            }
         }
     }
 
@@ -96,10 +105,10 @@ export default function Register() {
                     <>
                         <h1>Create an account</h1>
                         <div className={registerPage['horizontal-container']}>
-                            <input placeholder="First Name" className={registerPage['input-field-short']} value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                            <input placeholder="Last Name" className={registerPage['input-field-short']} value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                            <input placeholder="First Name" className={registerPage['input-field-short']} value={givenName} onChange={(e) => setgivenName(e.target.value)} />
+                            <input placeholder="Last Name" className={registerPage['input-field-short']} value={familyName} onChange={(e) => setfamilyName(e.target.value)} />
                         </div>
-                        <select value={role} onChange={handleRole} id="select-role" name="Select Role" className={registerPage['input-field']}>
+                        <select value={roleName} onChange={handleRole} id="select-role" name="Select Role" className={registerPage['input-field']}>
                             <option value="" disabled selected>Select Role</option>
                             <option value="Student">Student</option>
                             <option value="Coach">Coach</option>
@@ -113,7 +122,7 @@ export default function Register() {
                 )}
                 {step === 2 && (
                     <>
-                        {role === 'Student' ? (
+                        {roleName === 'Student' ? (
                             <>
                                 <h1>Do you meet the ICPC eligibility rules?</h1>
                                 <p>
@@ -121,7 +130,7 @@ export default function Register() {
                                     <a href='https://icpc.global/regionals/rules/'>https://icpc.global/regionals/rules/</a>,
                                     but the most notable criteria are:
                                     <ul>
-                                        <li>enrolled in a degree program at the team's institution</li>
+                                        <li>enrolled in a degree program at the team&apos;s institution</li>
                                         <li>taking at least 1/2 load, or co-op, exchange or intern student</li>
                                         <li>have not competed in two ICPC World Finals</li>
                                         <li>have not competed in ICPC regional contests in five different years</li>
@@ -147,14 +156,14 @@ export default function Register() {
                 {step === 3 && (
                     <>
                         <h1>Enter your details</h1>
-                        <h1>{role}</h1>
+                        <h1>{roleName}</h1>
                         <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(e.target.value)}>
                             <option value="" disabled selected>Select University</option>
                             <option value="student">UNSW</option>
                             <option value="coach">University of Sydney</option>
                             <option value="site-coordinator">Western Sydney University</option>
                         </select>
-                        {role === 'Student' ? (
+                        {roleName === 'Student' ? (
                             <div className={registerPage['form-container']}>
                                 <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
                                 <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -174,7 +183,7 @@ export default function Register() {
                 {step === 4 && (
                     <>
                         <h1>Verify email address</h1>
-                        <h1>{role}</h1>
+                        <h1>{roleName}</h1>
                         <input placeholder="Enter Verification Code" className={registerPage['input-field']} value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
                         <div className={registerPage['horizontal-container']}>
                             <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
@@ -185,7 +194,7 @@ export default function Register() {
                 {step === 5 && (
                     <>
                         <h1>Create a password</h1>
-                        <h1>{role}</h1>
+                        <h1>{roleName}</h1>
                         <input type="password" placeholder="Password" className={registerPage['input-field']} value={password} onChange={(e) => setPassword(e.target.value)}/>
                         <input type="password" placeholder="Confirm Password" className={registerPage['input-field']} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
                         <label htmlFor="tnc">
