@@ -1,10 +1,5 @@
-import { eq } from "drizzle-orm";
 import {
   DatabaseConnection,
-  students,
-  teams,
-  universities,
-  users,
 } from "../db/index.js";
 
 export class AlgorithmService {

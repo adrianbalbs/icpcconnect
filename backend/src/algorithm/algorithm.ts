@@ -15,7 +15,7 @@ export enum Experience {
 export enum Courses {
     intro_computing = 1,
     data_struct_and_algos = 2,
-    discrete_math = 2,
+    discrete_math = 3,
     algorithms = 4,
     prog_chal = 5,
 }
@@ -25,7 +25,7 @@ export enum Courses {
 export enum Weights {
     CONTEST_WEIGHT = 5,
     LEET_WEIGHT = 4,
-    CODEFORCE_WEIGHT = 4,
+    CODEFORCE_WEIGHT = 3,
     COURSES_WEIGHT = 2,
 }
 
@@ -37,8 +37,8 @@ export interface StudentInfo {
     contestExperience: number,
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
     codeforcesRating: number, // Refer to this: https://codeforces.com/blog/entry/68288
-    completedCourses : String[],
-    spokenLanguages: String[],
+    completedCourses : string[],
+    spokenLanguages: string[],
     cppExperience: Experience,
     cExpericence: Experience,
     javaExperience: Experience,
@@ -80,18 +80,23 @@ export function calculateScore(s: StudentInfo): number {
 
     let courseScore = 0;
 
-    for (let course of s.completedCourses) {
+    for (const course of s.completedCourses) {
         switch (course) {
             case 'intro_computing':
                 courseScore += Courses.intro_computing;
+                break;
             case 'data_struct_and_algos':
                 courseScore += Courses.data_struct_and_algos;
+                break;
             case 'discrete_math':
                 courseScore += Courses.discrete_math;
+                break;
             case 'algorithms':
                 courseScore += Courses.algorithms;
+                break;
             case 'prog_chal':
                 courseScore += Courses.prog_chal;
+                break;
         }
     }
 
@@ -109,7 +114,7 @@ export function calculateScore(s: StudentInfo): number {
  * @returns StudentScore[]
  */
 export function getStudentScores(students: StudentInfo[]): StudentScore[] {
-    let studentsScores: StudentScore[] = [];
+    const studentsScores: StudentScore[] = [];
 
     let score: StudentScore = {
         ids: [-42],
@@ -120,7 +125,7 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
         if (s.markdone) { continue; } // Case of it already being considered within a pair
 
         if (s.paired_with != null) {
-            let p: StudentInfo | undefined = students.find(student => student.id == s.paired_with)
+            const p: StudentInfo | undefined = students.find(student => student.id == s.paired_with)
             if (p == undefined) { return [score] } // Should never happen
             score = {
                 ids: [s.id, p.id],
@@ -156,22 +161,22 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
  */
 export function algorithm(studentsScores: StudentScore[]): Group[] {
     studentsScores.sort((a, b) => a.studentScore - b.studentScore)
-    let groups: Group[] = [];
+    const groups: Group[] = [];
 
     while (true) {
-        let group: Group = {
+        const group: Group = {
             ids: [],
             totalScore: 0
         }
 
-        let stu1: StudentScore | undefined = studentsScores.pop();
+        const stu1: StudentScore | undefined = studentsScores.pop();
         if (stu1 === undefined) {
             return groups;
         }
 
         // Stu1 = Pair
         if (stu1.ids.length == 2) {
-            let stu2 = findNextSingle(studentsScores);
+            const stu2 = findNextSingle(studentsScores);
 
             // No singular person exists to join this pair
             if (stu2.studentScore == -1) {
@@ -184,7 +189,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
             continue;
         }
 
-        let stu2: StudentScore | undefined = studentsScores.pop();
+        const stu2: StudentScore | undefined = studentsScores.pop();
         if (stu2 === undefined) {
             studentsScores.push(stu1);
             return groups;
@@ -198,7 +203,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
             continue;
         }
 
-        let stu3: StudentScore | undefined = studentsScores.pop();
+        const stu3: StudentScore | undefined = studentsScores.pop();
         if (stu3 === undefined) {
             studentsScores.push(stu1);
             studentsScores.push(stu2); 
@@ -243,7 +248,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
 function findNextSingle(studentsScores: StudentScore[]): StudentScore {
     for (let i = studentsScores.length - 1; i >= 0; i--) {
         if (studentsScores[i].ids.length == 1) {
-            let student: StudentScore = studentsScores[i];
+            const student: StudentScore = studentsScores[i];
             studentsScores.splice(i, 1);
             return student;
         }

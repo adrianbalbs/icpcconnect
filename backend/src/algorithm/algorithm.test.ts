@@ -1,4 +1,3 @@
-import { extractTablesRelationalConfig } from "drizzle-orm";
 import {
     StudentInfo,
     Experience,
@@ -69,14 +68,14 @@ afterEach(() => {
   
 describe("Algorithm Unit Tests", () => {
     it("calculateScore: Should return true (s1.score > s2.score)", async () => {
-        let score1 = calculateScore(s1);
-        let score2 = calculateScore(s2);
+        const score1 = calculateScore(s1);
+        const score2 = calculateScore(s2);
 
         expect(score1).toBeGreaterThan(score2);
     });
 
     it("getStudentScores: Should return an array of two StudentScore objects", () => {
-        let calcscores = getStudentScores(test_studentInfo);
+        const calcscores = getStudentScores(test_studentInfo);
 
         expect(calcscores.length == 2)
 
@@ -97,7 +96,7 @@ describe("Algorithm Unit Tests", () => {
         s1.paired_with = s2.id;
         s2.paired_with = s1.id;
 
-        let calcscores = getStudentScores(test_studentInfo);
+        const calcscores = getStudentScores(test_studentInfo);
 
         expect(calcscores.length == 1)
 
@@ -111,7 +110,7 @@ describe("Algorithm Unit Tests", () => {
     });
 
     it("getStudentScores: Should return an array of two StudentScore object (a pair and a single)", () => {
-        let s3: StudentInfo = {
+        const s3: StudentInfo = {
             id: 3,
             uniId: 1,
             contestExperience: 6,
@@ -137,7 +136,7 @@ describe("Algorithm Unit Tests", () => {
 
         s1.paired_with = s3.id;
 
-        let calcscores = getStudentScores(test_studentInfo);
+        const calcscores = getStudentScores(test_studentInfo);
 
         expect(calcscores.length == 1)
 
@@ -156,7 +155,7 @@ describe("Algorithm Unit Tests", () => {
     });
 
     it("algorithm: Should return a singular team (Pair and Single)", () => {
-        let s3: StudentInfo = {
+        const s3: StudentInfo = {
             id: 3,
             uniId: 1,
             contestExperience: 6,
@@ -182,7 +181,7 @@ describe("Algorithm Unit Tests", () => {
 
         s1.paired_with = s3.id;
 
-        let calcscores = getStudentScores(test_studentInfo);
+        const calcscores = getStudentScores(test_studentInfo);
 
         expect(calcscores.length).toEqual(2)
 
@@ -199,7 +198,7 @@ describe("Algorithm Unit Tests", () => {
         expect(s2.markdone).toBe(true)
         expect(s3.markdone).toBe(true)
 
-        let groups = algorithm(calcscores)
+        const groups = algorithm(calcscores)
 
         expect(groups.length).toEqual(1)
 
@@ -210,7 +209,7 @@ describe("Algorithm Unit Tests", () => {
     });
 
     it("algorithm: Should return a singular team (Three Singles)", () => {
-        let s3: StudentInfo = {
+        const s3: StudentInfo = {
             id: 3,
             uniId: 1,
             contestExperience: 6,
@@ -234,7 +233,7 @@ describe("Algorithm Unit Tests", () => {
 
         test_studentInfo.push(s3)
 
-        let calcscores = getStudentScores(test_studentInfo);
+        const calcscores = getStudentScores(test_studentInfo);
 
         expect(calcscores.length).toEqual(3)
 
@@ -255,7 +254,7 @@ describe("Algorithm Unit Tests", () => {
         expect(s2.markdone).toBe(true)
         expect(s3.markdone).toBe(true)
 
-        let groups = algorithm(calcscores)
+        const groups = algorithm(calcscores)
 
         expect(groups.length).toEqual(1)
 
@@ -266,7 +265,7 @@ describe("Algorithm Unit Tests", () => {
     });
 
     it("algorithm: Should return a singular team (Four Singles (1 Excluded))", () => {
-        let s3: StudentInfo = {
+        const s3: StudentInfo = {
             id: 3,
             uniId: 1,
             contestExperience: 6,
@@ -288,7 +287,7 @@ describe("Algorithm Unit Tests", () => {
             markdone: false
         }
 
-        let s4: StudentInfo = {
+        const s4: StudentInfo = {
             id: 4,
             uniId: 1,
             contestExperience: 2,
@@ -310,7 +309,7 @@ describe("Algorithm Unit Tests", () => {
         test_studentInfo.push(s3)
         test_studentInfo.push(s4)
 
-        let calcscores = getStudentScores(test_studentInfo);
+        const calcscores = getStudentScores(test_studentInfo);
 
         expect(calcscores.length).toEqual(4)
 
@@ -336,7 +335,7 @@ describe("Algorithm Unit Tests", () => {
         expect(s3.markdone).toBe(true)
         expect(s4.markdone).toBe(true)
 
-        let groups = algorithm(calcscores)
+        const groups = algorithm(calcscores)
 
         expect(groups.length).toEqual(1)
 
@@ -347,7 +346,7 @@ describe("Algorithm Unit Tests", () => {
     });
 
     it("algorithm: Should return no teams (Two Pairs, both excluded)", () => {
-        let s3: StudentInfo = {
+        const s3: StudentInfo = {
             id: 3,
             uniId: 1,
             contestExperience: 6,
@@ -369,7 +368,7 @@ describe("Algorithm Unit Tests", () => {
             markdone: false
         }
 
-        let s4: StudentInfo = {
+        const s4: StudentInfo = {
             id: 4,
             uniId: 1,
             contestExperience: 2,
@@ -394,7 +393,7 @@ describe("Algorithm Unit Tests", () => {
         s1.paired_with = 2;
         s2.paired_with = 1;
 
-        let calcscores = getStudentScores(test_studentInfo);
+        const calcscores = getStudentScores(test_studentInfo);
 
         expect(calcscores.length).toEqual(2)
 
@@ -412,7 +411,7 @@ describe("Algorithm Unit Tests", () => {
         expect(s3.markdone).toBe(true)
         expect(s4.markdone).toBe(true)
 
-        let groups = algorithm(calcscores)
+        const groups = algorithm(calcscores)
 
         expect(groups.length).toEqual(0)
 
