@@ -13,3 +13,9 @@ export const CreateAuthCodeSchema = z.object({
 });
   
 export type CreateAuthCodeRequest = z.infer<typeof CreateAuthCodeSchema>;
+
+export const CreateAuthCodeRouteSchema = z.object({
+  email: z.string()
+})
+
+export type CreateAuthCodeRouteRequest = z.infer<typeof CreateAuthCodeRouteSchema>;

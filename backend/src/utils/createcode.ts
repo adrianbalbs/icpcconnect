@@ -15,7 +15,7 @@ import {
 
 const CODE_LENGTH = 6;
 
-enum role {
+export enum role {
     coach = 1,
     site_coord = 2
 }
