@@ -14,7 +14,7 @@ import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,
 } from "../schemas/index.js";
-import { badRequest, HTTPError } from "../utils/errors.js";
+import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 
 export type SiteCoordinatorProfileResponse = UserProfileResponse & {
@@ -90,7 +90,7 @@ export class SiteCoordinatorService {
 
     if (!siteCoordinator) {
       throw new HTTPError({
-        errorCode: badRequest.errorCode,
+        errorCode: notFoundError.errorCode,
         message: `Site Coordinator with id: ${userId} does not exist`,
       });
     }

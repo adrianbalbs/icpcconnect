@@ -14,6 +14,7 @@ import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,
 } from "../schemas/user-schema.js";
+import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
@@ -23,7 +24,8 @@ beforeAll(async () => {
   await seed(db);
   app = express()
     .use(express.json())
-    .use("/api", siteCoordinatorRouter(new SiteCoordinatorService(db)));
+    .use("/api", siteCoordinatorRouter(new SiteCoordinatorService(db)))
+    .use(errorHandlerMiddleware);
 });
 
 afterAll(async () => {
@@ -126,7 +128,7 @@ describe("siteCoordinatorRouter tests", () => {
   });
 
   it("should throw if a site-coordinator cannot be found", async () => {
-    await request(app).get(`/api/site-coordinators/${uuidv4()}`).expect(500);
+    await request(app).get(`/api/site-coordinators/${uuidv4()}`).expect(404);
   });
 
   it("should update the site-coordinator's details", async () => {
@@ -184,10 +186,10 @@ describe("siteCoordinatorRouter tests", () => {
 
     await request(app)
       .get(`/api/site-coordinators/${res.body.userId}`)
-      .expect(500);
+      .expect(404);
   });
 
   it("should throw when trying to delete a site coordinator that does not exist", async () => {
-    await request(app).delete(`/api/site-coordinators/${uuidv4()}`).expect(500);
+    await request(app).delete(`/api/site-coordinators/${uuidv4()}`).expect(400);
   });
 });

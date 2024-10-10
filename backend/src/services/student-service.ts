@@ -10,7 +10,7 @@ import {
   CreateStudentRequest,
   UpdateStudentRequest,
 } from "../schemas/index.js";
-import { badRequest, HTTPError } from "../utils/errors.js";
+import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 
 export class StudentService {
@@ -73,7 +73,7 @@ export class StudentService {
 
     if (!student) {
       throw new HTTPError({
-        errorCode: badRequest.errorCode,
+        errorCode: notFoundError.errorCode,
         message: `Student with id: ${userId} does not exist`,
       });
     }

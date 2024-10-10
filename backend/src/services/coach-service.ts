@@ -6,7 +6,7 @@ import {
   users,
 } from "../db/index.js";
 import { CreateCoachRequest, UpdateCoachRequest } from "../schemas/index.js";
-import { badRequest, HTTPError } from "../utils/errors.js";
+import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import {
   DeleteResponse,
@@ -74,7 +74,7 @@ export class CoachService {
 
     if (!coach) {
       throw new HTTPError({
-        errorCode: badRequest.errorCode,
+        errorCode: notFoundError.errorCode,
         message: `Coach with id: ${userId} does not exist`,
       });
     }
