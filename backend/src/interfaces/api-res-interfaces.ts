@@ -7,7 +7,7 @@ export interface IHttpError {
 
 export type NewUserResponse = {
   userId: string;
-}
+};
 
 export type UserProfileResponse = {
   id: string;
@@ -15,8 +15,8 @@ export type UserProfileResponse = {
   familyName: string;
   email: string;
   role: UserRole;
-}
+};
 
 export type DeleteResponse = {
   status: "OK";
-}
+};

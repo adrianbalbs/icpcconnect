@@ -42,6 +42,7 @@ describe("coachRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const response = await request(app)
       .post("/api/coaches")
@@ -60,6 +61,7 @@ describe("coachRouter tests", () => {
         email: "adrianbalbs@comp3900.com",
         password: "helloworld",
         university: 1,
+        verificationCode: "test",
       },
       {
         role: "coach",
@@ -68,6 +70,7 @@ describe("coachRouter tests", () => {
         email: "testuser@comp3900.com",
         password: "helloworld",
         university: 1,
+        verificationCode: "test",
       },
       {
         role: "coach",
@@ -76,6 +79,7 @@ describe("coachRouter tests", () => {
         email: "testuser2@comp3900.com",
         password: "helloworld",
         university: 1,
+        verificationCode: "test",
       },
     ];
 
@@ -95,6 +99,7 @@ describe("coachRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const user = await request(app).post("/api/coaches").send(req).expect(200);
 
@@ -119,6 +124,7 @@ describe("coachRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const res = await request(app)
       .post("/api/coaches")
@@ -147,6 +153,7 @@ describe("coachRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const res = await request(app)
       .post("/api/coaches")

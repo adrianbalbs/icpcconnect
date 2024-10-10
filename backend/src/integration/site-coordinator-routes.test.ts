@@ -45,6 +45,7 @@ describe("siteCoordinatorRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       site: 1,
+      verificationCode: "test",
     };
     const response = await request(app)
       .post("/api/site-coordinators")
@@ -63,6 +64,7 @@ describe("siteCoordinatorRouter tests", () => {
         email: "adrianbalbs@comp3900.com",
         password: "helloworld",
         site: 1,
+        verificationCode: "test",
       },
       {
         role: "site_coordinator",
@@ -71,6 +73,7 @@ describe("siteCoordinatorRouter tests", () => {
         email: "testuser@comp3900.com",
         password: "helloworld",
         site: 1,
+        verificationCode: "test",
       },
       {
         role: "site_coordinator",
@@ -79,6 +82,7 @@ describe("siteCoordinatorRouter tests", () => {
         email: "testuser2@comp3900.com",
         password: "helloworld",
         site: 1,
+        verificationCode: "test",
       },
     ];
 
@@ -105,6 +109,7 @@ describe("siteCoordinatorRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       site: 1,
+      verificationCode: "test",
     };
     const user = await request(app)
       .post("/api/site-coordinators")
@@ -132,6 +137,7 @@ describe("siteCoordinatorRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       site: 1,
+      verificationCode: "test",
     };
     const res = await request(app)
       .post("/api/site-coordinators")
@@ -162,6 +168,7 @@ describe("siteCoordinatorRouter tests", () => {
       email: "adrianbalbs@comp3900.com",
       password: "helloworld",
       site: 1,
+      verificationCode: "test",
     };
     const res = await request(app)
       .post("/api/site-coordinators")

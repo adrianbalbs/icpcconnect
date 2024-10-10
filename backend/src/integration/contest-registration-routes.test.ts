@@ -58,6 +58,7 @@ describe("contestRegistrationRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const response = await request(app)
       .post("/api/students")
@@ -96,6 +97,7 @@ describe("contestRegistrationRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const response = await request(app)
       .post("/api/students")
@@ -142,6 +144,7 @@ describe("contestRegistrationRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const response = await request(app)
       .post("/api/students")
@@ -194,7 +197,7 @@ describe("contestRegistrationRouter tests", () => {
   });
 
   it("should get all student registrations", async () => {
-    const students = [
+    const students: CreateStudentRequest[] = [
       {
         role: "student",
         givenName: "Adrian",
@@ -203,6 +206,7 @@ describe("contestRegistrationRouter tests", () => {
         studentId: "z5397730",
         password: "helloworld",
         university: 1,
+        verificationCode: "test",
       },
       {
         role: "student",
@@ -212,6 +216,7 @@ describe("contestRegistrationRouter tests", () => {
         studentId: "z5397731",
         password: "password123",
         university: 2,
+        verificationCode: "test",
       },
       {
         role: "student",
@@ -221,10 +226,11 @@ describe("contestRegistrationRouter tests", () => {
         studentId: "z5397732",
         password: "securepass",
         university: 3,
+        verificationCode: "test",
       },
     ];
 
-    const studentIds = [];
+    const studentIds: string[] = [];
 
     for (const student of students) {
       const response = await request(app)
@@ -232,7 +238,7 @@ describe("contestRegistrationRouter tests", () => {
         .send(student)
         .expect(200);
 
-      studentIds.push(response.body.userId);
+      studentIds.push(response.body.userId as string);
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
@@ -271,6 +277,7 @@ describe("contestRegistrationRouter tests", () => {
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
+      verificationCode: "test",
     };
     const response = await request(app)
       .post("/api/students")
