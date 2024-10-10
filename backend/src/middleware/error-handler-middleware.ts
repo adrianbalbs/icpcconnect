@@ -12,10 +12,12 @@ export const errorHandlerMiddleware: ErrorRequestHandler = (
   err: Error | HTTPError,
   _req,
   res,
+  _next, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) => {
+  logger.error(`Received ${formatError(err)}`);
   if (err instanceof HTTPError) {
-    logger.error(`Received HTTP Error: ${formatError(err)}`);
     res.status(err.errorCode).json(getResponseFromHttpError(err));
+    return;
   }
   res.status(internalServerError.errorCode).json(internalServerError);
 };
