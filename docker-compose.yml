@@ -56,7 +56,3 @@ services:
       timeout: 5s
       retries: 5
     profiles: [test]
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-volumes:
-  postgres_data:
