@@ -106,11 +106,14 @@ export class AdminService {
         familyName: users.familyName,
         email: users.email,
         role: users.role,
-        site: siteCoordinators.site,
+        university: siteCoordinators.university,
       })
       .from(users)
       .innerJoin(siteCoordinators, eq(users.id, siteCoordinators.userId))
-      .innerJoin(universities, eq(universities.id, siteCoordinators.site));
+      .innerJoin(
+        universities,
+        eq(universities.id, siteCoordinators.university),
+      );
 
     // const allMembers = [
     //     ...allStudents.map(student => ({
