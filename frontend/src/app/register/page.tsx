@@ -4,7 +4,6 @@ import { useState } from 'react';
 import axios from 'axios';
 import { SERVER_URL } from '../utils/constants';
 import { useRouter } from 'next/navigation';
-import { collapseClasses } from '@mui/material';
 
 export default function Register() {
     const router = useRouter();
