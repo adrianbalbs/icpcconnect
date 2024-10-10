@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import styles from '../styles/Page.module.css';
+import styles from '@/styles/Page.module.css';
 import { styled } from '@mui/material/styles';
 import { Box, Tabs, Tab} from '@mui/material';
 import Menu from './profile/Menu';
