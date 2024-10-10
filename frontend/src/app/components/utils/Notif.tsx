@@ -19,7 +19,7 @@ interface NotifProps {
 }
 
 const LongAlert = styled(Alert)<{ visible: boolean }>`
-  display: ${(props) => (props.visible ? 'block' : 'none')};
+  display: ${(props) => (props.visible ? 'flex' : 'none')};
   margin-top: 60px;
   margin-bottom: -60px;
 `;
