@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import {
   DatabaseConnection,
   teams,
@@ -20,7 +20,29 @@ export class TeamService {
   }
 
   async createTeam(req: CreateTeamRequest) {
-    return { teamId: 0 };
+    const {
+      name,
+      university,
+      memberIds,
+    } = req;
+
+    /*
+    const members = await this.db
+      .query.students.findMany({
+        where: inArray(students.userId, memberIds)
+      });
+    */
+
+    const [id] = await this.db 
+      .insert(teams)
+      .values({
+        name,
+        university,
+     //   members,
+      })
+      .returning({teamId: teams.id})
+
+    return id
   }
 
   async getTeam(teamId: string) {
@@ -47,15 +69,39 @@ export class TeamService {
       memberIds,
     } = updatedDetails;
 
+    const members = await this.db
+      .query.students.findMany({
+        where: inArray(students.userId, memberIds)
+      });
+
+    await this.db
+      .update(teams)
+      .set({ university, name })
+      //.set({ university, name, members })
+      .where(eq(teams.id, teamId));
+
     return {
       id: teamId,
       university, 
       name,
-      members: memberIds,
+      members: members,
     };
   }
 
   async deleteTeam(teamId: string) {
+    const [team] = await this.db
+      .select({ teamId: teams.id })
+      .from(teams)
+      .where(eq(teams.id, teamId))
+
+    if (!team) {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Team with id: ${teamId} does not exist`,
+      });
+    }
+
+    await this.db.delete(teams).where(eq(teams.id, teamId));
     return { status: "OK" };
   }
 }
