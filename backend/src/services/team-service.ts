@@ -3,14 +3,12 @@ import {
   DatabaseConnection,
   teams,
   students,
-  universities,
 } from "../db/index.js";
 import {
   CreateTeamRequest,
   UpdateTeamRequest,
 } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
-import { passwordUtils } from "../utils/encrypt.js";
 
 export class TeamService {
   private readonly db: DatabaseConnection;
@@ -51,6 +49,10 @@ export class TeamService {
         columns: {university: false},
         with: {members: true, university: true}, 
       })
+
+    if (team == undefined) {
+      throw new HTTPError(badRequest);
+    }
 
     return team;
   }
