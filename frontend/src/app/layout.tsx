@@ -11,20 +11,14 @@ export default function RootLayout({
 }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleStorageChange = () => {
-    setIsLoggedIn(localStorage.getItem('token') !== null);
-  }
-
   useEffect(() => {
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+    setIsLoggedIn(localStorage.getItem('role') !== null);
+  });
 
   return (
     <html lang="en">
       <body>
-        {<Navbar />}
+        {isLoggedIn && <Navbar />}
         {children}
       </body>
     </html>

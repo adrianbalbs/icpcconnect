@@ -11,19 +11,21 @@ import InviteCode from '@/components/utils/InviteCode';
 
 const Members: React.FC = () => {
   const router = useRouter();
-  // const [role, setRole] = useState(0);
+  const role = 'admin';
   const [notif, setNotif] = useState({ type: '', name: '' });
 
-  if (localStorage.getItem('token') === null) {
-    router.replace('/login');
-  }
+  useEffect(() => {
+    if (localStorage.getItem('role') === null) {
+      router.replace('/login');
+    }
+  }, []);
 
   return <>
     <Notif visible={notif.type !== ''} notif={notif} setNotif={setNotif} />
     <div className={pageStyles.screen}>
-      {<InviteCode setNotif={setNotif} />}
-      {<SiteCoordinators />}
-      {<Coaches />}
+      {role === 'admin' && <InviteCode setNotif={setNotif} />}
+      {role === 'admin' && <SiteCoordinators />}
+      {(role === 'admin' || role === 'site_coordinator') && <Coaches />}
       <Students />
     </div>
   </>

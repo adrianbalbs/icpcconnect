@@ -91,10 +91,12 @@
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  justify-content: end;
   align-items: center;
+  column-gap: 5px;
   margin-left: auto;
   height: 100%;
-  width: 110px;
+  width: 200px;
 }
 
 .pfp-label {
@@ -102,7 +104,6 @@
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  width: 70px;
   font-size: 15px;
   text-align: right;
 }

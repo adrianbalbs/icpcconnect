@@ -21,10 +21,6 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
   const router = useRouter();
   const [info, setInfo] = useState({ name: 'Rachel Chen', role: 'admin', pronouns: 'she/her' });
 
-  if (localStorage.getItem('token') === null) {
-    router.replace('/login');
-  }
-
   const storeInfo = async () => {
     const data = await getInfo(params.id);
     if (data !== undefined) {
@@ -32,7 +28,12 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
     }
   }
 
-  useEffect(() => { storeInfo() }, [params.id]);
+  useEffect(() => { 
+    if (localStorage.getItem('role') === null) {
+      router.replace('/login');
+    }
+    storeInfo();
+   }, [params.id]);
 
   return (
     <div className={profileStyles.screen}>

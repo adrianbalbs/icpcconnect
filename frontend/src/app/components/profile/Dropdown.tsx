@@ -18,7 +18,7 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
 
   const logout = () => {
     router.push('/login');
-    localStorage.removeItem('token');
+    localStorage.removeItem('role');
   }
 
   return <Menu
