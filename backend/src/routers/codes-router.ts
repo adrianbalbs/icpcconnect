@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { getLogger } from "../utils/logger.js";
+// import { getLogger } from "../utils/logger.js";
 import { CodesService } from "../services/index.js";
 import {
     pushCodeAuth,
@@ -11,7 +11,7 @@ import {
 } from "../schemas/codes-schema.js"
 
 export function codesRouter(codesService: CodesService) {
-  const logger = getLogger();
+//   const logger = getLogger();
   return Router()
 
     /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/
