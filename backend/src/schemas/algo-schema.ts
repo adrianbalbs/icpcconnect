@@ -20,9 +20,9 @@ export const StudentInfoSchema = z.object({
 
 export type StudentScoreRequest = z.infer<typeof StudentInfoSchema>;
 
-/*
-export const RunAlgoSchema = z.object({
+export const RunGroupingSchema = z.object({
+  ids: z.array(z.number()),
+  studentScore: z.number(),
 });
 
-export type RunAlgoRequest = z.infer<typeof RunAlgoSchema>;
-*/
+export type RunGroupingRequest = z.infer<typeof RunGroupingSchema>;
