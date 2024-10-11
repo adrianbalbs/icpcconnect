@@ -43,7 +43,7 @@ function createCode(length: number): number {
  * @returns number (the code)
  */
 export async function pushCodeCoach(codesService: CodesService) {
-    let coachCode: CreateRoleCodeRequest = {
+    const coachCode: CreateRoleCodeRequest = {
         code: createCode(CODE_LENGTH),
         role: role.coach,
     }
@@ -63,7 +63,7 @@ export async function pushCodeCoach(codesService: CodesService) {
  * @returns number (the code)
  */
 export async function pushCodeSiteCoord(codesService: CodesService) {
-    let siteCoordCode: CreateRoleCodeRequest = {
+    const siteCoordCode: CreateRoleCodeRequest = {
         code: createCode(CODE_LENGTH),
         role: role.site_coord,
     }
@@ -84,7 +84,7 @@ export async function pushCodeSiteCoord(codesService: CodesService) {
  * @returns number (the code)
  */
 export async function pushCodeAuth(codesService: CodesService, email: string) {
-    let authCode: CreateAuthCodeRequest = {
+    const authCode: CreateAuthCodeRequest = {
         code: createCode(CODE_LENGTH),
         email: email,
     }
@@ -108,8 +108,8 @@ export async function checkCoachCode(codesService: CodesService, checkCode: numb
 
     for (const code of codes) {
         if ((code.code == checkCode) && (code.role == role.coach)) {
-            let expireTime: Date = addDays(new Date(code.createdAt), 1);
-            let now: Date = new Date(Date.now())
+            const expireTime: Date = addDays(new Date(code.createdAt), 1);
+            const now: Date = new Date(Date.now())
 
             // Is the right code and role but it is expired
             if (expireTime.getTime() < now.getTime()) {
@@ -139,8 +139,8 @@ export async function checkSiteCoordCode(codesService: CodesService, checkCode: 
 
     for (const code of codes) {
         if ((code.code == checkCode) && (code.role == role.site_coord)) {
-            let expireTime: Date = addDays(new Date(code.createdAt), 1);
-            let now: Date = new Date(Date.now())
+            const expireTime: Date = addDays(new Date(code.createdAt), 1);
+            const now: Date = new Date(Date.now())
 
             // Is the right code and role but it is expired
             if (expireTime.getTime() < now.getTime()) {
@@ -170,8 +170,8 @@ export async function checkAuthCode(codesService: CodesService, checkCode: numbe
 
     for (const code of codes) {
         if ((code.code == checkCode) && (code.email == email)) {
-            let expireTime: Date = addHours(new Date(code.createdAt), 1);
-            let now: Date = new Date(Date.now())
+            const expireTime: Date = addHours(new Date(code.createdAt), 1);
+            const now: Date = new Date(Date.now())
 
             // Is the right code and role but it is expired
             if (expireTime.getTime() < now.getTime()) {
@@ -187,13 +187,13 @@ export async function checkAuthCode(codesService: CodesService, checkCode: numbe
 }
 
 function addDays(date: Date, days: number): Date {
-    let result = new Date(date);
+    const result = new Date(date);
     result.setDate(date.getDate() + days);
     return result;
 }
 
 function addHours(date: Date, hours: number): Date {
-    let result = new Date(date);
+    const result = new Date(date);
     result.setDate(date.getDate() + (hours * 60 * 60 * 1000));
     return result;
 }
