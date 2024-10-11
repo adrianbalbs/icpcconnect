@@ -17,6 +17,7 @@ const AccountSettings: React.FC = () => {
         </IconButton>
       </div>
       <hr className={pageStyles.divider}/>
+      <p>(Currently not implemented)</p>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import profileStyles from '../styles/Profile.module.css';
+import profileStyles from '@/styles/Profile.module.css';
 import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 interface SidebarProps {

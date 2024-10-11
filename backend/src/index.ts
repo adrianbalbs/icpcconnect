@@ -3,6 +3,7 @@ import cors from "cors";
 import { Database, seed } from "./db/index.js";
 import {
   CoachService,
+  CodesService,
   ContestRegistrationService,
   SiteCoordinatorService,
   StudentService,
@@ -10,6 +11,7 @@ import {
 } from "./services/index.js";
 import {
   coachRouter,
+  codesRouter,
   siteCoordinatorRouter,
   studentRouter,
   authRouter,
@@ -37,6 +39,7 @@ const contestRegistrationService = new ContestRegistrationService(
   databaseConnection,
 );
 const authService = new AuthService(databaseConnection);
+const codesService = new CodesService(databaseConnection);
 
 logger.info("Setup HTTP Server");
 app
@@ -49,6 +52,7 @@ app
   .use("/api", siteCoordinatorRouter(siteCoordinatorService))
   .use("/api", contestRegistrationRouter(contestRegistrationService))
   .use("/api", authRouter(authService))
+  .use("/api", codesRouter(codesService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {

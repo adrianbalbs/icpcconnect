@@ -40,6 +40,11 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
   //   }
   // }
 
+  const capitalise = (name: string) => {
+    if (!name) return name;
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
   // useEffect(() => { storeInfo() }, [params]);
   useEffect(() => {
     setInfo([['name', 'Rachel Chen'], ['pronouns', 'she/her'], ['University', 'UNSW'], ['email', 'asd'], ['studentId', '54321']]);
@@ -54,7 +59,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
         </IconButton>
       </div>
       <hr className={pageStyles.divider}/>
-      {info.map(i => <Info key={i[0]} name={i[0]} value={i[1]} />)}
+      {info.map(i => <Info key={i[0]} name={capitalise(i[0])} value={i[1]} />)}
     </div>
   );
 }
