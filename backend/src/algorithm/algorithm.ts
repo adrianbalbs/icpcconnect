@@ -40,7 +40,7 @@ export interface StudentInfo {
     completedCourses : string[],
     spokenLanguages: string[],
     cppExperience: Experience,
-    cExpericence: Experience,
+    cExperience: Experience,
     javaExperience: Experience,
     pythonExperience: Experience,
 

@@ -1,12 +1,31 @@
 import {
   DatabaseConnection,
 } from "../db/index.js";
+import {
+     StudentInfoSchema,
+     StudentScoreRequest,
+     RunGroupingRequest,
+} from "../schemas/algo-schema.js";
+import {
+     getStudentScores,
+     algorithm,
+} from "../algorithm/algorithm.js";
 
 export class AlgorithmService {
     private readonly db: DatabaseConnection;
   
     constructor(db: DatabaseConnection) {
       this.db = db;
+    }
+
+    async getStudentScores(req: StudentScoreRequest[]) {
+     const scores = getStudentScores(req);
+     return { scores };
+    }
+
+    async getGroupings(req: RunGroupingRequest[]) {
+     const groups = algorithm(req);
+     return { groups };
     }
 
     /**
