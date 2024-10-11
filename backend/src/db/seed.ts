@@ -1,6 +1,7 @@
+import { passwordUtils } from "../utils/encrypt.js";
 import { getLogger } from "../utils/logger.js";
 import { DatabaseConnection } from "./database.js";
-import { courses, spokenLanguages, universities } from "./schema.js";
+import { courses, spokenLanguages, universities, users } from "./schema.js";
 
 export const seed = async (db: DatabaseConnection) => {
   const logger = getLogger();
@@ -224,4 +225,14 @@ export const seed = async (db: DatabaseConnection) => {
       { code: "zu", name: "Zulu" },
     ])
     .onConflictDoNothing();
+
+  logger.info("Adding dummy admin account");
+  const adminPassword = await passwordUtils().hash("tomatofactory");
+  await db.insert(users).values({
+    givenName: "Admin",
+    familyName: "Account",
+    password: adminPassword,
+    role: "admin",
+    email: "admin@comp3900.com",
+  });
 };
