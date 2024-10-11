@@ -1,0 +1,28 @@
+import { z } from "zod";
+
+const ExperienceEnum = z.enum(["none", "some", "prof"]);
+
+export const StudentInfoSchema = z.object({
+  id: z.number(),
+  uniId: z.number(),
+  contestExperience: z.number(),
+  leetcodeRating: z.number(),
+  codeforcesRating: z.number(),
+  completedCourses: z.array(z.string()),
+  spokenLanguages: z.array(z.string()),
+  cppExperience: ExperienceEnum,
+  cExperience: ExperienceEnum,
+  javaExperience: ExperienceEnum,
+  pythonExperience: ExperienceEnum,
+  paired_with: z.number(),
+  markdone: z.boolean(),
+});
+
+export type StudentScoreRequest = z.infer<typeof StudentInfoSchema>;
+
+/*
+export const RunAlgoSchema = z.object({
+});
+
+export type RunAlgoRequest = z.infer<typeof RunAlgoSchema>;
+*/
