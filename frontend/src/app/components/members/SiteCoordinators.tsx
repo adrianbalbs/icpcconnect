@@ -46,7 +46,7 @@ const SiteCoordinators: React.FC = () => {
       }));
       setSiteCoords(filteredInfo);
     } catch (error) {
-      alert(`Get sitecoords: ${error}`);
+      console.log(`Get sitecoords: ${error}`);
     }
   };
 

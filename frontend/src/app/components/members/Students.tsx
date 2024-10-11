@@ -52,7 +52,7 @@ const Students: React.FC = () => {
       }));
       setStudents(filteredInfo);
     } catch (error) {
-      alert(`Get students: ${error}`);
+      console.log(`Get students: ${error}`);
     }
   };
 

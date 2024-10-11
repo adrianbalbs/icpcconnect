@@ -46,7 +46,7 @@ const Coaches: React.FC = () => {
       }));
       setCoaches(filteredInfo);
     } catch (error) {
-      alert(`Get coaches: ${error}`);
+      console.log(`Get coaches: ${error}`);
     }
   };
 
