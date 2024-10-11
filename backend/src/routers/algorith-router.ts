@@ -1,9 +1,4 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { validateData } from "../middleware/index.js";
-import {
-    StudentScoreRequest,
-    RunGroupingRequest,
-} from "../schemas/index.js";
 import { AlgorithmService } from "../services/index.js";
 
 export function algoRouter(algoService: AlgorithmService) {

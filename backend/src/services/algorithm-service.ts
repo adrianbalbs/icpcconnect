@@ -2,11 +2,6 @@ import {
   DatabaseConnection,
 } from "../db/index.js";
 import {
-     StudentInfoSchema,
-     StudentScoreRequest,
-     RunGroupingRequest,
-} from "../schemas/algo-schema.js";
-import {
      getStudentScores,
      algorithm,
 } from "../algorithm/algorithm.js";
@@ -23,15 +18,8 @@ export class AlgorithmService {
       this.contest_service = conService;
     }
 
-/*
-    async getStudentScores(req: StudentScoreRequest[]) {
-     const scores = getStudentScores(req);
-     return { scores };
-    }
-*/
-
     async getGroupings() {
-     let { registrations } = await this.contest_service.getAllStudentRegistrations();
+     const { registrations } = await this.contest_service.getAllStudentRegistrations();
      const new_registrations = registrations.map((registration) => ({
           ...registration,
           coursesCompleted: registration.coursesCompleted.map((course) => (
