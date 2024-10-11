@@ -78,7 +78,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (pathname.includes('teams')) {
+    if (pathname.includes('team')) {
       setTab(0);
     } else {
       setTab(1);

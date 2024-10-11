@@ -47,7 +47,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
 
   // useEffect(() => { storeInfo() }, [params]);
   useEffect(() => {
-    setInfo([['name', 'Rachel Chen'], ['pronouns', 'she/her'], ['University', 'UNSW'], ['email', 'asd'], ['studentId', '54321']]);
+    setInfo([['name', 'Rachel Chen'], ['pronouns', 'she/her'], ['University', 'UNSW'], ['email', 'z5432123@ad.unsw.edu.au'], ['studentId', '5432123']]);
   }, [params]);
 
   return (

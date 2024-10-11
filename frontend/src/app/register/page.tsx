@@ -80,7 +80,7 @@ export default function Register() {
                     localStorage.setItem('id', res.data.id);
                 }
                 localStorage.setItem('role', role);
-                router.push('/teams');
+                router.push(role === 'student' ? '/team' : '/teams');
             } else if (password !== confirmPassword) {
                 console.log("Passwords do not match");
             } else {

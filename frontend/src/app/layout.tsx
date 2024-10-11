@@ -12,7 +12,7 @@ export default function RootLayout({
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
-    // setIsLoggedIn(localStorage.getItem('role') !== null);
+    setIsLoggedIn(localStorage.getItem('role') !== null);
   });
 
   return (

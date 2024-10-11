@@ -1,12 +1,11 @@
 import axios from 'axios';
-import { SetStateAction } from 'react';
 import { SERVER_URL } from './constants';
 import { StudentInfo } from '@/components/members/Students';
 
 interface Info {
   id: string;
   info: [string, string | number][];
-  sideInfo: SetStateAction<{ name: string; role: string; pronouns: string; }>;
+  sideInfo: { name: string; role: string; pronouns: string; };
 }
 
 const current: Info = {
@@ -21,12 +20,14 @@ const current: Info = {
 
 const infoToRemove = ['id', 'givenName', 'familyName', 'role'];
 
-export const getInfo = async (id: string) => {
+export const getInfo = async (id: string | null) => {
+  if (id === null) return current;
   if (id === current.id) return current;
 
   try {
     const res = await axios.get(`${SERVER_URL}/api/students/${id}`);
     const data: StudentInfo = res.data.info;
+    console.log(data);
     const infoObject = { name: `${data.givenName} ${data.familyName}`, ...data };
     current.sideInfo = {
       name: infoObject.name,
