@@ -21,7 +21,6 @@ export class TeamService {
     const {
       name,
       university,
-      memberIds,
     } = req;
 
     /*

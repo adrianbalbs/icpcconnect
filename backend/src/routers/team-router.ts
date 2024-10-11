@@ -6,11 +6,9 @@ import {
   UpdateTeamRequest,
   UpdateTeamRequestSchema,
 } from "../schemas/index.js";
-import { getLogger } from "../utils/logger.js";
 import { TeamService } from "../services/index.js";
 
 export function teamRouter(teamService: TeamService) {
-  const logger = getLogger();
   return Router()
     .get("/all", async (_req: Request, res: Response, next: NextFunction) => {
       try {
