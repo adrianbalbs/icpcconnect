@@ -279,3 +279,19 @@ export const teamRelations = relations(teams, ({ many, one }) => ({
 }));
 
 export type Team = InferSelectModel<typeof teams>;
+
+export const inviteCodes = pgTable('invite_codes', {
+  code: integer('code').notNull(),
+  role: integer('role').notNull(),
+  createdAt: timestamp('created_at::timestamp without time zone').notNull().defaultNow(),
+});
+
+export type InviteCodes = InferSelectModel<typeof inviteCodes>
+
+export const authCodes = pgTable('auth_codes', {
+  code: integer('code').notNull(),
+  email: text('email').notNull(),
+  createdAt: timestamp('created_at::timestamp without time zone').notNull().defaultNow(),
+});
+
+export type AuthCodes = InferSelectModel<typeof authCodes>

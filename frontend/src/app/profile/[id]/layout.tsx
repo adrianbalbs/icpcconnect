@@ -28,7 +28,12 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
     }
   }
 
-  useEffect(() => { storeInfo() }, [params.id]);
+  useEffect(() => { 
+    if (localStorage.getItem('role') === null) {
+      router.replace('/login');
+    }
+    storeInfo();
+   }, [params.id]);
 
   return (
     <div className={profileStyles.screen}>

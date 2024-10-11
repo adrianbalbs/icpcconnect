@@ -16,6 +16,11 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
     handleClose();
   }
 
+  const logout = () => {
+    router.push('/login');
+    localStorage.removeItem('role');
+  }
+
   return <Menu
     anchorEl={anchorEl}
     open={open}
@@ -29,7 +34,7 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
     <MenuItem sx={{ fontSize: '13px' }} onClick={() => to('/preferences')}>Preferences</MenuItem>
     <MenuItem sx={{ fontSize: '13px' }} onClick={() => to('/account-settings')}>Account settings</MenuItem>
     <Divider />
-    <MenuItem sx={{ fontSize: '13px' }}>Logout</MenuItem>
+    <MenuItem sx={{ fontSize: '13px' }} onClick={logout}>Logout</MenuItem>
   </Menu>
 }
 

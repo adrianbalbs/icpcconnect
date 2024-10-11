@@ -57,6 +57,13 @@
       "when": 1728528189605,
       "tag": "0007_light_pretty_boy",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1728542095526,
+      "tag": "0008_fair_scorpion",
+      "breakpoints": true
     }
   ]
 }
