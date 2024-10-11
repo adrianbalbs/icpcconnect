@@ -10,21 +10,44 @@ import {
      getStudentScores,
      algorithm,
 } from "../algorithm/algorithm.js";
+import {
+     ContestRegistrationService
+} from "./index.js";
 
 export class AlgorithmService {
     private readonly db: DatabaseConnection;
+    private readonly contest_service: ContestRegistrationService;
   
-    constructor(db: DatabaseConnection) {
+    constructor(db: DatabaseConnection, conService: ContestRegistrationService) {
       this.db = db;
+      this.contest_service = conService;
     }
 
+/*
     async getStudentScores(req: StudentScoreRequest[]) {
      const scores = getStudentScores(req);
      return { scores };
     }
+*/
 
-    async getGroupings(req: RunGroupingRequest[]) {
-     const groups = algorithm(req);
+    async getGroupings() {
+     let { registrations } = await this.contest_service.getAllStudentRegistrations();
+     const new_registrations = registrations.map((registration) => ({
+          ...registration,
+          coursesCompleted: registration.coursesCompleted.map((course) => (
+               course.type
+          )),
+          languagesSpoken: registration.languagesSpoken.map((language) => (
+               language.name
+          )),
+          id: registration.student,
+          uniId: "",
+          paired_with: null,
+          markdone: false,
+     }));
+     const scores = getStudentScores(new_registrations);
+     const groups = algorithm(scores);
+
      return { groups };
     }
 

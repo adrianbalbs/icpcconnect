@@ -7,7 +7,7 @@
 export enum Experience {
     none,
     some,
-    prof
+    prof,
 }
 
 // MIGHT NOT BE USED
@@ -32,29 +32,37 @@ export enum Weights {
 /** Interfaces for Student Information and Scores **/
 
 export interface StudentInfo {
-    id: number,
-    uniId: number,
+    id: string,
+    uniId: string,
     contestExperience: number,
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
     codeforcesRating: number, // Refer to this: https://codeforces.com/blog/entry/68288
-    completedCourses : string[],
-    spokenLanguages: string[],
+    coursesCompleted : string[],
+    languagesSpoken: string[],
+    /*
     cppExperience: Experience,
     cExperience: Experience,
     javaExperience: Experience,
     pythonExperience: Experience,
+    */
+   //Might change back to numbered-enum
+    cppExperience:    "none" | "some" | "prof",
+    cExperience:      "none" | "some" | "prof",
+    javaExperience:   "none" | "some" | "prof",
+    pythonExperience: "none" | "some" | "prof",
 
-    paired_with: number | null,
+    paired_with: string | null,
     markdone: boolean
 }
 
+
 export interface StudentScore {
-    ids: number[],
+    ids: string[],
     studentScore: number,
 }
 
 export interface Group {
-    ids: number[],
+    ids: string[],
     totalScore: number
 }
 
@@ -80,7 +88,7 @@ export function calculateScore(s: StudentInfo): number {
 
     let courseScore = 0;
 
-    for (const course of s.completedCourses) {
+    for (const course of s.coursesCompleted) {
         switch (course) {
             case 'intro_computing':
                 courseScore += Courses.intro_computing;
@@ -117,7 +125,7 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
     const studentsScores: StudentScore[] = [];
 
     let score: StudentScore = {
-        ids: [-42],
+        ids: [],
         studentScore: -42
     }
 
