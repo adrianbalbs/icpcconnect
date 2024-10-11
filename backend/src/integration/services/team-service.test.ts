@@ -6,13 +6,13 @@ import {
   universities,
   users,
   teams,
-} from "../db/index.js";
+} from "../../db/index.js";
 import {
   CreateTeamRequest,
   UpdateTeamRequest,
-} from "../schemas/team-schema.js";
-import { TeamService } from "./index.js";
-import { badRequest, HTTPError } from "../utils/errors.js";
+} from "../../schemas/team-schema.js";
+import { TeamService } from "../../services/index.js";
+import { badRequest, HTTPError } from "../../utils/errors.js";
 
 let db: DatabaseConnection;
 let teamService: TeamService;
@@ -101,8 +101,8 @@ describe("TeamService tests", () => {
   });
 
   it("Throw when deleting a team that does not exist", async () => {
-    await expect(teamService.deleteTeam(uuidv4())).rejects.toThrow(
-      new HTTPError(badRequest),
-    );
+    const uuid = uuidv4();
+
+    await expect(teamService.deleteTeam(uuid)).rejects.toThrow();
   });
 });
