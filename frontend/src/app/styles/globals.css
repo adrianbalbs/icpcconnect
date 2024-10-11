@@ -1,22 +1,39 @@
-body {
-    font-family: Arial, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
-h1 {
-    font-size: 35px;
-    text-align: center;
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* h1 {
+  font-size: 35px;
+  text-align: center;
 }
 
 hr {
-    width: 230px;
-    color: lightgray;
-    margin: 10px;
-}
+  width: 230px;
+  color: lightgray;
+  margin: 10px;
+} */
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 select {
-    background-color: white;
+  background-color: white;
 }
