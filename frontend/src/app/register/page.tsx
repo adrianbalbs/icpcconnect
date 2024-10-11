@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SERVER_URL } from '@/utils/constants';
 import registerPage from '@/styles/Auth.module.css';
 import { useRouter } from 'next/navigation';
@@ -124,6 +124,13 @@ export default function Register() {
             }
         }
     }
+
+    useEffect(() => {
+        const role = localStorage.getItem('role');
+        if (role !== null) {
+            router.replace(role === 'student' ? '/team' : '/teams');
+        }
+    }, []);
 
     return (
         <>
