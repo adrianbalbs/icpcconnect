@@ -20,6 +20,8 @@ export default function Login() {
             }
             const res = await axios.post(`${SERVER_URL}/api/login`, payload);
             localStorage.setItem('token', res.data.token);
+            localStorage.setItem('role', res.data.role);
+            localStorage.setItem('id', res.data.id);
             router.push('/teams');
         } catch (error) {
             alert(error);

@@ -40,7 +40,7 @@ export class AuthService {
             const token = jwt.sign({ id: user[0].id, role: user[0].role }, SECRET_KEY, {
                 expiresIn: '2 days',
             });
-            return { token: token };
+            return { token: token, id: user[0].id, role: user[0].role };
         } else {
             throw new HTTPError(unauthorizedError)
         }
