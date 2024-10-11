@@ -6,7 +6,7 @@ import {
   users,
 } from "../db/index.js";
 import { CreateCoachRequest, UpdateCoachRequest } from "../schemas/index.js";
-import { badRequest, HTTPError } from "../utils/errors.js";
+import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import {
   DeleteResponse,
@@ -16,15 +16,15 @@ import {
 
 export type CoachProfileResponse = UserProfileResponse & {
   university: string;
-}
+};
 
-export type CoachProfileUpdateResponse =  UserProfileResponse & {
+export type CoachProfileUpdateResponse = UserProfileResponse & {
   university: number;
-}
+};
 
 export type AllCoachesResponse = {
   coaches: CoachProfileResponse[];
-}
+};
 
 export class CoachService {
   private readonly db: DatabaseConnection;
@@ -38,7 +38,7 @@ export class CoachService {
 
     const hashedPassword = await passwordUtils().hash(password);
 
-    const res = await this.db
+    const [res] = await this.db
       .insert(users)
       .values({
         givenName,
@@ -50,15 +50,15 @@ export class CoachService {
       .returning({ userId: users.id });
 
     await this.db.insert(coaches).values({
-      userId: res[0].userId,
+      userId: res.userId,
       university,
     });
 
-    return { userId: res[0].userId };
+    return { userId: res.userId };
   }
 
   async getCoachById(userId: string): Promise<CoachProfileResponse> {
-    const coach = await this.db
+    const [coach] = await this.db
       .select({
         id: users.id,
         givenName: users.givenName,
@@ -72,11 +72,14 @@ export class CoachService {
       .innerJoin(coaches, eq(users.id, coaches.userId))
       .innerJoin(universities, eq(universities.id, coaches.university));
 
-    if (!coach.length) {
-      throw new HTTPError(badRequest);
+    if (!coach) {
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Coach with id: ${userId} does not exist`,
+      });
     }
 
-    return coach[0];
+    return coach;
   }
 
   async getAllCoaches(): Promise<AllCoachesResponse> {
@@ -125,12 +128,15 @@ export class CoachService {
   }
 
   async deleteCoach(userId: string): Promise<DeleteResponse> {
-    const coach = await this.db
+    const [coach] = await this.db
       .select({ userId: users.id })
       .from(users)
       .where(eq(users.id, userId));
-    if (!coach.length) {
-      throw new HTTPError(badRequest);
+    if (!coach) {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Coach with id: ${userId} does not exist`,
+      });
     }
 
     await this.db.delete(users).where(eq(users.id, userId));

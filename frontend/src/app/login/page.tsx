@@ -1,16 +1,25 @@
 'use client'
-import loginPage from '../styles/Auth.module.css'
+import loginPage from '../styles/Auth.module.css';
 import Image from 'next/image';
 import logo from '../assets/logo.png';
 import axios from 'axios';
 import { SERVER_URL } from '../utils/constants';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 
 export default function Login() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const router = useRouter();
     const handleLogin = async () => {
         try {
-            const res = await axios.post(`${SERVER_URL}/store`);
+            const payload = {
+                email,
+                password,
+            }
+            const res = await axios.post(`${SERVER_URL}/api/login`, payload);
+            localStorage.setItem('token', res.data.token);
             router.push('/teams');
         } catch (error) {
             alert(error);
@@ -24,8 +33,8 @@ export default function Login() {
                 <Image src={logo} alt="" width={400} />
                 <br/>
                 <div className={loginPage['form-container']}>
-                    <input type="email" id="email" placeholder="Email" className={loginPage['input-field']} />
-                    <input type="password" id="password" placeholder="Password" className={loginPage['input-field']} />
+                    <input type="email" id="email" placeholder="Email" className={loginPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="password" id="password" placeholder="Password" className={loginPage['input-field']} value={password} onChange={(e) => setPassword(e.target.value)} />
                     <a href="/forgot-password" className={loginPage.link}>Forgot Password?</a>
                 </div>
                 <button onClick={handleLogin} className={`${loginPage['auth-button']} ${loginPage['dark']} ${loginPage['long']}`}>Login</button>
