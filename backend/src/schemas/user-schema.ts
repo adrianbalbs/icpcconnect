@@ -80,3 +80,10 @@ export const UpdateSiteCoordinatorRequestSchema =
 export type UpdateSiteCoordinatorRequest = z.infer<
   typeof UpdateSiteCoordinatorRequestSchema
 >;
+
+export const LoginRequestSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+})
+
+export type LoginRequest = z.infer<typeof LoginRequestSchema>;

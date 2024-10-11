@@ -42,26 +42,28 @@ export default function Register() {
                         givenName,
                         familyName,
                         role,
-                        university, // change this to uni_code later
+                        university,
                         email,
                         password,
                         verificationCode,
                         inviteCode,
                     };
-                    await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
+                    const res = await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
+                    localStorage.setItem('id', res.data.id);
                 } else if (roleName === "Coach") {
                     role = "coach";
                     const payload = {
                         givenName,
                         familyName,
                         role,
-                        university, // change this to uni_code later
+                        university,
                         email,
                         password,
                         verificationCode,
                         inviteCode,
                     };
-                    await axios.post(`${SERVER_URL}/api/coaches`, payload);
+                    const res = await axios.post(`${SERVER_URL}/api/coaches`, payload);
+                    localStorage.setItem('id', res.data.id);
                 } else {
                     role = "student";
                     const payload = {
@@ -74,12 +76,10 @@ export default function Register() {
                         email,
                         password,
                     };
-                    await axios.post(`${SERVER_URL}/api/students`, payload);
+                    const res = await axios.post(`${SERVER_URL}/api/students`, payload);
+                    localStorage.setItem('id', res.data.id);
                 }
                 localStorage.setItem('role', role);
-                console.log(role);
-                console.log(localStorage.getItem('role'));
-                // TODO: return id of user and go straight in
                 router.push('/teams');
             } else if (password !== confirmPassword) {
                 console.log("Passwords do not match");
