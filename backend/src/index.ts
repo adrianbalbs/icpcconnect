@@ -7,12 +7,14 @@ import {
   ContestRegistrationService,
   SiteCoordinatorService,
   StudentService,
+  AuthService,
 } from "./services/index.js";
 import {
   coachRouter,
   codesRouter,
   siteCoordinatorRouter,
   studentRouter,
+  authRouter,
 } from "./routers/index.js";
 import {
   errorHandlerMiddleware,
@@ -36,6 +38,7 @@ const siteCoordinatorService = new SiteCoordinatorService(databaseConnection);
 const contestRegistrationService = new ContestRegistrationService(
   databaseConnection,
 );
+const authService = new AuthService(databaseConnection);
 const codesService = new CodesService(databaseConnection);
 
 logger.info("Setup HTTP Server");
@@ -48,6 +51,7 @@ app
   .use("/api", coachRouter(coachService))
   .use("/api", siteCoordinatorRouter(siteCoordinatorService))
   .use("/api", contestRegistrationRouter(contestRegistrationService))
+  .use("/api", authRouter(authService))
   .use("/api", codesRouter(codesService))
   .use(errorHandlerMiddleware);
 

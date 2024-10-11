@@ -42,7 +42,7 @@ export default function Register() {
                         givenName,
                         familyName,
                         role,
-                        university, // change this to uni_code later
+                        university,
                         email,
                         password,
                         verificationCode,
@@ -55,7 +55,7 @@ export default function Register() {
                         givenName,
                         familyName,
                         role,
-                        university, // change this to uni_code later
+                        university,
                         email,
                         password,
                         verificationCode,
