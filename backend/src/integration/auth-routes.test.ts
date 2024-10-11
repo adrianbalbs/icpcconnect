@@ -9,7 +9,7 @@ import {
 import {
   authRouter,
   coachRouter,
-  siteCoordinatorRouter, 
+  siteCoordinatorRouter,
   studentRouter
 } from "../routers/index.js";
 import {
@@ -70,8 +70,8 @@ describe("authRouter tests", () => {
     expect(response.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "adrianbalbs@comp3900.com",
-        password: "helloworld"
+      email: "adrianbalbs@comp3900.com",
+      password: "helloworld"
     }
 
     const response2 = await request(app)
@@ -101,11 +101,11 @@ describe("authRouter tests", () => {
     expect(response.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "adrianbalbs@comp3900.com",
-        password: "wrongpass"
+      email: "adrianbalbs@comp3900.com",
+      password: "wrongpass"
     }
 
-    const response2 = await request(app)
+    await request(app)
       .post("/api/login")
       .send(req2)
       .expect(500);
@@ -129,11 +129,11 @@ describe("authRouter tests", () => {
     expect(response.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "jerryyang@comp3900.com",
-        password: "helloworld"
+      email: "jerryyang@comp3900.com",
+      password: "helloworld"
     }
 
-    const response2 = await request(app)
+    await request(app)
       .post("/api/login")
       .send(req2)
       .expect(500);
@@ -157,8 +157,8 @@ describe("authRouter tests", () => {
     expect(response1.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "adrianbalbs@comp3900.com",
-        password: "helloworld"
+      email: "adrianbalbs@comp3900.com",
+      password: "helloworld"
     }
 
     const response2 = await request(app)
@@ -187,11 +187,11 @@ describe("authRouter tests", () => {
     expect(response1.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "adrianbalbs@comp3900.com",
-        password: "wrongpass"
+      email: "adrianbalbs@comp3900.com",
+      password: "wrongpass"
     }
 
-    const response2 = await request(app)
+    await request(app)
       .post("/api/login")
       .send(req2)
       .expect(500);
@@ -215,11 +215,11 @@ describe("authRouter tests", () => {
     expect(response1.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "jerryyang@comp3900.com",
-        password: "helloworld"
+      email: "jerryyang@comp3900.com",
+      password: "helloworld"
     }
 
-    const response2 = await request(app)
+    await request(app)
       .post("/api/login")
       .send(req2)
       .expect(500);
@@ -244,8 +244,8 @@ describe("authRouter tests", () => {
     expect(response.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "adrianbalbs@comp3900.com",
-        password: "helloworld"
+      email: "adrianbalbs@comp3900.com",
+      password: "helloworld"
     }
 
     const response2 = await request(app)
@@ -275,11 +275,11 @@ describe("authRouter tests", () => {
     expect(response.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "adrianbalbs@comp3900.com",
-        password: "wrongpass"
+      email: "adrianbalbs@comp3900.com",
+      password: "wrongpass"
     }
 
-    const response2 = await request(app)
+    await request(app)
       .post("/api/login")
       .send(req2)
       .expect(500);
@@ -304,11 +304,11 @@ describe("authRouter tests", () => {
     expect(response.body).toHaveProperty("userId");
 
     const req2: LoginRequest = {
-        email: "jerryyang@comp3900.com",
-        password: "helloworld"
+      email: "jerryyang@comp3900.com",
+      password: "helloworld"
     }
 
-    const response2 = await request(app)
+    await request(app)
       .post("/api/login")
       .send(req2)
       .expect(500);

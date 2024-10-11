@@ -1,9 +1,9 @@
-import { eq, is } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { DatabaseConnection } from "../db/database.js";
 import { users } from "../db/schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { HTTPError, unauthorizedError } from "../utils/errors.js";
-import jwt, { Secret, JwtPayload } from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 
 export interface LoginRequest {
     email: string,

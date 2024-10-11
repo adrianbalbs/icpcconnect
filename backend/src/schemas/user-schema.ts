@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { passwordUtils } from "../utils/encrypt.js";
 
 const UserRoleEnum = z.enum(["student", "coach", "site_coordinator", "admin"]);
 export type UserRole = z.infer<typeof UserRoleEnum>;
