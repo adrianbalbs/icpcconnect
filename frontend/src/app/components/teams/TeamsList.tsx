@@ -5,7 +5,7 @@ import TeamCard from './TeamCard';
 
 const TeamsList: React.FC = () => {
   // const getTeams = async () => {
-  //   const res = await axios.get(`${SERVER_URL}/teams/all`);
+  //   const res = await axios.get(`${SERVER_URL}/api/teams/all`);
 
   // }
   return <div className={teamStyles.teams}>

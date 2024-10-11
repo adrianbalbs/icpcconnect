@@ -52,13 +52,14 @@ const StyledTab = styled((props: tabProps) => <Tab disableRipple {...props} />)(
 
 const Navbar: React.FC = () => {
   const [tab, setTab] = useState(-1);
+  const [tabAllowed, setTabAllowed] = useState('team');
   // const [initialLoad, setInitialLoad] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newTab: number) => {
     setTab(newTab);
-    router.push(`${tab === 1 ? '/teams' : '/members'}`);
+    router.push(tab === 1 ? `/${tabAllowed}` : '/members');
   };
 
   // useEffect(() => {
@@ -68,6 +69,12 @@ const Navbar: React.FC = () => {
 
   //   return () => clearTimeout(timeout);
   // }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem('role') !== 'student') {
+      setTabAllowed('teams');
+    }
+  }, []);
 
   useEffect(() => {
     pathname.includes('members') ? setTab(1) : setTab(0);
@@ -83,8 +90,8 @@ const Navbar: React.FC = () => {
         aria-label="tabs"
       >
         {/* { (!isStudent && <Tab sx={{ height: '60px', color: '#415478' }} value="teams" label="Teams"/>} */}
-        <StyledTab sx={{ height: '60px' }} label="Teams"/>
-        <StyledTab label="Members" />
+        <StyledTab sx={{ height: '60px' }} label={tabAllowed} />
+        <StyledTab label="members" />
       </StyledTabs>
     </Box>
   </div>
