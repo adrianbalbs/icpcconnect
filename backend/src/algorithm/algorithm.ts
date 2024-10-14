@@ -150,9 +150,9 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
                 ids: [s.id], 
                 studentScore: calculateScore(s),
                 cppExperience: s.cppExperience,
-                cExpericence: s.cppExperience,
-                javaExperience: s.cppExperience,
-                pythonExperience: s.cppExperience
+                cExpericence: s.cExpericence,
+                javaExperience: s.javaExperience,
+                pythonExperience: s.pythonExperience
             }
         }
 
@@ -170,7 +170,7 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
  * student scores.
  * 
  * @param studentsScores: StudentScore[]
- * @returns Groups[]
+ * @returns Group[]
  * 
  * TODO: 
  *  - Implement logic for team building based on coding language experience
@@ -187,18 +187,16 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
         }
 
         const stu1: StudentScore | undefined = studentsScores.pop();
-        if (stu1 === undefined) {
-            return groups;
-        }
+
+        // No more students
+        if (stu1 === undefined) { return groups; }
 
         // Stu1 = Pair
         if (stu1.ids.length == 2) {
-            const stu2 = findNextSingle(studentsScores);
+            const stu2 = getNext(studentsScores, stu1, null, true);
 
-            // No singular person exists to join this pair
-            if (stu2.studentScore == -1) {
-                continue;
-            }
+            // No singular person exists to join this pair meaning only pairs are left
+            if (stu2 == undefined) { return groups; }
 
             group.ids = stu1.ids.concat(stu2.ids);
             group.totalScore = (stu1.studentScore * 2) + stu2.studentScore;
@@ -206,11 +204,10 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
             continue;
         }
 
-        const stu2: StudentScore | undefined = studentsScores.pop();
-        if (stu2 === undefined) {
-            studentsScores.push(stu1);
-            return groups;
-        }
+        const stu2: StudentScore | undefined = getNext(studentsScores, stu1, null, false);
+        
+        // Stu1 has no compatible teammates
+        if (stu2 === undefined) { continue }
 
         // Stu1 = Single, Stu 2 = Pair
         if ((stu1.ids.length + stu2.ids.length) == 3) {
@@ -220,12 +217,10 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
             continue;
         }
 
-        const stu3: StudentScore | undefined = studentsScores.pop();
-        if (stu3 === undefined) {
-            studentsScores.push(stu1);
-            studentsScores.push(stu2); 
-            return groups;
-        }
+        const stu3: StudentScore | undefined = getNext(studentsScores, stu1, stu2, false);
+
+        // Stu1 with Stu2 has no compatible teammates
+        if (stu3 === undefined) { continue }
 
         // Stu1 = Single, Stu2 = Single, Stu3 = Single
         if ((stu1.ids.length + stu2.ids.length + stu3.ids.length) == 3) {
@@ -244,42 +239,53 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
             continue;
         }
 
-        // All cases exhausted, no other teams could be made
-        // Pushes the people back onto the array to see who
-        // could not be assigned
-        studentsScores.push(stu1);
-        studentsScores.push(stu2);
-        studentsScores.push(stu3);
         return groups;
     }
 }
 
-
 /**
- * findNextSingle
+ * getNext
  * 
- * Finds the next singular person within the scores, removes them from the list
- * returns that students details
+ * Returns the next studentScore that is compatible with one, or both, studentScores
+ * passed into this function. if needSingle is true, it returns the next studentScore
+ * that is a single person (not a pair).
  * 
+ * @param studentsScores StudentScore[]
+ * @param s1 StudentScore
+ * @param s2 StudentSCore
+ * @param needSingle boolean
  * @returns StudentScore
  */
-function findNextSingle(studentsScores: StudentScore[]): StudentScore {
-    for (let i = studentsScores.length - 1; i >= 0; i--) {
-        if (studentsScores[i].ids.length == 1) {
-            const student: StudentScore = studentsScores[i];
-            studentsScores.splice(i, 1);
-            return student;
+function getNext(studentsScores: StudentScore[], s1: StudentScore, s2: StudentScore | null, needSingle: boolean): StudentScore | undefined {
+    if (s2 == null) {
+        if (needSingle) {
+            for (let i = studentsScores.length - 1; i >= 0; i--) {
+                if (studentsScores[i].ids.length == 1 && isCompatible(studentsScores[i], s1)) {
+                    const student: StudentScore = studentsScores[i];
+                    studentsScores.splice(i, 1);
+                    return student;
+                }
+            }
+        } else {
+            for (let i = studentsScores.length - 1; i >= 0; i--) {
+                if (isCompatible(studentsScores[i], s1)) {
+                    const student: StudentScore = studentsScores[i];
+                    studentsScores.splice(i, 1);
+                    return student;
+                }
+            }
+        }
+    } else {
+        for (let i = studentsScores.length - 1; i >= 0; i--) {
+            if (isCompatible(studentsScores[i], s1) && isCompatible(studentsScores[i], s2)) {
+                const student: StudentScore = studentsScores[i];
+                studentsScores.splice(i, 1);
+                return student;
+            }
         }
     }
 
-    return {
-        ids: [],
-        studentScore: -1,
-        cppExperience: Experience.none,
-        cExpericence: Experience.none,
-        javaExperience: Experience.none,
-        pythonExperience: Experience.none
-    }
+    return undefined;
 }
 
 /**
@@ -293,26 +299,9 @@ function findNextSingle(studentsScores: StudentScore[]): StudentScore {
  * @param s2: StudentScore
  * @returns boolean
  */
-function isCompatible(s1: StudentScore, s2: StudentScore): boolean {
-    // C++ Check
-    if (s1.cppExperience > 0 && s2.cppExperience > 0) {
-        return true;
-    }
-
-    // C Check
-    if (s1.cExpericence > 0 && s2.cExpericence > 0) {
-        return true;
-    }
-
-    // Java Check
-    if (s1.javaExperience > 0 && s2.javaExperience > 0) {
-        return true;
-    }
-
-    // Python Check
-    if (s1.pythonExperience > 0 && s2.pythonExperience > 0) {
-        return true;
-    }
-
-    return false;
+export function isCompatible(s1: StudentScore, s2: StudentScore): boolean {
+    return (s1.pythonExperience > 0 && s2.pythonExperience > 0)
+        || (s1.javaExperience > 0 && s2.javaExperience > 0)
+        || (s1.cExpericence > 0 && s2.cExpericence > 0)
+        || (s1.cppExperience > 0 && s2.cppExperience > 0);
 }
