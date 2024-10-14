@@ -486,12 +486,11 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             leetcodeRating: 3000,
             codeforcesRating: 3000,
             completedCourses: [
-                "intro_computing",
-                "data_struct_and_algos",
-                "discrete_math",
-                "algorithms"
+                Courses.intro_computing,
+                Courses.data_struct_and_algos,
+                Courses.algorithm_design
             ],
-            spokenLanguages: [],
+            spokenLanguages: [1],
             cppExperience: Experience.prof,
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
