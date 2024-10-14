@@ -404,7 +404,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "discrete_math",
                 "algorithms"
             ],
-            spokenLanguages: [],
+            spokenLanguages: [1],
             cppExperience: Experience.none,
             cExpericence: Experience.prof,
             javaExperience: Experience.none,
