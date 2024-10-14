@@ -389,6 +389,65 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "discrete_math",
                 "algorithms"
             ],
+            spokenLanguages: [],
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none,
+    
+            paired_with: 4,
+            markdone: false
+        }
+
+        test_studentInfo.push(noCompat);
+
+        const CProf: StudentInfo = {
+            id: 4,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 1000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                "intro_computing",
+                "data_struct_and_algos",
+                "discrete_math",
+                "algorithms"
+            ],
+            spokenLanguages: [],
+            cppExperience: Experience.none,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none,
+    
+            paired_with: 3,
+            markdone: false
+        }
+
+        test_studentInfo.push(CProf);
+
+        const calcscores = getStudentScores(test_studentInfo);
+
+        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+    });
+
+    it("algorithm: Should return a singular team (Pair and Single)", () => {
+        const s3: StudentInfo = {
+            id: 3,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 3000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                "intro_computing",
+                "data_struct_and_algos",
+                "discrete_math",
+                "algorithms"
+            ],
+            spokenLanguages: [],
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
             spokenLanguages: [1],
             cppExperience: Experience.prof,
             cExpericence: Experience.prof,
