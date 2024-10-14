@@ -37,7 +37,7 @@ export interface StudentInfo {
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
     codeforcesRating: number, // Refer to this: https://codeforces.com/blog/entry/68288
     completedCourses : string[],
-    spokenLanguages: string[],
+    spokenLanguages: number[],
     cppExperience: Experience,
     cExpericence: Experience,
     javaExperience: Experience,
@@ -50,6 +50,7 @@ export interface StudentInfo {
 export interface StudentScore {
     ids: number[],
     studentScore: number,
+    spokenLanguages: number[],
     cppExperience: Experience,
     cExpericence: Experience,
     javaExperience: Experience,
@@ -122,6 +123,7 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
     let score: StudentScore = {
         ids: [-1],
         studentScore: -1,
+        spokenLanguages: [],
         cppExperience: Experience.none,
         cExpericence: Experience.none,
         javaExperience: Experience.none,
@@ -138,6 +140,9 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
                 ids: [s.id, p.id],
                 studentScore: (calculateScore(s) + calculateScore(p)) / 2,
 
+                // We combine them together, we do a set operation later anyways
+                spokenLanguages: s.spokenLanguages.concat(p.spokenLanguages),
+
                 // For pairs we consider the highest experience between the two
                 cppExperience: Math.max(s.cppExperience, p.cppExperience),
                 cExpericence: Math.max(s.cExpericence, p.cExpericence),
@@ -149,6 +154,7 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
             score = {
                 ids: [s.id], 
                 studentScore: calculateScore(s),
+                spokenLanguages: s.spokenLanguages,
                 cppExperience: s.cppExperience,
                 cExpericence: s.cExpericence,
                 javaExperience: s.javaExperience,
@@ -300,8 +306,12 @@ function getNext(studentsScores: StudentScore[], s1: StudentScore, s2: StudentSc
  * @returns boolean
  */
 export function isCompatible(s1: StudentScore, s2: StudentScore): boolean {
-    return (s1.pythonExperience > 0 && s2.pythonExperience > 0)
+    const sameCoding = (s1.pythonExperience > 0 && s2.pythonExperience > 0)
         || (s1.javaExperience > 0 && s2.javaExperience > 0)
         || (s1.cExpericence > 0 && s2.cExpericence > 0)
         || (s1.cppExperience > 0 && s2.cppExperience > 0);
+
+    const sameSpoken = s1.spokenLanguages.every(a => s2.spokenLanguages.includes(a));
+
+    return sameCoding && sameSpoken;
 }
