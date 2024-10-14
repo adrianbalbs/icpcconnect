@@ -5,9 +5,9 @@
 /** Enums **/
 
 export enum Experience {
-    none,
-    some,
-    prof
+    none = 0,
+    some = 1,
+    prof = 2,
 }
 
 // MIGHT NOT BE USED
@@ -22,12 +22,11 @@ export enum Courses {
 
 /** Weighting of Specific Values for Determining Score **/
 
-export enum Weights {
-    CONTEST_WEIGHT = 5,
-    LEET_WEIGHT = 4,
-    CODEFORCE_WEIGHT = 3,
-    COURSES_WEIGHT = 2,
-}
+const CONTEST_WEIGHT = 5;
+const LEET_WEIGHT = 4;
+const CODEFORCE_WEIGHT = 4;
+const COURSES_WEIGHT = 3;
+
 
 /** Interfaces for Student Information and Scores **/
 
@@ -51,6 +50,10 @@ export interface StudentInfo {
 export interface StudentScore {
     ids: number[],
     studentScore: number,
+    cppExperience: Experience,
+    cExpericence: Experience,
+    javaExperience: Experience,
+    pythonExperience: Experience,
 }
 
 export interface Group {
@@ -70,13 +73,13 @@ export interface Group {
  */
 export function calculateScore(s: StudentInfo): number {
     let score = 0;
-    score += s.contestExperience * Weights.CONTEST_WEIGHT;
+    score += s.contestExperience * CONTEST_WEIGHT;
     
     // Weight Leetcode Rating down from Range (Roughly Between 1 & 3)
-    score += (s.leetcodeRating / 1000) * Weights.LEET_WEIGHT;
+    score += (s.leetcodeRating / 1000) * LEET_WEIGHT;
 
     // Weight Codeforces Rating down from Range (Roughly Between 1 & 3)
-    score += (s.codeforcesRating / 1000) * Weights.CODEFORCE_WEIGHT;
+    score += (s.codeforcesRating / 1000) * CODEFORCE_WEIGHT;
 
     let courseScore = 0;
 
@@ -100,7 +103,7 @@ export function calculateScore(s: StudentInfo): number {
         }
     }
 
-    score += courseScore * Weights.COURSES_WEIGHT;
+    score += courseScore * COURSES_WEIGHT;
 
     return score;
 }
@@ -117,8 +120,12 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
     const studentsScores: StudentScore[] = [];
 
     let score: StudentScore = {
-        ids: [-42],
-        studentScore: -42
+        ids: [-1],
+        studentScore: -1,
+        cppExperience: Experience.none,
+        cExpericence: Experience.none,
+        javaExperience: Experience.none,
+        pythonExperience: Experience.none
     }
 
     for (const s of students) {
@@ -129,13 +136,23 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
             if (p == undefined) { return [score] } // Should never happen
             score = {
                 ids: [s.id, p.id],
-                studentScore: (calculateScore(s) + calculateScore(p)) / 2
+                studentScore: (calculateScore(s) + calculateScore(p)) / 2,
+
+                // For pairs we consider the highest experience between the two
+                cppExperience: Math.max(s.cppExperience, p.cppExperience),
+                cExpericence: Math.max(s.cExpericence, p.cExpericence),
+                javaExperience: Math.max(s.javaExperience, p.javaExperience),
+                pythonExperience: Math.max(s.pythonExperience, p.pythonExperience)
             }
             p.markdone = true; 
         } else {
             score = {
                 ids: [s.id], 
                 studentScore: calculateScore(s),
+                cppExperience: s.cppExperience,
+                cExpericence: s.cppExperience,
+                javaExperience: s.cppExperience,
+                pythonExperience: s.cppExperience
             }
         }
 
@@ -218,6 +235,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
             continue;
         }
         
+        // Stu1 - Single, Stu2 = Single, Stu3 = Pair
         if ((stu1.ids.length + stu2.ids.length + stu3.ids.length) == 4) {
             studentsScores.push(stu2);
             group.ids = stu1.ids.concat(stu3.ids);
@@ -257,5 +275,44 @@ function findNextSingle(studentsScores: StudentScore[]): StudentScore {
     return {
         ids: [],
         studentScore: -1,
+        cppExperience: Experience.none,
+        cExpericence: Experience.none,
+        javaExperience: Experience.none,
+        pythonExperience: Experience.none
     }
+}
+
+/**
+ * isScoreCompatible
+ * 
+ * Returns whether two StudentScores have compatible coding language experience.
+ * Both scores need to have at least Experience.Some or Experience.Prof in the
+ * same language to be considered as 'compatible'.
+ * 
+ * @param s1: StudentScore
+ * @param s2: StudentScore
+ * @returns boolean
+ */
+function isCompatible(s1: StudentScore, s2: StudentScore): boolean {
+    // C++ Check
+    if (s1.cppExperience > 0 && s2.cppExperience > 0) {
+        return true;
+    }
+
+    // C Check
+    if (s1.cExpericence > 0 && s2.cExpericence > 0) {
+        return true;
+    }
+
+    // Java Check
+    if (s1.javaExperience > 0 && s2.javaExperience > 0) {
+        return true;
+    }
+
+    // Python Check
+    if (s1.pythonExperience > 0 && s2.pythonExperience > 0) {
+        return true;
+    }
+
+    return false;
 }
