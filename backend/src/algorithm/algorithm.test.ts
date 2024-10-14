@@ -4,6 +4,7 @@ import {
     calculateScore,
     algorithm,
     getStudentScores,
+    isCompatible,
 } from "./algorithm.js"
 
 let test_studentInfo: StudentInfo[] = [];
@@ -27,10 +28,10 @@ beforeEach(() => {
             "prog_chal"
         ],
         spokenLanguages: [],
-        cppExperience: Experience.none,
-        cExpericence: Experience.none,
-        javaExperience: Experience.none,
-        pythonExperience: Experience.none,
+        cppExperience: Experience.prof,
+        cExpericence: Experience.prof,
+        javaExperience: Experience.prof,
+        pythonExperience: Experience.prof,
 
         paired_with: null,
         markdone: false
@@ -49,10 +50,10 @@ beforeEach(() => {
             "algorithms"
         ],
         spokenLanguages: [],
-        cppExperience: Experience.none,
-        cExpericence: Experience.none,
-        javaExperience: Experience.none,
-        pythonExperience: Experience.none,
+        cppExperience: Experience.prof,
+        cExpericence: Experience.prof,
+        javaExperience: Experience.prof,
+        pythonExperience: Experience.prof,
 
         paired_with: null,
         markdone: false
@@ -82,18 +83,18 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id],
             studentScore: calculateScore(s1),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
             studentScore: calculateScore(s2),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
 
         expect(s1.markdone).toBe(true)
@@ -111,10 +112,10 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s2.id],
             studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
 
         expect(s1.markdone).toBe(true)
@@ -135,10 +136,10 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "algorithms"
             ],
             spokenLanguages: [],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
     
             paired_with: s1.id,
             markdone: false
@@ -155,18 +156,18 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s3.id],
             studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
             studentScore: calculateScore(s2),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
 
         expect(s1.markdone).toBe(true)
@@ -174,8 +175,8 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(s3.markdone).toBe(true)
     });
 
-    it("algorithm: Should return a singular team (Pair and Single)", () => {
-        const s3: StudentInfo = {
+    it("isCompatible: Should test single students compatabilities", async () => {
+        const noCompat: StudentInfo = {
             id: 3,
             uniId: 1,
             contestExperience: 6,
@@ -193,6 +194,145 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             javaExperience: Experience.none,
             pythonExperience: Experience.none,
     
+            paired_with: null,
+            markdone: false
+        }
+
+        test_studentInfo.push(noCompat);
+
+        const CProf: StudentInfo = {
+            id: 4,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 1000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                "intro_computing",
+                "data_struct_and_algos",
+                "discrete_math",
+                "algorithms"
+            ],
+            spokenLanguages: [],
+            cppExperience: Experience.none,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none,
+    
+            paired_with: null,
+            markdone: false
+        }
+
+        test_studentInfo.push(CProf);
+
+        const JavaSome: StudentInfo = {
+            id: 5,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 1000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                "intro_computing",
+                "data_struct_and_algos",
+                "discrete_math",
+                "algorithms"
+            ],
+            spokenLanguages: [],
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.some,
+            pythonExperience: Experience.none,
+    
+            paired_with: null,
+            markdone: false
+        }
+
+        test_studentInfo.push(JavaSome);
+
+        const calcscores = getStudentScores(test_studentInfo);
+
+        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+        expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
+        expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
+        expect(isCompatible(calcscores[0], calcscores[4])).toBe(true);
+        expect(isCompatible(calcscores[3], calcscores[4])).toBe(false);
+    });
+
+    it("isCompatible: Should test pair students compatabilities", async () => {
+        s1.paired_with = s2.id;
+        s2.paired_with = s1.id;
+
+        const noCompat: StudentInfo = {
+            id: 3,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 3000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                "intro_computing",
+                "data_struct_and_algos",
+                "discrete_math",
+                "algorithms"
+            ],
+            spokenLanguages: [],
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none,
+    
+            paired_with: 4,
+            markdone: false
+        }
+
+        test_studentInfo.push(noCompat);
+
+        const CProf: StudentInfo = {
+            id: 4,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 1000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                "intro_computing",
+                "data_struct_and_algos",
+                "discrete_math",
+                "algorithms"
+            ],
+            spokenLanguages: [],
+            cppExperience: Experience.none,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none,
+    
+            paired_with: 3,
+            markdone: false
+        }
+
+        test_studentInfo.push(CProf);
+
+        const calcscores = getStudentScores(test_studentInfo);
+
+        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+    });
+
+    it("algorithm: Should return a singular team (Pair and Single)", () => {
+        const s3: StudentInfo = {
+            id: 3,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 3000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                "intro_computing",
+                "data_struct_and_algos",
+                "discrete_math",
+                "algorithms"
+            ],
+            spokenLanguages: [],
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
+    
             paired_with: s1.id,
             markdone: false
         }
@@ -208,18 +348,18 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s3.id],
             studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
             studentScore: calculateScore(s2),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
 
         expect(s1.markdone).toBe(true)
@@ -248,10 +388,10 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "algorithms"
             ],
             spokenLanguages: [],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
     
             paired_with: null,
             markdone: false
@@ -266,26 +406,26 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id],
             studentScore: calculateScore(s1),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
             studentScore: calculateScore(s2),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[2]).toEqual({
             ids: [s3.id],
             studentScore: calculateScore(s3),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
 
         expect(s1.markdone).toBe(true)
@@ -314,10 +454,10 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "algorithms"
             ],
             spokenLanguages: [],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
     
             paired_with: null,
             markdone: false
@@ -333,10 +473,10 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "intro_computing"
             ],
             spokenLanguages: [],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
     
             paired_with: null,
             markdone: false
@@ -352,34 +492,34 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id],
             studentScore: calculateScore(s1),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
             studentScore: calculateScore(s2),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[2]).toEqual({
             ids: [s3.id],
             studentScore: calculateScore(s3),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[3]).toEqual({
             ids: [s4.id],
             studentScore: calculateScore(s4),
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
 
         expect(s1.markdone).toBe(true)
@@ -409,10 +549,10 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "algorithms"
             ],
             spokenLanguages: [],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
     
             paired_with: 4,
             markdone: false
@@ -428,10 +568,10 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 "intro_computing"
             ],
             spokenLanguages: [],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
     
             paired_with: 3,
             markdone: false
@@ -450,18 +590,18 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s2.id],
             studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
         expect(calcscores[1]).toEqual({
             ids: [s3.id, s4.id],
             studentScore: (calculateScore(s3) + calculateScore(s4)) / 2,
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof
         })
 
         expect(s1.markdone).toBe(true)
