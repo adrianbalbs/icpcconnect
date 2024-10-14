@@ -66,7 +66,7 @@ afterEach(() => {
     test_studentInfo = [];
 });
   
-describe("Algorithm Unit Tests", () => {
+describe("Algorithm Score Calculation Unit Tests", () => {
     it("calculateScore: Should return true (s1.score > s2.score)", async () => {
         const score1 = calculateScore(s1);
         const score2 = calculateScore(s2);
@@ -81,11 +81,19 @@ describe("Algorithm Unit Tests", () => {
 
         expect(calcscores[0]).toEqual({
             ids: [s1.id],
-            studentScore: calculateScore(s1)
+            studentScore: calculateScore(s1),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
-            studentScore: calculateScore(s2)
+            studentScore: calculateScore(s2),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
 
         expect(s1.markdone).toBe(true)
@@ -102,7 +110,11 @@ describe("Algorithm Unit Tests", () => {
 
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s2.id],
-            studentScore: (calculateScore(s1) + calculateScore(s2)) / 2
+            studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
 
         expect(s1.markdone).toBe(true)
@@ -142,11 +154,19 @@ describe("Algorithm Unit Tests", () => {
 
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s3.id],
-            studentScore: (calculateScore(s1) + calculateScore(s3)) / 2
+            studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
-            studentScore: calculateScore(s2)
+            studentScore: calculateScore(s2),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
 
         expect(s1.markdone).toBe(true)
@@ -187,11 +207,19 @@ describe("Algorithm Unit Tests", () => {
 
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s3.id],
-            studentScore: (calculateScore(s1) + calculateScore(s3)) / 2
+            studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
-            studentScore: calculateScore(s2)
+            studentScore: calculateScore(s2),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
 
         expect(s1.markdone).toBe(true)
@@ -202,10 +230,8 @@ describe("Algorithm Unit Tests", () => {
 
         expect(groups.length).toEqual(1)
 
-        expect(groups[0]).toEqual({
-            ids: [s1.id, s3.id, s2.id],
-            totalScore: calculateScore(s1) + calculateScore(s2) + calculateScore(s3)
-        })
+        expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort())
+        expect(groups[0].totalScore).toEqual(calculateScore(s1) + calculateScore(s2) + calculateScore(s3))
     });
 
     it("algorithm: Should return a singular team (Three Singles)", () => {
@@ -239,15 +265,27 @@ describe("Algorithm Unit Tests", () => {
 
         expect(calcscores[0]).toEqual({
             ids: [s1.id],
-            studentScore: calculateScore(s1)
+            studentScore: calculateScore(s1),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
-            studentScore: calculateScore(s2)
+            studentScore: calculateScore(s2),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[2]).toEqual({
             ids: [s3.id],
-            studentScore: calculateScore(s3)
+            studentScore: calculateScore(s3),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
 
         expect(s1.markdone).toBe(true)
@@ -258,10 +296,8 @@ describe("Algorithm Unit Tests", () => {
 
         expect(groups.length).toEqual(1)
 
-        expect(groups[0]).toEqual({
-            ids: [s3.id, s1.id, s2.id],
-            totalScore: calculateScore(s1) + calculateScore(s2) + calculateScore(s3)
-        })
+        expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort())
+        expect(groups[0].totalScore).toEqual(calculateScore(s1) + calculateScore(s2) + calculateScore(s3))
     });
 
     it("algorithm: Should return a singular team (Four Singles (1 Excluded))", () => {
@@ -315,19 +351,35 @@ describe("Algorithm Unit Tests", () => {
 
         expect(calcscores[0]).toEqual({
             ids: [s1.id],
-            studentScore: calculateScore(s1)
+            studentScore: calculateScore(s1),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[1]).toEqual({
             ids: [s2.id],
-            studentScore: calculateScore(s2)
+            studentScore: calculateScore(s2),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[2]).toEqual({
             ids: [s3.id],
-            studentScore: calculateScore(s3)
+            studentScore: calculateScore(s3),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[3]).toEqual({
             ids: [s4.id],
-            studentScore: calculateScore(s4)
+            studentScore: calculateScore(s4),
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
 
         expect(s1.markdone).toBe(true)
@@ -339,10 +391,8 @@ describe("Algorithm Unit Tests", () => {
 
         expect(groups.length).toEqual(1)
 
-        expect(groups[0]).toEqual({
-            ids: [s3.id, s1.id, s2.id],
-            totalScore: calculateScore(s1) + calculateScore(s2) + calculateScore(s3)
-        })
+        expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort())
+        expect(groups[0].totalScore).toEqual(calculateScore(s1) + calculateScore(s2) + calculateScore(s3))
     });
 
     it("algorithm: Should return no teams (Two Pairs, both excluded)", () => {
@@ -399,11 +449,19 @@ describe("Algorithm Unit Tests", () => {
 
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s2.id],
-            studentScore: (calculateScore(s1) + calculateScore(s2)) / 2
+            studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
         expect(calcscores[1]).toEqual({
             ids: [s3.id, s4.id],
-            studentScore: (calculateScore(s3) + calculateScore(s4)) / 2
+            studentScore: (calculateScore(s3) + calculateScore(s4)) / 2,
+            cppExperience: Experience.none,
+            cExpericence: Experience.none,
+            javaExperience: Experience.none,
+            pythonExperience: Experience.none
         })
 
         expect(s1.markdone).toBe(true)
