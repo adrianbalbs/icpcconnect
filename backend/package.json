@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test:unit": "vitest --exclude='**/integration/**'",
+    "test:unit": "vitest --run --exclude='**/integration/**'",
     "test:integration": "./integration-test.sh",
     "test": "npm run test:unit && npm run test:integration",
     "test:ci": "npm run test:unit && npx vitest run --config vitest.config.integration.ts",
