@@ -6,7 +6,7 @@ import { getLogger } from "../utils/logger.js";
 
 dotenv.config();
 
-export type DatabaseConnection = ReturnType<typeof Database.getConnection>;
+export type DatabaseConnection = NodePgDatabase<typeof schema>;
 
 export class Database {
   private static instance: NodePgDatabase<typeof schema> | null;

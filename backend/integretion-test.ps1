@@ -5,7 +5,7 @@ $ErrorActionPreference = "Stop"
 
 function Cleanup {
     Write-Host "Cleaning up..."
-    docker compose --profile test down test-db
+    docker compose --profile test down -v test-db
     Write-Host "Environment cleaned up."
 }
 
@@ -30,14 +30,12 @@ try {
     $env:TEST_DB = "postgres://testuser:testpassword@localhost:5556/testdb"
 
     Write-Host "Running tests..."
-    $env:NODE_ENV = "test"
-    npm run db:migrate
 
     $PATTERN = $args[0]
     if (-not $PATTERN) {
         $PATTERN = '.*'
     }
-    $env:NODE_OPTIONS="--experimental-vm-modules"; npx jest --runInBand --config jest.config.integration.js --testPathPattern="$PATTERN"
+    npx vitest run --config vitest.config.integration.ts -t "${PATTERN}"
 }
 finally {
     Cleanup

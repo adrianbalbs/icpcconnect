@@ -27,7 +27,6 @@ export class AuthService {
       .from(users)
       .where(eq(users.email, email));
 
-    console.log(user);
     if (!user.length) {
       throw new HTTPError(unauthorizedError);
     }

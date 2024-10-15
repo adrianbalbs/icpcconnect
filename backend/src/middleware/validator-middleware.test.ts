@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { describe, beforeEach, it, expect, vi } from "vitest";
 import { NextFunction, Request, Response } from "express";
 import { validateData } from "./validator-middleware.js";
 import { badRequest } from "../utils/errors.js";
@@ -16,10 +17,10 @@ describe("validateData middleware", () => {
   beforeEach(() => {
     req = { body: {} };
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
     };
-    next = jest.fn();
+    next = vi.fn();
   });
 
   it("should call next() if the data is valid", () => {

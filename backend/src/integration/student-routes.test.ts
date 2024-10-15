@@ -1,27 +1,23 @@
+import { beforeAll, afterAll, afterEach, describe, expect, it } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
 import { StudentService } from "../services/index.js";
 import { studentRouter } from "../routers/index.js";
-import {
-  Database,
-  DatabaseConnection,
-  seed,
-  universities,
-  users,
-} from "../db/index.js";
+import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateStudentRequest,
   UpdateStudentRequest,
 } from "../schemas/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
+import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
 
 beforeAll(async () => {
-  db = Database.getConnection();
-  await seed(db);
+  const dbSetup = await setupTestDatabase();
+  db = dbSetup.db;
   app = express()
     .use(express.json())
     .use("/api", studentRouter(new StudentService(db)))
@@ -29,9 +25,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db.delete(users);
-  await db.delete(universities);
-  await Database.endConnection();
+  await dropTestDatabase();
 });
 
 describe("studentRouter tests", () => {

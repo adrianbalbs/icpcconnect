@@ -4,10 +4,10 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test:unit": "jest --testPathIgnorePatterns=integration",
+    "test:unit": "vitest --exclude='**/integration/**'",
     "test:integration": "./integration-test.sh",
     "test": "npm run test:unit && npm run test:integration",
-    "test:ci": "jest --testPathIgnorePatterns=integration && NODE_OPTIONS='--experimental-vm-modules' jest --runInBand --config jest.config.integration.js",
+    "test:ci": "npm run test:unit && npx vitest run --config vitest.config.integration.ts",
     "test:integration_windows": "powershell -ExecutionPolicy Bypass -File ./integretion-test.ps1",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
@@ -37,16 +37,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
-    "@jest/globals": "^29.7.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/eslint__js": "^8.42.3",
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.13",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
+    "@types/node": "^22.7.5",
     "@types/pg": "^8.11.10",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
@@ -56,12 +55,11 @@
     "drizzle-kit": "^0.24.2",
     "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
-    "jest": "^29.7.0",
     "prettier": "3.3.3",
     "supertest": "^7.0.0",
-    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
-    "typescript-eslint": "^8.8.0"
+    "typescript-eslint": "^8.8.0",
+    "vitest": "^2.1.3"
   }
 }

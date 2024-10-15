@@ -3,10 +3,11 @@
   "compilerOptions": {
     "rootDir": "./",
     "outDir": "./dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node", "vitest/globals"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "exclude": ["node_modules", "src/**/*.test.ts"]
   // "compilerOptions": {
   //   /* Visit https://aka.ms/tsconfig to read more about this file */
   //
