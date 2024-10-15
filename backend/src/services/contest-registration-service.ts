@@ -40,6 +40,8 @@ export type GetRegistrationFormResponse = {
 export type UpdateContestRegistrationFormResponse =
   UpdateContestRegistrationForm;
 
+export type Registrations = { registrations: GetRegistrationFormResponse[] };
+
 export class ContestRegistrationService {
   private readonly db: DatabaseConnection;
 
@@ -129,7 +131,7 @@ export class ContestRegistrationService {
     };
   }
 
-  async getAllStudentRegistrations() {
+  async getAllStudentRegistrations(): Promise<Registrations> {
     const registrations = await this.db.query.registrationDetails.findMany({
       with: {
         registeredBy: {
