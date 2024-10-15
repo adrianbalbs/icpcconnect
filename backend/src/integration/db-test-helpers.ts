@@ -4,15 +4,17 @@ import { v4 as uuidv4 } from "uuid";
 import pg from "pg";
 import { runMigrations } from "../db/migrate.js";
 import { seedTest } from "../db/seed.js";
+import dotenv from "dotenv";
 const { Pool } = pg;
 
+dotenv.config();
 async function createTestDatabase(dbName: string) {
   const pool = new Pool({
-    user: "testuser",
-    host: "localhost",
-    database: "testdb",
-    password: "testpassword",
-    port: 5556,
+    user: process.env.PG_TEST_USER,
+    host: process.env.PG_TEST_HOST,
+    password: process.env.PG_TEST_PW,
+    database: process.env.PG_TEST_DB,
+    port: process.env.PG_TEST_PORT as number | undefined,
   });
 
   await pool.query(`CREATE DATABASE ${dbName} WITH TEMPLATE template_test_db`);
@@ -21,11 +23,11 @@ async function createTestDatabase(dbName: string) {
 
 export async function dropTestDatabase() {
   const pool = new Pool({
-    user: "testuser",
-    host: "localhost",
-    database: "testdb",
-    password: "testpassword",
-    port: 5556,
+    user: process.env.PG_TEST_USER,
+    host: process.env.PG_TEST_HOST,
+    password: process.env.PG_TEST_PW,
+    database: process.env.PG_TEST_DB,
+    port: process.env.PG_TEST_PORT as number | undefined,
   });
 
   // this causes an error where the db is being used, not too sure of a fix yet
@@ -42,7 +44,7 @@ export async function setupTestDatabase() {
     user: "testuser",
     password: "testpassword",
     database: testDbName,
-    port: 5556,
+    port: process.env.PG_TEST_PORT as number | undefined,
   });
 
   const db = drizzle(pool, { schema });

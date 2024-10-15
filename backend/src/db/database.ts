@@ -12,10 +12,7 @@ export class Database {
   private static instance: NodePgDatabase<typeof schema> | null;
   private static pool: pg.Pool;
   private static logger = getLogger();
-  private static connectionString =
-    process.env.NODE_ENV === "test"
-      ? process.env.TEST_DB
-      : process.env.DATABASE_URL;
+  private static connectionString = process.env.DATABASE_URL;
 
   static getConnection() {
     if (!Database.instance) {
