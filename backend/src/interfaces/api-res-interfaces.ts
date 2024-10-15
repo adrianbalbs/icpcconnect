@@ -17,6 +17,15 @@ export type UserProfileResponse = {
   role: UserRole;
 };
 
+export type NewTeamResponse = {
+  id: number;
+  stuIds: number[];
+};
+
+export type GetTeamsResponse = {
+  teams: NewTeamResponse[];
+}
+
 export type DeleteResponse = {
   status: "OK";
 };
