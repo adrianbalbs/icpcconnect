@@ -37,7 +37,7 @@ try {
     if (-not $PATTERN) {
         $PATTERN = '.*'
     }
-    npx jest --runInBand --config jest.config.integration.js --testPathPattern="$PATTERN"
+    $env:NODE_OPTIONS="--experimental-vm-modules"; npx jest --runInBand --config jest.config.integration.js --testPathPattern="$PATTERN"
 }
 finally {
     Cleanup
