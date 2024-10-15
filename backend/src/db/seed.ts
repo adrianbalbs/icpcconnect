@@ -163,11 +163,3 @@ export const seed = async (db: DatabaseConnection) => {
     await db.insert(users).values(admin).onConflictDoNothing();
   }
 };
-
-export async function dropTestDatabase(db: DatabaseConnection) {
-  try {
-    await db.execute(sql`DROP DATABASE "testdb"`);
-  } catch (err) {
-    console.error(`An error occured while trying to drop the testdb: ${err}`);
-  }
-}
