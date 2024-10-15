@@ -24,7 +24,7 @@ export const users = pgTable("users", {
   givenName: varchar("given_name", { length: 35 }).notNull(),
   familyName: varchar("family_name", { length: 35 }).notNull(),
   password: varchar("password", { length: 128 }).notNull(),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   role: roleEnum("role").notNull(),
 });
 
