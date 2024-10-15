@@ -7,7 +7,7 @@
     "test:unit": "jest --testPathIgnorePatterns=integration",
     "test:integration": "./integration-test.sh",
     "test": "npm run test:unit && npm run test:integration",
-    "test:ci": "jest --testPathIgnorePatterns=integration && jest --runInBand --config jest.config.integration.js",
+    "test:ci": "jest --testPathIgnorePatterns=integration && NODE_OPTIONS='--experimental-vm-modules' jest --runInBand --config jest.config.integration.js",
     "test:integration_windows": "powershell -ExecutionPolicy Bypass -File ./integretion-test.ps1",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
