@@ -3,8 +3,8 @@ import * as schema from "../db/schema.js";
 import { v4 as uuidv4 } from "uuid";
 import pg from "pg";
 import { runMigrations } from "../db/migrate.js";
-import { seedTest } from "../db/seed.js";
 import dotenv from "dotenv";
+import { seedTest } from "../db/index.js";
 const { Pool } = pg;
 
 dotenv.config();
