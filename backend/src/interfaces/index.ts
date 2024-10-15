@@ -1,1 +1,1 @@
-export * from "./api-res-interfaces.js";
+export * from "./api-res.js";

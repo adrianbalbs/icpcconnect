@@ -18,9 +18,7 @@ export type CoachProfileResponse = UserProfileResponse & {
   university: string;
 };
 
-export type CoachProfileUpdateResponse = UserProfileResponse & {
-  university: number;
-};
+export type CoachProfileUpdateResponse = Omit<UpdateCoachRequest, "password">;
 
 export type AllCoachesResponse = {
   coaches: CoachProfileResponse[];
@@ -118,7 +116,6 @@ export class CoachService {
       .where(eq(coaches.userId, userId));
 
     return {
-      id: userId,
       role,
       givenName,
       familyName,

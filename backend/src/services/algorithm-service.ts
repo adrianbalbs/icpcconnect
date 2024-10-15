@@ -1,15 +1,13 @@
-import {
-  DatabaseConnection,
-} from "../db/index.js";
+import { DatabaseConnection } from "../db/index.js";
 
 export class AlgorithmService {
-    private readonly db: DatabaseConnection;
-  
-    constructor(db: DatabaseConnection) {
-      this.db = db;
-    }
+  private readonly db: DatabaseConnection;
 
-    /**
+  constructor(db: DatabaseConnection) {
+    this.db = db;
+  }
+
+  /**
      * TODO:
      * Create a call to get all students and their relevant
      * registration details.
@@ -35,7 +33,7 @@ export class AlgorithmService {
      * }
      */
 
-    /**
+  /**
      * TODO:
      * Create a call that puts a team into the DB/
      * Current format of algorithm return: Group[]
@@ -46,4 +44,4 @@ export class AlgorithmService {
      * }
      */
 }
-  
+
