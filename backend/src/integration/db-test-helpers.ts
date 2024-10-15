@@ -17,7 +17,7 @@ async function createTestDatabase(dbName: string) {
     port: process.env.PG_TEST_PORT as number | undefined,
   });
 
-  await pool.query(`CREATE DATABASE ${dbName} WITH TEMPLATE template_test_db`);
+  await pool.query(`CREATE DATABASE ${dbName} WITH TEMPLATE template1`);
   await pool.end();
 }
 
@@ -40,9 +40,9 @@ export async function setupTestDatabase() {
   await createTestDatabase(testDbName);
 
   const pool = new pg.Pool({
-    host: "localhost",
-    user: "testuser",
-    password: "testpassword",
+    user: process.env.PG_TEST_USER,
+    host: process.env.PG_TEST_HOST,
+    password: process.env.PG_TEST_PW,
     database: testDbName,
     port: process.env.PG_TEST_PORT as number | undefined,
   });

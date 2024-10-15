@@ -31,15 +31,6 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run lint
-      - name: Create Template Database
-        env:
-          PGHOST: ${{ secrets.PG_TEST_HOST }}
-          PGUSER: ${{ secrets.PG_TEST_USER }}
-          PGPASSWORD: ${{ secrets.PG_TEST_PW }}
-          PGDATABASE: ${{ secrets.PG_TEST_DB }}
-          PGPORT: ${{ secrets.PG_TEST_PORT }}
-        run: |
-          psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "CREATE DATABASE template_test_db WITH TEMPLATE template0 ENCODING 'UTF8';"
       - run: npm run test:ci
     env:
       NODE_ENV: test
