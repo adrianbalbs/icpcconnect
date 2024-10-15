@@ -1,3 +1,6 @@
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import { readFile } from "fs/promises";
 import { UserRole } from "../schemas/user-schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { getLogger } from "../utils/logger.js";
@@ -12,6 +15,7 @@ import {
   universities,
   users,
 } from "./schema.js";
+import { sql } from "drizzle-orm";
 
 type UserTable = {
   givenName: string;
@@ -103,52 +107,67 @@ const addCoach = async (
   });
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+async function readJsonFile(path: string) {
+  try {
+    const filePath = join(__dirname, path);
+    const data = await readFile(filePath, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading JSON file:", error);
+    throw error;
+  }
+}
+
 export const seed = async (db: DatabaseConnection) => {
   const logger = getLogger();
-  const data = await import("../../seed-data/seed.json", {
-    assert: { type: "json" },
-  });
-
+  const data = await readJsonFile("../../seed-data/seed.json");
   logger.info("Seeding University and Site information");
-  await db
-    .insert(universities)
-    .values(data.default.universities)
-    .onConflictDoNothing();
+  await db.insert(universities).values(data.universities).onConflictDoNothing();
 
   logger.info("Seeding Course Information");
   await db
     .insert(courses)
-    .values(data.default.courses as Course[])
+    .values(data.courses as Course[])
     .onConflictDoNothing();
 
   logger.info("Seeding Language Information");
   await db
     .insert(spokenLanguages)
-    .values(data.default.spokenLanguages)
+    .values(data.spokenLanguages)
     .onConflictDoNothing();
 
   logger.info("Adding dummy students");
-  const students = data.default.students as StudentTable[];
+  const students = data.students as StudentTable[];
   for (const student of students) {
     await addStudent(db, student);
   }
 
   logger.info("Adding dummy coaches");
-  const coaches = data.default.coaches as CoachTable[];
+  const coaches = data.coaches as CoachTable[];
   for (const coach of coaches) {
     await addCoach(db, coach);
   }
 
   logger.info("Adding dummy site coordinators");
-  const siteCoordinators = data.default
-    .siteCoordinators as SiteCoordinatorTable[];
+  const siteCoordinators = data.siteCoordinators as SiteCoordinatorTable[];
   for (const siteCoordinator of siteCoordinators) {
     await addSiteCoordinator(db, siteCoordinator);
   }
 
   logger.info("Adding default admin");
-  const admins = data.default.admins as UserTable[];
+  const admins = data.admins as UserTable[];
   for (const admin of admins) {
     await db.insert(users).values(admin).onConflictDoNothing();
   }
 };
+
+export async function dropTestDatabase(db: DatabaseConnection) {
+  try {
+    await db.execute(sql`DROP DATABASE "testdb"`);
+  } catch (err) {
+    console.error(`An error occured while trying to drop the testdb: ${err}`);
+  }
+}

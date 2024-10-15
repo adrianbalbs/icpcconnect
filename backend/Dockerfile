@@ -18,6 +18,7 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/drizzle.config.ts ./
 
 COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /app/seed-data ./dist/seed-data
 
 # Set environment variables if needed
 # ENV NODE_ENV=production

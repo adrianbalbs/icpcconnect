@@ -29,4 +29,4 @@ docker compose --profile test up -d test-db
 wait_for_postgres
 
 NODE_ENV="test" npm run db:migrate
-npx jest --runInBand --config jest.config.integration.js --testPathPattern="${PATTERN}"
+NODE_OPTIONS="--experimental-vm-modules" npx jest --runInBand --config jest.config.integration.js --testPathPattern="${PATTERN}"
