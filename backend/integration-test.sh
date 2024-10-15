@@ -2,6 +2,8 @@
 
 set -e
 
+PATTERN=$1
+
 cleanup() {
     echo "Cleaning up..."
     docker compose --profile test down test-db
@@ -26,6 +28,5 @@ docker compose --profile test up -d test-db
 
 wait_for_postgres
 
-echo "Running tests..."
 NODE_ENV="test" npm run db:migrate
-npx jest --runInBand integration/
+npx jest --runInBand --config jest.config.integration.js --testPathPattern="${PATTERN}"

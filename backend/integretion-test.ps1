@@ -32,7 +32,12 @@ try {
     Write-Host "Running tests..."
     $env:NODE_ENV = "test"
     npm run db:migrate
-    npx jest --runInBand integration/
+
+    $PATTERN = $args[0]
+    if (-not $PATTERN) {
+        $PATTERN = '.*'
+    }
+    npx jest --runInBand --config jest.config.integration.js --testPathPattern="$PATTERN"
 }
 finally {
     Cleanup
