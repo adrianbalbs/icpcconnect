@@ -12,7 +12,7 @@ import {
   Level,
   UpdateContestRegistrationForm,
 } from "../schemas/index.js";
-import { DeleteResponse } from "../interfaces/index.js";
+import { DeleteResponse } from "../types/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { eq } from "drizzle-orm";
 

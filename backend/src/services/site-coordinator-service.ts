@@ -9,7 +9,7 @@ import {
   DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/index.js";
+} from "../types/index.js";
 import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,

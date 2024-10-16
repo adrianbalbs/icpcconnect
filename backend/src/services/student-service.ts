@@ -16,7 +16,7 @@ import {
   DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/api-res.js";
+} from "../types/api-res.js";
 
 export type StudentProfileResponse = UserProfileResponse & {
   university: string;

@@ -12,7 +12,7 @@ import {
   DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/index.js";
+} from "../types/index.js";
 
 export type CoachProfileResponse = UserProfileResponse & {
   university: string;
