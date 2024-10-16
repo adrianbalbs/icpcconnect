@@ -21,7 +21,6 @@ const Menu: React.FC = () => {
 
   const storeInfo = async () => {
     const data = await getInfo(localStorage.getItem('id'));
-    console.log(data);
     if (data !== undefined) {
       setInfo({ role: data.sideInfo.role, name: data.sideInfo.name });
     }
@@ -34,7 +33,7 @@ const Menu: React.FC = () => {
   return <div className={styles.menu}>
     <Tooltip title="Account profile">
       <IconButton onClick={handleClick} sx={{ height: '55px', width: '55px' }}>
-        <Avatar>Y</Avatar>
+        <Avatar>{info.name.charAt(0)}</Avatar>
       </IconButton>
     </Tooltip>
     <div className={styles['pfp-label']}>

@@ -26,11 +26,13 @@
 
 .name {
   margin-top: 10px;
+  height: 42px;
   font-size: 28px;
 }
 
 .role {
   margin: 3px 0 40px;
+  height: 21px;
   font-size: 14px;
 }
 
@@ -104,8 +106,9 @@
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  font-size: 15px;
+  font-size: 14px;
   text-align: right;
+  color: #262626ff;
 }
 
 .pfp-role {

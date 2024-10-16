@@ -25,9 +25,8 @@ export const getInfo = async (id: string | null) => {
   if (id === current.id) return current;
 
   try {
-    const res = await axios.get(`${SERVER_URL}/api/students/${id}`);
-    const data: StudentInfo = res.data.info;
-    console.log(data);
+    const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
+    const data: StudentInfo = res.data;
     const infoObject = { name: `${data.givenName} ${data.familyName}`, ...data };
     current.sideInfo = {
       name: infoObject.name,
@@ -40,4 +39,9 @@ export const getInfo = async (id: string | null) => {
   } catch (error) {
     console.log(error);
   }
+}
+
+export const capitalise = (name: string) => {
+  if (!name) return name;
+  return name.charAt(0).toUpperCase() + name.slice(1);
 }

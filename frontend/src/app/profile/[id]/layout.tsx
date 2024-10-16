@@ -19,7 +19,7 @@ interface ProfileLayoutProps {
 
 const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
   const router = useRouter();
-  const [info, setInfo] = useState({ name: 'Rachel Chen', role: 'admin', pronouns: 'she/her' });
+  const [info, setInfo] = useState({ name: '', role: '', pronouns: '' });
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
@@ -31,8 +31,9 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
   useEffect(() => { 
     if (localStorage.getItem('role') === null) {
       router.replace('/login');
+    } else {
+      storeInfo();
     }
-    storeInfo();
    }, [params.id]);
 
   return (
@@ -40,7 +41,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
       <div className={profileStyles['side-screen']}>
         <Image src={image} alt='pfp' className={profileStyles.pfp} />
         <h1 className={profileStyles.name}>{info.name}</h1>
-        <p className={profileStyles.role}>{`${info.role} • ${info.pronouns}`}</p>
+        <p className={profileStyles.role}>{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ''}`}</p>
         <Sidebar id={params.id} />
       </div>
       <IconButton sx={{ marginTop: '40px' }} onClick={() => router.push('/members')}>
