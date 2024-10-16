@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
       >
         {/* { (!isStudent && <Tab sx={{ height: '60px', color: '#415478' }} value="teams" label="Teams"/>} */}
         <StyledTab sx={{ height: '60px' }} label={tabAllowed} />
-        <StyledTab label="members" />
+        {tabAllowed === 'teams' && <StyledTab label="members" />}
       </StyledTabs>
     </Box>
     <Menu />

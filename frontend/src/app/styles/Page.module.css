@@ -39,6 +39,7 @@
   width: 100vw;
   background-color: #E4EEFF;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1;
 }
 
 .waiting-screen {

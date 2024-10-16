@@ -22,7 +22,7 @@ export default function Login() {
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('role', res.data.role);
             localStorage.setItem('id', res.data.id);
-            router.push('/teams');
+            router.push(localStorage.getItem('role') === 'student' ? 'team' : 'teams');
         } catch (error) {
             alert(error);
         }
