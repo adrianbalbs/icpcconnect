@@ -3,6 +3,8 @@ import {
   DatabaseConnection,
   teams,
   students,
+  universities,
+  users,
 } from "../db/index.js";
 import {
   CreateTeamRequest,
@@ -54,6 +56,35 @@ export class TeamService {
     }
 
     return team;
+  }
+
+  async getTeamByStudent(studentId: string) {
+    const [team] = await this.db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        university: universities.name
+      })
+      .from(students)
+      .where(eq(students.userId, studentId))
+      .innerJoin(universities, eq(universities.id, students.university))
+      .leftJoin(teams, eq(teams.id, students.team));
+
+    if (team == undefined) {
+      throw new HTTPError(badRequest);
+    }
+
+    const members = await this.db
+      .select({
+        id: users.id,
+        givenName: users.givenName,
+        familyName: users.familyName,
+      })
+      .from(students)
+      .where(eq(students.team, String(team.id)))
+      .innerJoin(users, eq(users.id, students.userId));
+    
+    return { ...team, members };
   }
 
   async getAllTeams() {

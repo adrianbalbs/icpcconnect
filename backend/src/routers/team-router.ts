@@ -34,6 +34,22 @@ export function teamRouter(teamService: TeamService) {
         }
       },
     )
+    .get(
+      "/teams/student/:id",
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const team = await teamService.getTeamByStudent(id);
+          res.status(200).json(team);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .delete(
       "/teams/:id",
       async (
