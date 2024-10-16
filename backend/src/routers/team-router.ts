@@ -10,7 +10,7 @@ import { TeamService } from "../services/index.js";
 
 export function teamRouter(teamService: TeamService) {
   return Router()
-    .get("/all", async (_req: Request, res: Response, next: NextFunction) => {
+    .get("/teams/all", async (_req: Request, res: Response, next: NextFunction) => {
       try {
         const teams = await teamService.getAllTeams();
         res.status(200).json(teams);
@@ -19,7 +19,7 @@ export function teamRouter(teamService: TeamService) {
       }
     })
     .get(
-      "/:id",
+      "/teams/:id",
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -35,7 +35,7 @@ export function teamRouter(teamService: TeamService) {
       },
     )
     .delete(
-      "/:id",
+      "/teams/:id",
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -51,8 +51,8 @@ export function teamRouter(teamService: TeamService) {
       },
     )
     .post(
-      "/register",
-      validateData(CreateTeamRequestSchema),
+      "/teams/register",
+      validateData(CreateTeamRequestSchema, "body"),
       async (
         req: Request<Record<string, never>, unknown, CreateTeamRequest>,
         res: Response,
@@ -68,8 +68,8 @@ export function teamRouter(teamService: TeamService) {
       },
     )
     .put(
-      "/update/:id",
-      validateData(UpdateTeamRequestSchema),
+      "/teams/update/:id",
+      validateData(UpdateTeamRequestSchema, "body"),
       async (
         req: Request<{ id: string }, unknown, UpdateTeamRequest>,
         res: Response,
