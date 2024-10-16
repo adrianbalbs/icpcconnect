@@ -6,13 +6,19 @@ import TeamsList from '../components/teams/TeamsList';
 import WaitingScreen from '../components/teams/WaitingScreen';
 import CircularProgress from '@mui/material/CircularProgress';
 
+const statusStrings = [
+  'Waiting for students to register...',
+  'Waiting for all teams to be allocated...',
+  'All teams'
+];
+
 const Teams: React.FC = () => {
-  const [status, setStatus] = useState('Waiting for students to register...');
+  const [status, setStatus] = useState(0);
 
   useEffect(() => {
-    if (status === 'Waiting for all teams to be allocated...') {
+    if (status === 1) {
       const timeout = setTimeout(() => {
-        setStatus('All teams');
+        setStatus(2);
       }, 3000);
   
       return () => clearTimeout(timeout);
@@ -22,11 +28,11 @@ const Teams: React.FC = () => {
 
 
   return <div className={pageStyles.screen}>
-    <h1 className={pageStyles.bold}>{status}</h1>
+    <h1 className={pageStyles.bold}>{statusStrings[status]}</h1>
     <hr className={pageStyles.divider}/>
-    {status.includes('register') && <WaitingScreen setStatus={setStatus}/>}
-    {status.includes('allocated') && <div className={pageStyles['waiting-screen']}><CircularProgress /></div>}
-    {status === 'All teams' && <TeamsList />}
+    {status === 0 && <WaitingScreen setStatus={setStatus}/>}
+    {status === 1 && <div className={pageStyles['waiting-screen']}><CircularProgress /></div>}
+    {status === 2 && <TeamsList />}
   </div>;
 }
 

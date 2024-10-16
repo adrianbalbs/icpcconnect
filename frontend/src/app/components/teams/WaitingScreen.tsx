@@ -4,23 +4,37 @@ import { Button } from '@mui/material';
 import { purpleBtn } from '@/styles/Overriding';
 
 interface WaitingProps {
-  setStatus: Dispatch<SetStateAction<string>>;
+  setStatus: Dispatch<SetStateAction<number>>;
 }
 
 const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
+  const [role, setRole] = useState<string | null>('student');
   const [access, setAccess] = useState(false);
+  
+  const nextStatus = () => {
+    setStatus(1);
+  }
 
   useEffect(() => {
     if (localStorage.getItem('role') === 'admin') {
       setAccess(true);
     }
+    setRole(localStorage.getItem('role'));
   }, []);
 
   return <div className={pageStyles['waiting-screen']}>
-    <p>Enrolment for team allocation closes at <span className={pageStyles.bold}>12.00pm xx.xx.xxxx</span></p>
-    <p>Coach review opens for 3 days starting from <span className={pageStyles.bold}>12.00pm xx.xx.xxxx</span></p>
+    <p>
+      Enrolment for team allocation closes at 
+      <span className={pageStyles.bold}>12.00pm xx.xx.xxxx</span>
+    </p>
+    {role === 'coach' && 
+      <p>
+        Coach review opens for 3 days starting from
+        <span className={pageStyles.bold}>12.00pm xx.xx.xxxx</span>
+      </p>
+    }
     <p>Finalised team allocations will be released after <span className={pageStyles.bold}>12.00pm xx.xx.xxxx</span></p>
-    {access && <Button sx={{ ...purpleBtn, marginTop: '15px' }} onClick={() => setStatus('Waiting for all teams to be allocated...')}>Allocate Teams</Button>}
+    {access && <Button sx={{ ...purpleBtn, marginTop: '15px' }} onClick={nextStatus}>Allocate Teams</Button>}
   </div>
 }
 
