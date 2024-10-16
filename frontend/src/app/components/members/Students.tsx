@@ -54,9 +54,7 @@ const Students: React.FC = () => {
         <p>Email</p>
       </div>
       <hr className={pageStyles.divider} />
-      {students.map((student) => (
-        <Student key={student.id} {...student} />
-      ))}
+      {students.map((student) => <Student key={student.id} {...student} />)}
       {/* <div className={`${memberStyles.students} ${memberStyles.space}`}>
       <p>Rachel Chen</p>
       <p>Randos</p>
