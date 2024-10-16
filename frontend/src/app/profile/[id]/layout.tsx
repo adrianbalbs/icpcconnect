@@ -44,7 +44,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
         <p className={profileStyles.role}>{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ''}`}</p>
         <Sidebar id={params.id} />
       </div>
-      <IconButton sx={{ marginTop: '40px' }} onClick={() => router.push('/members')}>
+      <IconButton sx={{ marginTop: '40px' }} onClick={() => router.back()}>
         <ArrowBackIosIcon />
       </IconButton>
       {children}

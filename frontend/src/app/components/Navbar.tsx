@@ -52,7 +52,7 @@ const StyledTab = styled((props: tabProps) => <Tab disableRipple {...props} />)(
 );
 
 const Navbar: React.FC = () => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(2);
   const [tabAllowed, setTabAllowed] = useState('team');
   // const [initialLoad, setInitialLoad] = useState(true);
   const pathname = usePathname();
@@ -80,8 +80,10 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (pathname.includes('team')) {
       setTab(0);
-    } else {
+    } else if (pathname.includes('members')) {
       setTab(1);
+    } else {
+      setTab(2);
     }
   }, [pathname]);
 
