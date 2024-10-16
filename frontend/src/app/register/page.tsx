@@ -77,7 +77,7 @@ export default function Register() {
                         password,
                     };
                     const res = await axios.post(`${SERVER_URL}/api/students`, payload);
-                    localStorage.setItem('id', res.data.id);
+                    localStorage.setItem('id', res.data.userId);
                 }
                 localStorage.setItem('role', role);
                 router.push(role === 'student' ? '/team' : '/teams');
