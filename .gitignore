@@ -1,2 +1,4 @@
 .env
 .idea/
+package.json
+package-lock.json

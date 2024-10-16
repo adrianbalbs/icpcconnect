@@ -1,14 +1,6 @@
 import request from "supertest";
 import express from "express";
-import {
-  courses,
-  Database,
-  DatabaseConnection,
-  seed,
-  spokenLanguages,
-  universities,
-  users,
-} from "../db/index.js";
+import { DatabaseConnection, users } from "../db/index.js";
 import { studentRouter } from "../routers/index.js";
 import {
   ContestRegistrationService,
@@ -23,13 +15,17 @@ import {
   UpdateContestRegistrationForm,
 } from "../schemas/index.js";
 import { v4 as uuidv4 } from "uuid";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
 
+let dbName: string;
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
 
 beforeAll(async () => {
-  db = Database.getConnection();
-  await seed(db);
+  const dbSetup = await setupTestDatabase();
+  dbName = dbSetup.testDbName;
+  db = dbSetup.db;
   app = express()
     .use(express.json())
     .use("/api", studentRouter(new StudentService(db)))
@@ -37,11 +33,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db.delete(users);
-  await db.delete(universities);
-  await db.delete(spokenLanguages);
-  await db.delete(courses);
-  await Database.endConnection();
+  await dropTestDatabase(dbName);
 });
 
 describe("contestRegistrationRouter tests", () => {

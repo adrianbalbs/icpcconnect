@@ -16,10 +16,14 @@ to it. Integration tests are stored in the `src/integration` folder and are used
 code that interacts with the database/other modules as a whole.
 
 To run the integration tests, make an `.env` folder in the root directory of this folder. Then add the
-following environment variable:
+following environment variables:
 
 ```txt
-TEST_DB=postgres://testuser:testpassword@localhost:5556/testdb
+PG_TEST_USER=testuser
+PG_TEST_HOST=localhost
+PG_TEST_PW=testpassword
+PG_TEST_DB=testdb
+PG_TEST_PORT=5556
 ```
 
 Then you can run
@@ -31,7 +35,7 @@ npm run test:integration
 To run all tests use:
 
 ```txt
-npm run test:all
+npm run test
 ```
 
 For unit tests, use:

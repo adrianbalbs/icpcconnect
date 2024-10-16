@@ -1,27 +1,23 @@
+import { describe, afterEach, beforeAll, afterAll, it, expect } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
 import { SiteCoordinatorService } from "../services/index.js";
 import { siteCoordinatorRouter } from "../routers/index.js";
-import {
-  Database,
-  DatabaseConnection,
-  seed,
-  universities,
-  users,
-} from "../db/index.js";
+import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,
 } from "../schemas/user-schema.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
+import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
 
 beforeAll(async () => {
-  db = Database.getConnection();
-  await seed(db);
+  const dbSetup = await setupTestDatabase();
+  db = dbSetup.db;
   app = express()
     .use(express.json())
     .use("/api", siteCoordinatorRouter(new SiteCoordinatorService(db)))
@@ -29,9 +25,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db.delete(users);
-  await db.delete(universities);
-  await Database.endConnection();
+  await dropTestDatabase();
 });
 
 describe("siteCoordinatorRouter tests", () => {

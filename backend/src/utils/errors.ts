@@ -1,4 +1,4 @@
-import { IHttpError } from "../interfaces/index.js";
+import { IHttpError } from "../types/index.js";
 
 export class HTTPError extends Error implements IHttpError {
   errorCode: number;

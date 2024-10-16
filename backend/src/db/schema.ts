@@ -24,7 +24,7 @@ export const users = pgTable("users", {
   givenName: varchar("given_name", { length: 35 }).notNull(),
   familyName: varchar("family_name", { length: 35 }).notNull(),
   password: varchar("password", { length: 128 }).notNull(),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   role: roleEnum("role").notNull(),
 });
 
@@ -280,18 +280,22 @@ export const teamRelations = relations(teams, ({ many, one }) => ({
 
 export type Team = InferSelectModel<typeof teams>;
 
-export const inviteCodes = pgTable('invite_codes', {
-  code: integer('code').notNull(),
-  role: integer('role').notNull(),
-  createdAt: timestamp('created_at::timestamp without time zone').notNull().defaultNow(),
+export const inviteCodes = pgTable("invite_codes", {
+  code: integer("code").notNull(),
+  role: integer("role").notNull(),
+  createdAt: timestamp("created_at::timestamp without time zone")
+    .notNull()
+    .defaultNow(),
 });
 
-export type InviteCodes = InferSelectModel<typeof inviteCodes>
+export type InviteCodes = InferSelectModel<typeof inviteCodes>;
 
-export const authCodes = pgTable('auth_codes', {
-  code: integer('code').notNull(),
-  email: text('email').notNull(),
-  createdAt: timestamp('created_at::timestamp without time zone').notNull().defaultNow(),
+export const authCodes = pgTable("auth_codes", {
+  code: integer("code").notNull(),
+  email: text("email").notNull(),
+  createdAt: timestamp("created_at::timestamp without time zone")
+    .notNull()
+    .defaultNow(),
 });
 
-export type AuthCodes = InferSelectModel<typeof authCodes>
+export type AuthCodes = InferSelectModel<typeof authCodes>;

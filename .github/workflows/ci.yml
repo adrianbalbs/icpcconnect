@@ -31,11 +31,15 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run lint
-      - run: npm run db:migrate
       - run: npm run test:ci
     env:
       NODE_ENV: test
       TEST_DB: postgres://postgres:postgres@localhost:5432/postgres
+      PG_TEST_HOST: localhost
+      PG_TEST_USER: postgres
+      PG_TEST_PW: postgres
+      PG_TEST_DB: postgres
+      PG_TEST_PORT: 5432
   frontend-ci:
     runs-on: ubuntu-latest
     defaults:
