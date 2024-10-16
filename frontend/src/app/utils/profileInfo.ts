@@ -4,12 +4,14 @@ import { StudentInfo } from '@/components/members/Students';
 
 interface Info {
   id: string;
+  university: string;
   info: [string, string | number][];
   sideInfo: { name: string; role: string; pronouns: string; };
 }
 
 const current: Info = {
   id: '',
+  university: '',
   info: [],
   sideInfo: {
     name: '',
@@ -28,13 +30,15 @@ export const getInfo = async (id: string | null) => {
     const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
     const data: StudentInfo = res.data;
     const infoObject = { name: `${data.givenName} ${data.familyName}`, ...data };
+    const infoArr = Object.entries(infoObject).filter(i => !infoToRemove.includes(i[0]));
+    current.id = data.id;
+    current.university = data.university;
+    current.info = infoArr;
     current.sideInfo = {
       name: infoObject.name,
       role: infoObject.role,
       pronouns: infoObject.pronouns
     };
-    const infoArr = Object.entries(infoObject).filter(i => !infoToRemove.includes(i[0]));
-    current.info = infoArr;
     return current;
   } catch (error) {
     console.log(error);

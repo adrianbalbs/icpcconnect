@@ -21,3 +21,34 @@
   padding: 20px;
   background-color: white;
 }
+
+.team-heading {
+  margin: 130px 0 0 20px;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.status {
+  font-weight: normal;
+  font-style: italic;
+  color: grey;
+}
+
+.university {
+  margin: 10px 0 30px 40px;
+  font-size: 13px;
+}
+
+.todo {
+  margin: 40px 0 10px 20px;
+  font-size: 23px;
+  font-weight: 600;
+}
+
+.indent {
+  margin-left: 20px;
+}
+
+.bold {
+  font-weight: bold;
+}

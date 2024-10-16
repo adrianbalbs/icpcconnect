@@ -62,12 +62,10 @@ export class TeamService {
     const [team] = await this.db
       .select({
         id: teams.id,
-        name: teams.name,
-        university: universities.name
+        name: teams.name
       })
       .from(students)
       .where(eq(students.userId, studentId))
-      .innerJoin(universities, eq(universities.id, students.university))
       .leftJoin(teams, eq(teams.id, students.team));
 
     if (team == undefined) {
@@ -79,6 +77,8 @@ export class TeamService {
         id: users.id,
         givenName: users.givenName,
         familyName: users.familyName,
+        studentId: students.studentId,
+        email: users.email
       })
       .from(students)
       .where(eq(students.team, String(team.id)))
