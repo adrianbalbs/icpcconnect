@@ -54,7 +54,6 @@ const Team: React.FC = () => {
 
   return (
     <div className={pageStyles.screen}>
-
         <h1 className={teamStyles['team-heading']}>
           Team:
           {status === 2 && <span> {team.name}</span>}

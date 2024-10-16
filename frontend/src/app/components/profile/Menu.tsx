@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import styles from '@/styles/Profile.module.css';
 import Dropdown from './Dropdown';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
-import { getInfo } from '@/utils/profileInfo';
+import { capitalise, getInfo } from '@/utils/profileInfo';
 
 const Menu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -22,7 +22,10 @@ const Menu: React.FC = () => {
   const storeInfo = async () => {
     const data = await getInfo(localStorage.getItem('id'));
     if (data !== undefined) {
-      setInfo({ role: data.sideInfo.role, name: data.sideInfo.name });
+      const role = data.sideInfo.role === 'site_coordinator' 
+        ? 'Site Coordinator' 
+        : capitalise(data.sideInfo.role);
+      setInfo({ role, name: data.sideInfo.name });
     }
   }
 
@@ -37,8 +40,8 @@ const Menu: React.FC = () => {
       </IconButton>
     </Tooltip>
     <div className={styles['pfp-label']}>
-      <p className={styles['pfp-role']}>site coordinator</p>
-      <p className={styles['pfp-name']}>Merry Rosalie</p>
+      <p className={styles['pfp-role']}>{info.role}</p>
+      <p className={styles['pfp-name']}>{info.name}</p>
     </div>
     <Dropdown anchorEl={anchorEl} open={open} handleClose={handleClose}/>
   </div>;

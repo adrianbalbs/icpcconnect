@@ -16,22 +16,6 @@ export interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ params }) => {
   const [info, setInfo] = useState<[string, string | number][]>([]);
-  // const getInfo = async () => {
-  //   try {
-  //     const res = await axios.get(`${SERVER_URL}/${params.id}`);
-  //     const data: StudentInfo = res.data.info;
-  //     const infoObject = { name: `${data.givenName} ${data.familyName}`, ...data };
-  //     setSideInfo({
-  //       name: infoObject.name,
-  //       role: infoObject.role,
-  //       pronouns: infoObject.pronouns
-  //     });
-  //     const infoArr = Object.entries(infoObject).filter(i => !infoToRemove.includes(i[0]));
-  //     setInfo(infoArr);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
@@ -41,9 +25,6 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
   }
 
   useEffect(() => { storeInfo() }, [params]);
-  // useEffect(() => {
-  //   setInfo([['name', 'Rachel Chen'], ['University', 'UNSW'], ['email', 'z5432123@ad.unsw.edu.au'], ['studentId', '5432123']]);
-  // }, [params]);
 
   return (
     <div className={profileStyles['inner-screen']}>
