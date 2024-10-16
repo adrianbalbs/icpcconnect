@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import pageStyles from '../styles/Page.module.css';
-import TeamsList from '../components/teams/TeamsList';
-import WaitingScreen from '../components/teams/WaitingScreen';
+import pageStyles from '@/styles/Page.module.css';
+import teamStyles from '@/styles/Teams.module.css';
+import TeamsList from '@/components/teams/TeamsList';
+import WaitingScreen from '@/components/teams/WaitingScreen';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const statusStrings = [
@@ -28,7 +29,7 @@ const Teams: React.FC = () => {
 
 
   return <div className={pageStyles.screen}>
-    <h1 className={pageStyles.bold}>{statusStrings[status]}</h1>
+    <h1 className={teamStyles['teams-heading']}>{statusStrings[status]}</h1>
     <hr className={pageStyles.divider}/>
     {status === 0 && <WaitingScreen setStatus={setStatus}/>}
     {status === 1 && <div className={pageStyles['waiting-screen']}><CircularProgress /></div>}

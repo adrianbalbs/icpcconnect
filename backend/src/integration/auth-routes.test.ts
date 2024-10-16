@@ -4,34 +4,30 @@ import {
   AuthService,
   CoachService,
   SiteCoordinatorService,
-  StudentService
+  StudentService,
 } from "../services/index.js";
 import {
   authRouter,
   coachRouter,
   siteCoordinatorRouter,
-  studentRouter
+  studentRouter,
 } from "../routers/index.js";
-import {
-  Database,
-  DatabaseConnection,
-  seed,
-  universities,
-  users,
-} from "../db/index.js";
+import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateCoachRequest,
   CreateSiteCoordinatorRequest,
   CreateStudentRequest,
   LoginRequest,
 } from "../schemas/index.js";
+import { beforeAll, afterAll, describe, afterEach, it, expect } from "vitest";
+import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
 
 beforeAll(async () => {
-  db = Database.getConnection();
-  await seed(db);
+  const dbSetup = await setupTestDatabase();
+  db = dbSetup.db;
   app = express()
     .use(express.json())
     .use("/api", siteCoordinatorRouter(new SiteCoordinatorService(db)))
@@ -41,14 +37,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db.delete(users);
-  await db.delete(universities);
-  await Database.endConnection();
+  await dropTestDatabase();
 });
 
 describe("authRouter tests", () => {
   afterEach(async () => {
-    await db.delete(users)
+    await db.delete(users);
   });
 
   it("should register a new site-coord, have them login, and receive a token", async () => {
@@ -71,8 +65,8 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "adrianbalbs@comp3900.com",
-      password: "helloworld"
-    }
+      password: "helloworld",
+    };
 
     const response2 = await request(app)
       .post("/api/login")
@@ -102,13 +96,10 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "adrianbalbs@comp3900.com",
-      password: "wrongpass"
-    }
+      password: "wrongpass",
+    };
 
-    await request(app)
-      .post("/api/login")
-      .send(req2)
-      .expect(500);
+    await request(app).post("/api/login").send(req2).expect(500);
   });
 
   it("should register a new site-coord, have them enter the wrong email", async () => {
@@ -130,13 +121,10 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "jerryyang@comp3900.com",
-      password: "helloworld"
-    }
+      password: "helloworld",
+    };
 
-    await request(app)
-      .post("/api/login")
-      .send(req2)
-      .expect(500);
+    await request(app).post("/api/login").send(req2).expect(500);
   });
 
   it("should register a new coach, have them login, and receive a token", async () => {
@@ -158,8 +146,8 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "adrianbalbs@comp3900.com",
-      password: "helloworld"
-    }
+      password: "helloworld",
+    };
 
     const response2 = await request(app)
       .post("/api/login")
@@ -188,13 +176,10 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "adrianbalbs@comp3900.com",
-      password: "wrongpass"
-    }
+      password: "wrongpass",
+    };
 
-    await request(app)
-      .post("/api/login")
-      .send(req2)
-      .expect(500);
+    await request(app).post("/api/login").send(req2).expect(500);
   });
 
   it("should register a new coach, have them enter the wrong email", async () => {
@@ -216,13 +201,10 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "jerryyang@comp3900.com",
-      password: "helloworld"
-    }
+      password: "helloworld",
+    };
 
-    await request(app)
-      .post("/api/login")
-      .send(req2)
-      .expect(500);
+    await request(app).post("/api/login").send(req2).expect(500);
   });
 
   it("should register a new student, have them login, and receive a token", async () => {
@@ -245,8 +227,8 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "adrianbalbs@comp3900.com",
-      password: "helloworld"
-    }
+      password: "helloworld",
+    };
 
     const response2 = await request(app)
       .post("/api/login")
@@ -276,13 +258,10 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "adrianbalbs@comp3900.com",
-      password: "wrongpass"
-    }
+      password: "wrongpass",
+    };
 
-    await request(app)
-      .post("/api/login")
-      .send(req2)
-      .expect(500);
+    await request(app).post("/api/login").send(req2).expect(500);
   });
 
   it("should register a new student, have them enter the wrong email", async () => {
@@ -305,12 +284,9 @@ describe("authRouter tests", () => {
 
     const req2: LoginRequest = {
       email: "jerryyang@comp3900.com",
-      password: "helloworld"
-    }
+      password: "helloworld",
+    };
 
-    await request(app)
-      .post("/api/login")
-      .send(req2)
-      .expect(500);
+    await request(app).post("/api/login").send(req2).expect(500);
   });
 });

@@ -1,13 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
 body {
+  margin: 0;
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, sans-serif;
@@ -37,3 +34,4 @@ a {
 select {
   background-color: white;
 }
+

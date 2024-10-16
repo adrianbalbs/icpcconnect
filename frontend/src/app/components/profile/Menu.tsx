@@ -37,8 +37,8 @@ const Menu: React.FC = () => {
       </IconButton>
     </Tooltip>
     <div className={styles['pfp-label']}>
-      <p className={styles['pfp-role']}>{info.role}</p>
-      <p>{info.name}</p>
+      <p className={styles['pfp-role']}>site coordinator</p>
+      <p className={styles['pfp-name']}>Merry Rosalie</p>
     </div>
     <Dropdown anchorEl={anchorEl} open={open} handleClose={handleClose}/>
   </div>;

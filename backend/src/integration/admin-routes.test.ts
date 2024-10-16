@@ -14,13 +14,7 @@ import {
   siteCoordinatorRouter,
   studentRouter,
 } from "../routers/index.js";
-import {
-  Database,
-  DatabaseConnection,
-  seed,
-  universities,
-  users,
-} from "../db/index.js";
+import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateAdminRequest,
   CreateCoachRequest,
@@ -28,6 +22,8 @@ import {
   CreateStudentRequest,
   UpdateStudentRequest,
 } from "../schemas/index.js";
+import { beforeAll, afterAll, describe, afterEach, it, expect } from "vitest";
+import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
 
 let db: DatabaseConnection;
 let adminApp: ReturnType<typeof express>;
@@ -36,8 +32,8 @@ let studentApp: ReturnType<typeof express>;
 let siteCoordinatorApp: ReturnType<typeof express>;
 
 beforeAll(async () => {
-  db = Database.getConnection();
-  await seed(db);
+  const dbSetup = await setupTestDatabase();
+  db = dbSetup.db;
   adminApp = express()
     .use(express.json())
     .use(
@@ -61,9 +57,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db.delete(users);
-  await db.delete(universities);
-  await Database.endConnection();
+  await dropTestDatabase();
 });
 
 async function createDifferentUserObjs() {

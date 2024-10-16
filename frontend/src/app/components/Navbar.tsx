@@ -38,7 +38,7 @@ const StyledTab = styled((props: tabProps) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
     color: '#6b7ea1',
     '&:hover': {
-      color: '#5974a6',
+      color: '#7195d8',
       opacity: 1,
     },
     '&.Mui-selected': {
@@ -88,9 +88,9 @@ const Navbar: React.FC = () => {
   }, [pathname]);
 
   return <div className={styles.navbar}>
-    <h1>ICPCC</h1>
+    <h1 className={styles.website}>ICPCC</h1>
 
-    <Box sx={{ width: '100%', gridColumn: '6' }}>
+    <Box sx={{ width: '100%', gridColumn: '5' }}>
       <StyledTabs
         value={tab}
         onChange={handleChange}

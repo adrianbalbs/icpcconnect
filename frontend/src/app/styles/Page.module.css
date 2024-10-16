@@ -30,7 +30,7 @@
 
 .navbar {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   position: fixed;
   top: 0;
   align-items: center;
@@ -59,4 +59,10 @@
   font-weight: lighter;
   color: #4B4B4B;
   background-color: #E5EAF3;
+}
+
+.website {
+  margin: 14px 0 13.5px;
+  font-size: 28px;
+  color: #415478;
 }

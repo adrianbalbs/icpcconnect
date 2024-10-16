@@ -9,7 +9,7 @@ import {
   DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/index.js";
+} from "../types/index.js";
 import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,
@@ -22,9 +22,10 @@ export type SiteCoordinatorProfileResponse = UserProfileResponse & {
   managedUniversities: { id: number; name: string }[];
 };
 
-export type SiteCoordinatorUpdateResponse = UserProfileResponse & {
-  universityId: number;
-};
+export type SiteCoordinatorUpdateResponse = Omit<
+  UpdateSiteCoordinatorRequest,
+  "password"
+>;
 
 export type SiteCoordinatorItem = UserProfileResponse & {
   university: string;
@@ -151,12 +152,11 @@ export class SiteCoordinatorService {
       .where(eq(siteCoordinators.userId, userId));
 
     return {
-      id: userId,
       role,
       givenName,
       familyName,
       email,
-      universityId: university,
+      university,
     };
   }
 

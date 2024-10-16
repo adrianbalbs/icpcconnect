@@ -12,6 +12,24 @@ import {
 } from "../schemas/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
+import {
+  DeleteResponse,
+  NewUserResponse,
+  UserProfileResponse,
+} from "../types/api-res.js";
+
+export type StudentProfileResponse = UserProfileResponse & {
+  university: string;
+  pronouns: string | null;
+  studentId: string | null;
+  team: string | null;
+};
+
+export type StudentsResponse = {
+  allStudents: StudentProfileResponse[];
+};
+
+export type UpdateStudentResponse = Omit<UpdateStudentRequest, "password">;
 
 export class StudentService {
   private readonly db: DatabaseConnection;
@@ -20,7 +38,7 @@ export class StudentService {
     this.db = db;
   }
 
-  async createStudent(req: CreateStudentRequest) {
+  async createStudent(req: CreateStudentRequest): Promise<NewUserResponse> {
     const {
       givenName,
       familyName,
@@ -52,7 +70,7 @@ export class StudentService {
     return { userId: student.userId };
   }
 
-  async getStudentById(userId: string) {
+  async getStudentById(userId: string): Promise<StudentProfileResponse> {
     const [student] = await this.db
       .select({
         id: users.id,
@@ -81,7 +99,7 @@ export class StudentService {
     return student;
   }
 
-  async getAllStudents() {
+  async getAllStudents(): Promise<StudentsResponse> {
     const allStudents = await this.db
       .select({
         id: users.id,
@@ -102,7 +120,10 @@ export class StudentService {
     return { allStudents };
   }
 
-  async updateStudent(userId: string, updatedDetails: UpdateStudentRequest) {
+  async updateStudent(
+    userId: string,
+    updatedDetails: UpdateStudentRequest,
+  ): Promise<UpdateStudentResponse> {
     const {
       role,
       givenName,
@@ -127,7 +148,6 @@ export class StudentService {
       .where(eq(students.userId, userId));
 
     return {
-      id: userId,
       studentId,
       role,
       givenName,
@@ -139,7 +159,7 @@ export class StudentService {
     };
   }
 
-  async deleteStudent(userId: string) {
+  async deleteStudent(userId: string): Promise<DeleteResponse> {
     const [student] = await this.db
       .select({ userId: users.id })
       .from(users)

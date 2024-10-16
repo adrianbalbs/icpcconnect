@@ -12,7 +12,7 @@ import {
   DeleteResponse,
   NewUserResponse,
   UserProfileResponse,
-} from "../interfaces/api-res-interfaces.js";
+} from "../types/api-res.js";
 import { CreateAdminRequest, UpdateAdminRequest } from "../schemas/index.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { HTTPError, badRequest } from "../utils/errors.js";
