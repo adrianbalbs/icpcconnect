@@ -188,7 +188,12 @@ export const seed = async (db: DatabaseConnection) => {
   logger.info("Adding default admin");
   const admins = data.default.admins as UserTable[];
   for (const admin of admins) {
-    await db.insert(users).values(admin).onConflictDoNothing();
+    const { id, givenName, familyName, password, email, role } = admin;
+    const newPassword = await passwordUtils().hash(password);
+    await db
+      .insert(users)
+      .values({ id, givenName, familyName, password: newPassword, email, role })
+      .onConflictDoNothing();
   }
 };
 
