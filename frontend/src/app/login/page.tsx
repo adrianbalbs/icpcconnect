@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import axios from 'axios';
-import loginPage from '@/styles/Auth.module.css';
+import styles from '@/styles/Auth.module.css';
 import logo from '@/assets/logo.png';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -34,27 +34,27 @@ export default function Login() {
   }
     
   return (
-    <>
-      <div className={loginPage['login-polygon']}></div>
-      <div className={loginPage['info-container']}>
-        <Image src={logo} alt="ICPC Connect" width={400} />
+    <div className={styles.background}>
+      <div className={styles.shadow}><div className={styles['login-polygon']}></div></div>
+      <div className={styles['info-container']}>
+        <Image src={logo} alt="ICPC Connect" width={400} className={styles['web-name']}/>
         <br/>
-        <form className={loginPage['form-container']} onSubmit={handleLogin}>
-          <input type="email" id="email" placeholder="Email" className={loginPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" id="password" placeholder="Password" className={loginPage['input-field']} value={password} onChange={(e) => setPassword(e.target.value)} />
-          <a href="/forgot-password" className={loginPage.link}>Forgot Password?</a>
-          <button type="submit" className={`${loginPage['auth-button']} ${loginPage['dark']} ${loginPage['long']}`}>Login</button>
+        <form className={styles['form-container']} onSubmit={handleLogin}>
+          <input type="email" id="email" placeholder="Email" className={styles['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="password" id="password" placeholder="Password" className={styles['input-field']} value={password} onChange={(e) => setPassword(e.target.value)} />
+          <a href="/forgot-password" className={styles.link}>Forgot Password?</a>
+          <button type="submit" className={`${styles['auth-button']} ${styles['dark']} ${styles['long']}`}>Login</button>
         </form>
-        <div className={loginPage['horizontal-container']}>
-          <hr className={loginPage.hr}/>
+        <div className={styles['horizontal-container']}>
+          <hr className={styles.hr}/>
           or
-          <hr className={loginPage.hr}/>
+          <hr className={styles.hr}/>
         </div>
-        <div className={loginPage['horizontal-container']}>
+        <div className={styles['horizontal-container']}>
           Don&apos;t have an account?&nbsp;
-          <a href="register" className={loginPage.link}>Register</a>
+          <a href="register" className={styles.link}>Register</a>
         </div>
       </div>
-    </>
+    </div>
   );
 }
