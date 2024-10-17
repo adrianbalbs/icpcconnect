@@ -60,7 +60,7 @@
 
 .form-container {
   width: 500px;
-  margin: 0 auto;
+  margin: 0 auto 30px;
 }
 
 .auth-button {
@@ -103,7 +103,7 @@
 .input-field {
   border: none;
   width: 500px;
-  margin: 5px 0 20px;
+  margin: 20px 0 15px;
   border-bottom: 1px solid #7a7a7a;
   outline: none;
   font-size: 16px;

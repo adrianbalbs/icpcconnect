@@ -23,17 +23,20 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
   }, []);
 
   return <div className={pageStyles['waiting-screen']}>
-    <p>
+    <p className={pageStyles.timeline}>
       Enrolment for team allocation closes at
       <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
     </p>
-    {role === 'coach' && 
-      <p>
+    {role !== 'student' && 
+      <p className={pageStyles.timeline}>
         Coach review opens for 3 days starting from
         <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
       </p>
     }
-    <p>Finalised team allocations will be released after <span className={pageStyles.bold}>12.00pm xx.xx.xxxx</span></p>
+    <p className={pageStyles.timeline}>
+      Finalised team allocations will be released after
+      <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
+    </p>
     {access && <Button sx={{ ...purpleBtn, marginTop: '15px' }} onClick={nextStatus}>Allocate Teams</Button>}
   </div>
 }
