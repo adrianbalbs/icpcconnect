@@ -70,3 +70,52 @@
 .timeline {
   margin: 5px 0;
 }
+
+.tile {
+  border-radius: 5%;
+  padding: 10px;
+  text-align: center;
+  height: 300px;
+  width: 300px;
+  align-items: center;
+  border: 2px solid gray;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tile-title {
+  flex: 1;
+}
+
+.tile-description {
+  flex: 2;
+}
+
+.tile-button-container {
+  flex: 1;
+}
+
+.tile-button {
+  text-align: center;
+  border: none;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  height: 30px;
+  width: 100px;
+  color: white;
+  background-color: #7D84AF;
+}
+
+.tile-button:hover {
+  cursor: pointer;
+  opacity: 90%;
+}
+
+.horizontal-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin: 20px 0;
+}
