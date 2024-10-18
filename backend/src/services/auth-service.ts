@@ -2,7 +2,11 @@ import { eq } from "drizzle-orm";
 import { DatabaseConnection } from "../db/database.js";
 import { users } from "../db/schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
-import { HTTPError, unauthorizedError } from "../utils/errors.js";
+import {
+  HTTPError,
+  notFoundError,
+  unauthorizedError,
+} from "../utils/errors.js";
 import jwt, { Secret } from "jsonwebtoken";
 
 export interface LoginRequest {
@@ -47,5 +51,18 @@ export class AuthService {
     } else {
       throw new HTTPError(unauthorizedError);
     }
+  }
+
+  async getUserRole(userId: string) {
+    const [user] = await this.db
+      .select({ role: users.role })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!user) {
+      throw new HTTPError(notFoundError);
+    }
+
+    return user.role;
   }
 }
