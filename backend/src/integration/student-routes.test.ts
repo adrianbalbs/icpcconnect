@@ -142,6 +142,8 @@ describe("studentRouter tests", () => {
       ...newStudent,
       pronouns: "he/him",
       team: null,
+      dietaryRequirements: "vegan",
+      tshirtSize: "M",
     };
 
     const result = await request(app)
@@ -149,6 +151,8 @@ describe("studentRouter tests", () => {
       .send(req)
       .expect(200);
     expect(result.body.pronouns).toEqual(req.pronouns);
+    expect(result.body.dietaryRequirements).toEqual(req.dietaryRequirements);
+    expect(result.body.tshirtSize).toEqual(req.tshirtSize);
   });
 
   it("should remove student from the database", async () => {
