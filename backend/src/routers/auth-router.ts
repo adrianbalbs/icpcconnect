@@ -16,23 +16,29 @@ export function authRouter(authService: AuthService) {
     maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
   } as const;
 
-  return Router().post(
-    "/login",
-    validateData(LoginRequestSchema, "body"),
-    async (
-      req: Request<Record<string, never>, unknown, LoginRequest>,
-      res: Response,
-      next: NextFunction,
-    ) => {
-      const loginDetails = req.body;
-      try {
-        const result = await authService.login(loginDetails);
-        res.cookie("id", result.token, cookieOpts);
-        res.cookie("rid", result.refresh, cookieOpts);
-        res.status(200).send(result);
-      } catch (err) {
-        next(err);
-      }
-    },
-  );
+  return Router()
+    .post(
+      "/login",
+      validateData(LoginRequestSchema, "body"),
+      async (
+        req: Request<Record<string, never>, unknown, LoginRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const loginDetails = req.body;
+        try {
+          const result = await authService.login(loginDetails);
+          res.cookie("id", result.token, cookieOpts);
+          res.cookie("rid", result.refresh, cookieOpts);
+          res.status(200).send(result);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .post("/logout", (_req: Request, res: Response) => {
+      res.clearCookie("id", cookieOpts);
+      res.clearCookie("rid", cookieOpts);
+      res.status(200).send();
+    });
 }
