@@ -13,6 +13,7 @@ import {
   NewUserResponse,
   UserProfileResponse,
 } from "../types/index.js";
+import { StudentService } from "./student-service.js";
 
 export type CoachProfileResponse = UserProfileResponse & {
   university: string;
@@ -26,9 +27,11 @@ export type AllCoachesResponse = {
 
 export class CoachService {
   private readonly db: DatabaseConnection;
+  private readonly studentServ: StudentService;
 
-  constructor(db: DatabaseConnection) {
+  constructor(db: DatabaseConnection, studentServ: StudentService) {
     this.db = db;
+    this.studentServ = studentServ;
   }
 
   async createCoach(req: CreateCoachRequest): Promise<NewUserResponse> {

@@ -66,6 +66,8 @@ export const students = pgTable("students", {
     .notNull(),
   studentId: text("student_id").notNull(),
   pronouns: text("pronouns"),
+  dietaryRequirements: text("dietary_requirements"),
+  tshirtSize: text("tshirt_size"),
   team: uuid("team").references(() => teams.id),
   university: integer("university").references(() => universities.id),
 });

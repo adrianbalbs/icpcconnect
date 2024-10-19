@@ -33,7 +33,7 @@ const databaseConnection = Database.getConnection();
 await seed(databaseConnection);
 
 const studentService = new StudentService(databaseConnection);
-const coachService = new CoachService(databaseConnection);
+const coachService = new CoachService(databaseConnection, studentService);
 const siteCoordinatorService = new SiteCoordinatorService(databaseConnection);
 const contestRegistrationService = new ContestRegistrationService(
   databaseConnection,

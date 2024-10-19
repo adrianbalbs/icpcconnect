@@ -23,6 +23,8 @@ export type StudentProfileResponse = UserProfileResponse & {
   pronouns: string | null;
   studentId: string | null;
   team: string | null;
+  dietaryRequirements: string | null;
+  tshirtSize: string | null;
 };
 
 export type StudentsResponse = {
@@ -82,6 +84,8 @@ export class StudentService {
         studentId: students.studentId,
         university: universities.name,
         team: teams.name,
+        dietaryRequirements: students.dietaryRequirements,
+        tshirtSize: students.tshirtSize,
       })
       .from(users)
       .where(eq(users.id, userId))
@@ -111,6 +115,8 @@ export class StudentService {
         studentId: students.studentId,
         university: universities.name,
         team: teams.name,
+        dietaryRequirements: students.dietaryRequirements,
+        tshirtSize: students.tshirtSize,
       })
       .from(users)
       .innerJoin(students, eq(users.id, students.userId))
@@ -120,6 +126,12 @@ export class StudentService {
     return { allStudents };
   }
 
+  // Update specified student's details
+  //
+  // Currently assumes that all the fields in 'updateDetails' are set
+  // And it is on FE to synthesis an update-request with all the fields
+  //
+  // Could instead handle this in the POST route
   async updateStudent(
     userId: string,
     updatedDetails: UpdateStudentRequest,
@@ -134,6 +146,8 @@ export class StudentService {
       university,
       pronouns,
       team,
+      dietaryRequirements,
+      tshirtSize,
     } = updatedDetails;
 
     const hashedPassword = await passwordUtils().hash(password);
@@ -144,7 +158,7 @@ export class StudentService {
 
     await this.db
       .update(students)
-      .set({ studentId, university, pronouns, team })
+      .set({ studentId, university, pronouns, team, dietaryRequirements, tshirtSize })
       .where(eq(students.userId, userId));
 
     return {
@@ -156,6 +170,8 @@ export class StudentService {
       university,
       pronouns,
       team,
+      dietaryRequirements,
+      tshirtSize,
     };
   }
 

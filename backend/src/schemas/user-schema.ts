@@ -36,6 +36,8 @@ export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
   university: z.number(),
   pronouns: z.string(),
   team: z.string().nullable(),
+  dietaryRequirements: z.string().nullable(),
+  tshirtSize: z.string(), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
 });
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
