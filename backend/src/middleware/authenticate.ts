@@ -24,14 +24,17 @@ export const createAuthenticationMiddleware = (authService: AuthService) => {
   const logger = getLogger();
 
   const verifyAccessToken = (token: string) => {
+    logger.debug("Verifying access token");
     try {
       return <AccessTokenPayload>jwt.verify(token, JWT_SECRET);
     } catch {
+      logger.debug("Access token invalid");
       return null;
     }
   };
 
   const verifyRefreshToken = async (token: string) => {
+    logger.debug("Verifying refresh token");
     try {
       const decodedRefresh = <RefreshTokenPayload>(
         jwt.verify(token, REFRESH_TOKEN_SECRET)
@@ -44,12 +47,13 @@ export const createAuthenticationMiddleware = (authService: AuthService) => {
         ? decodedRefresh.id
         : null;
     } catch {
+      logger.debug("Id associated with refresh token not valid");
       return null;
     }
   };
 
   return async (req: Request, res: Response, next: NextFunction) => {
-    logger.info("Authenticating request");
+    logger.debug("Authenticating request");
     if (!Object.keys(req.cookies).includes("id")) {
       res.status(unauthorizedError.errorCode).send(unauthorizedError);
       return;
@@ -70,6 +74,7 @@ export const createAuthenticationMiddleware = (authService: AuthService) => {
     const refreshToken = req.cookies["rid"];
     const userId = await verifyRefreshToken(refreshToken);
     if (!userId) {
+      logger.debug("Refresh token is invalid");
       res.status(unauthorizedError.errorCode).send(unauthorizedError);
       return;
     }
