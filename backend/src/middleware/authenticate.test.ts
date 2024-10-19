@@ -17,7 +17,7 @@ describe("authentication middleware", () => {
 
   beforeEach(() => {
     req = {
-      headers: {},
+      cookies: {},
       userId: undefined,
     };
     res = {
@@ -30,7 +30,7 @@ describe("authentication middleware", () => {
   });
 
   it("should authenticate the user with a valid token", () => {
-    req.headers = { authorization: `Bearer ${validToken}` };
+    req.cookies = { id: validToken };
     authenticate(req as Request, res as Response, next);
     expect(next).toHaveBeenCalled();
     expect(req.userId).toBe(userId);
@@ -45,8 +45,7 @@ describe("authentication middleware", () => {
   });
 
   it("should return 401 for invalid token", () => {
-    req.headers = { authorization: `Bearer ${invalidToken}` };
-
+    req.cookies = { id: invalidToken };
     authenticate(req as Request, res as Response, next);
 
     expect(res.status).toHaveBeenCalledWith(unauthorizedError.errorCode);
@@ -60,7 +59,7 @@ describe("authentication middleware", () => {
   it("should return 403 for token with invalid structure", () => {
     const malformedToken = jwt.sign({ id: "user123" }, JWT_SECRET);
 
-    req.headers = { authorization: `Bearer ${malformedToken}` };
+    req.cookies = { id: malformedToken };
 
     authenticate(req as Request, res as Response, next);
 

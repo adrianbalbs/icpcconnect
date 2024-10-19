@@ -12,11 +12,11 @@ const logger = getLogger();
 
 export function authenticate(req: Request, res: Response, next: NextFunction) {
   logger.info("Authenticating request");
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
+  if (!Object.keys(req.cookies).includes("id")) {
     res.status(unauthorizedError.errorCode).send({ unauthorizedError });
     return;
   }
+  const token = req.cookies["id"];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const parsed = JwtPayloadSchema.safeParse(decoded);
