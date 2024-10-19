@@ -28,12 +28,16 @@ let app: ReturnType<typeof express>;
 beforeAll(async () => {
   const dbSetup = await setupTestDatabase();
   db = dbSetup.db;
+  const authService = new AuthService(db);
   app = express()
     .use(express.json())
-    .use("/api", siteCoordinatorRouter(new SiteCoordinatorService(db)))
-    .use("/api", coachRouter(new CoachService(db)))
-    .use("/api", studentRouter(new StudentService(db)))
-    .use("/api", authRouter(new AuthService(db)));
+    .use(
+      "/api",
+      siteCoordinatorRouter(new SiteCoordinatorService(db), authService),
+    )
+    .use("/api", coachRouter(new CoachService(db), authService))
+    .use("/api", studentRouter(new StudentService(db), authService))
+    .use("/api", authRouter(authService));
 });
 
 afterAll(async () => {
@@ -76,6 +80,7 @@ describe("authRouter tests", () => {
       .expect(200);
 
     expect(response2.body).toHaveProperty("token");
+    expect(response2.body).toHaveProperty("refresh");
   });
 
   it("should register a new site-coord, have them enter the wrong password", async () => {
@@ -159,6 +164,7 @@ describe("authRouter tests", () => {
       .expect(200);
 
     expect(response2.body).toHaveProperty("token");
+    expect(response2.body).toHaveProperty("refresh");
   });
 
   it("should register a new coach, have them enter the wrong password", async () => {
@@ -242,6 +248,7 @@ describe("authRouter tests", () => {
       .expect(200);
 
     expect(response2.body).toHaveProperty("token");
+    expect(response2.body).toHaveProperty("refresh");
   });
 
   it("should register a new student, have them enter the wrong password", async () => {

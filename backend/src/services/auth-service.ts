@@ -15,6 +15,7 @@ export interface LoginRequest {
 }
 
 export const SECRET_KEY: Secret = "placeholder-key";
+export const REFRESH_TOKEN_SECRET = "another-placeholder-key";
 
 export class AuthService {
   private readonly db: DatabaseConnection;
@@ -44,10 +45,19 @@ export class AuthService {
         { id: user[0].id, role: user[0].role },
         SECRET_KEY,
         {
-          expiresIn: "2 days",
+          expiresIn: "15min",
         },
       );
-      return { token: token, id: user[0].id, role: user[0].role };
+
+      const refresh = jwt.sign(
+        { id: user[0].id, refreshTokenVersion: user[0].refreshTokenVersion },
+        REFRESH_TOKEN_SECRET,
+        {
+          expiresIn: "30d",
+        },
+      );
+
+      return { token, refresh };
     } else {
       throw new HTTPError(unauthorizedError);
     }

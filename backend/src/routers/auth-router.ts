@@ -13,7 +13,7 @@ export function authRouter(authService: AuthService) {
     sameSite: "lax",
     path: "/",
     domain: __prod__ ? `.${process.env.DOMAIN}` : "",
-    maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 year
+    maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
   } as const;
 
   return Router().post(
@@ -28,6 +28,7 @@ export function authRouter(authService: AuthService) {
       try {
         const result = await authService.login(loginDetails);
         res.cookie("id", result.token, cookieOpts);
+        res.cookie("rid", result.refresh, cookieOpts);
         res.status(200).send(result);
       } catch (err) {
         next(err);
