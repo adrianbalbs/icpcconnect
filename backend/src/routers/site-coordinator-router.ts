@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { SiteCoordinatorService } from "../services/index.js";
+import { AuthService, SiteCoordinatorService } from "../services/index.js";
 import {
   CreateSiteCoordinatorRequest,
   CreateSiteCoordinatorRequestSchema,
@@ -7,13 +7,19 @@ import {
   UpdateSiteCoordinatorRequestSchema,
 } from "../schemas/user-schema.js";
 import { validateData } from "../middleware/validator-middleware.js";
+import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
+import { createAuthoriseMiddleware } from "../middleware/authorise.js";
 
 export function siteCoordinatorRouter(
   siteCoordinatorService: SiteCoordinatorService,
+  authService: AuthService,
 ) {
+  const authenticate = createAuthenticationMiddleware(authService);
+  const authorise = createAuthoriseMiddleware(authService);
   return Router()
     .get(
-      "/site-coordinators",
+      "/",
+      [authenticate, authorise(["admin"])],
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
           const siteCoordinators =
@@ -25,7 +31,8 @@ export function siteCoordinatorRouter(
       },
     )
     .get(
-      "/site-coordinators/:id",
+      "/:id",
+      [authenticate, authorise(["admin", "site_coordinator"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -42,7 +49,8 @@ export function siteCoordinatorRouter(
       },
     )
     .delete(
-      "/site-coordinators/:id",
+      "/:id",
+      [authenticate, authorise(["admin"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -58,7 +66,7 @@ export function siteCoordinatorRouter(
       },
     )
     .post(
-      "/site-coordinators",
+      "/",
       validateData(CreateSiteCoordinatorRequestSchema, "body"),
       async (
         req: Request<
@@ -81,8 +89,13 @@ export function siteCoordinatorRouter(
       },
     )
     .put(
-      "/site-coordinators/:id",
-      validateData(UpdateSiteCoordinatorRequestSchema, "body"),
+      "/:id",
+      [
+        authenticate,
+        authorise(["admin", "site_coordinator"]),
+        validateData(UpdateSiteCoordinatorRequestSchema, "body"),
+      ],
+
       async (
         req: Request<
           Record<string, never>,

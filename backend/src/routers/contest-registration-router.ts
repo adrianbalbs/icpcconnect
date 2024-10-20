@@ -1,6 +1,10 @@
-import { ContestRegistrationService } from "../services/index.js";
+import { AuthService, ContestRegistrationService } from "../services/index.js";
 import { NextFunction, Request, Response, Router } from "express";
-import { validateData } from "../middleware/index.js";
+import {
+  createAuthenticationMiddleware,
+  validateData,
+  createAuthoriseMiddleware,
+} from "../middleware/index.js";
 import {
   CreateContestRegistrationForm,
   CreateContestRegistrationFormSchema,
@@ -10,10 +14,15 @@ import {
 
 export function contestRegistrationRouter(
   contestRegistrationService: ContestRegistrationService,
+  authService: AuthService,
 ) {
+  const authenticate = createAuthenticationMiddleware(authService);
+  const authorise = createAuthoriseMiddleware(authService);
   return Router()
+    .use(authenticate)
     .get(
-      "/contest-registration",
+      "/",
+      [authorise(["admin", "coach"])],
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
           const registrations =
@@ -25,7 +34,8 @@ export function contestRegistrationRouter(
       },
     )
     .get(
-      "/contest-registration/:id",
+      "/:id",
+      [authorise(["admin", "coach", "student"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -42,7 +52,8 @@ export function contestRegistrationRouter(
       },
     )
     .delete(
-      "/contest-registration/:id",
+      "/:id",
+      [authorise(["admin", "coach", "student"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -59,8 +70,12 @@ export function contestRegistrationRouter(
       },
     )
     .post(
-      "/contest-registration",
-      validateData(CreateContestRegistrationFormSchema, "body"),
+      "/",
+      [
+        authorise(["admin", "coach", "student"]),
+        validateData(CreateContestRegistrationFormSchema, "body"),
+      ],
+
       async (
         req: Request<
           Record<string, never>,
@@ -82,8 +97,11 @@ export function contestRegistrationRouter(
       },
     )
     .put(
-      "/contest-registration/:id",
-      validateData(UpdateContestRegistrationFormSchema, "body"),
+      "/:id",
+      [
+        authorise(["admin", "coach", "student"]),
+        validateData(UpdateContestRegistrationFormSchema, "body"),
+      ],
       async (
         req: Request<
           Record<string, never>,

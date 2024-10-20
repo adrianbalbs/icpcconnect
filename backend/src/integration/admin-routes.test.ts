@@ -4,12 +4,14 @@ import request from "supertest";
 import express from "express";
 import {
   AdminService,
+  AuthService,
   CoachService,
   SiteCoordinatorService,
   StudentService,
 } from "../services/index.js";
 import {
   adminRouter,
+  authRouter,
   coachRouter,
   siteCoordinatorRouter,
   studentRouter,
@@ -22,8 +24,18 @@ import {
   CreateStudentRequest,
   UpdateStudentRequest,
 } from "../schemas/index.js";
-import { beforeAll, afterAll, describe, afterEach, it, expect } from "vitest";
+import {
+  beforeAll,
+  afterAll,
+  describe,
+  afterEach,
+  it,
+  expect,
+  beforeEach,
+} from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
+import cookieParser from "cookie-parser";
+import { not, eq } from "drizzle-orm";
 import { AlgorithmService } from "../services/algorithm-service.js";
 
 let db: DatabaseConnection;
@@ -31,12 +43,16 @@ let adminApp: ReturnType<typeof express>;
 let coachApp: ReturnType<typeof express>;
 let studentApp: ReturnType<typeof express>;
 let siteCoordinatorApp: ReturnType<typeof express>;
+let cookies: string;
 
 beforeAll(async () => {
   const dbSetup = await setupTestDatabase();
   db = dbSetup.db;
+  const authService = new AuthService(db);
   adminApp = express()
     .use(express.json())
+    .use(cookieParser())
+    .use("/api", authRouter(authService))
     .use(
       "/api",
       adminRouter(
@@ -44,18 +60,33 @@ beforeAll(async () => {
         new CoachService(db),
         new StudentService(db),
         new SiteCoordinatorService(db),
-        new AlgorithmService(db)
+        authService,
+        new AlgorithmService(db),
       ),
     );
   coachApp = express()
     .use(express.json())
-    .use("/api", coachRouter(new CoachService(db)));
+    .use("/api/coaches", coachRouter(new CoachService(db), authService));
   studentApp = express()
     .use(express.json())
-    .use("/api", studentRouter(new StudentService(db)));
+    .use("/api/students", studentRouter(new StudentService(db), authService));
   siteCoordinatorApp = express()
     .use(express.json())
-    .use("/api", siteCoordinatorRouter(new SiteCoordinatorService(db)));
+    .use(
+      "/api/site-coordinators",
+      siteCoordinatorRouter(new SiteCoordinatorService(db), authService),
+    );
+});
+
+beforeEach(async () => {
+  const loginRes = await request(adminApp)
+    .post("/api/login")
+    .send({
+      email: "admin@comp3900.com",
+      password: "tomatofactory",
+    })
+    .expect(200);
+  cookies = loginRes.headers["set-cookie"];
 });
 
 afterAll(async () => {
@@ -167,7 +198,7 @@ async function createDifferentUserObjs() {
 
 describe("adminRouter tests", () => {
   afterEach(async () => {
-    await db.delete(users);
+    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
   });
 
   it("should register a new admin", async () => {
@@ -180,6 +211,7 @@ describe("adminRouter tests", () => {
     };
     const response = await request(adminApp)
       .post("/api/admin")
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
@@ -188,7 +220,10 @@ describe("adminRouter tests", () => {
 
   it("should get all users info", async () => {
     const all_request = (await createDifferentUserObjs()).requests;
-    const response = await request(adminApp).get("/api/admin").expect(200);
+    const response = await request(adminApp)
+      .get("/api/admin")
+      .set("Cookie", cookies)
+      .expect(200);
     // The response should be equal to the all_request
     all_request.forEach((expectedUser) => {
       const matchingUser = response.body.users.find(
@@ -211,6 +246,7 @@ describe("adminRouter tests", () => {
     const all_request = (await createDifferentUserObjs()).requests;
     const response = await request(adminApp)
       .get("/api/admin/details")
+      .set("Cookie", cookies)
       .expect(200);
 
     // The response should be equal to the all_request
@@ -237,6 +273,7 @@ describe("adminRouter tests", () => {
     for (const id of created_user_ids) {
       const response = await request(adminApp)
         .get(`/api/admin/${id}`)
+        .set("Cookie", cookies)
         .expect(200);
 
       expect(response.body.id).toEqual(id);
@@ -244,7 +281,10 @@ describe("adminRouter tests", () => {
   });
 
   it("should throw if a user cannot be found", async () => {
-    await request(adminApp).get(`/api/admin/${uuidv4()}`).expect(500);
+    await request(adminApp)
+      .get(`/api/admin/${uuidv4()}`)
+      .set("Cookie", cookies)
+      .expect(500);
   });
 
   // The admin can change any person's profile, but here I just showcase and test the student case.
@@ -261,6 +301,7 @@ describe("adminRouter tests", () => {
     // Check that this user is indeed exist and can be found
     const res = await request(adminApp)
       .get(`/api/admin/${targetId}`)
+      .set("Cookie", cookies)
       .expect(200);
 
     expect(fouthObj.email).toEqual(res.body.email);
@@ -280,6 +321,7 @@ describe("adminRouter tests", () => {
     // update the student
     const result = await request(adminApp)
       .put(`/api/admin/${targetId}`)
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
@@ -299,21 +341,28 @@ describe("adminRouter tests", () => {
     };
     const response = await request(adminApp)
       .post("/api/admin")
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
     await request(adminApp)
       .get(`/api/admin/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     await request(adminApp)
       .delete(`/api/admin/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     await request(adminApp)
       .get(`/api/admin/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(500);
   });
 
   it("should throw when trying to delete an admin that does not exist", async () => {
-    await request(adminApp).delete(`/api/admin/${uuidv4()}`).expect(500);
+    await request(adminApp)
+      .delete(`/api/admin/${uuidv4()}`)
+      .set("Cookie", cookies)
+      .expect(500);
   });
 });

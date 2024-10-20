@@ -4,7 +4,11 @@
     "rootDir": "./",
     "outDir": "./dist",
     "resolveJsonModule": true,
-    "typeRoots": ["./src/types"]
+    "typeRoots": ["src/types"],
+    "baseUrl": "./",
+    "paths": {
+      "@common/*": ["../common/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "src/**/*.test.ts"]

@@ -32,11 +32,11 @@ beforeAll(async () => {
   app = express()
     .use(express.json())
     .use(
-      "/api",
+      "/api/site-coordinators",
       siteCoordinatorRouter(new SiteCoordinatorService(db), authService),
     )
-    .use("/api", coachRouter(new CoachService(db), authService))
-    .use("/api", studentRouter(new StudentService(db), authService))
+    .use("/api/coaches", coachRouter(new CoachService(db), authService))
+    .use("/api/students", studentRouter(new StudentService(db), authService))
     .use("/api", authRouter(authService));
 });
 

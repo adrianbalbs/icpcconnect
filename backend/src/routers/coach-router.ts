@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { CoachService } from "../services/index.js";
+import { AuthService, CoachService } from "../services/index.js";
 import { validateData } from "../middleware/validator-middleware.js";
 import {
   CreateCoachRequest,
@@ -7,11 +7,19 @@ import {
   UpdateCoachRequest,
   UpdateCoachRequestSchema,
 } from "../schemas/user-schema.js";
+import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
+import { createAuthoriseMiddleware } from "../middleware/authorise.js";
 
-export function coachRouter(coachService: CoachService) {
+export function coachRouter(
+  coachService: CoachService,
+  authService: AuthService,
+) {
+  const authenticate = createAuthenticationMiddleware(authService);
+  const authorise = createAuthoriseMiddleware(authService);
   return Router()
     .get(
-      "/coaches",
+      "/",
+      [authenticate, authorise(["admin", "site_coordinator"])],
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
           const coaches = await coachService.getAllCoaches();
@@ -22,7 +30,8 @@ export function coachRouter(coachService: CoachService) {
       },
     )
     .get(
-      "/coaches/:id",
+      "/:id",
+      [authenticate, authorise(["admin", "coach"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -38,7 +47,8 @@ export function coachRouter(coachService: CoachService) {
       },
     )
     .delete(
-      "/coaches/:id",
+      "/:id",
+      [authenticate, authorise(["admin"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -54,7 +64,7 @@ export function coachRouter(coachService: CoachService) {
       },
     )
     .post(
-      "/coaches",
+      "/",
       validateData(CreateCoachRequestSchema, "body"),
       async (
         req: Request<Record<string, never>, unknown, CreateCoachRequest>,
@@ -71,8 +81,12 @@ export function coachRouter(coachService: CoachService) {
       },
     )
     .put(
-      "/coaches/:id",
-      validateData(UpdateCoachRequestSchema, "body"),
+      "/:id",
+      [
+        authenticate,
+        authorise(["admin", "coach"]),
+        validateData(UpdateCoachRequestSchema, "body"),
+      ],
       async (
         req: Request<Record<string, never>, unknown, UpdateCoachRequest>,
         res: Response,
