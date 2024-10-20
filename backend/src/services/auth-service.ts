@@ -8,14 +8,17 @@ import {
   unauthorizedError,
 } from "../utils/errors.js";
 import jwt, { Secret } from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-export const SECRET_KEY: Secret = "placeholder-key";
-export const REFRESH_TOKEN_SECRET = "another-placeholder-key";
+export const SECRET_KEY: Secret = process.env.JWT_SECRET || "placeholder-key";
+export const REFRESH_TOKEN_SECRET =
+  process.env.REFRESH_TOKEN_SECRET || "another-placeholder-key";
 
 export class AuthService {
   private readonly db: DatabaseConnection;
@@ -74,5 +77,18 @@ export class AuthService {
     }
 
     return user.role;
+  }
+
+  async getUserRefreshTokenVersion(userId: string) {
+    const [user] = await this.db
+      .select({ refreshTokenVersion: users.refreshTokenVersion })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!user) {
+      throw new HTTPError(notFoundError);
+    }
+
+    return user.refreshTokenVersion;
   }
 }
