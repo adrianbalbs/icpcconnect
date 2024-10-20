@@ -121,3 +121,7 @@
   font-size: 12px;
   color: grey;
 }
+
+.edit-box {
+  width: 250px;
+}

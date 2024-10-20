@@ -16,6 +16,7 @@ export interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ params }) => {
   const [info, setInfo] = useState<[string, string | number][]>([]);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
@@ -24,18 +25,22 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     }
   }
 
+  const handleEditClick = () => {
+    setIsEditing((prev) => !prev);
+  };
+  
   useEffect(() => { storeInfo() }, [params]);
 
   return (
     <div className={profileStyles['inner-screen']}>
       <div className={profileStyles.title}>
         <h1>Profile</h1>
-        <IconButton>
+        <IconButton onClick={handleEditClick}>
           <EditTwoToneIcon />
         </IconButton>
       </div>
       <hr className={pageStyles.divider}/>
-      {info.map(i => <Info key={i[0]} name={capitalise(i[0])} value={i[1]} />)}
+      {info.map(i => <Info key={i[0]} name={capitalise(i[0])} value={i[1]} edit={isEditing} />)}
     </div>
   );
 }
