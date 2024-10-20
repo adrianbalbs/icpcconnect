@@ -21,9 +21,6 @@ export default function Login() {
         withCredentials: true,
       });
       console.log(res);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("id", res.data.id);
       router.push("/teams");
     } catch (error) {
       alert(error);

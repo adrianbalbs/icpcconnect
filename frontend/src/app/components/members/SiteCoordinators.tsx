@@ -30,6 +30,7 @@ const SiteCoordinators: React.FC = () => {
     try {
       const res = await axios.get<{ siteCoordinators: SiteCoordInfo[] }>(
         `${SERVER_URL}/api/site-coordinators`,
+        { withCredentials: true },
       );
       const allSC: SiteCoordInfo[] = res.data.siteCoordinators;
       const filteredInfo: StaffProps[] = allSC.map((sc) => ({

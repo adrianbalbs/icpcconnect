@@ -30,6 +30,7 @@ const Coaches: React.FC = () => {
     try {
       const res = await axios.get<{ coaches: CoachInfo[] }>(
         `${SERVER_URL}/api/coaches`,
+        { withCredentials: true },
       );
       const allCoaches: CoachInfo[] = res.data.coaches;
       const filteredInfo: StaffProps[] = allCoaches.map((coach) => ({
