@@ -133,7 +133,7 @@ export class StudentService {
     //I do not know how to get rid of 'undefined' here :sob:
     //and don't want to break the struct FE is already using
     let teamName = student.team?.name;
-    if (teamName == undefined) {
+    if (!teamName) {
       teamName = null;
     }
 
@@ -191,7 +191,7 @@ export class StudentService {
           const uniName = student.university.name;
 
           let teamName = student.team?.name;
-          if (teamName == undefined) {
+          if (!teamName) {
             teamName = null;
           }
 
