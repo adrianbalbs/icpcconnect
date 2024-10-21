@@ -43,6 +43,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      spokenLanguages: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -63,6 +65,8 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        spokenLanguages: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -73,6 +77,8 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        spokenLanguages: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -83,6 +89,8 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        spokenLanguages: ["en"],
+        photoConsent: true,
       },
     ];
 
@@ -104,6 +112,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      spokenLanguages: ["en"],
+      photoConsent: true,
     };
     const user = await request(app).post("/api/students").send(req).expect(200);
 
@@ -130,6 +140,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      spokenLanguages: ["en"],
+      photoConsent: true,
     };
     const res = await request(app)
       .post("/api/students")
@@ -165,6 +177,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      spokenLanguages: ["en"],
+      photoConsent: true,
     };
     const res = await request(app)
       .post("/api/students")

@@ -2,6 +2,7 @@ import { UserRole } from "../schemas/user-schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { getLogger } from "../utils/logger.js";
 import { DatabaseConnection } from "./database.js";
+import { SpokenLanguage } from "../schemas/user-schema.js";
 import {
   coaches,
   Course,
@@ -11,6 +12,7 @@ import {
   students,
   universities,
   users,
+  languagesSpokenByStudent,
 } from "./schema.js";
 
 type UserTable = {
@@ -26,6 +28,8 @@ type StudentTable = UserTable & {
   team: string | null;
   pronouns: string;
   studentId: string;
+  photoConsent: boolean,
+  languagesSpoken: SpokenLanguage[],
 };
 
 type CoachTable = UserTable & {
@@ -45,6 +49,8 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
     team,
     pronouns,
     studentId,
+    photoConsent,
+    languagesSpoken,
   } = student;
 
   const newPassword = await passwordUtils().hash(password);
@@ -56,8 +62,13 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
       .onConflictDoNothing();
     await tx
       .insert(students)
-      .values({ userId: user.userId, university, team, pronouns, studentId })
+      .values({ userId: user.userId, university, team, pronouns, studentId, photoConsent })
       .onConflictDoNothing();
+    for (const languageCode of languagesSpoken) {
+      await tx
+        .insert(languagesSpokenByStudent)
+        .values({ studentId: user.userId, languageCode });
+     }
   });
 };
 

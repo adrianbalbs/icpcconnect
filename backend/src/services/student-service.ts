@@ -2,9 +2,9 @@ import { eq } from "drizzle-orm";
 import {
   DatabaseConnection,
   students,
-  teams,
-  universities,
   users,
+  languagesSpokenByStudent,
+  SpokenLanguage,
 } from "../db/index.js";
 import {
   CreateStudentRequest,
@@ -25,6 +25,7 @@ export type StudentProfileResponse = UserProfileResponse & {
   team: string | null;
   dietaryRequirements: string | null;
   tshirtSize: string | null;
+  languagesSpoken: SpokenLanguage[];
 };
 
 export type StudentsResponse = {
@@ -49,7 +50,10 @@ export class StudentService {
       role,
       studentId,
       university,
+      spokenLanguages,
+      photoConsent,
     } = req;
+
 
     const hashedPassword = await passwordUtils().hash(password);
     const [student] = await this.db
@@ -67,31 +71,47 @@ export class StudentService {
       userId: student.userId,
       studentId,
       university,
+      photoConsent,
     });
+
+
+    for (const languageCode of spokenLanguages) {
+      await this.db
+        .insert(languagesSpokenByStudent)
+        //This is meant to be the student's userId, not their *studentId* 
+        .values({ studentId: student.userId, languageCode });
+    }
 
     return { userId: student.userId };
   }
 
   async getStudentById(userId: string): Promise<StudentProfileResponse> {
-    const [student] = await this.db
-      .select({
-        id: users.id,
-        givenName: users.givenName,
-        familyName: users.familyName,
-        email: users.email,
-        role: users.role,
-        pronouns: students.pronouns,
-        studentId: students.studentId,
-        university: universities.name,
-        team: teams.name,
-        dietaryRequirements: students.dietaryRequirements,
-        tshirtSize: students.tshirtSize,
-      })
-      .from(users)
-      .where(eq(users.id, userId))
-      .leftJoin(students, eq(users.id, students.userId))
-      .innerJoin(universities, eq(universities.id, students.university))
-      .leftJoin(teams, eq(teams.id, students.team));
+   const student = await this.db.query.students.findFirst({
+      where: eq(students.userId, userId),
+      columns: { team: false, university: false},
+      with: {
+        team: {
+          columns: {
+            name: true,
+          },
+        },
+        university: {
+          columns: {
+            name: true,
+          },
+        },
+        user: {
+          columns: {
+            password: false,
+          }
+        },
+        languagesSpoken: {
+          with: {
+            language: true,
+          }
+        },
+      },
+   })
 
     if (!student) {
       throw new HTTPError({
@@ -100,30 +120,94 @@ export class StudentService {
       });
     }
 
-    return student;
+    const {
+      givenName,
+      familyName,
+      email,
+      role,
+      id
+    } = student.user;
+
+    const uniName = student.university.name;
+
+    //I do not know how to get rid of 'undefined' here :sob:
+    //and don't want to break the struct FE is already using
+    let teamName = student.team?.name;
+    if (teamName == undefined) {
+      teamName = null;
+    }
+
+    return {
+      ...student,
+      university: uniName,
+      team: teamName,
+      languagesSpoken: student.languagesSpoken.map((ls) => ls.language),
+      givenName,
+      familyName,
+      email,
+      role,
+      id
+    }
   }
 
   async getAllStudents(): Promise<StudentsResponse> {
-    const allStudents = await this.db
-      .select({
-        id: users.id,
-        givenName: users.givenName,
-        familyName: users.familyName,
-        email: users.email,
-        role: users.role,
-        pronouns: students.pronouns,
-        studentId: students.studentId,
-        university: universities.name,
-        team: teams.name,
-        dietaryRequirements: students.dietaryRequirements,
-        tshirtSize: students.tshirtSize,
-      })
-      .from(users)
-      .innerJoin(students, eq(users.id, students.userId))
-      .innerJoin(universities, eq(universities.id, students.university))
-      .leftJoin(teams, eq(teams.id, students.team));
+   const allStudents = await this.db.query.students.findMany({
+      columns: { team: false, university: false},
+      with: {
+        team: {
+          columns: {
+            name: true,
+          },
+        },
+        university: {
+          columns: {
+            name: true,
+          },
+        },
+        user: {
+          columns: {
+            password: false,
+          }
+        },
+        languagesSpoken: {
+          with: {
+            language: true,
+          }
+        },
+      },
+   })
 
-    return { allStudents };
+    return {
+      allStudents:
+        allStudents.map((student) => {
+          const {
+            givenName,
+            familyName,
+            email,
+            role,
+            id
+          } = student.user;
+
+          const uniName = student.university.name;
+
+          let teamName = student.team?.name;
+          if (teamName == undefined) {
+            teamName = null;
+          }
+
+          return {
+            ...student,
+            university: uniName,
+            team: teamName,
+            languagesSpoken: student.languagesSpoken.map((ls) => ls.language),
+            givenName,
+            familyName,
+            email,
+            role,
+            id
+          }
+        }),
+    };
   }
 
   // Update specified student's details
@@ -148,6 +232,8 @@ export class StudentService {
       team,
       dietaryRequirements,
       tshirtSize,
+      photoConsent,
+      spokenLanguages,
     } = updatedDetails;
 
     const hashedPassword = await passwordUtils().hash(password);
@@ -158,8 +244,19 @@ export class StudentService {
 
     await this.db
       .update(students)
-      .set({ studentId, university, pronouns, team, dietaryRequirements, tshirtSize })
+      .set({ studentId, university, pronouns, team, dietaryRequirements, tshirtSize, photoConsent })
       .where(eq(students.userId, userId));
+
+    await this.db
+      .delete(languagesSpokenByStudent)
+      .where(eq(languagesSpokenByStudent.studentId, userId));
+
+    for (const languageCode of spokenLanguages) {
+      await this.db
+        .insert(languagesSpokenByStudent)
+        //This is meant to be the student's userId, not their *studentId* 
+        .values({ studentId: userId, languageCode });
+    }
 
     return {
       studentId,
@@ -172,6 +269,8 @@ export class StudentService {
       team,
       dietaryRequirements,
       tshirtSize,
+      photoConsent,
+      spokenLanguages,
     };
   }
 
