@@ -8,7 +8,7 @@ import {
 } from "../utils/createcode.js";
 import { CreateAuthCodeRouteRequest } from "../schemas/codes-schema.js";
 import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
-import { createAuthoriseMiddleware } from "../middleware/authorise.js";
+import { authorise } from "../middleware/authorise.js";
 
 export function codesRouter(
   codesService: CodesService,
@@ -16,7 +16,6 @@ export function codesRouter(
 ) {
   //   const logger = getLogger();
   const authenticate = createAuthenticationMiddleware(authService);
-  const authorise = createAuthoriseMiddleware(authService);
   return (
     Router()
       /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/

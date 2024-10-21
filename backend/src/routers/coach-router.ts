@@ -8,14 +8,13 @@ import {
   UpdateCoachRequestSchema,
 } from "../schemas/user-schema.js";
 import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
-import { createAuthoriseMiddleware } from "../middleware/authorise.js";
+import { authorise } from "../middleware/authorise.js";
 
 export function coachRouter(
   coachService: CoachService,
   authService: AuthService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
-  const authorise = createAuthoriseMiddleware(authService);
   return Router()
     .get(
       "/",

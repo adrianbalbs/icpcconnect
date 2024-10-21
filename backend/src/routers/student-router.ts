@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import {
   createAuthenticationMiddleware,
-  createAuthoriseMiddleware,
+  authorise,
   validateData,
 } from "../middleware/index.js";
 import {
@@ -19,7 +19,6 @@ export function studentRouter(
   authService: AuthService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
-  const authorise = createAuthoriseMiddleware(authService);
   return Router()
     .get(
       "/",

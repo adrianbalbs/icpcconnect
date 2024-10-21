@@ -3,7 +3,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import {
   createAuthenticationMiddleware,
   validateData,
-  createAuthoriseMiddleware,
+  authorise,
 } from "../middleware/index.js";
 import {
   CreateContestRegistrationForm,
@@ -17,7 +17,6 @@ export function contestRegistrationRouter(
   authService: AuthService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
-  const authorise = createAuthoriseMiddleware(authService);
   return Router()
     .use(authenticate)
     .get(

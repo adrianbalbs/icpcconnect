@@ -8,14 +8,13 @@ import {
 } from "../schemas/user-schema.js";
 import { validateData } from "../middleware/validator-middleware.js";
 import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
-import { createAuthoriseMiddleware } from "../middleware/authorise.js";
+import { authorise } from "../middleware/authorise.js";
 
 export function siteCoordinatorRouter(
   siteCoordinatorService: SiteCoordinatorService,
   authService: AuthService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
-  const authorise = createAuthoriseMiddleware(authService);
   return Router()
     .get(
       "/",

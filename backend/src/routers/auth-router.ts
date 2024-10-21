@@ -3,7 +3,7 @@ import { validateData } from "../middleware/validator-middleware.js";
 import { AuthService, LoginRequest } from "../services/auth-service.js";
 import { LoginRequestSchema } from "../schemas/index.js";
 import dotenv from "dotenv";
-import { clearCookies, setCookies } from "src/utils/jwt.js";
+import { clearCookies, setCookies } from "../utils/jwt.js";
 dotenv.config();
 
 export function authRouter(authService: AuthService) {

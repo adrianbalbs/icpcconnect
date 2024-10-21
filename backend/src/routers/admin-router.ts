@@ -12,7 +12,7 @@ import {
 import {
   validateData,
   createAuthenticationMiddleware,
-  createAuthoriseMiddleware,
+  authorise,
 } from "../middleware/index.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
 
@@ -25,10 +25,9 @@ export function adminRouter(
   algorithmService: AlgorithmService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
-  const authorise = createAuthoriseMiddleware(authService)(["admin"]);
   return Router()
     .use(authenticate)
-    .use(authorise)
+    .use(authorise(["admin"]))
     .get("/admin", async (_req: Request, res: Response, next: NextFunction) => {
       try {
         const users = await adminService.getAllMembers();
