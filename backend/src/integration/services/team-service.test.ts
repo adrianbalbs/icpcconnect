@@ -2,9 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
 import {
-  Database,
   DatabaseConnection,
-  seed,
   universities,
   users,
   teams,
@@ -29,9 +27,13 @@ beforeAll(async () => {
   app = express()
     .use(express.json())
     .use("/api", teamRouter(new TeamService(db)));
+  teamService = new TeamService(db);
 });
 
 afterAll(async () => {
+  await db.delete(teams)
+  await db.delete(users);
+  await db.delete(universities);
   await dropTestDatabase();
 });
 
