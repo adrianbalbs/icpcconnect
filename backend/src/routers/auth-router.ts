@@ -2,20 +2,11 @@ import { Router, Request, Response, NextFunction } from "express";
 import { validateData } from "../middleware/validator-middleware.js";
 import { AuthService, LoginRequest } from "../services/auth-service.js";
 import { LoginRequestSchema } from "../schemas/index.js";
-import { __prod__ } from "../utils/constants.js";
 import dotenv from "dotenv";
+import { clearCookies, setCookies } from "src/utils/jwt.js";
 dotenv.config();
 
 export function authRouter(authService: AuthService) {
-  const cookieOpts = {
-    httpOnly: true,
-    secure: __prod__,
-    sameSite: "lax",
-    path: "/",
-    domain: __prod__ ? `.${process.env.DOMAIN}` : "",
-    maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
-  } as const;
-
   return Router()
     .post(
       "/login",
@@ -28,8 +19,7 @@ export function authRouter(authService: AuthService) {
         const loginDetails = req.body;
         try {
           const result = await authService.login(loginDetails);
-          res.cookie("id", result.token, cookieOpts);
-          res.cookie("rid", result.refresh, cookieOpts);
+          setCookies(res, result.token, result.refresh);
           res.status(200).send(result);
         } catch (err) {
           next(err);
@@ -37,8 +27,7 @@ export function authRouter(authService: AuthService) {
       },
     )
     .post("/logout", (_req: Request, res: Response) => {
-      res.clearCookie("id", cookieOpts);
-      res.clearCookie("rid", cookieOpts);
+      clearCookies(res);
       res.status(200).send();
     });
 }

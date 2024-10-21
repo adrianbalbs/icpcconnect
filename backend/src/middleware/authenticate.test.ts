@@ -20,7 +20,7 @@ describe("authentication middleware", () => {
   );
   const invalidToken = "invalid-token";
 
-  let req: Partial<Request & { userId?: string }>;
+  let req: Partial<Request & { role?: string }>;
   let res: Partial<Response>;
   let next: NextFunction;
   let authService: Partial<AuthService>;
@@ -29,16 +29,22 @@ describe("authentication middleware", () => {
   beforeEach(() => {
     req = {
       cookies: {},
-      userId: undefined,
+      role: undefined,
     };
     res = {
       status: vi.fn().mockReturnThis(),
       json: vi.fn(),
       send: vi.fn(),
+      cookie: vi.fn(),
     };
     next = vi.fn();
     authService = {
-      getUserRefreshTokenVersion: vi.fn().mockResolvedValue(1),
+      getUserAuthInfo: vi.fn().mockResolvedValue({
+        role: "student",
+        email: "student@ad.com",
+        id: userId,
+        refreshTokenVersion: 1,
+      }),
     };
     authenticate = createAuthenticationMiddleware(authService as AuthService);
 
@@ -50,7 +56,7 @@ describe("authentication middleware", () => {
     authenticate(req as Request, res as Response, next);
 
     expect(next).toHaveBeenCalled();
-    expect(req.userId).toBe(userId);
+    expect(req.role).toBe("student");
   });
 
   it("should return 401 for missing access token", () => {
@@ -74,9 +80,10 @@ describe("authentication middleware", () => {
     req.cookies = { id: invalidToken, rid: validRefreshToken };
     await authenticate(req as Request, res as Response, next);
 
+    expect(authService.getUserAuthInfo).toHaveBeenCalledWith(userId);
+    expect(res.cookie).toHaveBeenCalledTimes(2);
     expect(next).toHaveBeenCalled();
-    expect(req.userId).toBe(userId);
-    expect(authService.getUserRefreshTokenVersion).toHaveBeenCalledWith(userId);
+    expect(req.role).toBe("student");
   });
 
   it("should return 401 for missing refresh token if access token is invalid", async () => {

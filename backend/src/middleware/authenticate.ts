@@ -5,6 +5,7 @@ import { unauthorizedError } from "../utils/errors.js";
 import { getLogger } from "../utils/logger.js";
 import { UserRole } from "../schemas/user-schema.js";
 import { AuthService } from "../services/auth-service.js";
+import { createAuthTokens, setCookies } from "../utils/jwt.js";
 
 export type AccessTokenPayload = {
   id: string;
@@ -40,11 +41,11 @@ export const createAuthenticationMiddleware = (authService: AuthService) => {
         jwt.verify(token, REFRESH_TOKEN_SECRET)
       );
 
-      const userRefreshTokenVersion =
-        await authService.getUserRefreshTokenVersion(decodedRefresh.id);
+      const { refreshTokenVersion, role, id } =
+        await authService.getUserAuthInfo(decodedRefresh.id);
 
-      return userRefreshTokenVersion === decodedRefresh.refreshTokenVersion
-        ? decodedRefresh.id
+      return refreshTokenVersion === decodedRefresh.refreshTokenVersion
+        ? { refreshTokenVersion, role, id }
         : null;
     } catch {
       logger.debug("Id associated with refresh token not valid");
@@ -62,24 +63,32 @@ export const createAuthenticationMiddleware = (authService: AuthService) => {
 
     const accessPayload = verifyAccessToken(accessToken);
     if (accessPayload) {
-      req.userId = accessPayload.id;
+      req.role = accessPayload.role;
       next();
       return;
     }
 
+    // If verifying the acces token fails, check refresh token
     if (!Object.keys(req.cookies).includes("rid")) {
       res.status(unauthorizedError.errorCode).send(unauthorizedError);
       return;
     }
     const refreshToken = req.cookies["rid"];
-    const userId = await verifyRefreshToken(refreshToken);
-    if (!userId) {
+    const userAuthInfo = await verifyRefreshToken(refreshToken);
+    if (!userAuthInfo) {
       logger.debug("Refresh token is invalid");
       res.status(unauthorizedError.errorCode).send(unauthorizedError);
       return;
     }
 
-    req.userId = userId;
+    const newTokens = createAuthTokens(
+      userAuthInfo.id,
+      userAuthInfo.role,
+      userAuthInfo.refreshTokenVersion,
+    );
+    setCookies(res, newTokens.token, newTokens.refresh);
+
+    req.role = userAuthInfo.role;
     next();
   };
 };

@@ -2,12 +2,12 @@ import { eq } from "drizzle-orm";
 import { DatabaseConnection } from "../db/database.js";
 import { users } from "../db/schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
+import { createAuthTokens } from "../utils/jwt.js";
 import {
   HTTPError,
   notFoundError,
   unauthorizedError,
 } from "../utils/errors.js";
-import jwt, { Secret } from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -15,10 +15,6 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
-
-export const SECRET_KEY: Secret = process.env.JWT_SECRET || "placeholder-key";
-export const REFRESH_TOKEN_SECRET =
-  process.env.REFRESH_TOKEN_SECRET || "another-placeholder-key";
 
 export class AuthService {
   private readonly db: DatabaseConnection;
@@ -44,31 +40,19 @@ export class AuthService {
     const isPasswordValid = await passwordUtils().compare(password, storedHash);
 
     if (isPasswordValid) {
-      const token = jwt.sign(
-        { id: user[0].id, role: user[0].role },
-        SECRET_KEY,
-        {
-          expiresIn: "15min",
-        },
+      return createAuthTokens(
+        user[0].id,
+        user[0].role,
+        user[0].refreshTokenVersion,
       );
-
-      const refresh = jwt.sign(
-        { id: user[0].id, refreshTokenVersion: user[0].refreshTokenVersion },
-        REFRESH_TOKEN_SECRET,
-        {
-          expiresIn: "30d",
-        },
-      );
-
-      return { token, refresh };
     } else {
       throw new HTTPError(unauthorizedError);
     }
   }
 
-  async getUserRole(userId: string) {
+  async getUserAuthInfo(userId: string) {
     const [user] = await this.db
-      .select({ role: users.role })
+      .select()
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
@@ -76,19 +60,11 @@ export class AuthService {
       throw new HTTPError(notFoundError);
     }
 
-    return user.role;
-  }
-
-  async getUserRefreshTokenVersion(userId: string) {
-    const [user] = await this.db
-      .select({ refreshTokenVersion: users.refreshTokenVersion })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-    if (!user) {
-      throw new HTTPError(notFoundError);
-    }
-
-    return user.refreshTokenVersion;
+    return {
+      refreshTokenVersion: user.refreshTokenVersion,
+      email: user.email,
+      role: user.role,
+      id: user.id,
+    };
   }
 }
