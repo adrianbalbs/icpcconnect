@@ -82,15 +82,15 @@ export function adminRouter(
         },
     )
     .get(
-        "/admin/:id/getEmails/:role",
+        "/admin/getEmails/:role",
         async (
-            req: Request<{ id: string, role: UserRole }, unknown>,
+            req: Request<{ role: UserRole }, unknown>,
             res: Response,
             next: NextFunction,
         ) => {
-            const { id, role } = req.params;
+            const { role } = req.params;
             try {
-                const emails = adminService.getEmailsViaRole(role);
+                const emails = await adminService.getEmailsViaRole(role);
 
                 res.status(200).json(emails);
             } catch (err) {
