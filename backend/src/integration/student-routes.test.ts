@@ -240,11 +240,11 @@ describe("studentRouter tests", () => {
 
     const emailsSplit = emails.split(";");
 
-    expect(emailsSplit).toContain(userIds[1]);
-    expect(emailsSplit).toContain(userIds[2]);
+    expect(emailsSplit).toContain(student_reqs[1].email);
+    expect(emailsSplit).toContain(student_reqs[2].email);
 
     //Dont include our own email - thatd be annoying
-    expect(emailsSplit).not.toContain(userIds[0]);
+    expect(emailsSplit).not.toContain(student_reqs[0].email);
 
   });
 
