@@ -5,8 +5,9 @@ import { CoachService } from "../services/index.js";
 import { StudentService } from "../services/index.js";
 import { SiteCoordinatorService } from "../services/index.js";
 import { HTTPError, badRequest } from "../utils/errors.js";
-import { CreateAdminRequest, CreateAdminRequestSchema } from "../schemas/user-schema.js";
+import { CreateAdminRequest, CreateAdminRequestSchema, UserRole } from "../schemas/user-schema.js";
 import { validateData } from "../middleware/validator-middleware.js";
+import { User } from "../db/schema.js";
 
 export function adminRouter(
     adminService: AdminService,
@@ -78,6 +79,23 @@ export function adminRouter(
                 next(err); // Handle unexpected errors
             }
             
+        },
+    )
+    .get(
+        "/admin/:id/getEmails/:role",
+        async (
+            req: Request<{ id: string, role: UserRole }, unknown>,
+            res: Response,
+            next: NextFunction,
+        ) => {
+            const { id, role } = req.params;
+            try {
+                const emails = adminService.getEmailsViaRole(role);
+
+                res.status(200).json(emails);
+            } catch (err) {
+                next(err); // Handle unexpected errors
+            }
         },
     )
     .put(

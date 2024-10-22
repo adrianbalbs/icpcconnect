@@ -37,6 +37,22 @@ export function coachRouter(coachService: CoachService) {
         }
       },
     )
+    .get(
+      "/coaches/:id/studentEmails",
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const emails = await coachService.getStudentEmails(id);
+          res.status(200).json(emails);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .delete(
       "/coaches/:id",
       async (
