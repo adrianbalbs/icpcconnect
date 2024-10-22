@@ -29,7 +29,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
   return (
     <div className={profileStyles['inner-screen']}>
       <div className={profileStyles.title}>
-        <h1>Profile</h1>
+        <h3>Profile</h3>
         <IconButton>
           <EditTwoToneIcon />
         </IconButton>

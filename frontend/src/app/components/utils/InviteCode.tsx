@@ -96,7 +96,7 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
           aria-describedby="generate-invite-code"
         >
           <CloseBtn handleClose={(handleClose)}/>
-          <DialogContent sx={{ width: '450px', height: '180px', padding: '40px 40px' }}>
+          <DialogContent sx={{ width: '450px', height: '110px', padding: '40px 40px' }}>
             <FormControl sx={{ margin: '10px 0', fontSize: '12px' }} fullWidth>
               <InputLabel id="new-invite-code-label" sx={{ lineHeight: '15px', fontSize: '14px' }}>New Invite Code</InputLabel>
               <Select
@@ -118,7 +118,7 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
           </DialogContent>
           <Button
             variant="contained"
-            sx={{...purpleBtn, margin: '0 auto 20px', width: '170px' }}
+            sx={{...purpleBtn, margin: '0 auto 30px', width: '170px' }}
             onClick={handleButton}
             disabled={type === ''}
           >

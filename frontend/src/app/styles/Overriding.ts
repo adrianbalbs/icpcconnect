@@ -16,3 +16,21 @@ export const copyBtn = {
     cursor: 'pointer'
   }
 }
+
+export const addBtn = {
+  minWidth: '220px',
+  padding: '10px 30px',
+  fontSize: '13px',
+  textTransform: 'none',
+  color: 'white',
+  backgroundColor: '#4B4B4B',
+}
+
+export const addModal = {
+  display: 'block',
+  padding: '30px 40px',
+  position: 'fixed',
+  height: '300px',
+  width: '600px',
+  zIndex: '1'
+}

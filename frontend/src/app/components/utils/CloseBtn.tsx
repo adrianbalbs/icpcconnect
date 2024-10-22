@@ -13,10 +13,16 @@ const CloseBtn: React.FC<FunctionProps> = ({ handleClose }) => {
       position: 'absolute',
       right: 8,
       top: 8,
+      margin: '5px 4px',
+      height: '25px',
+      width: '25px',
       color: theme.palette.grey[500],
     })}
   >
-    <CloseIcon />
+    <CloseIcon sx={{
+      height: '20px',
+      width: '20px',
+    }}/>
   </IconButton>
 }
 
