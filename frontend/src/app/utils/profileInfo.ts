@@ -20,6 +20,7 @@ const current: Info = {
   }
 };
 
+const infoToRemove = ['id', 'givenName', 'familyName', 'role'];
 
 export const getInfo = async (id: string | null) => {
   if (id === null) return current;
@@ -29,7 +30,7 @@ export const getInfo = async (id: string | null) => {
     const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
     const data: StudentInfo = res.data;
     const infoObject = { name: `${data.givenName} ${data.familyName}`, ...data };
-    const infoArr = Object.entries(infoObject);
+    const infoArr = Object.entries(infoObject).filter(i => !infoToRemove.includes(i[0]));
     current.id = data.id;
     current.university = data.university;
     current.info = infoArr;

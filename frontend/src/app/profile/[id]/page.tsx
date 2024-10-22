@@ -48,8 +48,6 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
   };
 
   useEffect(() => { storeInfo() }, [params]);
-
-  const infoToRemove = ['id', 'givenName', 'familyName', 'role'];
   
   return (
     <div className={profileStyles['inner-screen']}>
@@ -60,7 +58,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
         </IconButton>
       </div>
       <hr className={pageStyles.divider}/>
-      {info.filter(i => !infoToRemove.includes(i[0])).map((i, index) => (
+      {info.map((i, index) => (
         <Info
           key={i[0]}
           name={capitalise(i[0])}
