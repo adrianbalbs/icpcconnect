@@ -2,12 +2,13 @@ import { beforeAll, afterAll, afterEach, describe, expect, it } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { StudentService } from "../services/index.js";
-import { studentRouter } from "../routers/index.js";
+import { StudentService, TeamService } from "../services/index.js";
+import { studentRouter, teamRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateStudentRequest,
   UpdateStudentRequest,
+  CreateTeamRequest,
 } from "../schemas/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
@@ -21,6 +22,7 @@ beforeAll(async () => {
   app = express()
     .use(express.json())
     .use("/api", studentRouter(new StudentService(db)))
+    .use("/api", teamRouter(new TeamService(db)))
     .use(errorHandlerMiddleware);
 });
 
@@ -176,4 +178,74 @@ describe("studentRouter tests", () => {
   it("should return an error when deleting a student that does not exist", async () => {
     await request(app).delete(`/api/students/${uuidv4()}`).expect(400);
   });
+
+  it("Students should be able to get their teammates emails", async () => {
+    const student_reqs: CreateStudentRequest[] = [{
+      role: "student",
+      givenName: "Adrian",
+      familyName: "Balbalosa",
+      email: "adrianbalbs@comp3900.com",
+      studentId: "z5397730",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+    },
+    {
+      role: "student",
+      givenName: "Yuyun",
+      familyName: "Zhou",
+      email: "qx3d23qw@comp3900.com",
+      studentId: "z5354057",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+    },
+    {
+      role: "student",
+      givenName: "dwe",
+      familyName: "dq3was",
+      email: "dqwasd3qw@comp3900.com",
+      studentId: "z1234567",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+    }];
+
+    const userIds : string[] = [];
+    for (const req of student_reqs) {
+      const res = await request(app)
+        .post("/api/students")
+        .send(req)
+        .expect(200);
+        let { userId } = res.body;
+        userIds.push(userId);
+    }
+
+    const teamCreationReq : CreateTeamRequest = {
+      university: 1,
+      name: "epic_team",
+      memberIds: userIds,
+    };
+
+    await request(app)
+      .post("/api/teams/register")
+      .send(teamCreationReq)
+      .expect(200);
+
+    const res = await request(app)
+      .get(`/api/students/${userIds[0]}/teamEmails`)
+      .expect(200);
+
+    const {emails} = res.body;
+
+    const emailsSplit = emails.split(";");
+
+    expect(emailsSplit).toContain(userIds[1]);
+    expect(emailsSplit).toContain(userIds[2]);
+
+    //Dont include our own email - thatd be annoying
+    expect(emailsSplit).not.toContain(userIds[0]);
+
+  });
+
 });
