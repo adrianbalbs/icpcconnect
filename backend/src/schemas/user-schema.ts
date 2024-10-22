@@ -86,3 +86,8 @@ export const LoginRequestSchema = z.object({
 
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 
+export const StudentEmailsSchema = z.object({
+  emails: z.string()
+});
+
+export type StudentEmails = z.infer<typeof StudentEmailsSchema>;
