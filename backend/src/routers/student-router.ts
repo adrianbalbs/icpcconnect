@@ -37,6 +37,22 @@ export function studentRouter(studentService: StudentService) {
         }
       },
     )
+    .get(
+      "/students/:id/teamEmails",
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const emails = await studentService.getTeamEmails(id);
+          res.status(200).json(emails);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .delete(
       "/students/:id",
       async (
