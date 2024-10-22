@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import {
   DatabaseConnection,
   students,
@@ -174,5 +174,44 @@ export class StudentService {
 
     await this.db.delete(users).where(eq(users.id, userId));
     return { status: "OK" };
+  }
+
+  //async getTeamEmails(userId: string) : Promise<> {
+  async getTeamEmails(userId: string) {
+    const [student] = await this.db
+      .select({
+        team: students.team
+      })
+      .from(students)
+      .where(eq(students.userId, userId));
+
+    const teamId = student.team;
+
+    //User may not necessarily be in team
+    if (teamId) { 
+      const team = await this.db.query.teams.findFirst({
+        columns: {},
+        where: eq(teams.id, teamId),
+        with: {
+          members: true,
+        }
+      });
+      // student has a teamId, so we know the team to exist
+      assert(team !== undefined);
+
+      //Get userIds from team, filtering out our own
+      const userIds = team.members.map((m) => m.userId).filter((id) => id != userId);
+
+      const emails = await this.db.select({
+        email: users.email
+      }).from(users)
+      .where(inArray(users.id, userIds));
+
+      //Join all emails, separated with ';' - which allows for easy pasting into email clients
+      const formatted_string = emails.map((e) => e.email).join(';');
+      return { emails: formatted_string};
+    } else {
+      return {emails: ""};
+    }
   }
 }
