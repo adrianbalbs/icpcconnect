@@ -6,7 +6,7 @@ import {
   users,
   students,
 } from "../db/index.js";
-import { CreateCoachRequest, UpdateCoachRequest, StudentEmails } from "../schemas/index.js";
+import { CreateCoachRequest, UpdateCoachRequest, FormattedEmails } from "../schemas/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import {
@@ -141,7 +141,7 @@ export class CoachService {
     return { status: "OK" };
   }
 
-  async getStudentEmails(userId: string) : Promise<StudentEmails> {
+  async getStudentEmails(userId: string) : Promise<FormattedEmails> {
     const [coach] = await this.db
       .select({ university: coaches.university})
       .from(coaches)

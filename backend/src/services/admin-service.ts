@@ -13,7 +13,7 @@ import {
   NewUserResponse,
   UserProfileResponse,
 } from "../types/api-res.js";
-import { CreateAdminRequest, UpdateAdminRequest } from "../schemas/index.js";
+import { CreateAdminRequest, UpdateAdminRequest, UserRole, FormattedEmails } from "../schemas/index.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { HTTPError, badRequest } from "../utils/errors.js";
 
@@ -184,5 +184,15 @@ export class AdminService {
 
     await this.db.delete(users).where(eq(users.id, userId));
     return { status: "OK" };
+  }
+
+  async getEmailsViaRole(role: UserRole) : Promise<FormattedEmails> {
+    const emails = await this.db
+      .select({ email: users.email})
+      .from(users)
+      .where(eq(users.role, role)); 
+
+    const formatted_string = emails.map((e) => e.email).join(';');
+    return { emails: formatted_string};
   }
 }

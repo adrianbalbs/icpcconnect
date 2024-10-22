@@ -8,6 +8,7 @@ import {
 } from "../db/index.js";
 import {
   CreateStudentRequest,
+  FormattedEmails,
   UpdateStudentRequest,
 } from "../schemas/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
@@ -176,8 +177,7 @@ export class StudentService {
     return { status: "OK" };
   }
 
-  //async getTeamEmails(userId: string) : Promise<> {
-  async getTeamEmails(userId: string) {
+  async getTeamEmails(userId: string) : Promise<FormattedEmails> {
     const [student] = await this.db
       .select({
         team: students.team
