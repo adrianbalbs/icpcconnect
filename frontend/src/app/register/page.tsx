@@ -202,12 +202,12 @@ export default function Register() {
             {roleName === 'Student' ? (
               <div className={registerPage['form-container']}>
                 <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
-                <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type="Email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
             ) : (
               <div className={registerPage['form-container']}>
                 <input placeholder="Invite Code" className={registerPage['input-field']} value={inviteCode} onChange={(e) => setInviteCode(e.target.value)}/>
-                <input placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type="Email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
             )}
             <div className={registerPage['horizontal-container']}>

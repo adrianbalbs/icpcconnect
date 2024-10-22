@@ -125,3 +125,22 @@
 .edit-box {
   width: 250px;
 }
+
+.profile-button {
+  background-color: #333333;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  align-items: center;
+  position: absolute;
+  width: 100px;
+  height: 35px;
+  right: 150px;
+  bottom: 125px;
+}
+
+
+.profile-button:hover {
+  opacity: 90%;
+  cursor: pointer;
+}

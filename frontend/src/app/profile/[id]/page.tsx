@@ -7,6 +7,8 @@ import { IconButton } from '@mui/material';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import Info from '@/components/profile/Info';
 import { getInfo, capitalise } from '@/utils/profileInfo';
+import axios from 'axios';
+import { SERVER_URL } from '@/utils/constants';
 
 export interface ProfileProps {
   params: {
@@ -23,14 +25,32 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     if (data !== undefined) {
       setInfo(data.info);
     }
-  }
+  };
+
+  const handleInfoChange = (index: number, newValue: string | number) => {
+    const updatedInfo = [...info];
+    updatedInfo[index] = [updatedInfo[index][0], newValue];
+    setInfo(updatedInfo);
+  };
 
   const handleEditClick = () => {
-    setIsEditing((prev) => !prev);
+    setIsEditing(true);
   };
-  
+
+  const handleSaveClick = async () => {
+    setIsEditing(false);
+    const data = await getInfo(params.id);
+    console.log(data);
+    if (data !== undefined) {
+      data.info = info;
+      axios.put(`${SERVER_URL}/students/${params.id}`, data);
+    }
+  };
+
   useEffect(() => { storeInfo() }, [params]);
 
+  const infoToRemove = ['id', 'givenName', 'familyName', 'role'];
+  
   return (
     <div className={profileStyles['inner-screen']}>
       <div className={profileStyles.title}>
@@ -40,10 +60,20 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
         </IconButton>
       </div>
       <hr className={pageStyles.divider}/>
-      {info.map(i => <Info key={i[0]} name={capitalise(i[0])} value={i[1]} edit={isEditing} />)}
+      {info.filter(i => !infoToRemove.includes(i[0])).map((i, index) => (
+        <Info
+          key={i[0]}
+          name={capitalise(i[0])}
+          value={i[1]}
+          edit={isEditing}
+          onChange={(newValue) => handleInfoChange(index, newValue)}
+        />
+      ))}
+      <button className={profileStyles['profile-button']} onClick={handleSaveClick}>
+        Save
+      </button>
     </div>
   );
 }
 
 export default Profile;
-
