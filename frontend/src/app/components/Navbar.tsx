@@ -38,7 +38,7 @@ const StyledTab = styled((props: tabProps) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
     color: '#6b7ea1',
     '&:hover': {
-      color: '#5974a6',
+      color: '#7195d8',
       opacity: 1,
     },
     '&.Mui-selected': {
@@ -52,14 +52,15 @@ const StyledTab = styled((props: tabProps) => <Tab disableRipple {...props} />)(
 );
 
 const Navbar: React.FC = () => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(2);
+  const [tabAllowed, setTabAllowed] = useState('team');
   // const [initialLoad, setInitialLoad] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newTab: number) => {
     setTab(newTab);
-    router.push(`${tab === 1 ? '/teams' : '/members'}`);
+    router.push(tab === 1 ? `/${tabAllowed}` : '/members');
   };
 
   // useEffect(() => {
@@ -71,25 +72,33 @@ const Navbar: React.FC = () => {
   // }, []);
 
   useEffect(() => {
-    if (pathname.includes('teams')) {
+    if (localStorage.getItem('role') !== 'student') {
+      setTabAllowed('teams');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (pathname.includes('team')) {
       setTab(0);
-    } else {
+    } else if (pathname.includes('members')) {
       setTab(1);
+    } else {
+      setTab(2);
     }
   }, [pathname]);
 
   return <div className={styles.navbar}>
-    <h1>ICPCC</h1>
+    <h1 className={styles.website}>ICPCC</h1>
 
-    <Box sx={{ width: '100%', gridColumn: '6' }}>
+    <Box sx={{ width: '100%', gridColumn: '5' }}>
       <StyledTabs
         value={tab}
         onChange={handleChange}
         aria-label="tabs"
       >
         {/* { (!isStudent && <Tab sx={{ height: '60px', color: '#415478' }} value="teams" label="Teams"/>} */}
-        <StyledTab sx={{ height: '60px' }} label="Teams"/>
-        <StyledTab label="Members" />
+        <StyledTab sx={{ height: '60px' }} label={tabAllowed} />
+        {tabAllowed === 'teams' && <StyledTab label="members" />}
       </StyledTabs>
     </Box>
     <Menu />

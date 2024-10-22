@@ -9,7 +9,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
     setIsLoggedIn(localStorage.getItem('role') !== null);

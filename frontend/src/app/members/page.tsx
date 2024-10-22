@@ -11,12 +11,14 @@ import InviteCode from '@/components/utils/InviteCode';
 
 const Members: React.FC = () => {
   const router = useRouter();
-  const role = 'admin';
+  const [role, setRole] = useState<string | null>();
   const [notif, setNotif] = useState({ type: '', name: '' });
 
   useEffect(() => {
     if (localStorage.getItem('role') === null) {
       router.replace('/login');
+    } else {
+      setRole(localStorage.getItem('role'));
     }
   }, []);
 

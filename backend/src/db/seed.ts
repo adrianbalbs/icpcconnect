@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { UserRole } from "../schemas/user-schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { getLogger } from "../utils/logger.js";
@@ -14,6 +15,7 @@ import {
 } from "./schema.js";
 
 type UserTable = {
+  id: string;
   givenName: string;
   familyName: string;
   email: string;
@@ -36,6 +38,7 @@ type SiteCoordinatorTable = CoachTable;
 
 const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
   const {
+    id,
     givenName,
     familyName,
     email,
@@ -49,15 +52,28 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
 
   const newPassword = await passwordUtils().hash(password);
   await db.transaction(async (tx) => {
-    const [user] = await tx
-      .insert(users)
-      .values({ givenName, familyName, email, password: newPassword, role })
-      .returning({ userId: users.id })
-      .onConflictDoNothing();
-    await tx
-      .insert(students)
-      .values({ userId: user.userId, university, team, pronouns, studentId })
-      .onConflictDoNothing();
+    const [existing] = await tx
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    if (!existing) {
+      const [user] = await tx
+        .insert(users)
+        .values({
+          id,
+          givenName,
+          familyName,
+          email,
+          password: newPassword,
+          role,
+        })
+        .returning({ userId: users.id });
+      await tx
+        .insert(students)
+        .values({ userId: user.userId, university, team, pronouns, studentId });
+    }
   });
 };
 
@@ -65,20 +81,33 @@ const addSiteCoordinator = async (
   db: DatabaseConnection,
   siteCoordinator: SiteCoordinatorTable,
 ) => {
-  const { givenName, familyName, email, password, role, university } =
+  const { id, givenName, familyName, email, password, role, university } =
     siteCoordinator;
 
   const newPassword = await passwordUtils().hash(password);
   await db.transaction(async (tx) => {
-    const [user] = await tx
-      .insert(users)
-      .values({ givenName, familyName, email, password: newPassword, role })
-      .returning({ userId: users.id })
-      .onConflictDoNothing();
-    await tx
-      .insert(siteCoordinators)
-      .values({ userId: user.userId, university })
-      .onConflictDoNothing();
+    const [existing] = await tx
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    if (!existing) {
+      const [user] = await tx
+        .insert(users)
+        .values({
+          id,
+          givenName,
+          familyName,
+          email,
+          password: newPassword,
+          role,
+        })
+        .returning({ userId: users.id });
+      await tx
+        .insert(siteCoordinators)
+        .values({ userId: user.userId, university });
+    }
   });
 };
 
@@ -86,20 +115,31 @@ const addCoach = async (
   db: DatabaseConnection,
   siteCoordinator: CoachTable,
 ) => {
-  const { givenName, familyName, email, password, role, university } =
+  const { id, givenName, familyName, email, password, role, university } =
     siteCoordinator;
 
   const newPassword = await passwordUtils().hash(password);
   await db.transaction(async (tx) => {
-    const [user] = await tx
-      .insert(users)
-      .values({ givenName, familyName, email, password: newPassword, role })
-      .returning({ userId: users.id })
-      .onConflictDoNothing();
-    await tx
-      .insert(coaches)
-      .values({ userId: user.userId, university })
-      .onConflictDoNothing();
+    const [existing] = await tx
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    if (!existing) {
+      const [user] = await tx
+        .insert(users)
+        .values({
+          id,
+          givenName,
+          familyName,
+          email,
+          password: newPassword,
+          role,
+        })
+        .returning({ userId: users.id });
+      await tx.insert(coaches).values({ userId: user.userId, university });
+    }
   });
 };
 
@@ -148,7 +188,12 @@ export const seed = async (db: DatabaseConnection) => {
   logger.info("Adding default admin");
   const admins = data.default.admins as UserTable[];
   for (const admin of admins) {
-    await db.insert(users).values(admin).onConflictDoNothing();
+    const { id, givenName, familyName, password, email, role } = admin;
+    const newPassword = await passwordUtils().hash(password);
+    await db
+      .insert(users)
+      .values({ id, givenName, familyName, password: newPassword, email, role })
+      .onConflictDoNothing();
   }
 };
 
