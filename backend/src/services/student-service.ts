@@ -136,8 +136,10 @@ export class StudentService {
       teamName = null;
     }
 
+    const { user, ...studentProps } = student;
+
     return {
-      ...student,
+      ...studentProps,
       university: uniName,
       team: teamName,
       languagesSpoken: student.languagesSpoken.map((ls) => ls.language),
