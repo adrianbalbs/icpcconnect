@@ -4,8 +4,9 @@ import {
   DatabaseConnection,
   universities,
   users,
+  students,
 } from "../db/index.js";
-import { CreateCoachRequest, UpdateCoachRequest } from "../schemas/index.js";
+import { CreateCoachRequest, UpdateCoachRequest, StudentEmails } from "../schemas/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import {
@@ -138,5 +139,23 @@ export class CoachService {
 
     await this.db.delete(users).where(eq(users.id, userId));
     return { status: "OK" };
+  }
+
+  async getStudentEmails(userId: string) : Promise<StudentEmails> {
+    const [coach] = await this.db
+      .select({ university: coaches.university})
+      .from(coaches)
+      .where(eq(coaches.userId, userId));
+
+    const student_emails = await this.db
+      .select({ email: users.email })
+      .from(users)
+      .leftJoin(students, eq(users.id, students.userId))
+      .where(eq(students.university, coach.university));
+
+    //Join all emails, separated with ';' - which allows for easy pasting into email clients
+    const formatted_string = student_emails.map((e) => e.email).join(';');
+
+    return { emails: formatted_string};
   }
 }
