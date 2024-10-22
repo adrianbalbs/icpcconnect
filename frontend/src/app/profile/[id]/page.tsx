@@ -53,9 +53,16 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     <div className={profileStyles['inner-screen']}>
       <div className={profileStyles.title}>
         <h1>Profile</h1>
-        <IconButton onClick={handleEditClick}>
-          <EditTwoToneIcon />
-        </IconButton>
+        {isEditing ? (
+          <button className={profileStyles['profile-button']} onClick={handleSaveClick}>
+            Save
+          </button>
+        ) : (
+          <IconButton onClick={handleEditClick}>
+            <EditTwoToneIcon />
+          </IconButton>
+        )}
+        
       </div>
       <hr className={pageStyles.divider}/>
       {info.map((i, index) => (
@@ -67,9 +74,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
           onChange={(newValue) => handleInfoChange(index, newValue)}
         />
       ))}
-      <button className={profileStyles['profile-button']} onClick={handleSaveClick}>
-        Save
-      </button>
+      
     </div>
   );
 }

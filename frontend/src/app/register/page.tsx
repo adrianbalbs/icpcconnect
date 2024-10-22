@@ -71,14 +71,14 @@ export default function Register() {
           const payload = {
             givenName,
             familyName,
+            password,
+            email,
             role,
             studentId,
             university,
             verificationCode,
-            email,
-            password,
-            spokenLanguages,
             photoConsent,
+            spokenLanguages,
           };
           const res = await axios.post(`${SERVER_URL}/api/students`, payload);
           localStorage.setItem('id', res.data.userId);
@@ -204,15 +204,15 @@ export default function Register() {
               <option value={4}>Macquarie University</option>
             </select>
             {roleName === 'Student' ? (
-              <div className={registerPage['form-container']}>
+              <form className={registerPage['form-container']}>
                 <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
-                <input type="Email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
+                <input type="Email" id="email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+              </form>
             ) : (
-              <div className={registerPage['form-container']}>
+              <form className={registerPage['form-container']}>
                 <input placeholder="Invite Code" className={registerPage['input-field']} value={inviteCode} onChange={(e) => setInviteCode(e.target.value)}/>
-                <input type="Email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
+                <input type="Email" id="email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+              </form>
             )}
             <div className={registerPage['horizontal-container']}>
               <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>

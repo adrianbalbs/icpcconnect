@@ -73,7 +73,7 @@ export const students = pgTable("students", {
   university: integer("university").references(() => universities.id).notNull(),
 });
 
-export const studentRelations = relations(students, ({ one , many}) => ({
+export const studentRelations = relations(students, ({ one, many }) => ({
   languagesSpoken: many(languagesSpokenByStudent),
   user: one(users, { fields: [students.userId], references: [users.id] }),
   university: one(universities, {

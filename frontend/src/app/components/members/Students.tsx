@@ -17,6 +17,9 @@ export interface StudentInfo {
   studentId: number;
   university: string;
   team: string;
+  languagesSpoken?: { code: string; name: string; }[];
+  dietaryRequirements: string;
+  photoConsent: boolean;
 }
 
 const Students: React.FC = () => {

@@ -19,11 +19,18 @@ const Info: React.FC<InfoProps> = ({ name, value, edit, onChange }) => {
       <div className={profileStyles.content}>
         <p className={pageStyles.bold}>{name}</p>
         {edit ? (
+          name !== 'Dietary Requirements' ? (
           <input
             className={profileStyles['edit-box']}
             value={value}
             onChange={handleInputChange}
           />
+          ) : (
+          <input
+            className={profileStyles['large-edit-box']}
+            value={value}
+            onChange={handleInputChange}
+          />)
         ) : (
           <p>{value}</p>
         )}

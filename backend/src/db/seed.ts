@@ -67,13 +67,11 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
     if (!existing) {
       const [user] = await tx
         .insert(users)
-        .values({ givenName, familyName, email, password: newPassword, role })
-        .returning({ userId: users.id })
-        .onConflictDoNothing();
+        .values({ id, givenName, familyName, email, password: newPassword, role })
+        .returning({ userId: users.id });
       await tx
         .insert(students)
-        .values({ userId: user.userId, university, team, pronouns, studentId, photoConsent })
-        .onConflictDoNothing();
+        .values({ userId: user.userId, university, team, pronouns, studentId, photoConsent });
       for (const languageCode of languagesSpoken) {
         await tx
           .insert(languagesSpokenByStudent)

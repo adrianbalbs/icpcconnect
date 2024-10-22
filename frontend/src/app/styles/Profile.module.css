@@ -124,6 +124,15 @@
 
 .edit-box {
   width: 250px;
+  height: 30px;
+  border-radius: 3px;
+}
+
+
+.large-edit-box {
+  width: 250px;
+  height: 60px;
+  border-radius: 3px;
 }
 
 .profile-button {
@@ -132,11 +141,10 @@
   border-radius: 5px;
   text-align: center;
   align-items: center;
-  position: absolute;
   width: 100px;
   height: 35px;
-  right: 150px;
-  bottom: 125px;
+  position: absolute;
+  right: 120px;
 }
 
 

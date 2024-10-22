@@ -7,6 +7,7 @@ interface Info {
   university: string;
   info: [string, string | number][];
   sideInfo: { name: string; role: string; pronouns: string; };
+  languagesSpoken?: { code: string; name: string; }[];
 }
 
 const current: Info = {
@@ -16,11 +17,10 @@ const current: Info = {
   sideInfo: {
     name: '',
     role: '',
-    pronouns: ''
-  }
+    pronouns: '',
+  },
+  languagesSpoken: [],
 };
-
-const infoToRemove = ['id', 'givenName', 'familyName', 'role'];
 
 export const getInfo = async (id: string | null) => {
   if (id === null) return current;
@@ -29,16 +29,26 @@ export const getInfo = async (id: string | null) => {
   try {
     const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
     const data: StudentInfo = res.data;
-    const infoObject = { name: `${data.givenName} ${data.familyName}`, ...data };
-    const infoArr = Object.entries(infoObject).filter(i => !infoToRemove.includes(i[0]));
+    const languages = data.languagesSpoken?.map(i => i.name).toString();
+    const infoArr: [string, string | number][] = [
+      ['Name', `${data.givenName} ${data.familyName}`],
+      ['Pronouns', data.pronouns ? data.pronouns : '(Not added yet)'],
+      ['Team', data.team ? data.team : '(Unallocated)'],
+      ['University', data.university],
+      ['Student ID', data.studentId],
+      ['Languages Spoken', languages ? languages : '(Not added yet)'],
+      ['Dietary Requirements', data.dietaryRequirements ? data.dietaryRequirements : '(Not added yet)'],
+      ['Do you consent to appear in photos and videos taken on the day of the contest?', data.photoConsent ? 'Yes' : 'No']
+    ];
     current.id = data.id;
     current.university = data.university;
     current.info = infoArr;
     current.sideInfo = {
-      name: infoObject.name,
-      role: infoObject.role,
-      pronouns: infoObject.pronouns
+      name: `${data.givenName} ${data.familyName}`,
+      role: data.role,
+      pronouns: data.pronouns
     };
+    current.languagesSpoken = data.languagesSpoken;
     return current;
   } catch (error) {
     console.log(error);
