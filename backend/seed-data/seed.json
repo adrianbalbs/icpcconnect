@@ -10,7 +10,9 @@
       "university": 1,
       "studentId": "z5397730",
       "pronouns": "he/him",
-      "team": null
+      "languagesSpoken": ["en"],
+      "team": null,
+      "photoConsent": true
     },
     {
       "id": "c47253b3-5181-4680-81e0-01fc7b3c6c09",
@@ -22,6 +24,8 @@
       "university": 1,
       "studentId": "z5418213",
       "pronouns": "she/her",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -34,6 +38,8 @@
       "university": 1,
       "studentId": "z5421467",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -46,6 +52,8 @@
       "university": 1,
       "studentId": "z5419703",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -58,6 +66,8 @@
       "university": 1,
       "studentId": "z5421983",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -70,6 +80,8 @@
       "university": 1,
       "studentId": "z5354052",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -82,6 +94,8 @@
       "university": 2,
       "studentId": "z1342356",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -94,6 +108,8 @@
       "university": 2,
       "studentId": "z1334567",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -106,6 +122,8 @@
       "university": 2,
       "studentId": "z2324535",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -118,6 +136,8 @@
       "university": 2,
       "studentId": "z8534085",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -130,6 +150,8 @@
       "university": 2,
       "studentId": "z1123333",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
     },
     {
@@ -142,7 +164,10 @@
       "university": 2,
       "studentId": "z1123333",
       "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": ["en"],
       "team": null
+      
     }
   ],
   "coaches": [
