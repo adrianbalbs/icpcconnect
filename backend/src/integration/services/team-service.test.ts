@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
+import request from "supertest";
+import express from "express";
 import {
-  Database,
   DatabaseConnection,
-  seed,
   universities,
   users,
   teams,
@@ -13,13 +13,20 @@ import {
 } from "../../schemas/team-schema.js";
 import { TeamService } from "../../services/index.js";
 import { badRequest, HTTPError } from "../../utils/errors.js";
+import { beforeAll, afterAll, describe, it, expect } from "vitest";
+import { setupTestDatabase, dropTestDatabase } from "../db-test-helpers.js";
+import { teamRouter } from "../../routers/team-router.js";
 
 let db: DatabaseConnection;
 let teamService: TeamService;
+let app: ReturnType<typeof express>;
 
 beforeAll(async () => {
-  db = Database.getConnection();
-  await seed(db);
+  const dbSetup = await setupTestDatabase();
+  db = dbSetup.db;
+  app = express()
+    .use(express.json())
+    .use("/api", teamRouter(new TeamService(db)));
   teamService = new TeamService(db);
 });
 
@@ -27,7 +34,7 @@ afterAll(async () => {
   await db.delete(teams)
   await db.delete(users);
   await db.delete(universities);
-  Database.endConnection();
+  await dropTestDatabase();
 });
 
 describe("TeamService tests", () => {
@@ -38,8 +45,12 @@ describe("TeamService tests", () => {
       memberIds: [],
     };
 
-    const result = await teamService.createTeam(req);
-    expect(result.teamId).not.toBeNull();
+    const result = await request(app)
+      .post("/api/teams/register")
+      .send(req)
+      .expect(200);
+
+    expect(result.body.teamId).not.toBeNull();
   });
 
   it("Should get the teams's details with a uuid", async () => {
@@ -49,8 +60,14 @@ describe("TeamService tests", () => {
       memberIds: [],
     };
 
-    const { teamId } = await teamService.createTeam(req);
-    const result = await teamService.getTeam(teamId);
+    const res = await request(app)
+      .post("/api/teams/register")
+      .send(req)
+      .expect(200);
+
+    const result = await request(app)
+      .get(`/api/teams/${res.body.teamId}`)
+      .expect(200);
     expect(result).not.toBeNull();
   });
 

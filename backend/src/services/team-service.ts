@@ -3,7 +3,6 @@ import {
   DatabaseConnection,
   teams,
   students,
-  universities,
   users,
 } from "../db/index.js";
 import {
