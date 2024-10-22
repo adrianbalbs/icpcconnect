@@ -55,20 +55,29 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
 
   const newPassword = await passwordUtils().hash(password);
   await db.transaction(async (tx) => {
-    const [user] = await tx
-      .insert(users)
-      .values({ givenName, familyName, email, password: newPassword, role })
-      .returning({ userId: users.id })
-      .onConflictDoNothing();
-    await tx
-      .insert(students)
-      .values({ userId: user.userId, university, team, pronouns, studentId, photoConsent })
-      .onConflictDoNothing();
-    for (const languageCode of languagesSpoken) {
+
+    const [existing] = await tx
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    if (!existing) {
+      const [user] = await tx
+        .insert(users)
+        .values({ givenName, familyName, email, password: newPassword, role })
+        .returning({ userId: users.id })
+        .onConflictDoNothing();
       await tx
-        .insert(languagesSpokenByStudent)
-        .values({ studentId: user.userId, languageCode });
-     }
+        .insert(students)
+        .values({ userId: user.userId, university, team, pronouns, studentId, photoConsent })
+        .onConflictDoNothing();
+      for (const languageCode of languagesSpoken) {
+        await tx
+          .insert(languagesSpokenByStudent)
+          .values({ studentId: user.userId, languageCode });
+      }
+    }
   });
 };
 

@@ -54,7 +54,6 @@ export class StudentService {
       photoConsent,
     } = req;
 
-
     const hashedPassword = await passwordUtils().hash(password);
     const [student] = await this.db
       .insert(users)
