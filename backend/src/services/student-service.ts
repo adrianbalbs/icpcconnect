@@ -5,6 +5,8 @@ import {
   teams,
   universities,
   users,
+  User,
+  Student,
 } from "../db/index.js";
 import {
   CreateStudentRequest,
@@ -124,39 +126,49 @@ export class StudentService {
     userId: string,
     updatedDetails: UpdateStudentRequest,
   ): Promise<UpdateStudentResponse> {
-    const {
-      role,
-      givenName,
-      familyName,
-      password,
-      email,
-      studentId,
-      university,
-      pronouns,
-      team,
-    } = updatedDetails;
+    const userUpdates: Partial<User> = {};
+    const studentUpdates: Partial<Student> = {};
 
-    const hashedPassword = await passwordUtils().hash(password);
-    await this.db
-      .update(users)
-      .set({ role, givenName, familyName, password: hashedPassword, email })
-      .where(eq(users.id, userId));
+    // I now remember why I did it the other way :skull:
+    if (updatedDetails.password) {
+      userUpdates.password = await passwordUtils().hash(
+        updatedDetails.password,
+      );
+    }
+    if (updatedDetails.givenName)
+      userUpdates.givenName = updatedDetails.givenName;
+    if (updatedDetails.familyName)
+      userUpdates.familyName = updatedDetails.familyName;
+    if (updatedDetails.email) userUpdates.email = updatedDetails.email;
+    if (updatedDetails.role) userUpdates.role = updatedDetails.role;
 
-    await this.db
-      .update(students)
-      .set({ studentId, university, pronouns, team })
-      .where(eq(students.userId, userId));
+    if (updatedDetails.studentId)
+      studentUpdates.studentId = updatedDetails.studentId;
+    if (updatedDetails.university)
+      studentUpdates.university = updatedDetails.university;
+    if (updatedDetails.pronouns)
+      studentUpdates.pronouns = updatedDetails.pronouns;
+    if (updatedDetails.team !== undefined)
+      studentUpdates.team = updatedDetails.team;
 
-    return {
-      studentId,
-      role,
-      givenName,
-      familyName,
-      email,
-      university,
-      pronouns,
-      team,
-    };
+    if (Object.keys(userUpdates).length > 0) {
+      await this.db.update(users).set(userUpdates).where(eq(users.id, userId));
+    }
+
+    if (Object.keys(studentUpdates).length > 0) {
+      await this.db
+        .update(students)
+        .set(studentUpdates)
+        .where(eq(students.userId, userId));
+    }
+
+    if (Object.keys(studentUpdates).length > 0) {
+      await this.db
+        .update(students)
+        .set(studentUpdates)
+        .where(eq(students.userId, userId));
+    }
+    return updatedDetails;
   }
 
   async deleteStudent(userId: string): Promise<DeleteResponse> {

@@ -32,11 +32,13 @@ export type CreateStudentRequest = z.infer<typeof CreateStudentRequestSchema>;
 
 export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
   verificationCode: true,
-}).extend({
-  university: z.number(),
-  pronouns: z.string(),
-  team: z.string().nullable(),
-});
+})
+  .extend({
+    university: z.number(),
+    pronouns: z.string(),
+    team: z.string().nullable(),
+  })
+  .partial();
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
 
@@ -85,4 +87,3 @@ export const LoginRequestSchema = z.object({
 });
 
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
-
