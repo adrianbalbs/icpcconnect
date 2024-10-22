@@ -1,9 +1,11 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import {
   DatabaseConnection,
   siteCoordinators,
   universities,
   users,
+  students,
+  coaches,
 } from "../db/index.js";
 import {
   DeleteResponse,
@@ -13,6 +15,8 @@ import {
 import {
   CreateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequest,
+  FormattedEmails,
+  UserRole,
 } from "../schemas/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
@@ -174,5 +178,51 @@ export class SiteCoordinatorService {
 
     await this.db.delete(users).where(eq(users.id, userId));
     return { status: "OK" };
+  }
+
+  async getEmailsViaRole(userId: string, role: UserRole): Promise<FormattedEmails> {
+    //Currently we've only specified they can view students/coaches emails
+    if (role !== "student" && role !== "coach") {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Cannot request the emails for ${role}`,
+      });
+    }
+
+    //Get site from site coordinator
+    const [siteCoordinator] = await this.db
+      .select({ university: siteCoordinators.university})
+      .from(siteCoordinators)
+      .where(eq(siteCoordinators.userId, userId));
+
+    const { university: hosting_university } = siteCoordinator;
+
+    //Get all universities hosted at our site
+    //e.g university.hosted_at == site
+    const unis = await this.db  
+      .select({id: universities.id})
+      .from(universities)
+      .where(eq(universities.hostedAt, hosting_university));
+
+    //And transform into an array of ids
+    const uniIds = unis.map((uni) => uni.id);
+
+    let emailsArr; 
+    if (role == "coach") {
+      emailsArr = await this.db
+        .select({ email: users.email })
+        .from(users)
+        .leftJoin(coaches, inArray(coaches.university,uniIds));
+    } else { // role == "student"
+      emailsArr = await this.db
+        .select({ email: users.email })
+        .from(users)
+        .leftJoin(students, inArray(students.university,uniIds));
+    }
+
+    //Join all emails, separated with ';' - which allows for easy pasting into email clients
+    const formatted_string = emailsArr.map((e) => e.email).join(';');
+
+    return {emails: formatted_string};
   }
 }

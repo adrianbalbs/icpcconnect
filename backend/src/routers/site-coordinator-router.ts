@@ -5,7 +5,8 @@ import {
   CreateSiteCoordinatorRequestSchema,
   UpdateSiteCoordinatorRequest,
   UpdateSiteCoordinatorRequestSchema,
-} from "../schemas/user-schema.js";
+  UserRole
+} from "../schemas/index.js";
 import { validateData } from "../middleware/validator-middleware.js";
 
 export function siteCoordinatorRouter(
@@ -40,6 +41,23 @@ export function siteCoordinatorRouter(
           next(err);
         }
       },
+    )
+    .get(
+        "/site-coordinators/:id/getEmails/:role",
+        async (
+            req: Request<{ id: string, role: UserRole }, unknown>,
+            res: Response,
+            next: NextFunction,
+        ) => {
+            const { id, role } = req.params;
+            try {
+                const emails = await siteCoordinatorService.getEmailsViaRole(id, role);
+
+                res.status(200).json(emails);
+            } catch (err) {
+                next(err); // Handle unexpected errors
+            }
+        },
     )
     .delete(
       "/site-coordinators/:id",
