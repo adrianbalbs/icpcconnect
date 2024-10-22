@@ -43,7 +43,7 @@ export class AuthService {
           expiresIn: "2 days",
         },
       );
-      return { token: token };
+      return { token: token, id: user[0].id, role: user[0].role };
     } else {
       throw new HTTPError(unauthorizedError);
     }

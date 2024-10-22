@@ -85,9 +85,9 @@ export class StudentService {
   }
 
   async getStudentById(userId: string): Promise<StudentProfileResponse> {
-   const student = await this.db.query.students.findFirst({
+    const student = await this.db.query.students.findFirst({
       where: eq(students.userId, userId),
-      columns: { team: false, university: false},
+      columns: { team: false, university: false },
       with: {
         team: {
           columns: {
@@ -110,7 +110,7 @@ export class StudentService {
           }
         },
       },
-   })
+    })
 
     if (!student) {
       throw new HTTPError({
@@ -150,8 +150,8 @@ export class StudentService {
   }
 
   async getAllStudents(): Promise<StudentsResponse> {
-   const allStudents = await this.db.query.students.findMany({
-      columns: { team: false, university: false},
+    const allStudents = await this.db.query.students.findMany({
+      columns: { team: false, university: false },
       with: {
         team: {
           columns: {
@@ -174,7 +174,7 @@ export class StudentService {
           }
         },
       },
-   })
+    })
 
     return {
       allStudents:

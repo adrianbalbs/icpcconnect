@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { SERVER_URL } from "@/utils/constants";
-import pageStyles from "@/styles/Page.module.css";
-import memberStyles from "@/styles/Members.module.css";
-import Staff, { StaffProps } from "./Staff";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { SERVER_URL } from '@/utils/constants';
+import pageStyles from '@/styles/Page.module.css';
+import memberStyles from '@/styles/Members.module.css';
+import Staff, { StaffProps } from './Staff';
 
 interface CoachInfo {
   id: string;
@@ -19,16 +19,10 @@ interface CoachInfo {
 const Coaches: React.FC = () => {
   const [coaches, setCoaches] = useState<StaffProps[]>([
     {
-      id: "123",
-      name: "Rebecca Liu",
-      institution: "UNSW",
-      email: "asdlakds",
-    },
-    {
-      id: "123",
-      name: "Rachel Chen",
-      institution: "UNSW",
-      email: "asdlakds",
+      id: '123',
+      name: 'Rebecca Liu',
+      institution: 'UNSW',
+      email: 'r.liu@unsw.edu.au',
     },
   ]);
 
@@ -40,13 +34,13 @@ const Coaches: React.FC = () => {
       const allCoaches: CoachInfo[] = res.data.coaches;
       const filteredInfo: StaffProps[] = allCoaches.map((coach) => ({
         id: coach.id,
-        name: coach.givenName + " " + coach.familyName,
+        name: coach.givenName + ' ' + coach.familyName,
         institution: coach.university,
         email: coach.email,
       }));
       setCoaches(filteredInfo);
     } catch (error) {
-      alert(`Get coaches: ${error}`);
+      console.log(`Get coaches: ${error}`);
     }
   };
 
