@@ -310,4 +310,48 @@ describe("adminRouter tests", () => {
   it("should throw when trying to delete an admin that does not exist", async () => {
     await request(adminApp).delete(`/api/admin/${uuidv4()}`).expect(500);
   });
+
+  it("Admins should be able to get everyones emails", async () => {
+    const { requests, ids } = await createDifferentUserObjs();
+    const studentEmails = requests.filter((r) => r.role == "student").map((r) => r.email);
+    const coachEmails = requests.filter((r) => r.role == "coach").map((r) => r.email);
+    const siteCoordinatorEmails = requests.filter((r) => r.role == "site_coordinator").map((r) => r.email);
+  
+    {
+      let res = await request(adminApp)
+        .get("/api/admin/getEmails/student")
+        .expect(200);
+
+      const { emails } = res.body;
+      const emailsSplit = emails.split(";");
+
+      for (const email of studentEmails) {
+        expect(emailsSplit).toContain(email);
+      }
+    }
+    {
+      let res = await request(adminApp)
+        .get("/api/admin/getEmails/coach")
+        .expect(200);
+
+      const { emails } = res.body;
+      const emailsSplit = emails.split(";");
+
+      for (const email of coachEmails) {
+        expect(emailsSplit).toContain(email);
+      }
+    }
+    {
+      let res = await request(adminApp)
+        .get("/api/admin/getEmails/site_coordinator")
+        .expect(200);
+
+      const { emails } = res.body;
+      const emailsSplit = emails.split(";");
+
+      for (const email of siteCoordinatorEmails) {
+        expect(emailsSplit).toContain(email);
+      }
+    }
+  });
 });

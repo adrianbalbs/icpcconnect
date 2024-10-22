@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { CoachService } from "../services/index.js";
-import { coachRouter } from "../routers/index.js";
+import { CoachService, StudentService } from "../services/index.js";
+import { coachRouter, studentRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
-import { CreateCoachRequest, UpdateCoachRequest } from "../schemas/index.js";
+import { CreateCoachRequest, UpdateCoachRequest, CreateStudentRequest, FormattedEmails } from "../schemas/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { beforeAll, afterAll, describe, afterEach, it, expect } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
@@ -18,6 +18,7 @@ beforeAll(async () => {
   app = express()
     .use(express.json())
     .use("/api", coachRouter(new CoachService(db)))
+    .use("/api", studentRouter(new StudentService(db)))
     .use(errorHandlerMiddleware);
 });
 
@@ -164,5 +165,64 @@ describe("coachRouter tests", () => {
 
   it("should throw when trying to delete a coach that does not exist", async () => {
     await request(app).delete(`/api/coaches/${uuidv4()}`).expect(400);
+  });
+
+
+  it("coaches should be able to get student emails", async () => {
+    const coach_req: CreateCoachRequest = {
+      role: "coach",
+      givenName: "Adrian",
+      familyName: "Balbalosa",
+      email: "adrianbalbs@comp3900.com",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+    };
+    const coach = await request(app)
+      .post("/api/coaches")
+      .send(coach_req)
+      .expect(200);
+
+    const { userId } = coach.body;
+
+    let student_req: CreateStudentRequest = {
+      role: "student",
+      givenName: "Zac",
+      familyName: "Ecob",
+      email: "a@comp3900.com",
+      studentId: "z5419703",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+    };
+    await request(app)
+      .post("/api/students")
+      .send(student_req)
+      .expect(200);
+
+    let student_req2: CreateStudentRequest = {
+      role: "student",
+      givenName: "Zac2",
+      familyName: "Ecob2",
+      email: "b@comp3900.com",
+      studentId: "z5419704",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+    };
+    await request(app)
+      .post("/api/students")
+      .send(student_req2)
+      .expect(200);
+
+    const emailRes = await request(app)
+      .get(`/api/coaches/${userId}/studentEmails`)
+      .expect(200);
+
+    const { emails } = emailRes.body;
+    const emailsSplit = emails.split(";");
+
+    expect(emailsSplit).toContain(student_req.email);
+    expect(emailsSplit).toContain(student_req2.email);
   });
 });
