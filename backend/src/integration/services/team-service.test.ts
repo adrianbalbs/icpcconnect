@@ -3,10 +3,7 @@ import request from "supertest";
 import express from "express";
 import {
   DatabaseConnection,
-  universities,
   users,
-  teams,
-  students,
 } from "../../db/index.js";
 import {
   CreateTeamRequest,
@@ -14,7 +11,6 @@ import {
   CreateStudentRequest,
 } from "../../schemas/index.js";
 import { TeamService, StudentService } from "../../services/index.js";
-import { badRequest, HTTPError } from "../../utils/errors.js";
 import { beforeAll, afterAll, describe, it, expect } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "../db-test-helpers.js";
 import { teamRouter, studentRouter } from "../../routers/index.js";
@@ -77,7 +73,7 @@ describe("TeamService tests", () => {
       },
     ];
 
-    let userIds : string[] = [];
+    const userIds : string[] = [];
     for (const student of students) {
       const res = await request(app).post("/api/students").send(student).expect(200);
       const { userId} = res.body;
@@ -132,7 +128,7 @@ describe("TeamService tests", () => {
       },
     ];
 
-    let userIds : string[] = [];
+    const userIds : string[] = [];
     for (const student of students) {
       const res = await request(app).post("/api/students").send(student).expect(200);
       const { userId} = res.body;
@@ -196,7 +192,7 @@ describe("TeamService tests", () => {
       },
     ];
 
-    let userIds : string[] = [];
+    const userIds : string[] = [];
     for (const student of students) {
       const res = await request(app).post("/api/students").send(student).expect(200);
       const { userId} = res.body;
