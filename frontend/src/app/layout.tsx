@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
-import { useRouter } from "next/navigation";
 import {
   AuthContextProvider,
   useAuth,
@@ -23,11 +21,10 @@ export default function RootLayout({
 
 function Root({ children }: { children: React.ReactNode }) {
   const { userSession, isLoading } = useAuth();
-  const router = useRouter();
   return (
     <html lang="en">
       <body>
-        {userSession && <Navbar />}
+        {!isLoading && userSession.id && <Navbar />}
         {children}
       </body>
     </html>

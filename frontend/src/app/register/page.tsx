@@ -50,11 +50,7 @@ export default function Register() {
             verificationCode,
             inviteCode,
           };
-          const res = await axios.post(
-            `${SERVER_URL}/api/site-coordinators`,
-            payload,
-          );
-          localStorage.setItem("id", res.data.id);
+          await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
         } else if (roleName === "Coach") {
           role = "coach";
           const payload = {
@@ -67,8 +63,7 @@ export default function Register() {
             verificationCode,
             inviteCode,
           };
-          const res = await axios.post(`${SERVER_URL}/api/coaches`, payload);
-          localStorage.setItem("id", res.data.id);
+          await axios.post(`${SERVER_URL}/api/coaches`, payload);
         } else {
           role = "student";
           const payload = {
@@ -83,8 +78,7 @@ export default function Register() {
             photoConsent,
             languagesSpoken,
           };
-          const res = await axios.post(`${SERVER_URL}/api/students`, payload);
-          localStorage.setItem("id", res.data.userId);
+          await axios.post(`${SERVER_URL}/api/students`, payload);
         }
         localStorage.setItem("role", role);
         router.push(role === "student" ? "/team" : "/teams");

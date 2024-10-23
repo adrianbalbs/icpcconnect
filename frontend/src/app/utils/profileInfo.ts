@@ -42,8 +42,9 @@ export const getInfo = async (id: string | null) => {
   // if (id === current.id) return current;
 
   try {
-    console.log("fetch");
-    const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
+    const res = await axios.get(`${SERVER_URL}/api/admin/${id}`, {
+      withCredentials: true,
+    });
     const data: StudentInfo = res.data;
     const languages = data.languagesSpoken?.map((i) => i.name).join(", ");
     console.log(data);
