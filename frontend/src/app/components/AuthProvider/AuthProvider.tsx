@@ -1,7 +1,13 @@
 import { SERVER_URL } from "@/utils/constants";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export type UserSession = {
   id: string;
@@ -35,7 +41,7 @@ export function AuthContextProvider({
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const getSession = async () => {
+  const getSession = useCallback(async () => {
     try {
       setIsLoading(true);
       const { data } = await axios.get<UserSession>(`${SERVER_URL}/api/me`, {
@@ -52,7 +58,7 @@ export function AuthContextProvider({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router]);
 
   const logout = async () => {
     try {
@@ -90,7 +96,7 @@ export function AuthContextProvider({
 
   useEffect(() => {
     getSession();
-  }, []);
+  }, [getSession]);
 
   return (
     <AuthContext.Provider
