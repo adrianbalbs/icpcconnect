@@ -47,6 +47,8 @@ export class AuthService {
           user[0].refreshTokenVersion,
         ),
         userInfo: {
+          givenName: user[0].givenName,
+          familyName: user[0].familyName,
           refreshTokenVersion: user[0].refreshTokenVersion,
           id: user[0].id,
           role: user[0].role,
