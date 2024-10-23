@@ -30,7 +30,6 @@ export const addModal = {
   display: 'block',
   padding: '30px 40px',
   position: 'fixed',
-  height: '300px',
   width: '600px',
   zIndex: '1'
 }
