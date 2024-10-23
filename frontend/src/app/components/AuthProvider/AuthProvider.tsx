@@ -1,6 +1,6 @@
 import { SERVER_URL } from "@/utils/constants";
 import axios, { AxiosError } from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export type UserSession = {
@@ -37,6 +37,7 @@ export function AuthContextProvider({
 
   const getSession = async () => {
     try {
+      setIsLoading(true);
       const { data } = await axios.get<UserSession>(`${SERVER_URL}/api/me`, {
         withCredentials: true,
       });
@@ -55,15 +56,24 @@ export function AuthContextProvider({
 
   const logout = async () => {
     try {
-      await axios.post(`${SERVER_URL}/api/logout`, { withCredentials: true });
+      setIsLoading(true);
+      await axios.post(
+        `${SERVER_URL}/api/logout`,
+        {},
+        { withCredentials: true },
+      );
+      setUserSession(null);
       router.push("/login");
     } catch (err) {
       console.error("Logout failed: ", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const login = async (credentials: LoginCredentials) => {
     try {
+      setIsLoading(true);
       const { data } = await axios.post<UserSession>(
         `${SERVER_URL}/api/login`,
         credentials,

@@ -2,29 +2,15 @@
 import loginPage from "../styles/Auth.module.css";
 import Image from "next/image";
 import logo from "../assets/logo.png";
-import axios from "axios";
-import { SERVER_URL } from "../utils/constants";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  const { login } = useAuth();
   const handleLogin = async () => {
-    try {
-      const payload = {
-        email,
-        password,
-      };
-      const res = await axios.post(`${SERVER_URL}/api/login`, payload, {
-        withCredentials: true,
-      });
-      console.log(res);
-      router.push("/teams");
-    } catch (error) {
-      alert(error);
-    }
+    await login({ email, password });
   };
 
   return (

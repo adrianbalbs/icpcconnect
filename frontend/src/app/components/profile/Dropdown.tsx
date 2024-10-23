@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Divider, Menu, MenuItem } from '@mui/material';
+import { useRouter } from "next/navigation";
+import { Divider, Menu, MenuItem } from "@mui/material";
+import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface DropdownProps {
   anchorEl: null | HTMLElement;
@@ -12,37 +12,47 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
   const router = useRouter();
-  const [ownId, setOwnId] = useState<string | null>();
+  const { logout, userSession } = useAuth();
 
   const to = (route: string) => {
-    router.push(`/profile/${ownId}${route}`);
+    router.push(`/profile/${userSession?.id}${route}`);
     handleClose();
-  }
+  };
 
-  const logout = () => {
-    router.push('/login');
-    localStorage.removeItem('role');
-  }
+  const handleLogout = async () => {
+    await logout();
+  };
 
-  useEffect(() => {
-    setOwnId(localStorage.getItem('id'));
-  }, []);
-
-  return <Menu
-    anchorEl={anchorEl}
-    open={open}
-    onClose={handleClose}
-    MenuListProps={{
-      'aria-labelledby': 'basic-button',
-    }}
-  >
-    <MenuItem sx={{ fontSize: '13px' }} onClick={() => to('')}>Profile</MenuItem>
-    <MenuItem sx={{ fontSize: '13px' }} onClick={() => to('/experience')}>Experience</MenuItem>
-    <MenuItem sx={{ fontSize: '13px' }} onClick={() => to('/preferences')}>Preferences</MenuItem>
-    <MenuItem sx={{ fontSize: '13px' }} onClick={() => to('/account-settings')}>Account settings</MenuItem>
-    <Divider />
-    <MenuItem sx={{ fontSize: '13px' }} onClick={logout}>Logout</MenuItem>
-  </Menu>
-}
+  return (
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={handleClose}
+      MenuListProps={{
+        "aria-labelledby": "basic-button",
+      }}
+    >
+      <MenuItem sx={{ fontSize: "13px" }} onClick={() => to("")}>
+        Profile
+      </MenuItem>
+      <MenuItem sx={{ fontSize: "13px" }} onClick={() => to("/experience")}>
+        Experience
+      </MenuItem>
+      <MenuItem sx={{ fontSize: "13px" }} onClick={() => to("/preferences")}>
+        Preferences
+      </MenuItem>
+      <MenuItem
+        sx={{ fontSize: "13px" }}
+        onClick={() => to("/account-settings")}
+      >
+        Account settings
+      </MenuItem>
+      <Divider />
+      <MenuItem sx={{ fontSize: "13px" }} onClick={handleLogout}>
+        Logout
+      </MenuItem>
+    </Menu>
+  );
+};
 
 export default Dropdown;

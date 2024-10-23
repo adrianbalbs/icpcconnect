@@ -1,26 +1,35 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import '@/styles/globals.css';
-import Navbar from '@/components/Navbar';
+import { useEffect } from "react";
+import "@/styles/globals.css";
+import Navbar from "@/components/Navbar";
+import { useRouter } from "next/navigation";
+import {
+  AuthContextProvider,
+  useAuth,
+} from "@/components/AuthProvider/AuthProvider";
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  return (
+    <AuthContextProvider>
+      <Root>{children}</Root>
+    </AuthContextProvider>
+  );
+}
 
-  useEffect(() => {
-    setIsLoggedIn(localStorage.getItem('role') !== null);
-  });
-
+function Root({ children }: { children: React.ReactNode }) {
+  const { userSession, isLoading } = useAuth();
+  const router = useRouter();
   return (
     <html lang="en">
       <body>
-        {isLoggedIn && <Navbar />}
+        {userSession && <Navbar />}
         {children}
       </body>
     </html>
-  )
+  );
 }
