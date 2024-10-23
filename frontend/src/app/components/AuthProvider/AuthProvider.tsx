@@ -50,9 +50,12 @@ export function AuthContextProvider({
   const getSession = useCallback(async () => {
     try {
       setIsLoading(true);
-      const { data } = await axios.get<UserSession>(`${SERVER_URL}/api/me`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get<UserSession>(
+        `${SERVER_URL}/api/auth/me`,
+        {
+          withCredentials: true,
+        },
+      );
       setUserSession(data);
     } catch (err) {
       setUserSession(defaultSession);
@@ -70,7 +73,7 @@ export function AuthContextProvider({
     try {
       setIsLoading(true);
       await axios.post(
-        `${SERVER_URL}/api/logout`,
+        `${SERVER_URL}/api/auth/logout`,
         {},
         { withCredentials: true },
       );
@@ -87,7 +90,7 @@ export function AuthContextProvider({
     try {
       setIsLoading(true);
       const { data } = await axios.post<UserSession>(
-        `${SERVER_URL}/api/login`,
+        `${SERVER_URL}/api/auth/login`,
         credentials,
         { withCredentials: true },
       );

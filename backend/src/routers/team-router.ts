@@ -17,7 +17,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
   return Router()
     .use(authenticate)
     .get(
-      "/teams/all",
+      "/all",
       authorise(["admin", "coach", "site_coordinator"]),
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
@@ -29,7 +29,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .get(
-      "/teams/:id",
+      "/:id",
       authorise(["admin", "coach", "site_coordinator", "student"]),
       async (
         req: Request<{ id: string }, unknown>,
@@ -46,7 +46,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .get(
-      "/teams/student/:id",
+      "/student/:id",
       authorise(["admin", "coach", "site_coordinator", "student"]),
       async (
         req: Request<{ id: string }, unknown>,
@@ -63,7 +63,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .delete(
-      "/teams/:id",
+      "/:id",
       authorise(["admin", "coach"]),
       async (
         req: Request<{ id: string }, unknown>,
@@ -80,7 +80,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .post(
-      "/teams/register",
+      "/register",
       [
         authorise(["admin", "coach", "student"]),
         validateData(CreateTeamRequestSchema, "body"),
@@ -100,7 +100,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .put(
-      "/teams/update/:id",
+      "/update/:id",
       [
         authorise(["admin", "coach"]),
         validateData(UpdateTeamRequestSchema, "body"),

@@ -28,13 +28,13 @@ describe("contestRegistrationRouter tests", () => {
     app = express()
       .use(express.json())
       .use(cookieParser())
-      .use("/api", authRouter(authService))
+      .use("/api/auth", authRouter(authService))
       .use("/api", codesRouter(new CodesService(db), authService));
   });
 
   beforeEach(async () => {
     const loginRes = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send({
         email: "admin@comp3900.com",
         password: "tomatofactory",

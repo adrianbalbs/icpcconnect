@@ -34,7 +34,7 @@ describe("siteCoordinatorRouter tests", () => {
     app = express()
       .use(express.json())
       .use(cookieParser())
-      .use("/api", authRouter(authService))
+      .use("/api/auth", authRouter(authService))
       .use(
         "/api/site-coordinators",
         siteCoordinatorRouter(new SiteCoordinatorService(db), authService),
@@ -44,7 +44,7 @@ describe("siteCoordinatorRouter tests", () => {
 
   beforeEach(async () => {
     const loginRes = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send({
         email: "admin@comp3900.com",
         password: "tomatofactory",

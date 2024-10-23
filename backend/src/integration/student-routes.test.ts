@@ -35,14 +35,14 @@ describe("studentRouter tests", () => {
     app = express()
       .use(express.json())
       .use(cookieParser())
-      .use("/api", authRouter(authService))
+      .use("/api/auth", authRouter(authService))
       .use("/api/students", studentRouter(new StudentService(db), authService))
       .use(errorHandlerMiddleware);
   });
 
   beforeEach(async () => {
     const loginRes = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send({
         email: "admin@comp3900.com",
         password: "tomatofactory",

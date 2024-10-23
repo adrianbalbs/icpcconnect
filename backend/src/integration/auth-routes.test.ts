@@ -39,7 +39,7 @@ beforeAll(async () => {
     )
     .use("/api/coaches", coachRouter(new CoachService(db), authService))
     .use("/api/students", studentRouter(new StudentService(db), authService))
-    .use("/api", authRouter(authService));
+    .use("/api/auth", authRouter(authService));
 });
 
 afterAll(async () => {
@@ -77,7 +77,7 @@ describe("authRouter tests", () => {
     };
 
     const response2 = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send(req2)
       .expect(200);
 
@@ -114,7 +114,7 @@ describe("authRouter tests", () => {
       password: "wrongpass",
     };
 
-    await request(app).post("/api/login").send(req2).expect(500);
+    await request(app).post("/api/auth/login").send(req2).expect(500);
   });
 
   it("should register a new site-coord, have them enter the wrong email", async () => {
@@ -139,7 +139,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
     };
 
-    await request(app).post("/api/login").send(req2).expect(500);
+    await request(app).post("/api/auth/login").send(req2).expect(500);
   });
 
   it("should register a new coach, have them login, and receive a token", async () => {
@@ -165,7 +165,7 @@ describe("authRouter tests", () => {
     };
 
     const response2 = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send(req2)
       .expect(200);
 
@@ -199,7 +199,7 @@ describe("authRouter tests", () => {
       password: "wrongpass",
     };
 
-    await request(app).post("/api/login").send(req2).expect(500);
+    await request(app).post("/api/auth/login").send(req2).expect(500);
   });
 
   it("should register a new coach, have them enter the wrong email", async () => {
@@ -224,7 +224,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
     };
 
-    await request(app).post("/api/login").send(req2).expect(500);
+    await request(app).post("/api/auth/login").send(req2).expect(500);
   });
 
   it("should register a new student, have them login, and receive a token", async () => {
@@ -253,7 +253,7 @@ describe("authRouter tests", () => {
     };
 
     const response2 = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send(req2)
       .expect(200);
 
@@ -290,7 +290,7 @@ describe("authRouter tests", () => {
       password: "wrongpass",
     };
 
-    await request(app).post("/api/login").send(req2).expect(500);
+    await request(app).post("/api/auth/login").send(req2).expect(500);
   });
 
   it("should register a new student, have them enter the wrong email", async () => {
@@ -318,7 +318,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
     };
 
-    await request(app).post("/api/login").send(req2).expect(500);
+    await request(app).post("/api/auth/login").send(req2).expect(500);
   });
 
   it("should register, login, then logout a user", async () => {
@@ -345,7 +345,7 @@ describe("authRouter tests", () => {
     };
 
     const response2 = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send(req2)
       .expect(200);
 
@@ -353,7 +353,7 @@ describe("authRouter tests", () => {
     expect(cookies).toBeDefined();
 
     const logoutResponse = await request(app)
-      .post("/api/logout")
+      .post("/api/auth/logout")
       .set("Cookie", cookies)
       .expect(200);
 
@@ -387,7 +387,7 @@ describe("authRouter tests", () => {
     };
 
     const response2 = await request(app)
-      .post("/api/login")
+      .post("/api/auth/login")
       .send(req2)
       .expect(200);
 
@@ -395,7 +395,7 @@ describe("authRouter tests", () => {
     expect(cookies).toBeDefined();
 
     const meResponse = await request(app)
-      .get("/api/me")
+      .get("/api/auth/me")
       .set("Cookie", cookies)
       .expect(200);
 
