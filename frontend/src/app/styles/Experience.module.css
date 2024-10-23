@@ -3,3 +3,14 @@
   font-weight: 600;
   color: rgb(96, 96, 96);
 }
+
+.question {
+  margin: 20px 0 10px 35px;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(96, 96, 96);
+}
+
+.checkbox-label {
+  font-size: 14px;
+}

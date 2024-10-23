@@ -7,6 +7,7 @@ import CloseBtn from '../utils/CloseBtn';
 import LanguageSlider from './LanguageSlider';
 import { Experiences, ExperienceType } from '@/profile/[id]/experience/page';
 import NumberInput from './NumberInput';
+import CourseCheckbox from './CourseCheckbox';
 
 interface ModalProps {
   added: ExperienceType;
@@ -56,20 +57,21 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
               sx={{ height: '45px', fontSize: '14px' }}
               onChange={handleSelect}
             >
-              <MenuItem sx={{ fontSize: '14px' }} value="language">Language Proficiency</MenuItem>
-              <MenuItem sx={{ fontSize: '14px' }} value="coursesTaken">Relevant Skills</MenuItem>
-              <MenuItem sx={{ fontSize: '14px' }} value="contestExperience">Past Contests</MenuItem>
-              <MenuItem sx={{ fontSize: '14px' }} value="leetcodeRating">LeetCode Contest Rating</MenuItem>
-              <MenuItem sx={{ fontSize: '14px' }} value="codeforcesRating">Codeforces Contest Rating</MenuItem>
+              {!added.language && <MenuItem sx={{ fontSize: '14px' }} value="language">Language Proficiency</MenuItem>}
+              {!added.coursesTaken && <MenuItem sx={{ fontSize: '14px' }} value="coursesTaken">Relevant Courses</MenuItem>}
+              {!added.contestExperience && <MenuItem sx={{ fontSize: '14px' }} value="contestExperience">Past Contests</MenuItem>}
+              {!added.leetcodeRating && <MenuItem sx={{ fontSize: '14px' }} value="leetcodeRating">LeetCode Contest Rating</MenuItem>}
+              {!added.codeforcesRating && <MenuItem sx={{ fontSize: '14px' }} value="codeforcesRating">Codeforces Contest Rating</MenuItem>}
             </Select>
           </FormControl>
           <hr className={pageStyles.divider}/>
-          {type === 'language' && <Box sx={{ margin: '25px 45px 10px 30px', width: 'calc(100% - 75px)' }}>
+          {type === 'language' && <Box sx={{ margin: '25px 45px 55px 30px', width: 'calc(100% - 75px)' }}>
             <LanguageSlider type="python" experience={newExperience} setExperience={setNewExperience}/>
             <LanguageSlider type="java" experience={newExperience} setExperience={setNewExperience}/>
             <LanguageSlider type="cpp"  experience={newExperience} setExperience={setNewExperience}/>
             <LanguageSlider type="c" experience={newExperience} setExperience={setNewExperience}/>
           </Box>}
+          {type === 'coursesTaken' && <CourseCheckbox setDisable={setDisable} />}
           {type === 'contestExperience' && <NumberInput type={0} setDisable={setDisable} />}
           {type === 'leetcodeRating' && <NumberInput type={1} setDisable={setDisable} />}
           {type === 'codeforcesRating' && <NumberInput type={2} setDisable={setDisable} />}
