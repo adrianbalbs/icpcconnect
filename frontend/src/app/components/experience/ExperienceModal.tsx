@@ -2,10 +2,11 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { addBtn, addExperienceBtn, addModal } from '@/styles/Overriding';
 import pageStyles from '@/styles/Page.module.css';
 import profileStyles from '@/styles/Profile.module.css';
-import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField } from '@mui/material';
 import CloseBtn from '../utils/CloseBtn';
 import LanguageSlider from './LanguageSlider';
 import { Experiences, ExperienceType } from '@/profile/[id]/experience/page';
+import NumberInput from './NumberInput';
 
 interface ModalProps {
   added: ExperienceType;
@@ -17,6 +18,7 @@ interface ModalProps {
 const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, setExperience }) => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
+  const [disable, setDisable] = useState(false);
   const [newExperience, setNewExperience] = useState<Experiences>(experience);
 
   const handleOpen = () => {
@@ -26,6 +28,7 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
   const handleClose = () => {
     setOpen(false);
     setType('');
+    setNewExperience(experience);
   }
 
   const handleSelect = (event: SelectChangeEvent) => {
@@ -67,7 +70,10 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
             <LanguageSlider type="cpp"  experience={newExperience} setExperience={setNewExperience}/>
             <LanguageSlider type="c" experience={newExperience} setExperience={setNewExperience}/>
           </Box>}
-          {type && <Button variant="contained" sx={addBtn} onClick={addExperience}>Add</Button>}
+          {type === 'contestExperience' && <NumberInput type={0} setDisable={setDisable} />}
+          {type === 'leetcodeRating' && <NumberInput type={1} setDisable={setDisable} />}
+          {type === 'codeforcesRating' && <NumberInput type={2} setDisable={setDisable} />}
+          {type && <Button variant="contained" sx={addBtn} onClick={addExperience} disabled={disable}>Add</Button>}
       </Paper>}
     </div>
   );
