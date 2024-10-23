@@ -4,8 +4,9 @@ import { useState } from 'react';
 import profileStyles from '@/styles/Profile.module.css';
 import pageStyles from '@/styles/Page.module.css';
 import { addBtn, addModal } from '@/styles/Overriding';
-import { Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent } from '@mui/material';
 import CloseBtn from '@/components/utils/CloseBtn';
+import LanguageSlider from '@/components/experience/LanguageSlider';
 // import { ProfileProps } from '../page';
 
 // TODO: Fix types
@@ -44,6 +45,7 @@ const Experience: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setType('');
   }
 
   const handleSelect = (event: SelectChangeEvent) => {
@@ -77,6 +79,12 @@ const Experience: React.FC = () => {
               </Select>
             </FormControl>
             <hr className={pageStyles.divider}/>
+            {type === 'language' && <Box sx={{ margin: '25px 45px 10px 30px', width: 'calc(100% - 75px)' }}>
+              <LanguageSlider type="python" experience={experience} setExperience={setExperience}/>
+              <LanguageSlider type="java" experience={experience} setExperience={setExperience}/>
+              <LanguageSlider type="cpp"  experience={experience} setExperience={setExperience}/>
+              <LanguageSlider type="c" experience={experience} setExperience={setExperience}/>
+            </Box>}
         </Paper>}
       </div>
     </div>
