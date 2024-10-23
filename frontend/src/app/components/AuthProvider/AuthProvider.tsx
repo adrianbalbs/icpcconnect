@@ -15,7 +15,6 @@ export type UserSession = {
   familyName: string;
   email: string;
   role: "student" | "site_coordinator" | "coach" | "admin";
-  refreshTokenVersion: number;
 };
 
 export type LoginCredentials = {
@@ -24,20 +23,27 @@ export type LoginCredentials = {
 };
 
 export type AuthContextType = {
-  userSession: UserSession | null;
+  userSession: UserSession;
   isLoading: boolean;
   getSession: () => Promise<void>;
   logout: () => Promise<void>;
   login: (credentials: LoginCredentials) => Promise<void>;
 };
 
+const defaultSession: UserSession = {
+  id: "",
+  givenName: "",
+  familyName: "",
+  email: "",
+  role: "student",
+};
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export function AuthContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [userSession, setUserSession] = useState<UserSession | null>(null);
+  const [userSession, setUserSession] = useState<UserSession>(defaultSession);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -49,7 +55,7 @@ export function AuthContextProvider({
       });
       setUserSession(data);
     } catch (err) {
-      setUserSession(null);
+      setUserSession(defaultSession);
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {
           router.push("/login");
@@ -68,7 +74,7 @@ export function AuthContextProvider({
         {},
         { withCredentials: true },
       );
-      setUserSession(null);
+      setUserSession(defaultSession);
       router.push("/login");
     } catch (err) {
       console.error("Logout failed: ", err);
