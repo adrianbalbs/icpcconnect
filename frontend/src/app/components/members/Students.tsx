@@ -20,6 +20,7 @@ export interface StudentInfo {
   languagesSpoken?: { code: string; name: string; }[];
   dietaryRequirements: string;
   photoConsent: boolean;
+  tShirtSize: string | null;
 }
 
 const Students: React.FC = () => {

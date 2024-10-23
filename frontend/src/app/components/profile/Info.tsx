@@ -14,23 +14,27 @@ const Info: React.FC<InfoProps> = ({ name, value, edit, onChange }) => {
     onChange(e.target.value);
   };
 
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange(e.target.value);
+  };
+
   return (
     <>
       <div className={profileStyles.content}>
         <p className={pageStyles.bold}>{name}</p>
         {edit ? (
-          name !== 'Dietary Requirements' ? (
+          name !== 'Do you consent to appear in photos and videos taken on the day of the contest?' ? (
           <input
             className={profileStyles['edit-box']}
             value={value}
             onChange={handleInputChange}
           />
           ) : (
-          <input
-            className={profileStyles['large-edit-box']}
-            value={value}
-            onChange={handleInputChange}
-          />)
+            <select id="consent" value={value} onChange={handleSelectChange} className={profileStyles['select-box']}>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          )
         ) : (
           <p>{value}</p>
         )}

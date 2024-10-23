@@ -38,7 +38,8 @@ export const getInfo = async (id: string | null) => {
       ['Student ID', data.studentId],
       ['Languages Spoken', languages ? languages : '(Not added yet)'],
       ['Dietary Requirements', data.dietaryRequirements ? data.dietaryRequirements : '(Not added yet)'],
-      ['Do you consent to appear in photos and videos taken on the day of the contest?', data.photoConsent ? 'Yes' : 'No']
+      ['Do you consent to appear in photos and videos taken on the day of the contest?', data.photoConsent ? 'Yes' : 'No'],
+      ['T-Shirt Size', data.tShirtSize ? data.tShirtSize : '(Not added yet)']
     ];
     current.id = data.id;
     current.university = data.university;
