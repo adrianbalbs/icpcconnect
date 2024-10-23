@@ -15,16 +15,16 @@ export const copyBtn = {
     color: 'white',
     cursor: 'pointer'
   }
-}
+};
 
-export const addBtn = {
+export const addExperienceBtn = {
   minWidth: '220px',
   padding: '10px 30px',
   fontSize: '13px',
   textTransform: 'none',
   color: 'white',
   backgroundColor: '#4B4B4B',
-}
+};
 
 export const addModal = {
   display: 'block',
@@ -32,4 +32,15 @@ export const addModal = {
   position: 'fixed',
   width: '600px',
   zIndex: '1'
-}
+};
+
+export const addBtn = {
+  display: 'block',
+  margin: '50px auto 0',
+  width: '110px',
+  padding: '5px 40px',
+  fontSize: '13px',
+  textTransform: 'none',
+  backgroundColor: '#8094AB',
+  boxShadow: 'none'
+};

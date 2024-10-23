@@ -1,31 +1,55 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import profileStyles from '@/styles/Profile.module.css';
 import pageStyles from '@/styles/Page.module.css';
-import { addBtn, addModal } from '@/styles/Overriding';
-import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent } from '@mui/material';
-import CloseBtn from '@/components/utils/CloseBtn';
-import LanguageSlider from '@/components/experience/LanguageSlider';
-// import { ProfileProps } from '../page';
+import ExperienceModal from '@/components/experience/ExperienceModal';
+
+export interface ExperienceType {
+  codeforcesRating: boolean;
+  contestExperience: boolean;
+  coursesTaken: boolean;
+  language: boolean;
+  leetcodeRating: boolean;
+}
 
 // TODO: Fix types
 export interface Experiences {
-  cExperience: string,
-  codeforcesRating: number,
-  contestExperience: number,
-  coursesTaken: string[],
-  cppExperience: string,
-  javaExperience: string,
-  level: string,
-  leetcodeRating: number,
-  pythonExperience: string,
-  student: string,
+  cExperience: string;
+  codeforcesRating: number;
+  contestExperience: number;
+  coursesTaken: string[];
+  cppExperience: string;
+  javaExperience: string;
+  level: string;
+  leetcodeRating: number;
+  pythonExperience: string;
+  student: string;
+}
+
+export interface Languages {
+  cExperience: string;
+  cppExperience: string;
+  javaExperience: string;
+  pythonExperience: string;
 }
 
 const Experience: React.FC = () => {
-  const [open, setOpen] = useState(false);
-  const [type, setType] = useState('');
+  
+  // const [languages, setLanguages] = useState<Languages>({
+  //   cExperience: 'none',
+  //   cppExperience: 'none',
+  //   javaExperience: 'none',
+  //   pythonExperience: 'none',
+  // });
+  const [added, setAdded] = useState<ExperienceType>({
+    codeforcesRating: false,
+    contestExperience: false,
+    coursesTaken: false,
+    language: false,
+    leetcodeRating: false,
+  });
+
   const [experience, setExperience] = useState<Experiences>({
     cExperience: 'none',
     codeforcesRating: 0,
@@ -39,18 +63,10 @@ const Experience: React.FC = () => {
     student: '',
   });
 
-  const handleOpen = () => {
-    setOpen(true);
-  }
 
-  const handleClose = () => {
-    setOpen(false);
-    setType('');
-  }
+  useEffect(() => {
 
-  const handleSelect = (event: SelectChangeEvent) => {
-    setType(event.target.value);
-  };
+  }, [added]);
 
   return (
     <div className={profileStyles['inner-screen']}>
@@ -58,38 +74,9 @@ const Experience: React.FC = () => {
         <h3>Experience</h3>
       </div>
       <hr className={pageStyles.divider}/>
-      <div className={profileStyles.modal}>
-        <Button variant="contained" sx={addBtn} onClick={handleOpen}>Add New Skill/Experience</Button>
-        {open && <Paper square elevation={3} sx={addModal}>
-          <CloseBtn handleClose={handleClose}/>
-          <FormControl sx={{ margin: '10px 20px 25px', fontSize: '12px', width: 'calc(100% - 40px)' }} >
-            <InputLabel id="new-experience-label" sx={{ lineHeight: '15px', fontSize: '14px' }}>New Skill / Experience</InputLabel>
-              <Select
-                id="select-type"
-                value={type}
-                label="New Skill / Experience"
-                sx={{ height: '45px', fontSize: '14px' }}
-                onChange={handleSelect}
-              >
-                <MenuItem sx={{ fontSize: '14px' }} value="language">Language Proficiency</MenuItem>
-                <MenuItem sx={{ fontSize: '14px' }} value="coursesTaken">Relevant Skills</MenuItem>
-                <MenuItem sx={{ fontSize: '14px' }} value="contestExperience">Past Contests</MenuItem>
-                <MenuItem sx={{ fontSize: '14px' }} value="leetcodeRating">LeetCode Contest Rating</MenuItem>
-                <MenuItem sx={{ fontSize: '14px' }} value="codeforcesRating">Codeforces Contest Rating</MenuItem>
-              </Select>
-            </FormControl>
-            <hr className={pageStyles.divider}/>
-            {type === 'language' && <Box sx={{ margin: '25px 45px 10px 30px', width: 'calc(100% - 75px)' }}>
-              <LanguageSlider type="python" experience={experience} setExperience={setExperience}/>
-              <LanguageSlider type="java" experience={experience} setExperience={setExperience}/>
-              <LanguageSlider type="cpp"  experience={experience} setExperience={setExperience}/>
-              <LanguageSlider type="c" experience={experience} setExperience={setExperience}/>
-            </Box>}
-        </Paper>}
-      </div>
+      <ExperienceModal  added={added} setAdded={setAdded} experience={experience} setExperience={setExperience} />
     </div>
   );
 }
 
 export default Experience;
-
