@@ -20,7 +20,7 @@ export function authRouter(authService: AuthService) {
         try {
           const result = await authService.login(loginDetails);
           setCookies(res, result.token, result.refresh);
-          res.status(200).send(result);
+          res.status(200).send(result.userInfo);
         } catch (err) {
           next(err);
         }

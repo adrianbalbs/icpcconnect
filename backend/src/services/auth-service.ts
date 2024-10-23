@@ -40,11 +40,19 @@ export class AuthService {
     const isPasswordValid = await passwordUtils().compare(password, storedHash);
 
     if (isPasswordValid) {
-      return createAuthTokens(
-        user[0].id,
-        user[0].role,
-        user[0].refreshTokenVersion,
-      );
+      return {
+        ...createAuthTokens(
+          user[0].id,
+          user[0].role,
+          user[0].refreshTokenVersion,
+        ),
+        userInfo: {
+          refreshTokenVersion: user[0].refreshTokenVersion,
+          id: user[0].id,
+          role: user[0].role,
+          email: user[0].email,
+        },
+      };
     } else {
       throw new HTTPError(unauthorizedError);
     }

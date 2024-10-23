@@ -79,8 +79,10 @@ describe("authRouter tests", () => {
       .send(req2)
       .expect(200);
 
-    expect(response2.body).toHaveProperty("token");
-    expect(response2.body).toHaveProperty("refresh");
+    expect(response2.body).toHaveProperty("id");
+    expect(response2.body).toHaveProperty("refreshTokenVersion");
+    expect(response2.body).toHaveProperty("role");
+    expect(response2.body).toHaveProperty("email");
   });
 
   it("should register a new site-coord, have them enter the wrong password", async () => {
@@ -163,8 +165,10 @@ describe("authRouter tests", () => {
       .send(req2)
       .expect(200);
 
-    expect(response2.body).toHaveProperty("token");
-    expect(response2.body).toHaveProperty("refresh");
+    expect(response2.body).toHaveProperty("id");
+    expect(response2.body).toHaveProperty("refreshTokenVersion");
+    expect(response2.body).toHaveProperty("role");
+    expect(response2.body).toHaveProperty("email");
   });
 
   it("should register a new coach, have them enter the wrong password", async () => {
@@ -247,8 +251,10 @@ describe("authRouter tests", () => {
       .send(req2)
       .expect(200);
 
-    expect(response2.body).toHaveProperty("token");
-    expect(response2.body).toHaveProperty("refresh");
+    expect(response2.body).toHaveProperty("id");
+    expect(response2.body).toHaveProperty("refreshTokenVersion");
+    expect(response2.body).toHaveProperty("role");
+    expect(response2.body).toHaveProperty("email");
   });
 
   it("should register a new student, have them enter the wrong password", async () => {
