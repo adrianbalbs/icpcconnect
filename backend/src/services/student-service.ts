@@ -126,46 +126,43 @@ export class StudentService {
     userId: string,
     updatedDetails: UpdateStudentRequest,
   ): Promise<UpdateStudentResponse> {
-    const userUpdates: Partial<User> = {};
-    const studentUpdates: Partial<Student> = {};
+    const { password, ...rest } = updatedDetails;
 
-    // I now remember why I did it the other way :skull:
-    if (updatedDetails.password) {
-      userUpdates.password = await passwordUtils().hash(
-        updatedDetails.password,
-      );
-    }
-    if (updatedDetails.givenName)
-      userUpdates.givenName = updatedDetails.givenName;
-    if (updatedDetails.familyName)
-      userUpdates.familyName = updatedDetails.familyName;
-    if (updatedDetails.email) userUpdates.email = updatedDetails.email;
-    if (updatedDetails.role) userUpdates.role = updatedDetails.role;
+    const userUpdates: Partial<User> = {
+      givenName: rest.givenName,
+      familyName: rest.familyName,
+      email: rest.email,
+      role: rest.role,
+    };
+    const studentUpdates: Partial<Student> = {
+      studentId: rest.studentId,
+      university: rest.university,
+      pronouns: rest.pronouns,
+      team: rest.team,
+    };
 
-    if (updatedDetails.studentId)
-      studentUpdates.studentId = updatedDetails.studentId;
-    if (updatedDetails.university)
-      studentUpdates.university = updatedDetails.university;
-    if (updatedDetails.pronouns)
-      studentUpdates.pronouns = updatedDetails.pronouns;
-    if (updatedDetails.team !== undefined)
-      studentUpdates.team = updatedDetails.team;
-
-    if (Object.keys(userUpdates).length > 0) {
-      await this.db.update(users).set(userUpdates).where(eq(users.id, userId));
+    if (password) {
+      userUpdates.password = await passwordUtils().hash(password);
     }
 
-    if (Object.keys(studentUpdates).length > 0) {
+    const cleanedUserUpdates = Object.fromEntries(
+      Object.entries(userUpdates).filter(([, value]) => value !== undefined),
+    );
+    const cleanedStudentUpdates = Object.fromEntries(
+      Object.entries(studentUpdates).filter(([, value]) => value !== undefined),
+    );
+
+    if (Object.keys(cleanedUserUpdates).length > 0) {
+      await this.db
+        .update(users)
+        .set(cleanedUserUpdates)
+        .where(eq(users.id, userId));
+    }
+
+    if (Object.keys(cleanedStudentUpdates).length > 0) {
       await this.db
         .update(students)
-        .set(studentUpdates)
-        .where(eq(students.userId, userId));
-    }
-
-    if (Object.keys(studentUpdates).length > 0) {
-      await this.db
-        .update(students)
-        .set(studentUpdates)
+        .set(cleanedStudentUpdates)
         .where(eq(students.userId, userId));
     }
     return updatedDetails;

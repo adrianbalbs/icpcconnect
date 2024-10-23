@@ -265,9 +265,9 @@ describe("adminRouter tests", () => {
     const new_pronouns = "he/him";
     const new_email = "adrianbalbs@comp3900.com";
     const req: UpdateStudentRequest = {
-      ...fouthObj,
       email: new_email,
       pronouns: new_pronouns,
+      role: "student",
       team: null,
     };
 
