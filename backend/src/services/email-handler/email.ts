@@ -40,9 +40,7 @@ export async function sendEmail(
     };
 
     try {
-        console.log("start send");
         await transporter.sendMail(mailOptions);
-        console.log("send fin");
         return 'Email sent successfully!';
     } catch (error) {
         throw new Error(`Failed to send email: ${error}`);
