@@ -5,3 +5,4 @@ export * from "./site-coordinator-service.js";
 export * from "./admin-service.js";
 export * from "./contest-registration-service.js";
 export * from "./auth-service.js";
+export * from "./email-service.js";

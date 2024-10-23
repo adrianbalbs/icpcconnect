@@ -299,3 +299,10 @@ export const authCodes = pgTable("auth_codes", {
 });
 
 export type AuthCodes = InferSelectModel<typeof authCodes>;
+
+export const verifyEmail = pgTable("verify_emails", {
+  code: integer("code").notNull().unique(),
+  email: text("email").notNull(),
+});
+
+export type VerifyEmail = InferSelectModel<typeof verifyEmail>;
