@@ -1,25 +1,36 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { validateData } from "../middleware/index.js";
+import {
+  authorise,
+  createAuthenticationMiddleware,
+  validateData,
+} from "../middleware/index.js";
 import {
   CreateTeamRequest,
   CreateTeamRequestSchema,
   UpdateTeamRequest,
   UpdateTeamRequestSchema,
 } from "../schemas/index.js";
-import { TeamService } from "../services/index.js";
+import { AuthService, TeamService } from "../services/index.js";
 
-export function teamRouter(teamService: TeamService) {
+export function teamRouter(teamService: TeamService, authService: AuthService) {
+  const authenticate = createAuthenticationMiddleware(authService);
   return Router()
-    .get("/teams/all", async (_req: Request, res: Response, next: NextFunction) => {
-      try {
-        const teams = await teamService.getAllTeams();
-        res.status(200).json(teams);
-      } catch (err) {
-        next(err);
-      }
-    })
+    .use(authenticate)
+    .get(
+      "/teams/all",
+      authorise(["admin", "coach", "site_coordinator"]),
+      async (_req: Request, res: Response, next: NextFunction) => {
+        try {
+          const teams = await teamService.getAllTeams();
+          res.status(200).json(teams);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .get(
       "/teams/:id",
+      authorise(["admin", "coach", "site_coordinator", "student"]),
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -36,6 +47,7 @@ export function teamRouter(teamService: TeamService) {
     )
     .get(
       "/teams/student/:id",
+      authorise(["admin", "coach", "site_coordinator", "student"]),
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -52,6 +64,7 @@ export function teamRouter(teamService: TeamService) {
     )
     .delete(
       "/teams/:id",
+      authorise(["admin", "coach"]),
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -68,7 +81,10 @@ export function teamRouter(teamService: TeamService) {
     )
     .post(
       "/teams/register",
-      validateData(CreateTeamRequestSchema, "body"),
+      [
+        authorise(["admin", "coach", "student"]),
+        validateData(CreateTeamRequestSchema, "body"),
+      ],
       async (
         req: Request<Record<string, never>, unknown, CreateTeamRequest>,
         res: Response,
@@ -85,7 +101,10 @@ export function teamRouter(teamService: TeamService) {
     )
     .put(
       "/teams/update/:id",
-      validateData(UpdateTeamRequestSchema, "body"),
+      [
+        authorise(["admin", "coach"]),
+        validateData(UpdateTeamRequestSchema, "body"),
+      ],
       async (
         req: Request<{ id: string }, unknown, UpdateTeamRequest>,
         res: Response,
@@ -95,7 +114,7 @@ export function teamRouter(teamService: TeamService) {
         const teamDetails = req.body;
         try {
           const team = teamService.updateTeam(id, teamDetails);
-          res.status(200).json(team);;
+          res.status(200).json(team);
         } catch (err) {
           next(err);
         }

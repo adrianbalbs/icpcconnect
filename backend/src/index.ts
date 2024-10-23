@@ -61,7 +61,7 @@ app
   .use(express.urlencoded({ extended: true }))
   .use(cookieParser())
   .use(loggingMiddlware)
-  .use("/api", teamRouter(teamService))
+  .use("/api", teamRouter(teamService, authService))
   .use("/api/students", studentRouter(studentService, authService))
   .use("/api/coaches", coachRouter(coachService, authService))
   .use(

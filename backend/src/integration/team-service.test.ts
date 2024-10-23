@@ -1,41 +1,63 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import {
-  DatabaseConnection,
-  users,
-} from "../db/index.js";
+import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateTeamRequest,
   UpdateTeamRequest,
   CreateStudentRequest,
 } from "../schemas/index.js";
-import { TeamService, StudentService } from "../services/index.js";
-import { beforeAll, afterAll, describe, it, expect } from "vitest";
+import { TeamService, StudentService, AuthService } from "../services/index.js";
+import {
+  beforeAll,
+  afterAll,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+} from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
-import { teamRouter, studentRouter } from "../routers/index.js";
+import { teamRouter, studentRouter, authRouter } from "../routers/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
-
-let db: DatabaseConnection;
-let app: ReturnType<typeof express>;
-
-beforeAll(async () => {
-  const dbSetup = await setupTestDatabase();
-  db = dbSetup.db;
-  app = express()
-    .use(express.json())
-    .use("/api", studentRouter(new StudentService(db)))
-    .use("/api", teamRouter(new TeamService(db)))
-    .use(errorHandlerMiddleware);
-});
-
-afterAll(async () => {
-  await dropTestDatabase();
-});
+import cookieParser from "cookie-parser";
+import { not, eq } from "drizzle-orm";
 
 describe("TeamService tests", () => {
+  let db: DatabaseConnection;
+  let app: ReturnType<typeof express>;
+  let cookies: string;
+
+  beforeAll(async () => {
+    const dbSetup = await setupTestDatabase();
+    db = dbSetup.db;
+    const authService = new AuthService(db);
+    app = express()
+      .use(express.json())
+      .use(cookieParser())
+      .use("/api", authRouter(authService))
+      .use("/api/students", studentRouter(new StudentService(db), authService))
+      .use("/api", teamRouter(new TeamService(db), authService))
+      .use(errorHandlerMiddleware);
+  });
+
+  beforeEach(async () => {
+    const loginRes = await request(app)
+      .post("/api/login")
+      .send({
+        email: "admin@comp3900.com",
+        password: "tomatofactory",
+      })
+      .expect(200);
+    cookies = loginRes.headers["set-cookie"];
+  });
+
   afterEach(async () => {
-    await db.delete(users);
+    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+  });
+
+  afterAll(async () => {
+    await dropTestDatabase();
   });
 
   it("Should register a new team", async () => {
@@ -92,11 +114,12 @@ describe("TeamService tests", () => {
       name: "epicTeam",
       university: 1,
       memberIds: userIds,
-      flagged: false
+      flagged: false,
     };
 
     const result = await request(app)
       .post("/api/teams/register")
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
@@ -157,16 +180,18 @@ describe("TeamService tests", () => {
       name: "epicTeam",
       university: 1,
       memberIds: userIds,
-      flagged: false
+      flagged: false,
     };
 
     const res = await request(app)
       .post("/api/teams/register")
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
     const result = await request(app)
       .get(`/api/teams/${res.body.teamId}`)
+      .set("Cookie", cookies)
       .expect(200);
     expect(result).not.toBeNull();
     expect(result.body.members).not.toBeNull();
@@ -174,7 +199,10 @@ describe("TeamService tests", () => {
 
   it("Show throw an error if the team cannot be found by uuid", async () => {
     const teamId = uuidv4();
-    await request(app).get(`/api/teams/${teamId}`).expect(400);
+    await request(app)
+      .get(`/api/teams/${teamId}`)
+      .set("Cookie", cookies)
+      .expect(400);
   });
 
   it("Should update the teams details", async () => {
@@ -231,17 +259,19 @@ describe("TeamService tests", () => {
       name: "epicTeam",
       university: 1,
       memberIds: userIds.slice(1),
-      flagged: false
+      flagged: false,
     };
 
     const id_res = await request(app)
       .post("/api/teams/register")
+      .set("Cookie", cookies)
       .send(team)
       .expect(200);
     const { teamId } = id_res.body;
 
     const prevDetRes = await request(app)
       .get(`/api/teams/${teamId}`)
+      .set("Cookie", cookies)
       .expect(200);
     const prevDetails = prevDetRes.body;
 
@@ -249,10 +279,11 @@ describe("TeamService tests", () => {
       name: "reallyEpicTeam",
       university: 1,
       memberIds: userIds,
-      flagged: false
+      flagged: false,
     };
     const res = await request(app)
       .put(`/api/teams/update/${teamId}`)
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
@@ -266,28 +297,39 @@ describe("TeamService tests", () => {
       name: "epicTeam",
       university: 1,
       memberIds: [],
-      flagged: false
+      flagged: false,
     };
 
     const id_res = await request(app)
       .post("/api/teams/register")
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
     const { teamId } = id_res.body;
 
     const prevDetRes = await request(app)
       .get(`/api/teams/${teamId}`)
+      .set("Cookie", cookies)
       .expect(200);
     const prev = prevDetRes.body;
     expect(prev).not.toBeNull();
 
-    await request(app).delete(`/api/teams/${teamId}`).expect(200);
-    await request(app).delete(`/api/teams/${teamId}`).expect(400);
+    await request(app)
+      .delete(`/api/teams/${teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+    await request(app)
+      .delete(`/api/teams/${teamId}`)
+      .set("Cookie", cookies)
+      .expect(400);
   });
 
   it("Throw when deleting a team that does not exist", async () => {
     const uuid = uuidv4();
 
-    await request(app).delete(`/api/teams/${uuid}`).expect(400);
+    await request(app)
+      .delete(`/api/teams/${uuid}`)
+      .set("Cookie", cookies)
+      .expect(400);
   });
 });
