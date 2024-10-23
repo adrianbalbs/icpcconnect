@@ -152,20 +152,23 @@ export class StudentService {
       Object.entries(studentUpdates).filter(([, value]) => value !== undefined),
     );
 
-    if (Object.keys(cleanedUserUpdates).length > 0) {
-      await this.db
-        .update(users)
-        .set(cleanedUserUpdates)
-        .where(eq(users.id, userId));
-    }
+    const result = await this.db.transaction(async (tx) => {
+      if (Object.keys(cleanedUserUpdates).length > 0) {
+        await tx
+          .update(users)
+          .set(cleanedUserUpdates)
+          .where(eq(users.id, userId));
+      }
 
-    if (Object.keys(cleanedStudentUpdates).length > 0) {
-      await this.db
-        .update(students)
-        .set(cleanedStudentUpdates)
-        .where(eq(students.userId, userId));
-    }
-    return updatedDetails;
+      if (Object.keys(cleanedStudentUpdates).length > 0) {
+        await tx
+          .update(students)
+          .set(cleanedStudentUpdates)
+          .where(eq(students.userId, userId));
+      }
+      return { ...rest };
+    });
+    return result;
   }
 
   async deleteStudent(userId: string): Promise<DeleteResponse> {
