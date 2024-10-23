@@ -5,7 +5,7 @@ import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 import { SERVER_URL } from '@/utils/constants';
 import Button from '@mui/material/Button';
 import pageStyles from '@/styles/Page.module.css';
-import { purpleBtn } from '@/styles/Overriding';
+import { purpleBtn } from '@/styles/sxStyles';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Dialog, DialogContent, DialogContentText } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';

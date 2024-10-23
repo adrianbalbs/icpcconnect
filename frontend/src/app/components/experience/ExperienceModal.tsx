@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import { addBtn, addExperienceBtn, addModal } from '@/styles/Overriding';
+import { addBtn, addExperienceBtn, addModal } from '@/styles/sxStyles';
 import pageStyles from '@/styles/Page.module.css';
 import profileStyles from '@/styles/Profile.module.css';
-import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent } from '@mui/material';
 import CloseBtn from '../utils/CloseBtn';
 import LanguageSlider from './LanguageSlider';
 import { Experiences, ExperienceType } from '@/profile/[id]/experience/page';
