@@ -81,6 +81,7 @@ app
       coachService,
       studentService,
       siteCoordinatorService,
+      authService,
       algorithmService,
     ),
   )

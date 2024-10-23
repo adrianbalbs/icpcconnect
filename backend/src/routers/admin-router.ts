@@ -27,15 +27,18 @@ export function adminRouter(
   const authenticate = createAuthenticationMiddleware(authService);
   return Router()
     .use(authenticate)
-    .use(authorise(["admin"]))
-    .get("/admin", async (_req: Request, res: Response, next: NextFunction) => {
-      try {
-        const users = await adminService.getAllMembers();
-        res.status(200).json(users);
-      } catch (err) {
-        next(err);
-      }
-    })
+    .get(
+      "/admin",
+      authorise(["admin"]),
+      async (_req: Request, res: Response, next: NextFunction) => {
+        try {
+          const users = await adminService.getAllMembers();
+          res.status(200).json(users);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .get(
       // Not expect to be used, but remain here just for cases
       "/admin/details",
@@ -92,6 +95,7 @@ export function adminRouter(
     )
     .put(
       "/admin/:id",
+      authorise(["admin"]),
       roleSwitchMiddleware(
         adminService,
         coachService,
@@ -104,6 +108,7 @@ export function adminRouter(
     )
     .post(
       "/admin",
+      authorise(["admin"]),
       validateData(CreateAdminRequestSchema, "body"),
       async (
         req: Request<Record<string, never>, unknown, CreateAdminRequest>,
@@ -132,6 +137,7 @@ export function adminRouter(
     )
     .delete(
       "/admin/:id",
+      authorise(["admin"]),
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
