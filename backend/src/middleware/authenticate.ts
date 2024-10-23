@@ -63,6 +63,7 @@ export const createAuthenticationMiddleware = (authService: AuthService) => {
 
     const accessPayload = verifyAccessToken(accessToken);
     if (accessPayload) {
+      req.userId = accessPayload.id;
       req.role = accessPayload.role;
       next();
       return;
@@ -88,6 +89,7 @@ export const createAuthenticationMiddleware = (authService: AuthService) => {
     );
     setCookies(res, newTokens.token, newTokens.refresh);
 
+    req.userId = userAuthInfo.id;
     req.role = userAuthInfo.role;
     next();
   };

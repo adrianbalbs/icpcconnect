@@ -67,8 +67,9 @@ export class AuthService {
     if (!user) {
       throw new HTTPError(notFoundError);
     }
-
     return {
+      givenName: user.givenName,
+      familyName: user.familyName,
       refreshTokenVersion: user.refreshTokenVersion,
       email: user.email,
       role: user.role,
