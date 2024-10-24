@@ -58,6 +58,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
   const getExperience = async () => {
     try {
       const res = await axios.get(`${SERVER_URL}/api/contest-registration/${params.id}`);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { student, ...newExperience } = res.data;
       // setExperience(newExperience);
     } catch (error) {

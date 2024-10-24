@@ -26,7 +26,7 @@ const CoursesExperience = ({ coursesTaken }: { coursesTaken: number[] }) => {
       <hr className={pageStyles.divider} />
       <List sx={{ m: '12px 40px 0', p: 0, width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {courses.map(c => 
-          <ListItem sx={{ padding: '5px' }}>
+          <ListItem key={c} sx={{ padding: '5px' }}>
             <ListItemIcon sx={{ color: '#444444' }}><SchoolRoundedIcon /></ListItemIcon>
             <ListItemText primary={valueToText[c - 1]} sx={{ fontSize: '14px', color: '#333333' }} />
           </ListItem>

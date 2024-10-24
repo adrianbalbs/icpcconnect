@@ -1,7 +1,5 @@
 // Used for the purpose of adding to sx
 
-import zIndex from "@mui/material/styles/zIndex";
-
 export const purpleBtn = {
   fontSize: '13px',
   textTransform: 'none',
@@ -75,18 +73,3 @@ export const sidebarBtn = {
     bgcolor: '#8094ab61'
   },
 }
-// .sidebar-btn {
-//   padding-left: 25px;
-//   color: #4E5C88;
-//   height: 51px;
-//   width: 220px;
-//   text-align: left;
-// }
-
-// .sidebar-btn:hover {
-//   background-color: #9fb9d65c;
-// }
-
-// .sidebar-btn:focus {
-//   background-color: #8094ab61;
-// }
