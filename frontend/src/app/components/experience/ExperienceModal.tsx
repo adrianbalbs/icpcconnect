@@ -75,7 +75,7 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
             </Select>
           </FormControl>
           <hr className={pageStyles.divider}/>
-          {type === 'language' && <Box sx={{ m: '25px 45px 55px 30px', w: 'calc(100% - 75px)' }}>
+          {type === 'language' && <Box sx={{ m: '25px 45px 55px 30px', width: 'calc(100% - 75px)' }}>
             <LanguageSlider type="c" experience={newExperience} setExperience={setNewExperience} />
             <LanguageSlider type="cpp"  experience={newExperience} setExperience={setNewExperience} />
             <LanguageSlider type="java" experience={newExperience} setExperience={setNewExperience} />

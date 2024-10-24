@@ -9,6 +9,7 @@ import CoursesExperience from '@/components/experience/CoursesExperience';
 import { ProfileProps } from '../page';
 import axios from 'axios';
 import { SERVER_URL } from '@/utils/constants';
+import { Box } from '@mui/material';
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -86,9 +87,11 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
         <h3>Experience</h3>
       </div>
       <hr className={experienceStyles.divider}/>
-      {added.language && <LanguageExperience { ...experience } />}
-      {added.coursesTaken && <CoursesExperience coursesTaken={experience.coursesTaken} />}
-      <ExperienceModal  added={added} setAdded={setAdded} experience={experience} setExperience={setExperience} />
+      <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
+        {added.language && <LanguageExperience { ...experience } />}
+        {added.coursesTaken && <CoursesExperience coursesTaken={experience.coursesTaken} />}
+        <ExperienceModal  added={added} setAdded={setAdded} experience={experience} setExperience={setExperience} />
+      </Box>
     </div>
   );
 }

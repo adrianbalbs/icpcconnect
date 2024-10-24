@@ -96,7 +96,7 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
           aria-describedby="generate-invite-code"
         >
           <CloseBtn handleClose={(handleClose)}/>
-          <DialogContent sx={{ w: '450px', h: '110px', p: '40px 40px' }}>
+          <DialogContent sx={{ width: '450px', height: '110px', p: '40px 40px' }}>
             <FormControl sx={{ m: '10px 0', fontSize: '12px' }} fullWidth>
               <InputLabel id="new-invite-code-label" sx={{ lineHeight: '15px', fontSize: '14px' }}>New Invite Code</InputLabel>
               <Select
