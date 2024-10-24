@@ -57,3 +57,36 @@ export const proficiencyLabel = {
   fontWeight: 600,
   color: '#979bb2'
 }
+
+export const sidebarBtn = {
+  justifyContent: 'flex-start',
+  paddingLeft: '30px', 
+  height: '51px',
+  width: '220px',
+  fontSize: '15px',
+  color: '#4E5C88',
+  textTransform: 'none',
+  '&:hover': {
+    color: '#4E5C88',
+    bgcolor: '#9fb9d65c'
+  },
+  '&:active': {
+    color: '#4E5C88',
+    bgcolor: '#8094ab61'
+  },
+}
+// .sidebar-btn {
+//   padding-left: 25px;
+//   color: #4E5C88;
+//   height: 51px;
+//   width: 220px;
+//   text-align: left;
+// }
+
+// .sidebar-btn:hover {
+//   background-color: #9fb9d65c;
+// }
+
+// .sidebar-btn:focus {
+//   background-color: #8094ab61;
+// }

@@ -39,12 +39,11 @@
 .sidebar {
   height: 199px;
   width: 220px;
-  font-size: 14px;
-  color: #4E5C88;
 }
 
 .sidebar-btn {
   padding-left: 25px;
+  color: #4E5C88;
   height: 51px;
   width: 220px;
   text-align: left;

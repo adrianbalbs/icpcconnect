@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import profileStyles from '@/styles/Profile.module.css';
 import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { sidebarBtn } from '@/styles/sxStyles';
 
 interface SidebarProps {
   id: string;
@@ -29,16 +30,16 @@ const Sidebar: React.FC<SidebarProps> = ({ id }) => {
 
   return <Paper elevation={3} className={profileStyles.sidebar}>
     <ToggleButtonGroup orientation="vertical" value={tab} onChange={handleClick} exclusive>
-      <ToggleButton value="profile" className={profileStyles['sidebar-btn']}>
+      <ToggleButton value="profile" sx={sidebarBtn}>
         Profile
       </ToggleButton>
-      <ToggleButton value="experience" className={profileStyles['sidebar-btn']}>
+      <ToggleButton value="experience" sx={sidebarBtn}>
         Experience
       </ToggleButton>
-      <ToggleButton value="preferences" className={profileStyles['sidebar-btn']}>
+      <ToggleButton value="preferences" sx={sidebarBtn}>
         Preferences
       </ToggleButton>
-      <ToggleButton value="account-settings" className={profileStyles['sidebar-btn']}>
+      <ToggleButton value="account-settings" sx={sidebarBtn}>
         Account Settings
       </ToggleButton>
     </ToggleButtonGroup>
