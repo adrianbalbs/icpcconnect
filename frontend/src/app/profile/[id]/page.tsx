@@ -39,12 +39,10 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
 
   const handleSaveClick = async () => {
     setIsEditing(false);
-    const data = await getInfo(params.id);
-    console.log(data);
-    if (data !== undefined) {
-      data.info = info;
-      axios.put(`${SERVER_URL}/students/${params.id}`, data);
-    }
+    console.log(info);
+    console.log("hello");
+    console.log(`${SERVER_URL}/api/students/${params.id}`);
+    axios.put(`${SERVER_URL}/api/students/${params.id}`, info);
   };
 
   useEffect(() => { storeInfo() }, [params]);

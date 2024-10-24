@@ -5,6 +5,8 @@ import {
   users,
   languagesSpokenByStudent,
   SpokenLanguage,
+  User,
+  Student,
 } from "../db/index.js";
 import {
   CreateStudentRequest,
@@ -220,58 +222,61 @@ export class StudentService {
     userId: string,
     updatedDetails: UpdateStudentRequest,
   ): Promise<UpdateStudentResponse> {
-    const {
-      role,
-      givenName,
-      familyName,
-      password,
-      email,
-      studentId,
-      university,
-      pronouns,
-      team,
-      dietaryRequirements,
-      tshirtSize,
-      photoConsent,
-      spokenLanguages,
-    } = updatedDetails;
+    const { password, ...rest } = updatedDetails;
 
-    const hashedPassword = await passwordUtils().hash(password);
-    await this.db
-      .update(users)
-      .set({ role, givenName, familyName, password: hashedPassword, email })
-      .where(eq(users.id, userId));
+    const userUpdates: Partial<User> = {
+      givenName: rest.givenName,
+      familyName: rest.familyName,
+      email: rest.email,
+      role: rest.role,
+    };
+    const studentUpdates: Partial<Student> = {
+      studentId: rest.studentId,
+      university: rest.university,
+      pronouns: rest.pronouns,
+      team: rest.team,
+    };
 
-    await this.db
-      .update(students)
-      .set({ studentId, university, pronouns, team, dietaryRequirements, tshirtSize, photoConsent })
-      .where(eq(students.userId, userId));
-
-    await this.db
-      .delete(languagesSpokenByStudent)
-      .where(eq(languagesSpokenByStudent.studentId, userId));
-
-    for (const languageCode of spokenLanguages) {
-      await this.db
-        .insert(languagesSpokenByStudent)
-        //This is meant to be the student's userId, not their *studentId* 
-        .values({ studentId: userId, languageCode });
+    if (password) {
+      userUpdates.password = await passwordUtils().hash(password);
     }
 
-    return {
-      studentId,
-      role,
-      givenName,
-      familyName,
-      email,
-      university,
-      pronouns,
-      team,
-      dietaryRequirements,
-      tshirtSize,
-      photoConsent,
-      spokenLanguages,
-    };
+    const cleanedUserUpdates = Object.fromEntries(
+      Object.entries(userUpdates).filter(([, value]) => value !== undefined),
+    );
+    const cleanedStudentUpdates = Object.fromEntries(
+      Object.entries(studentUpdates).filter(([, value]) => value !== undefined),
+    );
+
+    const result = await this.db.transaction(async (tx) => {
+      if (Object.keys(cleanedUserUpdates).length > 0) {
+        await tx
+          .update(users)
+          .set(cleanedUserUpdates)
+          .where(eq(users.id, userId));
+      }
+
+      if (Object.keys(cleanedStudentUpdates).length > 0) {
+        await tx
+          .update(students)
+          .set(cleanedStudentUpdates)
+          .where(eq(students.userId, userId));
+      }
+
+      if (rest.spokenLanguages) {
+        await tx
+          .delete(languagesSpokenByStudent)
+          .where(eq(languagesSpokenByStudent.studentId, userId));
+
+        for (const languageCode of rest.spokenLanguages) {
+          await tx
+            .insert(languagesSpokenByStudent)
+            .values({ studentId: userId, languageCode });
+        }
+      }
+      return { ...rest };
+    });
+    return result;
   }
 
   async deleteStudent(userId: string): Promise<DeleteResponse> {

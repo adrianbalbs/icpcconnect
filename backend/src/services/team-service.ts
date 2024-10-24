@@ -22,23 +22,29 @@ export class TeamService {
     const {
       name,
       university,
+      memberIds,
     } = req;
 
-    /*
-    const members = await this.db
-      .query.students.findMany({
-        where: inArray(students.userId, memberIds)
-      });
-    */
 
     const [id] = await this.db 
       .insert(teams)
       .values({
         name,
         university,
-     //   members,
       })
       .returning({teamId: teams.id})
+
+    const members = await this.db
+      .query.students.findMany({
+        where: inArray(students.userId, memberIds)
+      });
+
+    for (const member of members) {
+      await this.db
+        .update(students)
+        .set({ team: id.teamId })
+        .where(eq(students.userId, member.userId));
+    }
 
     return id
   }
@@ -93,6 +99,10 @@ export class TeamService {
       })
   }
 
+  //Expects all team-members to be sent
+  //And unsets 'old' team-members
+  //
+  //Albeit this behaviour can easily be adjusted
   async updateTeam(teamId: string, updatedDetails: UpdateTeamRequest) {
     const {
       university,
@@ -100,15 +110,37 @@ export class TeamService {
       memberIds,
     } = updatedDetails;
 
+    //Unset old team-members
+    {
+      const members = await this.db
+        .query.students.findMany({
+          where: eq(students.team, teamId)
+        });
+
+      for (const member of members) {
+        await this.db
+          .update(students)
+          .set({ team: null })
+          .where(eq(students.userId, member.userId));
+      }
+    }
+
+    //Set team-id for new members
     const members = await this.db
       .query.students.findMany({
         where: inArray(students.userId, memberIds)
       });
 
+    for (const member of members) {
+      await this.db
+        .update(students)
+        .set({ team: teamId })
+        .where(eq(students.userId, member.userId));
+    }
+
     await this.db
       .update(teams)
       .set({ university, name })
-      //.set({ university, name, members })
       .where(eq(teams.id, teamId));
 
     return {

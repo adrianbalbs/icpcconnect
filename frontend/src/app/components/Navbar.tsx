@@ -60,7 +60,9 @@ const Navbar: React.FC = () => {
 
   const handleChange = (event: React.SyntheticEvent, newTab: number) => {
     setTab(newTab);
-    router.push(tab === 1 ? `/${tabAllowed}` : '/members');
+    console.log(`tab is ${tab}`);
+    console.log(`newTab is ${newTab}`);
+    router.push(newTab === 1 ? '/members' : `/${tabAllowed}`);
   };
 
   // useEffect(() => {

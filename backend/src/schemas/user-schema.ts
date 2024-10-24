@@ -233,7 +233,7 @@ export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
   dietaryRequirements: z.string().nullable(),
   tshirtSize: z.string(), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
   photoConsent: z.boolean(),
-});
+}).partial();
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
 
@@ -282,4 +282,3 @@ export const LoginRequestSchema = z.object({
 });
 
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
-

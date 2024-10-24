@@ -17,29 +17,48 @@ const Info: React.FC<InfoProps> = ({ name, value, edit, onChange }) => {
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value);
   };
-
+  
   return (
     <>
       <div className={profileStyles.content}>
         <p className={pageStyles.bold}>{name}</p>
         {edit ? (
-          name !== 'Do you consent to appear in photos and videos taken on the day of the contest?' ? (
-          <input
-            className={profileStyles['edit-box']}
-            value={value}
-            onChange={handleInputChange}
-          />
-          ) : (
-            <select id="consent" value={value} onChange={handleSelectChange} className={profileStyles['select-box']}>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          )
+          (() => {
+            if (name === 'Do you consent to appear in photos and videos taken on the day of the contest?') {
+              return (
+                <select
+                  id="consent"
+                  value={value}
+                  onChange={handleSelectChange}
+                  className={profileStyles['select-box']}
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              );
+            } else if (name === 'Name') {
+              return (
+                <input
+                  className={profileStyles['edit-box']}
+                  value={value}
+                  onChange={handleInputChange}
+                />
+              );
+            } else {
+              return (
+                <input
+                  className={profileStyles['edit-box']}
+                  value={value}
+                  onChange={handleInputChange}
+                />
+              );
+            }
+          })()
         ) : (
           <p>{value}</p>
         )}
       </div>
-      <hr className={pageStyles.divider}/>
+      <hr className={pageStyles.divider} />
     </>
   );
 };

@@ -60,7 +60,15 @@ app
   .use("/api", contestRegistrationRouter(contestRegistrationService))
   .use("/api", authRouter(authService))
   .use("/api", codesRouter(codesService))
-  .use("/api", adminRouter(adminService, coachService, studentService, siteCoordinatorService))
+  .use(
+    "/api",
+    adminRouter(
+      adminService,
+      coachService,
+      studentService,
+      siteCoordinatorService,
+    ),
+  )
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {
