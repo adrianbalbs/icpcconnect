@@ -6,6 +6,9 @@ import experienceStyles from '@/styles/Experience.module.css';
 import ExperienceModal from '@/components/experience/ExperienceModal';
 import LanguageExperience from '@/components/experience/LanguageExperience';
 import CoursesExperience from '@/components/experience/CoursesExperience';
+import { ProfileProps } from '../page';
+import axios from 'axios';
+import { SERVER_URL } from '@/utils/constants';
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -29,7 +32,7 @@ export interface Experiences {
   student: string;
 }
 
-const Experience: React.FC = () => {
+const Experience: React.FC<ProfileProps> = ({ params }) => {
   const [added, setAdded] = useState<ExperienceType>({
     codeforcesRating: false,
     contestExperience: false,
@@ -51,8 +54,30 @@ const Experience: React.FC = () => {
     student: '',
   });
 
-  useEffect(() => {
+  const getExperience = async () => {
+    try {
+      const res = await axios.get(`${SERVER_URL}/api/contest-registration/${params.id}`);
+      const { student, ...newExperience } = res.data;
+      // setExperience(newExperience);
+    } catch (error) {
+      console.log(`Get experience error: ${error}`);
+    }
+  }
 
+  const updateExperience = async () => {
+    try {
+      await axios.put(`${SERVER_URL}/api/contest-registration/${params.id}`, experience);
+    } catch (error) {
+      console.log(`Update experience error: ${error}`);
+    }
+  }
+
+  useEffect(() => {
+    getExperience();
+  }, []);
+
+  useEffect(() => {
+    updateExperience();
   }, [added]);
 
   return (
