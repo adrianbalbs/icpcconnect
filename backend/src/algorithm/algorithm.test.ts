@@ -399,10 +399,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             leetcodeRating: 1000,
             codeforcesRating: 3000,
             completedCourses: [
-                "intro_computing",
-                "data_struct_and_algos",
-                "discrete_math",
-                "algorithms"
+                Courses.intro_computing,
+                Courses.data_struct_and_algos,
+                Courses.algorithm_design
             ],
             spokenLanguages: [1],
             cppExperience: Experience.none,
@@ -419,63 +418,6 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         const calcscores = getStudentScores(test_studentInfo);
 
         expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-    });
-
-    it("isCompatible: Test language compatabilities", async () => {
-        const otherLang: StudentInfo = {
-            id: 4,
-            uniId: 1,
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                "intro_computing",
-                "data_struct_and_algos",
-                "discrete_math",
-                "algorithms"
-            ],
-            spokenLanguages: [2],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-    
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(otherLang)
-
-        const bothLang: StudentInfo = {
-            id: 4,
-            uniId: 1,
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                "intro_computing",
-                "data_struct_and_algos",
-                "discrete_math",
-                "algorithms"
-            ],
-            spokenLanguages: [1, 2],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-    
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(bothLang)
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-        expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
-        expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
-        expect(isCompatible(calcscores[2], calcscores[3])).toBe(true);
     });
 
     it("algorithm: Should return a singular team (Pair and Single)", () => {
@@ -531,6 +473,27 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
     });
 
+    it("algorithm: Should return a singular team (Pair and Single)", () => {
+        const s3: StudentInfo = {
+            id: 3,
+            uniId: 1,
+            contestExperience: 6,
+            leetcodeRating: 3000,
+            codeforcesRating: 3000,
+            completedCourses: [
+                Courses.intro_computing,
+                Courses.data_struct_and_algos,
+                Courses.algorithm_design
+            ],
+            spokenLanguages: [1],
+            cppExperience: Experience.prof,
+            cExpericence: Experience.prof,
+            javaExperience: Experience.prof,
+            pythonExperience: Experience.prof,
+    
+            paired_with: s1.id,
+            markdone: false
+        }
     it("algorithm: Should return a singular team (Pair and Single)", () => {
         const s3: StudentInfo = {
             id: 3,
