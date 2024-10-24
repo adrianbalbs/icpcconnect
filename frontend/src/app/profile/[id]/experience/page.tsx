@@ -5,6 +5,7 @@ import profileStyles from '@/styles/Profile.module.css';
 import experienceStyles from '@/styles/Experience.module.css';
 import ExperienceModal from '@/components/experience/ExperienceModal';
 import LanguageExperience from '@/components/experience/LanguageExperience';
+import CoursesExperience from '@/components/experience/CoursesExperience';
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -61,6 +62,7 @@ const Experience: React.FC = () => {
       </div>
       <hr className={experienceStyles.divider}/>
       {added.language && <LanguageExperience { ...experience } />}
+      {added.coursesTaken && <CoursesExperience coursesTaken={experience.coursesTaken} />}
       <ExperienceModal  added={added} setAdded={setAdded} experience={experience} setExperience={setExperience} />
     </div>
   );
