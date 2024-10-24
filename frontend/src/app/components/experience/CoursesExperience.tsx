@@ -22,13 +22,13 @@ const CoursesExperience = ({ coursesTaken }: { coursesTaken: number[] }) => {
 
   return (
     <>
-      <h3>Relevant Courses</h3>
+      <h3 className={experienceStyles.heading}>Relevant Courses</h3>
       <hr className={pageStyles.divider} />
-      <List sx={{ m: '0 40px', p: 0, w: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <List sx={{ m: '12px 40px 0', p: 0, w: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {courses.map(c => 
           <ListItem sx={{ padding: '5px' }}>
-            <ListItemIcon><SchoolRoundedIcon /></ListItemIcon>
-            <ListItemText primary={valueToText[c - 1]} sx={{ fontSize: '15px', color: '#444444' }} />
+            <ListItemIcon sx={{ color: '#444444' }}><SchoolRoundedIcon /></ListItemIcon>
+            <ListItemText primary={valueToText[c - 1]} sx={{ fontSize: '14px', color: '#333333' }} />
           </ListItem>
         )}
       </List>

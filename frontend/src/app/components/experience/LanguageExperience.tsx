@@ -26,8 +26,8 @@ const LanguageExperience = (props: Experiences) => {
 
   return (
     <>
-      <h3>Programming Language Experience</h3>
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 4fr', alignItems: 'center', m: '25px 40px 13px' }}>
+      <h3 className={experienceStyles.heading}>Programming Language Experience</h3>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 4fr', alignItems: 'center', m: '10px 40px 13px' }}>
         <Typography sx={experienceHeading}>Language</Typography>
         <Typography sx={experienceHeading}>Proficiency</Typography>
       </Box>
