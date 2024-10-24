@@ -15,9 +15,8 @@ export enum Experience {
 export enum Courses {
     intro_computing = 1,
     data_struct_and_algos = 2,
-    discrete_math = 3,
-    algorithms = 4,
-    prog_chal = 5,
+    algorithm_design = 3,
+    prog_chal = 4,
 }
 
 /** Weighting of Specific Values for Determining Score **/
@@ -36,7 +35,7 @@ export interface StudentInfo {
     contestExperience: number,
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
     codeforcesRating: number, // Refer to this: https://codeforces.com/blog/entry/68288
-    completedCourses : string[],
+    completedCourses : number[],
     spokenLanguages: number[],
     cppExperience: Experience,
     cExpericence: Experience,
@@ -85,28 +84,10 @@ export function calculateScore(s: StudentInfo): number {
     let courseScore = 0;
 
     for (const course of s.completedCourses) {
-        switch (course) {
-            case 'intro_computing':
-                courseScore += Courses.intro_computing;
-                break;
-            case 'data_struct_and_algos':
-                courseScore += Courses.data_struct_and_algos;
-                break;
-            case 'discrete_math':
-                courseScore += Courses.discrete_math;
-                break;
-            case 'algorithms':
-                courseScore += Courses.algorithms;
-                break;
-            case 'prog_chal':
-                courseScore += Courses.prog_chal;
-                break;
-        }
+        courseScore += course * COURSES_WEIGHT;
     }
 
-    score += courseScore * COURSES_WEIGHT;
-
-    return score;
+    return score + courseScore;
 }
 
 /**
