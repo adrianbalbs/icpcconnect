@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { addBtn, addExperienceBtn, addModal } from '@/styles/sxStyles';
 import pageStyles from '@/styles/Page.module.css';
-import profileStyles from '@/styles/Profile.module.css';
+import experienceStyles from '@/styles/Experience.module.css';
 import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent } from '@mui/material';
 import CloseBtn from '../utils/CloseBtn';
 import LanguageSlider from './LanguageSlider';
@@ -17,6 +17,7 @@ interface ModalProps {
 }
 
 const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, setExperience }) => {
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
   const [disable, setDisable] = useState(false);
@@ -29,10 +30,13 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
   const handleClose = () => {
     setOpen(false);
     setType('');
+    setDisable(false);
     setNewExperience(experience);
   }
 
   const handleSelect = (event: SelectChangeEvent) => {
+    if (event.target.value === 'language') setDisable(false);
+    setNewExperience(experience);
     setType(event.target.value);
   };
 
@@ -43,9 +47,15 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
     handleClose();
   }
 
+  useEffect(() => {
+    if (buttonRef.current) {
+        buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}, [type]);
+
   return (
-    <div className={profileStyles.modal}>
-      <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>Add New Skill/Experience</Button>
+    <div className={experienceStyles.modal}>
+      {!open && <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>Add New Skill/Experience</Button>}
       {open && <Paper square elevation={3} sx={addModal}>
         <CloseBtn handleClose={handleClose}/>
         <FormControl sx={{ margin: '10px 20px 25px', fontSize: '12px', width: 'calc(100% - 40px)' }} >
@@ -57,7 +67,7 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
               sx={{ height: '45px', fontSize: '14px' }}
               onChange={handleSelect}
             >
-              {!added.language && <MenuItem sx={{ fontSize: '14px' }} value="language">Language Proficiency</MenuItem>}
+              {!added.language && <MenuItem sx={{ fontSize: '14px' }} value="language">Programming Language Experience</MenuItem>}
               {!added.coursesTaken && <MenuItem sx={{ fontSize: '14px' }} value="coursesTaken">Relevant Courses</MenuItem>}
               {!added.contestExperience && <MenuItem sx={{ fontSize: '14px' }} value="contestExperience">Past Contests</MenuItem>}
               {!added.leetcodeRating && <MenuItem sx={{ fontSize: '14px' }} value="leetcodeRating">LeetCode Contest Rating</MenuItem>}
@@ -65,17 +75,17 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
             </Select>
           </FormControl>
           <hr className={pageStyles.divider}/>
-          {type === 'language' && <Box sx={{ margin: '25px 45px 55px 30px', width: 'calc(100% - 75px)' }}>
-            <LanguageSlider type="python" experience={newExperience} setExperience={setNewExperience}/>
-            <LanguageSlider type="java" experience={newExperience} setExperience={setNewExperience}/>
-            <LanguageSlider type="cpp"  experience={newExperience} setExperience={setNewExperience}/>
-            <LanguageSlider type="c" experience={newExperience} setExperience={setNewExperience}/>
+          {type === 'language' && <Box sx={{ m: '25px 45px 55px 30px', w: 'calc(100% - 75px)' }}>
+            <LanguageSlider type="c" experience={newExperience} setExperience={setNewExperience} />
+            <LanguageSlider type="cpp"  experience={newExperience} setExperience={setNewExperience} />
+            <LanguageSlider type="java" experience={newExperience} setExperience={setNewExperience} />
+            <LanguageSlider type="python" experience={newExperience} setExperience={setNewExperience} />
           </Box>}
-          {type === 'coursesTaken' && <CourseCheckbox setDisable={setDisable} />}
+          {type === 'coursesTaken' && <CourseCheckbox setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
           {type === 'contestExperience' && <NumberInput type={0} setDisable={setDisable} />}
           {type === 'leetcodeRating' && <NumberInput type={1} setDisable={setDisable} />}
           {type === 'codeforcesRating' && <NumberInput type={2} setDisable={setDisable} />}
-          {type && <Button variant="contained" sx={addBtn} onClick={addExperience} disabled={disable}>Add</Button>}
+          {type && <Button variant="contained" sx={addBtn} onClick={addExperience} ref={buttonRef} disabled={disable}>Add</Button>}
       </Paper>}
     </div>
   );

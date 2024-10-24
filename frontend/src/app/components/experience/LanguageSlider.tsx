@@ -36,9 +36,7 @@ const LanguageSlider: React.FC<SliderProps> = ({ type, experience, setExperience
   const onChange = (event: Event, value: number | number[]) => {
     const key = `${type}Experience`;
     const assertValue = Number(value);
-    const newExperience = { ...experience, [key]: valueToText[assertValue] };
-    console.log(newExperience);
-    setExperience(newExperience);
+    setExperience({ ...experience, [key]: valueToText[assertValue] });
   }
 
   return (

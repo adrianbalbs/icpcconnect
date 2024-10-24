@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import profileStyles from '@/styles/Profile.module.css';
-import pageStyles from '@/styles/Page.module.css';
+import experienceStyles from '@/styles/Experience.module.css';
 import ExperienceModal from '@/components/experience/ExperienceModal';
+import LanguageExperience from '@/components/experience/LanguageExperience';
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -18,7 +19,7 @@ export interface Experiences {
   cExperience: string;
   codeforcesRating: number;
   contestExperience: number;
-  coursesTaken: string[];
+  coursesTaken: number[];
   cppExperience: string;
   javaExperience: string;
   level: string;
@@ -27,21 +28,7 @@ export interface Experiences {
   student: string;
 }
 
-export interface Languages {
-  cExperience: string;
-  cppExperience: string;
-  javaExperience: string;
-  pythonExperience: string;
-}
-
 const Experience: React.FC = () => {
-  
-  // const [languages, setLanguages] = useState<Languages>({
-  //   cExperience: 'none',
-  //   cppExperience: 'none',
-  //   javaExperience: 'none',
-  //   pythonExperience: 'none',
-  // });
   const [added, setAdded] = useState<ExperienceType>({
     codeforcesRating: false,
     contestExperience: false,
@@ -63,7 +50,6 @@ const Experience: React.FC = () => {
     student: '',
   });
 
-
   useEffect(() => {
 
   }, [added]);
@@ -73,7 +59,8 @@ const Experience: React.FC = () => {
       <div className={profileStyles.title}>
         <h3>Experience</h3>
       </div>
-      <hr className={pageStyles.divider}/>
+      <hr className={experienceStyles.divider}/>
+      {added.language && <LanguageExperience { ...experience } />}
       <ExperienceModal  added={added} setAdded={setAdded} experience={experience} setExperience={setExperience} />
     </div>
   );

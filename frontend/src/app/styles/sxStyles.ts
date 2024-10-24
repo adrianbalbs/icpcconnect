@@ -1,5 +1,7 @@
 // Used for the purpose of adding to sx
 
+import zIndex from "@mui/material/styles/zIndex";
+
 export const purpleBtn = {
   fontSize: '13px',
   textTransform: 'none',
@@ -28,10 +30,10 @@ export const addExperienceBtn = {
 
 export const addModal = {
   display: 'block',
+  position: 'relative',
   padding: '30px 40px',
-  position: 'fixed',
   width: '600px',
-  zIndex: '1'
+  zIndex: 1
 };
 
 export const addBtn = {
@@ -44,3 +46,14 @@ export const addBtn = {
   backgroundColor: '#8094AB',
   boxShadow: 'none'
 };
+
+export const experienceHeading = {
+  fontSize: '15px',
+  fontWeight: 600,
+}
+
+export const proficiencyLabel = {
+  fontSize: '12px',
+  fontWeight: 600,
+  color: '#979bb2'
+}

@@ -28,13 +28,13 @@ const NumberInput: React.FC<InputProps> = ({ type, setDisable }) => {
   }, [value]);
 
   return (
-    <Box sx={{ margin: '30px 35px', width: 'calc(100% - 70px)' }}>
+    <Box sx={{ m: '30px 35px', w: 'calc(100% - 70px)' }}>
       <Stack spacing={4} direction="row" sx={{ alignItems: 'center', justifyContent: 'center' }}>
         <p className={styles.language}>{typeToQuestion[type]}</p>
         <Input
           type="number"
           value={value}
-          sx={{ paddingLeft: '5px', width: '91px', color: 'grey' }}
+          sx={{ pl: '5px', w: '91px', color: 'grey' }}
           onChange={assertPositive}
         />
       </Stack>

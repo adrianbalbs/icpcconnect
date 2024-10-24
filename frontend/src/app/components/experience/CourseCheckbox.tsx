@@ -1,16 +1,25 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styles from '@/styles/Experience.module.css';
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
+import { Experiences } from '@/profile/[id]/experience/page';
 
 interface CheckboxProps {
   setDisable: Dispatch<SetStateAction<boolean>>;
+  experience: Experiences;
+  setExperience: Dispatch<SetStateAction<Experiences>>;
 }
 
-const CourseCheckbox: React.FC<CheckboxProps> = ({ setDisable }) => {
+const CourseCheckbox: React.FC<CheckboxProps> = ({ setDisable, experience, setExperience }) => {
   const [courses, setCourses] = useState({ 1: false, 2: false, 3: false, 4: false });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCourses({ ...courses, [event.target.name]: event.target.checked });
+    const course = Number(event.target.name);
+    setCourses({ ...courses, [course]: event.target.checked });
+
+    // Attempt to filter out course regardless of adding or removing (avoid duplicates)
+    const coursesTaken = experience.coursesTaken.filter(i => i !== course);
+    if (event.target.checked) coursesTaken.push(course);
+    setExperience({ ...experience, coursesTaken: coursesTaken });
   }
 
   useEffect(() => {

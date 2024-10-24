@@ -96,8 +96,8 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
           aria-describedby="generate-invite-code"
         >
           <CloseBtn handleClose={(handleClose)}/>
-          <DialogContent sx={{ width: '450px', height: '110px', padding: '40px 40px' }}>
-            <FormControl sx={{ margin: '10px 0', fontSize: '12px' }} fullWidth>
+          <DialogContent sx={{ w: '450px', h: '110px', p: '40px 40px' }}>
+            <FormControl sx={{ m: '10px 0', fontSize: '12px' }} fullWidth>
               <InputLabel id="new-invite-code-label" sx={{ lineHeight: '15px', fontSize: '14px' }}>New Invite Code</InputLabel>
               <Select
                 id="select-type"
@@ -111,7 +111,7 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
               </Select>
             </FormControl>
             <hr className={pageStyles.divider}/>
-            <DialogContentText id="invite-code" sx={{ display: 'flex', margin: '15px 0 0 14px', fontSize: '14px', fontWeight: 'bold' }}>
+            <DialogContentText id="invite-code" sx={{ display: 'flex', m: '15px 0 0 14px', fontSize: '14px', fontWeight: 'bold' }}>
               Invite Code: 
               <div className={pageStyles.code}>{code}</div>
             </DialogContentText>

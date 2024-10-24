@@ -1,3 +1,11 @@
+.modal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 40px 0;
+  width: 100%;
+}
+
 .language {
   font-size: 15px;
   font-weight: 600;
@@ -13,4 +21,12 @@
 
 .checkbox-label {
   font-size: 14px;
+}
+
+.divider {
+  margin: 50px 0;
+  height: 1px;
+  width: 100%;
+  border: none;
+  background-color: #E0E0E0;
 }

@@ -37,7 +37,7 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
       Finalised team allocations will be released after
       <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
     </p>
-    {access && <Button sx={{ ...purpleBtn, marginTop: '15px' }} onClick={nextStatus}>Allocate Teams</Button>}
+    {access && <Button sx={{ ...purpleBtn, mt: '15px' }} onClick={nextStatus}>Allocate Teams</Button>}
   </div>
 }
 

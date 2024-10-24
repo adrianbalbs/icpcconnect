@@ -19,10 +19,7 @@ const CloseBtn: React.FC<FunctionProps> = ({ handleClose }) => {
       color: theme.palette.grey[500],
     })}
   >
-    <CloseIcon sx={{
-      height: '20px',
-      width: '20px',
-    }}/>
+    <CloseIcon sx={{ height: '20px', width: '20px' }}/>
   </IconButton>
 }
 
