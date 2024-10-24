@@ -2,6 +2,10 @@
  * Team building algorithmic design
  */
 
+import { Console, group } from "console";
+import { CreateTeamRequest } from "../schemas/team-schema.js";
+import { AllUniIDResponse, AlgorithmStudentResponse, StudentResponse } from "../services/algorithm-service.js";
+
 /** Enums **/
 
 export enum Experience {
@@ -31,7 +35,7 @@ const COURSES_WEIGHT = 3;
 
 export interface StudentInfo {
     id: number,
-    uniId: number,
+    uniName: string,
     contestExperience: number,
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
     codeforcesRating: number, // Refer to this: https://codeforces.com/blog/entry/68288
@@ -61,6 +65,84 @@ export interface Group {
     totalScore: number
 }
 
+/**
+ * runFullAlgorithm
+ * 
+ * Runs the full team creation process:
+ * 1. Grabs all university IDs
+ * 2. For each university it grabs all students from that university (their registration details, etc)
+ * 3. Runs the getStudent scores for all students
+ * 4. Runs the algorithm to create an array of team objects
+ * 5. Adds those teams to the database
+ */
+function runFullAlgorithm() {
+    const uniIds: AllUniIDResponse = {
+        allUniversityIds: []
+    } // TODO: TURN THIS INTO THE ACTUAL CALL
+    
+    for (const uni of uniIds.allUniversityIds) {
+        const studentsOfUni: AlgorithmStudentResponse = {
+            allStudents: []
+        } // TODO: TURN THIS INTO THE ACTUAL CALL
+
+        if (studentsOfUni.allStudents.length == 0) {
+            continue
+        }
+
+        const studentInfo: StudentInfo[] = convertToStudentInfo(studentsOfUni.allStudents)
+        const studentScores: StudentScore[] = getStudentScores(studentInfo)
+        const groups: Group[] = algorithm(studentScores)
+
+        const uniName = studentInfo[0].uniName
+        let teamNum = 1
+        for (const g of groups) {
+            const team: CreateTeamRequest = {
+                name: uniName + '-Team' + teamNum.toString(),
+                university: uni.id,
+                memberIds: g.ids.map(String)
+            }
+
+            teamNum++
+
+            const pushedTeams = []
+            // Send this team to the db through createTeam call or something
+            // Grab the result and add it to an array
+
+            if (pushedTeams.length != groups.length) {
+                console.log('Something went wrong here!')
+                console.log('Teams pushed to DB: ' + pushedTeams.length.toString)
+                console.log('Groups formed: ' + group.length.toString())
+            }
+        }
+    }
+}
+
+/**
+ * convertToStudentInfo
+ * 
+ * Converts a db return into the format required by the algorithm
+ */
+function convertToStudentInfo(all: StudentResponse[]): StudentInfo[] {
+    const formattedInfo: StudentInfo[] = []
+    for (const s of all) {
+        formattedInfo.push({
+            id: s.id,
+            uniName: s.uniName,
+            contestExperience: s.contestExperience,
+            leetcodeRating: s.leetcodeRating,
+            codeforcesRating: s.codeforcesRating,
+            completedCourses : s.completedCourses,
+            spokenLanguages: s.spokenLanguages,
+            cppExperience: s.cppExperience,
+            cExpericence: s.cppExperience,
+            javaExperience: s.javaExperience,
+            pythonExperience: s.pythonExperience,
+            paired_with: null,
+            markdone: false
+        })
+    }
+    return formattedInfo
+}
 
 /**
  * GetStudentScore
