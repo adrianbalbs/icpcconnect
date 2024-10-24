@@ -4,7 +4,7 @@
 
 import { Console, group } from "console";
 import { CreateTeamRequest } from "../schemas/team-schema.js";
-import { AllUniIDResponse, AlgorithmStudentResponse, StudentResponse } from "../services/algorithm-service.js";
+import { AllUniIDResponse, AlgorithmStudentResponse, StudentResponse, AllCoursesCompleted, AllLanguagesSpoken } from "../services/algorithm-service.js";
 
 /** Enums **/
 
@@ -40,7 +40,7 @@ export interface StudentInfo {
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
     codeforcesRating: number, // Refer to this: https://codeforces.com/blog/entry/68288
     completedCourses : number[],
-    spokenLanguages: number[],
+    spokenLanguages: string[],
     cppExperience: Experience,
     cExpericence: Experience,
     javaExperience: Experience,
@@ -53,7 +53,7 @@ export interface StudentInfo {
 export interface StudentScore {
     ids: number[],
     studentScore: number,
-    spokenLanguages: number[],
+    spokenLanguages: string[],
     cppExperience: Experience,
     cExpericence: Experience,
     javaExperience: Experience,
@@ -75,7 +75,7 @@ export interface Group {
  * 4. Runs the algorithm to create an array of team objects
  * 5. Adds those teams to the database
  */
-function runFullAlgorithm() {
+export function runFullAlgorithm() {
     const uniIds: AllUniIDResponse = {
         allUniversityIds: []
     } // TODO: TURN THIS INTO THE ACTUAL CALL
@@ -121,27 +121,84 @@ function runFullAlgorithm() {
  * convertToStudentInfo
  * 
  * Converts a db return into the format required by the algorithm
+ * 
+ * @param all: StudentResponse[]
+ * @returns StudentInfo[]
  */
 function convertToStudentInfo(all: StudentResponse[]): StudentInfo[] {
     const formattedInfo: StudentInfo[] = []
     for (const s of all) {
+        const courses: AllCoursesCompleted = { courses: [] }    // NEED TO CALL THE ACTUAL THING HERE
+        const languages: AllLanguagesSpoken = { languages: [] } // NEED TO CALL THE ACTUAL THING HERE
         formattedInfo.push({
-            id: s.id,
+            id: Number(s.id),
             uniName: s.uniName,
+            completedCourses : getCourses(courses),
+            spokenLanguages: getLanguages(languages),
             contestExperience: s.contestExperience,
             leetcodeRating: s.leetcodeRating,
             codeforcesRating: s.codeforcesRating,
-            completedCourses : s.completedCourses,
-            spokenLanguages: s.spokenLanguages,
-            cppExperience: s.cppExperience,
-            cExpericence: s.cppExperience,
-            javaExperience: s.javaExperience,
-            pythonExperience: s.pythonExperience,
+            cppExperience: convertToEnum(s.cppExperience),
+            cExpericence: convertToEnum(s.cppExperience),
+            javaExperience: convertToEnum(s.javaExperience),
+            pythonExperience: convertToEnum(s.pythonExperience),
             paired_with: null,
             markdone: false
         })
     }
     return formattedInfo
+}
+
+/**
+ * convertToEnum
+ * 
+ * Converts a given coding profficieny (none, some, prof) in string
+ * form to it's corresponding enum value.
+ * 
+ * @param s: string
+ * @returns Experience
+ */
+
+function convertToEnum(s: string): Experience {
+    if (s == "prof") {
+        return Experience.prof
+    } else if (s == "some") {
+        return Experience.some
+    } else {
+        return Experience.none
+    } 
+}
+
+/**
+ * getCourses
+ * 
+ * Extracts only the course values from a DB return
+ * 
+ * @param c: AllCoursesCompleted
+ * @returns number[]
+ */
+function getCourses(c: AllCoursesCompleted): number[] {
+    const courses: number[] = []
+    for (const co of c.courses) {
+        courses.push(co.code)
+    }
+    return courses
+}
+
+/**
+ * getLanguages
+ * 
+ * Extracts only the course values from a DB return
+ * 
+ * @param l: AllLanguagesSpoken
+ * @returns string[]
+ */
+function getLanguages(l: AllLanguagesSpoken): string[] {
+    const languages: string[] = []
+    for (const la of l.languages) {
+        languages.push(la.code)
+    }
+    return languages
 }
 
 /**
@@ -240,10 +297,6 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
  * 
  * @param studentsScores: StudentScore[]
  * @returns Group[]
- * 
- * TODO: 
- *  - Implement logic for team building based on coding language experience
- *  - Implement logic for team building based on spoken languages
  */
 export function algorithm(studentsScores: StudentScore[]): Group[] {
     studentsScores.sort((a, b) => a.studentScore - b.studentScore)

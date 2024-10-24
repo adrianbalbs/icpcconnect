@@ -1,22 +1,29 @@
 import { eq } from "drizzle-orm";
-import { DatabaseConnection, registrationDetails, spokenLanguages, students, universities, users } from "../db/index.js";
+import { coursesCompletedByStudent, DatabaseConnection, languagesSpokenByStudent, registrationDetails, spokenLanguages, students, universities, users } from "../db/index.js";
+import { uniqueKeyName } from "drizzle-orm/mysql-core";
 
 export type AllUniIDResponse = {
      allUniversityIds: { id: number }[]
 }
 
+export type AllLanguagesSpoken = {
+     languages: { code: string }[]
+}
+
+export type AllCoursesCompleted = {
+     courses: { code: number }[]
+}
+
 export type StudentResponse = {
-     id: number,
+     id: string,
      uniName: string,
      contestExperience: number,
      leetcodeRating: number,
      codeforcesRating: number,
-     completedCourses : number[],
-     spokenLanguages: number[],
-     cppExperience: number,
-     cExpericence: number,
-     javaExperience: number,
-     pythonExperience: number,
+     cppExperience: string,
+     cExpericence: string,
+     javaExperience: string,
+     pythonExperience: string,
      // paired_with: number | null,
 }
 
@@ -45,12 +52,10 @@ export class AlgorithmService {
      const allStudents = await this.db
        .select({
           id: users.id,
-          university: universities.name,
+          uniName: universities.name,
           contestExperience: registrationDetails.contestExperience,
           leetcodeRating: registrationDetails.leetcodeRating,
           codeforcesRating: registrationDetails.codeforcesRating,
-          completedCourses: [1],
-          spokenLanguages: [1],
           cppExperience: registrationDetails.cppExperience,
           cExpericence: registrationDetails.cExperience,
           javaExperience: registrationDetails.javaExperience,
@@ -59,10 +64,32 @@ export class AlgorithmService {
        .from(users)
        .innerJoin(students, eq(students.userId, users.id))
        .innerJoin(universities, eq(universities.id, students.university))
-       .innerJoin(registrationDetails, eq(registrationDetails.student))
+       .innerJoin(registrationDetails, eq(registrationDetails.student, students.userId))
        .where(eq(universities.id, universityId))
  
      return { allStudents };
+   }
+
+   async getLanguagesFromStudent(studentId: string): Promise<AllLanguagesSpoken> {
+     const languages = await this.db
+     .select({
+          code: languagesSpokenByStudent.languageCode
+     })
+     .from(languagesSpokenByStudent)
+     .where(eq(languagesSpokenByStudent.studentId, studentId))
+
+     return { languages }
+   }
+
+   async getCoursesFromStudent(studentId: string): Promise<AllCoursesCompleted> {
+     const courses = await this.db
+     .select({
+          code: coursesCompletedByStudent.courseId
+     })
+     .from(coursesCompletedByStudent)
+     .where(eq(coursesCompletedByStudent.studentId, studentId))
+
+     return { courses }
    }
 }
 
