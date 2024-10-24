@@ -944,4 +944,4 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         expect(groups).toEqual([])
     });
-});
+})
