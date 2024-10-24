@@ -36,13 +36,39 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
   const handleEditClick = () => {
     setIsEditing(true);
   };
-
+  
   const handleSaveClick = async () => {
     setIsEditing(false);
+    const nameSplit = (info[0][1] as string).split(/\s+/); //separate name into first and last names
+    const firstName = nameSplit[0];
+    const lastName = nameSplit[1];
     console.log(info);
-    console.log("hello");
+    const pronouns = info[1][1] === '(Not added yet)' ? null : info[1][1];
+    const team = info[2][1] === '(Unallocated)' ? null : info[2][1];
+    const languagesSpoken = info[5][1] === '(Not added yet)' ? [] : info[5][1];
+    const dietaryRequirements = info[6][1] === '(Not added yet)' ? null : info[6][1];
+    const photoConsent = info[7][1] === 'Yes';
+    const tshirtSize = info[8][1] === '(Not added yet)' ? null : info[8][1];
+
+    const update = {
+      firstName,
+      lastName,
+      pronouns,
+      team,
+      university: 0, //change this later
+      studentId: info[4][1],
+      languagesSpoken,
+      photoConsent,
+      dietaryRequirements,
+      tshirtSize,
+    }
+    console.log(update);
     console.log(`${SERVER_URL}/api/students/${params.id}`);
-    axios.put(`${SERVER_URL}/api/students/${params.id}`, info);
+    try {
+      await axios.put(`${SERVER_URL}/api/students/${params.id}`, update);
+    } catch (error) {
+      console.error('Failed to update:', error);
+    }
   };
 
   useEffect(() => { storeInfo() }, [params]);
