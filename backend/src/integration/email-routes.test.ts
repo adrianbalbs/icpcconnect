@@ -81,17 +81,17 @@ describe("emailRouter tests", () => {
       .send(req)
       .expect(200);
     
-    const actual_key = response.body.codes;
+    const actual_key = response.body.codes; // Return is a string of the actual key.
 
 
     // Given a wrong key from user will verify fail
     let verify_req: PassVerificationRequest = {
       email: "z5354052@ad.unsw.edu.au",
-      userProvidedCode: actual_key + 1
+      userProvidedCode: actual_key + "1" 
     };
 
     let verify_response = await request(emailApp)
-      .get("/api/verify")
+      .post("/api/verify")
       .send(verify_req)
       .expect(200);
     
@@ -105,12 +105,36 @@ describe("emailRouter tests", () => {
     };
 
     verify_response = await request(emailApp)
-      .get("/api/verify")
+      .post("/api/verify")
       .send(verify_req)
       .expect(200);
     
     expect(verify_response.body.result === true);
+
+
+    // The verification Code can only be used once. After the successful verification,
+    // the old verification code will be invalid and return with Error.
+    // To gain a valid verification code, you have to send the request again.
+
+    verify_response = await request(emailApp)
+    .post("/api/verify")
+    .send(verify_req)
+    .expect(500);
     
   }, 20000);
+
+  it("should fail to verify if verification request not yet sent to email box", async () => {
+    
+    // Verification directly will fail. You have to send the verification code to user first.
+    const verify_req: PassVerificationRequest = {
+      email: "z5354052@ad.unsw.edu.au",
+      userProvidedCode: "123456"
+    };
+
+    await request(emailApp)
+    .post("/api/verify")
+    .send(verify_req)
+    .expect(500);
+  });
 
 });

@@ -24,7 +24,7 @@ export function emailRouter(Service: EmailService) {
             }
         },
     )
-    .get(
+    .post(
         "/verify",
         validateData(PassVerificationSchema, "body"),
         async (

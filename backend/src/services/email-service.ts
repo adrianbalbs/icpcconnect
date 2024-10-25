@@ -3,6 +3,7 @@ import { PassVerificationRequest, SendEmailCodeRequest } from "../schemas/index.
 import { eq } from "drizzle-orm";
 // import { sendVerificationCode } from "./email-handler"
 import { sendEmail } from './email-handler/email.js'; // Adjust the path as necessary
+import { HTTPError, badRequest } from "../utils/errors.js";
 export class EmailService {
     private readonly db: DatabaseConnection;
 
@@ -15,7 +16,7 @@ export class EmailService {
         .select({ code: verifyEmail.code })
         .from(verifyEmail)
         .where(eq(verifyEmail.code, code));
-        return existingCode.length != 0;
+        return existingCode.length !== 0;
     }
 
     private async finishVerification(email: string): Promise<void> {
@@ -93,9 +94,15 @@ export class EmailService {
     public async sendEmailVerificationCode(req: SendEmailCodeRequest): Promise<string> {
         const { email } = req;
         if (!this.isValidUniversityEmail(email)) {
-            throw Error("Invalid University Email Address provided.")
+            throw new HTTPError({
+                errorCode: badRequest.errorCode,
+                message: "Invalid University Email Address provided.",
+            });
         } else if (!await this.isNewRegisteredEmail(email)) {
-            throw Error("Email Address provided has been used by others before.")
+            throw new HTTPError({
+                errorCode: badRequest.errorCode,
+                message: "Email Address provided has been used by others before.",
+            });
         }
         const code = (await this.generateUniqueCode(email)).toString();
         await sendEmail("New User", email, "ICPC Verification Code", code);
@@ -110,7 +117,10 @@ export class EmailService {
             .from(verifyEmail)
             .where(eq(verifyEmail.email, email));
         if (targetCode.length === 0) {
-            throw Error("You need to send email verification first.");
+            throw new HTTPError({
+                errorCode: badRequest.errorCode,
+                message: "You need to send email verification first.",
+            });
         }
         const result = targetCode[0].code.toString() === userProvidedCode;
 
