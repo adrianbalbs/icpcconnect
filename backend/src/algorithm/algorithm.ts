@@ -4,7 +4,8 @@
 
 import { Console, group } from "console";
 import { CreateTeamRequest } from "../schemas/team-schema.js";
-import { AllUniIDResponse, AlgorithmStudentResponse, StudentResponse, AllCoursesCompleted, AllLanguagesSpoken } from "../services/algorithm-service.js";
+import { AllUniIDResponse, AlgorithmStudentResponse, StudentResponse, AllCoursesCompleted, AllLanguagesSpoken, AlgorithmService } from "../services/algorithm-service.js";
+import { TeamService } from "../services/team-service.js";
 
 /** Enums **/
 
@@ -75,21 +76,18 @@ export interface Group {
  * 4. Runs the algorithm to create an array of team objects
  * 5. Adds those teams to the database
  */
-export function runFullAlgorithm() {
-    const uniIds: AllUniIDResponse = {
-        allUniversityIds: []
-    } // TODO: TURN THIS INTO THE ACTUAL CALL
+
+export async function runFullAlgorithm(algorithmService: AlgorithmService): Promise<boolean> {
+    const uniIds: AllUniIDResponse = await algorithmService.getAllUniversityIds()
     
     for (const uni of uniIds.allUniversityIds) {
-        const studentsOfUni: AlgorithmStudentResponse = {
-            allStudents: []
-        } // TODO: TURN THIS INTO THE ACTUAL CALL
+        const studentsOfUni: AlgorithmStudentResponse = await algorithmService.getAllStudentsFromUniversity(uni.id)
 
         if (studentsOfUni.allStudents.length == 0) {
             continue
         }
 
-        const studentInfo: StudentInfo[] = convertToStudentInfo(studentsOfUni.allStudents)
+        const studentInfo: StudentInfo[] = await convertToStudentInfo(studentsOfUni.allStudents, algorithmService)
         const studentScores: StudentScore[] = getStudentScores(studentInfo)
         const groups: Group[] = algorithm(studentScores)
 
@@ -105,16 +103,18 @@ export function runFullAlgorithm() {
             teamNum++
 
             const pushedTeams = []
-            // Send this team to the db through createTeam call or something
-            // Grab the result and add it to an array
+            algorithmService.createTeam(team)
 
             if (pushedTeams.length != groups.length) {
                 console.log('Something went wrong here!')
                 console.log('Teams pushed to DB: ' + pushedTeams.length.toString)
                 console.log('Groups formed: ' + group.length.toString())
+                return false;
             }
         }
     }
+
+    return true;
 }
 
 /**
@@ -125,11 +125,11 @@ export function runFullAlgorithm() {
  * @param all: StudentResponse[]
  * @returns StudentInfo[]
  */
-function convertToStudentInfo(all: StudentResponse[]): StudentInfo[] {
+async function convertToStudentInfo(all: StudentResponse[], algorithmService: AlgorithmService): Promise<StudentInfo[]> {
     const formattedInfo: StudentInfo[] = []
     for (const s of all) {
-        const courses: AllCoursesCompleted = { courses: [] }    // NEED TO CALL THE ACTUAL THING HERE
-        const languages: AllLanguagesSpoken = { languages: [] } // NEED TO CALL THE ACTUAL THING HERE
+        const courses: AllCoursesCompleted = await algorithmService.getCoursesFromStudent(s.id)
+        const languages: AllLanguagesSpoken = await algorithmService.getLanguagesFromStudent(s.id)
         formattedInfo.push({
             id: Number(s.id),
             uniName: s.uniName,
