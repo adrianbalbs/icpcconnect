@@ -7,12 +7,14 @@ import { SiteCoordinatorService } from "../services/index.js";
 import { HTTPError, badRequest } from "../utils/errors.js";
 import { CreateAdminRequest, CreateAdminRequestSchema } from "../schemas/user-schema.js";
 import { validateData } from "../middleware/validator-middleware.js";
+import { AlgorithmService } from "../services/algorithm-service.js";
 
 export function adminRouter(
     adminService: AdminService,
     coachService: CoachService,
     studentService: StudentService,
-    siteCoordinatorService: SiteCoordinatorService
+    siteCoordinatorService: SiteCoordinatorService,
+    algorithmService: AlgorithmService
 ) {
     return Router()
     .get(
@@ -78,6 +80,17 @@ export function adminRouter(
                 next(err); // Handle unexpected errors
             }
             
+        },
+    )
+    .get(
+        "/admin/runalgo",
+        async (_req: Request, res: Response, next: NextFunction) => {
+            try {
+                const success = await algorithmService.callAlgorithm();
+                res.status(200).json(success);
+            } catch (err) {
+                next(err);
+            }
         },
     )
     .put(

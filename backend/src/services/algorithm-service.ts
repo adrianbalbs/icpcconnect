@@ -1,6 +1,8 @@
-import { eq } from "drizzle-orm";
-import { coursesCompletedByStudent, DatabaseConnection, languagesSpokenByStudent, registrationDetails, spokenLanguages, students, universities, users } from "../db/index.js";
+import { eq, inArray } from "drizzle-orm";
+import { coursesCompletedByStudent, DatabaseConnection, languagesSpokenByStudent, registrationDetails, spokenLanguages, students, teams, universities, users } from "../db/index.js";
 import { uniqueKeyName } from "drizzle-orm/mysql-core";
+import { runFullAlgorithm } from "../algorithm/algorithm.js";
+import { CreateTeamRequest } from "../schemas/team-schema.js";
 
 export type AllUniIDResponse = {
      allUniversityIds: { id: number }[]
@@ -31,11 +33,20 @@ export type AlgorithmStudentResponse = {
      allStudents: StudentResponse[]
 }
 
+export type RunAlgoResponse = {
+     success: boolean
+}
+
 export class AlgorithmService {
   private readonly db: DatabaseConnection;
 
   constructor(db: DatabaseConnection) {
     this.db = db;
+  }
+
+  async callAlgorithm(): Promise<RunAlgoResponse> {
+     const succesful = await runFullAlgorithm(this);
+     return { success: succesful }
   }
 
   async getAllUniversityIds(): Promise<AllUniIDResponse> {
@@ -90,6 +101,37 @@ export class AlgorithmService {
      .where(eq(coursesCompletedByStudent.studentId, studentId))
 
      return { courses }
+   }
+
+   async createTeam(req: CreateTeamRequest) {
+     const {
+       name,
+       university,
+       memberIds,
+     } = req;
+ 
+ 
+     const [id] = await this.db 
+       .insert(teams)
+       .values({
+         name,
+         university,
+       })
+       .returning({teamId: teams.id})
+ 
+     const members = await this.db
+       .query.students.findMany({
+         where: inArray(students.userId, memberIds)
+       });
+ 
+     for (const member of members) {
+       await this.db
+         .update(students)
+         .set({ team: id.teamId })
+         .where(eq(students.userId, member.userId));
+     }
+ 
+     return id
    }
 }
 
