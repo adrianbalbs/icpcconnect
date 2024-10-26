@@ -66,9 +66,8 @@ export class EmailService {
 
   // Check that email is a valid university email.
   public isValidUniversityEmail(email: string): boolean {
-    // eslint-disable-next-line no-useless-escape
     const regex =
-      /^[\w!#$%&'*+\=?^`{|}~-]+(?:\.[\w!#$%&'*+\=?^`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(\.(edu|edu\.au|ac|ac\.uk|edu\.ca|edu\.cn|edu\.sg|edu\.nz|edu\.in|edu\.jp|ac\.nz))$/;
+      /^[\w!#$%&'*+=?^`{|}~-]+(?:\.[\w!#$%&'*+=?^`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(\.(edu|edu\.au|ac|ac\.uk|edu\.ca|edu\.cn|edu\.sg|edu\.nz|edu\.in|edu\.jp|ac\.nz))$/;
 
     return regex.test(email);
   }
