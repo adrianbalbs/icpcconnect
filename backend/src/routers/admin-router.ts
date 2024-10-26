@@ -82,17 +82,6 @@ export function adminRouter(
             
         },
     )
-    .get(
-        "/runalgo",
-        async (_req: Request, res: Response, next: NextFunction) => {
-            try {
-                const success = await algorithmService.callAlgorithm();
-                res.status(200).json(success);
-            } catch (err) {
-                next(err);
-            }
-        },
-    )
     .put(
         "/admin/:id",
         roleSwitchMiddleware(adminService, coachService, studentService, siteCoordinatorService), // Use middleware for role switching
@@ -112,6 +101,17 @@ export function adminRouter(
             try {
                 const result = await adminService.createAdmin(adminDetails);
                 res.status(200).json(result);
+            } catch (err) {
+                next(err);
+            }
+        },
+    )
+    .post(
+        "/runalgo",
+        async (_req: Request, res: Response, next: NextFunction) => {
+            try {
+                const success = await algorithmService.callAlgorithm();
+                res.status(200).json(success);
             } catch (err) {
                 next(err);
             }

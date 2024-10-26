@@ -51,7 +51,7 @@ describe("Algorithm Tests", () => {
 
   it("should just return success (no registrations)", async () => {
     const numTeam = await request(app)
-        .get("/api/runalgo")
+        .post("/api/runalgo")
         .expect(200);
     expect(numTeam.body.success).toBe(true)
 
@@ -113,7 +113,7 @@ describe("Algorithm Tests", () => {
     expect(allRegistrationsResponse.body.registrations).toHaveLength(1);
 
     const algoSuccess = await request(app)
-        .get("/api/runalgo")
+        .post("/api/runalgo")
         .expect(200);
     expect(algoSuccess.body.success).toBe(true)
 
@@ -185,7 +185,7 @@ describe("Algorithm Tests", () => {
     expect(allRegistrationsResponse.body.registrations).toHaveLength(2);
 
     const algoSuccess = await request(app)
-        .get("/api/runalgo")
+        .post("/api/runalgo")
         .expect(200);
     expect(algoSuccess.body.success).toBe(true)
 
@@ -267,7 +267,7 @@ describe("Algorithm Tests", () => {
     expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
     const algoSuccess = await request(app)
-        .get("/api/runalgo")
+        .post("/api/runalgo")
         .expect(200);
     expect(algoSuccess.body.success).toBe(true)
 
@@ -349,7 +349,7 @@ describe("Algorithm Tests", () => {
     expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
     const algoSuccess = await request(app)
-        .get("/api/runalgo")
+        .post("/api/runalgo")
         .expect(200);
     expect(algoSuccess.body.success).toBe(true)
 
@@ -461,7 +461,7 @@ describe("Algorithm Tests", () => {
     expect(allRegistrationsResponse.body.registrations).toHaveLength(6);
 
     const algoSuccess = await request(app)
-        .get("/api/runalgo")
+        .post("/api/runalgo")
         .expect(200);
     expect(algoSuccess.body.success).toBe(true)
 
@@ -557,7 +557,7 @@ describe("Algorithm Tests", () => {
     expect(allRegistrationsResponse.body.registrations).toHaveLength(100);
 
     const algoSuccess = await request(app)
-        .get("/api/runalgo")
+        .post("/api/runalgo")
         .expect(200);
     expect(algoSuccess.body.success).toBe(true)
 
