@@ -1,6 +1,6 @@
 import { SERVER_URL } from "@/utils/constants";
 import axios, { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -38,6 +38,8 @@ const defaultSession: UserSession = {
   role: "student",
 };
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+const publicRoutes = ["/login", "/register"];
+
 export function AuthContextProvider({
   children,
 }: {
@@ -46,7 +48,7 @@ export function AuthContextProvider({
   const [userSession, setUserSession] = useState<UserSession>(defaultSession);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
+  const pathname = usePathname();
   const getSession = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -61,7 +63,9 @@ export function AuthContextProvider({
       setUserSession(defaultSession);
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {
-          router.push("/login");
+          if (!publicRoutes.includes(pathname)) {
+            router.push("/login");
+          }
         }
       }
     } finally {
