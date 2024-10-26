@@ -32,4 +32,3 @@ const Tile: React.FC<Props> = ({
 };
 
 export default Tile;
-

@@ -8,14 +8,16 @@ export const CreateRoleCodeSchema = z.object({
 export type CreateRoleCodeRequest = z.infer<typeof CreateRoleCodeSchema>;
 
 export const CreateAuthCodeSchema = z.object({
-    code: z.number(),
-    email: z.string(),
+  code: z.number(),
+  email: z.string(),
 });
-  
+
 export type CreateAuthCodeRequest = z.infer<typeof CreateAuthCodeSchema>;
 
 export const CreateAuthCodeRouteSchema = z.object({
-  email: z.string()
-})
+  email: z.string(),
+});
 
-export type CreateAuthCodeRouteRequest = z.infer<typeof CreateAuthCodeRouteSchema>;
+export type CreateAuthCodeRouteRequest = z.infer<
+  typeof CreateAuthCodeRouteSchema
+>;

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { SERVER_URL } from '@/utils/constants';
-import pageStyles from '@/styles/Page.module.css';
-import memberStyles from '@/styles/Members.module.css';
-import Staff, { StaffProps } from './Staff';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { SERVER_URL } from "@/utils/constants";
+import pageStyles from "@/styles/Page.module.css";
+import memberStyles from "@/styles/Members.module.css";
+import Staff, { StaffProps } from "./Staff";
 
 interface SiteCoordInfo {
   id: string;
@@ -19,10 +19,10 @@ interface SiteCoordInfo {
 const SiteCoordinators: React.FC = () => {
   const [siteCoords, setSiteCoords] = useState<StaffProps[]>([
     {
-      id: '123',
-      name: 'Lily Belle',
-      institution: 'UNSW',
-      email: 'l.belle@unsw.edu.au',
+      id: "123",
+      name: "Lily Belle",
+      institution: "UNSW",
+      email: "l.belle@unsw.edu.au",
     },
   ]);
 
@@ -35,7 +35,7 @@ const SiteCoordinators: React.FC = () => {
       const allSC: SiteCoordInfo[] = res.data.siteCoordinators;
       const filteredInfo: StaffProps[] = allSC.map((sc) => ({
         id: sc.id,
-        name: sc.givenName + ' ' + sc.familyName,
+        name: sc.givenName + " " + sc.familyName,
         institution: sc.university,
         email: sc.email,
       }));

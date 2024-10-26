@@ -1,6 +1,6 @@
-import { useRouter } from 'next/navigation';
-import memberStyles from '@/styles/Members.module.css';
-import pageStyles from '@/styles/Page.module.css';
+import { useRouter } from "next/navigation";
+import memberStyles from "@/styles/Members.module.css";
+import pageStyles from "@/styles/Page.module.css";
 
 export interface StaffProps {
   id: string;
@@ -14,14 +14,18 @@ const Staff: React.FC<StaffProps> = ({ id, name, institution, email }) => {
 
   const handleClick = () => router.push(`/profile/${id}`);
 
-  return <>
-    <div className={`${memberStyles.staff} ${memberStyles.space}`}>
-      <p className={memberStyles.name} onClick={handleClick}>{name}</p>
-      <p>{institution}</p>
-      <p className={memberStyles.overflow}>{email}</p>
-    </div>
-    <hr className={pageStyles.divider}/>
-  </>;
-}
+  return (
+    <>
+      <div className={`${memberStyles.staff} ${memberStyles.space}`}>
+        <p className={memberStyles.name} onClick={handleClick}>
+          {name}
+        </p>
+        <p>{institution}</p>
+        <p className={memberStyles.overflow}>{email}</p>
+      </div>
+      <hr className={pageStyles.divider} />
+    </>
+  );
+};
 
 export default Staff;

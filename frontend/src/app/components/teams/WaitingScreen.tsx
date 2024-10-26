@@ -48,4 +48,3 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
 };
 
 export default WaitingScreen;
-

@@ -7,7 +7,7 @@ import {
   HTTPError,
   notFoundError,
   unauthorizedError,
-} from '../utils/errors.js';
+} from "../utils/errors.js";
 import dotenv from "dotenv";
 dotenv.config();
 
