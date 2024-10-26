@@ -1,1076 +1,1079 @@
-import { expect } from "vitest";
+import { beforeEach, afterEach, describe, it, expect } from "vitest";
 import {
-    StudentInfo,
-    Experience,
-    calculateScore,
-    algorithm,
-    getStudentScores,
-    isCompatible,
-    Courses,
-    checkExclusions,
-    StudentScore
-} from "./algorithm.js"
+  StudentInfo,
+  Experience,
+  calculateScore,
+  algorithm,
+  getStudentScores,
+  isCompatible,
+  Courses,
+  checkExclusions,
+  StudentScore,
+} from "./algorithm.js";
 
 let test_studentInfo: StudentInfo[] = [];
 let s1: StudentInfo;
 let s2: StudentInfo;
 
 beforeEach(() => {
-    test_studentInfo = [];
+  test_studentInfo = [];
 
-    s1 = {
-        id: "1",
-        stuGiven: "1first",
-        stuLast: "1last",
-        uniName: "1",
-        contestExperience: 6,
-        leetcodeRating: 1500,
-        codeforcesRating: 1500,
-        completedCourses: [
-            Courses.intro_computing,
-            Courses.data_struct_and_algos,
-            Courses.algorithm_design,
-            Courses.prog_chal
-        ],
-        languagesSpoken: ["ab"],
-        cppExperience: Experience.prof,
-        cExpericence: Experience.prof,
-        javaExperience: Experience.prof,
-        pythonExperience: Experience.prof,
-        exclusions: "",
+  s1 = {
+    id: "1",
+    stuGiven: "1first",
+    stuLast: "1last",
+    uniName: "1",
+    contestExperience: 6,
+    leetcodeRating: 1500,
+    codeforcesRating: 1500,
+    completedCourses: [
+      Courses.intro_computing,
+      Courses.data_struct_and_algos,
+      Courses.algorithm_design,
+      Courses.prog_chal,
+    ],
+    languagesSpoken: ["ab"],
+    cppExperience: Experience.prof,
+    cExpericence: Experience.prof,
+    javaExperience: Experience.prof,
+    pythonExperience: Experience.prof,
+    exclusions: "",
 
-        paired_with: null,
-        markdone: false
-    }
+    paired_with: null,
+    markdone: false,
+  };
 
-    s2 = {
-        id: "2",
-        stuGiven: "2first",
-        stuLast: "2last",
-        uniName: "1",
-        contestExperience: 6,
-        leetcodeRating: 1500,
-        codeforcesRating: 1500,
-        completedCourses: [
-            Courses.intro_computing,
-            Courses.data_struct_and_algos,
-            
-            Courses.algorithm_design
-        ],
-        languagesSpoken: ["ab"],
-        cppExperience: Experience.prof,
-        cExpericence: Experience.prof,
-        javaExperience: Experience.prof,
-        pythonExperience: Experience.prof,
-        exclusions: "",
+  s2 = {
+    id: "2",
+    stuGiven: "2first",
+    stuLast: "2last",
+    uniName: "1",
+    contestExperience: 6,
+    leetcodeRating: 1500,
+    codeforcesRating: 1500,
+    completedCourses: [
+      Courses.intro_computing,
+      Courses.data_struct_and_algos,
 
-        paired_with: null,
-        markdone: false
-    }
+      Courses.algorithm_design,
+    ],
+    languagesSpoken: ["ab"],
+    cppExperience: Experience.prof,
+    cExpericence: Experience.prof,
+    javaExperience: Experience.prof,
+    pythonExperience: Experience.prof,
+    exclusions: "",
 
-    test_studentInfo.push(s1);
-    test_studentInfo.push(s2);
+    paired_with: null,
+    markdone: false,
+  };
+
+  test_studentInfo.push(s1);
+  test_studentInfo.push(s2);
 });
-  
+
 afterEach(() => {
-    test_studentInfo = [];
+  test_studentInfo = [];
 });
-  
+
 describe("Algorithm Score Calculation Unit Tests", () => {
-    it("calculateScore: Should return true (s1.score > s2.score)", async () => {
-        const score1 = calculateScore(s1);
-        const score2 = calculateScore(s2);
+  it("calculateScore: Should return true (s1.score > s2.score)", async () => {
+    const score1 = calculateScore(s1);
+    const score2 = calculateScore(s2);
 
-        expect(score1).toBeGreaterThan(score2);
+    expect(score1).toBeGreaterThan(score2);
+  });
+
+  it("checkExclusion: Tests basic exclusions", async () => {
+    const names = ["Jerry Yang", "Manav Dodia"];
+    const excl2 = ["Jerry"];
+    const excl1 = ["Manav"];
+    const excl3 = ["nav"];
+    const excl4 = ["Meow"];
+    const excl5 = ["12", "Python", "Jimmy"];
+    const excl6 = ["12", "Python", "Jimmy", "Manav"];
+
+    expect(checkExclusions(excl1, names)).toBe(true);
+    expect(checkExclusions(excl2, names)).toBe(true);
+    expect(checkExclusions(excl3, names)).toBe(true);
+    expect(checkExclusions(excl4, names)).toBe(false);
+    expect(checkExclusions(excl5, names)).toBe(false);
+    expect(checkExclusions(excl6, names)).toBe(true);
+  });
+
+  it("getStudentScores: Should return an array of two StudentScore objects", () => {
+    const calcscores: StudentScore[] = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length == 2);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id],
+      studentScore: calculateScore(s1),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last"],
+      exclusions: [""],
+    });
+    expect(calcscores[1]).toEqual({
+      ids: [s2.id],
+      studentScore: calculateScore(s2),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["2first 2last"],
+      exclusions: [""],
     });
 
-    it("checkExclusion: Tests basic exclusions", async () => {
-        const names = ["Jerry Yang", "Manav Dodia"]
-        const excl2 = ["Jerry"]
-        const excl1 = ["Manav"]
-        const excl3 = ["nav"]
-        const excl4 = ["Meow"]
-        const excl5 = ["12", "Python", "Jimmy"]
-        const excl6 = ["12", "Python", "Jimmy", "Manav"]
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+  });
 
+  it("getStudentScores: Should return an array of one StudentScore object (a pair)", () => {
+    s1.paired_with = s2.id;
+    s2.paired_with = s1.id;
 
-        expect(checkExclusions(excl1, names)).toBe(true)
-        expect(checkExclusions(excl2, names)).toBe(true)
-        expect(checkExclusions(excl3, names)).toBe(true)
-        expect(checkExclusions(excl4, names)).toBe(false)
-        expect(checkExclusions(excl5, names)).toBe(false)
-        expect(checkExclusions(excl6, names)).toBe(true)
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length == 1);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id, s2.id],
+      studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
+      languagesSpoken: ["ab", "ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last", "2first 2last"],
+      exclusions: ["", ""],
     });
 
-    it("getStudentScores: Should return an array of two StudentScore objects", () => {
-        const calcscores: StudentScore[] = getStudentScores(test_studentInfo);
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+  });
 
-        expect(calcscores.length == 2)
+  it("getStudentScores: Should return an array of two StudentScore object (a pair and a single)", () => {
+    const s3: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
 
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id],
-            studentScore: calculateScore(s1),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last"],
-            exclusions: [""]
-        })
-        expect(calcscores[1]).toEqual({
-            ids: [s2.id],
-            studentScore: calculateScore(s2),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["2first 2last"],
-            exclusions: [""]
-        })
+      paired_with: s1.id,
+      markdone: false,
+    };
 
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
+    test_studentInfo.push(s3);
+
+    s1.paired_with = s3.id;
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length == 1);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id, s3.id],
+      studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
+      languagesSpoken: ["ab", "ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last", "3first 3last"],
+      exclusions: ["", ""],
+    });
+    expect(calcscores[1]).toEqual({
+      ids: [s2.id],
+      studentScore: calculateScore(s2),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["2first 2last"],
+      exclusions: [""],
     });
 
-    it("getStudentScores: Should return an array of one StudentScore object (a pair)", () => {
-        s1.paired_with = s2.id;
-        s2.paired_with = s1.id;
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+    expect(s3.markdone).toBe(true);
+  });
 
-        const calcscores = getStudentScores(test_studentInfo);
+  it("isCompatible: Should test single students compatabilities", async () => {
+    const noCompat: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.none,
+      javaExperience: Experience.none,
+      pythonExperience: Experience.none,
+      exclusions: "",
 
-        expect(calcscores.length == 1)
+      paired_with: null,
+      markdone: false,
+    };
 
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id, s2.id],
-            studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
-            languagesSpoken: ["ab", "ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last", "2first 2last"],
-            exclusions: ["", ""]
-        })
+    test_studentInfo.push(noCompat);
 
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
+    const CProf: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.none,
+      pythonExperience: Experience.none,
+      exclusions: "",
+
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(CProf);
+
+    const JavaSome: StudentInfo = {
+      id: "5",
+      stuGiven: "5first",
+      stuLast: "5last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.none,
+      javaExperience: Experience.some,
+      pythonExperience: Experience.none,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(JavaSome);
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+    expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
+    expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
+    expect(isCompatible(calcscores[0], calcscores[4])).toBe(true);
+    expect(isCompatible(calcscores[3], calcscores[4])).toBe(false);
+  });
+
+  it("isCompatible: Should test pair students compatabilities", async () => {
+    s1.paired_with = s2.id;
+    s2.paired_with = s1.id;
+
+    const noCompat: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.none,
+      javaExperience: Experience.none,
+      pythonExperience: Experience.none,
+      exclusions: "",
+      paired_with: "4",
+      markdone: false,
+    };
+
+    test_studentInfo.push(noCompat);
+
+    const CProf: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.none,
+      pythonExperience: Experience.none,
+      exclusions: "",
+      paired_with: "3",
+      markdone: false,
+    };
+
+    test_studentInfo.push(CProf);
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+  });
+
+  it("isCompatible: Test language compatabilities", async () => {
+    const otherLang: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["aa"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(otherLang);
+
+    const bothLang: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab", "aa"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(bothLang);
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+    expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
+    expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
+    expect(isCompatible(calcscores[2], calcscores[3])).toBe(true);
+  });
+
+  it("algorithm: Should return a singular team (Pair and Single)", () => {
+    const noCompat: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.none,
+      javaExperience: Experience.none,
+      pythonExperience: Experience.none,
+      exclusions: "",
+      paired_with: "4",
+      markdone: false,
+    };
+
+    test_studentInfo.push(noCompat);
+
+    const CProf: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.none,
+      pythonExperience: Experience.none,
+      exclusions: "",
+      paired_with: "3",
+      markdone: false,
+    };
+
+    test_studentInfo.push(CProf);
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+  });
+
+  it("isCompatible: Test language compatabilities", async () => {
+    const otherLang: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["aa"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(otherLang);
+
+    const bothLang: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab", "aa"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(bothLang);
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+    expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
+    expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
+    expect(isCompatible(calcscores[2], calcscores[3])).toBe(true);
+  });
+
+  it("algorithm: Should return a singular team (Pair and Single)", () => {
+    const noCompat: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: "4",
+      markdone: false,
+    };
+
+    test_studentInfo.push(noCompat);
+
+    const CProf: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.none,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.none,
+      pythonExperience: Experience.none,
+      exclusions: "",
+      paired_with: "3",
+      markdone: false,
+    };
+
+    test_studentInfo.push(CProf);
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+  });
+
+  it("isCompatible: Test language compatabilities", async () => {
+    const otherLang: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["aa"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(otherLang);
+
+    const bothLang: StudentInfo = {
+      id: "5",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 1000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab", "aa"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(bothLang);
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+    expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
+    expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
+    expect(isCompatible(calcscores[2], calcscores[3])).toBe(true);
+  });
+
+  it("algorithm: Should return a singular team (Pair and Single)", () => {
+    const s3: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: s1.id,
+      markdone: false,
+    };
+
+    test_studentInfo.push(s3);
+
+    s1.paired_with = s3.id;
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length).toEqual(2);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id, s3.id],
+      studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
+      languagesSpoken: ["ab", "ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last", "3first 3last"],
+      exclusions: ["", ""],
+    });
+    expect(calcscores[1]).toEqual({
+      ids: [s2.id],
+      studentScore: calculateScore(s2),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["2first 2last"],
+      exclusions: [""],
     });
 
-    it("getStudentScores: Should return an array of two StudentScore object (a pair and a single)", () => {
-        const s3: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-    
-            paired_with: s1.id,
-            markdone: false
-        }
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+    expect(s3.markdone).toBe(true);
 
-        test_studentInfo.push(s3)
+    const groups = algorithm(calcscores);
 
-        s1.paired_with = s3.id;
+    expect(groups.length).toEqual(1);
 
-        const calcscores = getStudentScores(test_studentInfo);
+    expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort());
+    expect(groups[0].totalScore).toEqual(
+      calculateScore(s1) + calculateScore(s2) + calculateScore(s3),
+    );
+    expect(groups[0].flagged).toEqual(false);
+  });
 
-        expect(calcscores.length == 1)
+  it("algorithm: Should return a singular team (Three Singles)", () => {
+    const s3: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
 
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id, s3.id],
-            studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
-            languagesSpoken: ["ab", "ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last", "3first 3last"],
-            exclusions: ["", ""]
-        })
-        expect(calcscores[1]).toEqual({
-            ids: [s2.id],
-            studentScore: calculateScore(s2),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["2first 2last"],
-            exclusions: [""]
-        })
+    test_studentInfo.push(s3);
 
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
-        expect(s3.markdone).toBe(true)
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length).toEqual(3);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id],
+      studentScore: calculateScore(s1),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last"],
+      exclusions: [""],
+    });
+    expect(calcscores[1]).toEqual({
+      ids: [s2.id],
+      studentScore: calculateScore(s2),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["2first 2last"],
+      exclusions: [""],
+    });
+    expect(calcscores[2]).toEqual({
+      ids: [s3.id],
+      studentScore: calculateScore(s3),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["3first 3last"],
+      exclusions: [""],
     });
 
-    it("isCompatible: Should test single students compatabilities", async () => {
-        const noCompat: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
-            exclusions: "",
-    
-            paired_with: null,
-            markdone: false
-        }
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+    expect(s3.markdone).toBe(true);
 
-        test_studentInfo.push(noCompat);
+    const groups = algorithm(calcscores);
 
-        const CProf: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
-            exclusions: "",
-    
-            paired_with: null,
-            markdone: false
-        }
+    expect(groups.length).toEqual(1);
 
-        test_studentInfo.push(CProf);
+    expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort());
+    expect(groups[0].totalScore).toEqual(
+      calculateScore(s1) + calculateScore(s2) + calculateScore(s3),
+    );
+    expect(groups[0].flagged).toEqual(false);
+  });
 
-        const JavaSome: StudentInfo = {
-            id: "5",
-            stuGiven: "5first",
-            stuLast: "5last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.some,
-            pythonExperience: Experience.none,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
+  it("algorithm: Should return a singular team (Four Singles (1 Excluded))", () => {
+    const s3: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
 
-        test_studentInfo.push(JavaSome);
+    const s4: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 2,
+      leetcodeRating: 500,
+      codeforcesRating: 500,
+      completedCourses: [Courses.intro_computing],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: null,
+      markdone: false,
+    };
 
-        const calcscores = getStudentScores(test_studentInfo);
+    test_studentInfo.push(s3);
+    test_studentInfo.push(s4);
 
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-        expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
-        expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
-        expect(isCompatible(calcscores[0], calcscores[4])).toBe(true);
-        expect(isCompatible(calcscores[3], calcscores[4])).toBe(false);
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length).toEqual(4);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id],
+      studentScore: calculateScore(s1),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last"],
+      exclusions: [""],
+    });
+    expect(calcscores[1]).toEqual({
+      ids: [s2.id],
+      studentScore: calculateScore(s2),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["2first 2last"],
+      exclusions: [""],
+    });
+    expect(calcscores[2]).toEqual({
+      ids: [s3.id],
+      studentScore: calculateScore(s3),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["3first 3last"],
+      exclusions: [""],
+    });
+    expect(calcscores[3]).toEqual({
+      ids: [s4.id],
+      studentScore: calculateScore(s4),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["4first 4last"],
+      exclusions: [""],
     });
 
-    it("isCompatible: Should test pair students compatabilities", async () => {
-        s1.paired_with = s2.id;
-        s2.paired_with = s1.id;
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+    expect(s3.markdone).toBe(true);
+    expect(s4.markdone).toBe(true);
 
-        const noCompat: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
-            exclusions: "",
-            paired_with: "4",
-            markdone: false
-        }
+    const groups = algorithm(calcscores);
 
-        test_studentInfo.push(noCompat);
+    expect(groups.length).toEqual(1);
 
-        const CProf: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
-            exclusions: "",
-            paired_with: "3",
-            markdone: false
-        }
+    expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort());
+    expect(groups[0].totalScore).toEqual(
+      calculateScore(s1) + calculateScore(s2) + calculateScore(s3),
+    );
+    expect(groups[0].flagged).toEqual(false);
+  });
 
-        test_studentInfo.push(CProf);
+  it("algorithm: Should return no teams (Two Pairs, both excluded)", () => {
+    const s3: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: "4",
+      markdone: false,
+    };
 
-        const calcscores = getStudentScores(test_studentInfo);
+    const s4: StudentInfo = {
+      id: "4",
+      stuGiven: "4first",
+      stuLast: "4last",
+      uniName: "1",
+      contestExperience: 2,
+      leetcodeRating: 500,
+      codeforcesRating: 500,
+      completedCourses: [Courses.intro_computing],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+      paired_with: "3",
+      markdone: false,
+    };
 
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
+    test_studentInfo.push(s3);
+    test_studentInfo.push(s4);
+
+    s1.paired_with = "2";
+    s2.paired_with = "1";
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length).toEqual(2);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id, s2.id],
+      studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
+      languagesSpoken: ["ab", "ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last", "2first 2last"],
+      exclusions: ["", ""],
+    });
+    expect(calcscores[1]).toEqual({
+      ids: [s3.id, s4.id],
+      studentScore: (calculateScore(s3) + calculateScore(s4)) / 2,
+      languagesSpoken: ["ab", "ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["3first 3last", "4first 4last"],
+      exclusions: ["", ""],
     });
 
-    it("isCompatible: Test language compatabilities", async () => {
-        const otherLang: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["aa"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(otherLang)
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+    expect(s3.markdone).toBe(true);
+    expect(s4.markdone).toBe(true);
 
-        const bothLang: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab", "aa"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(bothLang)
+    const groups = algorithm(calcscores);
 
-        const calcscores = getStudentScores(test_studentInfo);
+    expect(groups.length).toEqual(0);
 
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-        expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
-        expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
-        expect(isCompatible(calcscores[2], calcscores[3])).toBe(true);
+    expect(groups).toEqual([]);
+  });
+
+  it("algorithm: Should return one team that is flagged due to exclusions", () => {
+    const s3: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 10000,
+      codeforcesRating: 10000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "1first",
+      paired_with: null,
+      markdone: false,
+    };
+
+    test_studentInfo.push(s3);
+
+    s1.paired_with = "2";
+    s2.paired_with = "1";
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length).toEqual(2);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id, s2.id],
+      studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
+      languagesSpoken: ["ab", "ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last", "2first 2last"],
+      exclusions: ["", ""],
+    });
+    expect(calcscores[1]).toEqual({
+      ids: [s3.id],
+      studentScore: calculateScore(s3),
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["3first 3last"],
+      exclusions: ["1first"],
     });
 
-    it("algorithm: Should return a singular team (Pair and Single)", () => {
-        const noCompat: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.none,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
-            exclusions: "",
-            paired_with: "4",
-            markdone: false
-        }
-
-        test_studentInfo.push(noCompat);
-
-        const CProf: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
-            exclusions: "",
-            paired_with: "3",
-            markdone: false
-        }
-
-        test_studentInfo.push(CProf);
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-    });
-
-    it("isCompatible: Test language compatabilities", async () => {
-        const otherLang: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["aa"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(otherLang)
-
-        const bothLang: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab", "aa"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(bothLang)
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-        expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
-        expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
-        expect(isCompatible(calcscores[2], calcscores[3])).toBe(true);
-    });
-
-    it("algorithm: Should return a singular team (Pair and Single)", () => {
-        const noCompat: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: "4",
-            markdone: false
-        }
-
-        test_studentInfo.push(noCompat);
-
-        const CProf: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.none,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.none,
-            pythonExperience: Experience.none,
-            exclusions: "",
-            paired_with: "3",
-            markdone: false
-        }
-
-        test_studentInfo.push(CProf);
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-    });
-
-    it("isCompatible: Test language compatabilities", async () => {
-        const otherLang: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["aa"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-    
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(otherLang)
-
-        const bothLang: StudentInfo = {
-            id: "5",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 1000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab", "aa"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-        
-        test_studentInfo.push(bothLang)
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(isCompatible(calcscores[0], calcscores[1])).toBe(true);
-        expect(isCompatible(calcscores[0], calcscores[2])).toBe(false);
-        expect(isCompatible(calcscores[0], calcscores[3])).toBe(true);
-        expect(isCompatible(calcscores[2], calcscores[3])).toBe(true);
-    });
-
-    it("algorithm: Should return a singular team (Pair and Single)", () => {
-        const s3: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: s1.id,
-            markdone: false
-        }
-
-        test_studentInfo.push(s3)
-
-        s1.paired_with = s3.id;
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(calcscores.length).toEqual(2)
-
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id, s3.id],
-            studentScore: (calculateScore(s1) + calculateScore(s3)) / 2,
-            languagesSpoken: ["ab", "ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last", "3first 3last"],
-            exclusions: ["", ""]
-        })
-        expect(calcscores[1]).toEqual({
-            ids: [s2.id],
-            studentScore: calculateScore(s2),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["2first 2last"],
-            exclusions: [""]
-        })
-
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
-        expect(s3.markdone).toBe(true)
-
-        const groups = algorithm(calcscores)
-
-        expect(groups.length).toEqual(1)
-
-        expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort())
-        expect(groups[0].totalScore).toEqual(calculateScore(s1) + calculateScore(s2) + calculateScore(s3))
-        expect(groups[0].flagged).toEqual(false)
-    });
-
-    it("algorithm: Should return a singular team (Three Singles)", () => {
-        const s3: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-
-        test_studentInfo.push(s3)
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(calcscores.length).toEqual(3)
-
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id],
-            studentScore: calculateScore(s1),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last"],
-            exclusions: [""]
-        })
-        expect(calcscores[1]).toEqual({
-            ids: [s2.id],
-            studentScore: calculateScore(s2),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["2first 2last"],
-            exclusions: [""]
-        })
-        expect(calcscores[2]).toEqual({
-            ids: [s3.id],
-            studentScore: calculateScore(s3),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["3first 3last"],
-            exclusions: [""]
-        })
-
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
-        expect(s3.markdone).toBe(true)
-
-        const groups = algorithm(calcscores)
-
-        expect(groups.length).toEqual(1)
-
-        expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort())
-        expect(groups[0].totalScore).toEqual(calculateScore(s1) + calculateScore(s2) + calculateScore(s3))
-        expect(groups[0].flagged).toEqual(false)
-    });
-
-    it("algorithm: Should return a singular team (Four Singles (1 Excluded))", () => {
-        const s3: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-
-        const s4: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 2,
-            leetcodeRating: 500,
-            codeforcesRating: 500,
-            completedCourses: [
-                Courses.intro_computing
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: null,
-            markdone: false
-        }
-
-        test_studentInfo.push(s3)
-        test_studentInfo.push(s4)
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(calcscores.length).toEqual(4)
-
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id],
-            studentScore: calculateScore(s1),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last"],
-            exclusions: [""]
-        })
-        expect(calcscores[1]).toEqual({
-            ids: [s2.id],
-            studentScore: calculateScore(s2),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["2first 2last"],
-            exclusions: [""]
-        })
-        expect(calcscores[2]).toEqual({
-            ids: [s3.id],
-            studentScore: calculateScore(s3),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["3first 3last"],
-            exclusions: [""]
-        })
-        expect(calcscores[3]).toEqual({
-            ids: [s4.id],
-            studentScore: calculateScore(s4),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["4first 4last"],
-            exclusions: [""]
-        })
-
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
-        expect(s3.markdone).toBe(true)
-        expect(s4.markdone).toBe(true)
-
-        const groups = algorithm(calcscores)
-
-        expect(groups.length).toEqual(1)
-
-        expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort())
-        expect(groups[0].totalScore).toEqual(calculateScore(s1) + calculateScore(s2) + calculateScore(s3))
-        expect(groups[0].flagged).toEqual(false)
-    });
-
-    it("algorithm: Should return no teams (Two Pairs, both excluded)", () => {
-        const s3: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 3000,
-            codeforcesRating: 3000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: "4",
-            markdone: false
-        }
-
-        const s4: StudentInfo = {
-            id: "4",
-            stuGiven: "4first",
-            stuLast: "4last",
-            uniName: "1",
-            contestExperience: 2,
-            leetcodeRating: 500,
-            codeforcesRating: 500,
-            completedCourses: [
-                Courses.intro_computing
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "",
-            paired_with: "3",
-            markdone: false
-        }
-
-        test_studentInfo.push(s3)
-        test_studentInfo.push(s4)
-
-        s1.paired_with = "2";
-        s2.paired_with = "1";
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(calcscores.length).toEqual(2)
-
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id, s2.id],
-            studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
-            languagesSpoken: ["ab", "ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last", "2first 2last"],
-            exclusions: ["", ""]
-        })
-        expect(calcscores[1]).toEqual({
-            ids: [s3.id, s4.id],
-            studentScore: (calculateScore(s3) + calculateScore(s4)) / 2,
-            languagesSpoken: ["ab", "ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["3first 3last", "4first 4last"],
-            exclusions: ["", ""]
-        })
-
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
-        expect(s3.markdone).toBe(true)
-        expect(s4.markdone).toBe(true)
-
-        const groups = algorithm(calcscores)
-
-        expect(groups.length).toEqual(0)
-
-        expect(groups).toEqual([])
-    });
-
-    it("algorithm: Should return one team that is flagged due to exclusions", () => {
-        const s3: StudentInfo = {
-            id: "3",
-            stuGiven: "3first",
-            stuLast: "3last",
-            uniName: "1",
-            contestExperience: 6,
-            leetcodeRating: 10000,
-            codeforcesRating: 10000,
-            completedCourses: [
-                Courses.intro_computing,
-                Courses.data_struct_and_algos,
-                Courses.algorithm_design
-            ],
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            exclusions: "1first",
-            paired_with: null,
-            markdone: false
-        }
-
-        test_studentInfo.push(s3)
-
-        s1.paired_with = "2";
-        s2.paired_with = "1";
-
-        const calcscores = getStudentScores(test_studentInfo);
-
-        expect(calcscores.length).toEqual(2)
-
-        expect(calcscores[0]).toEqual({
-            ids: [s1.id, s2.id],
-            studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
-            languagesSpoken: ["ab", "ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["1first 1last", "2first 2last"],
-            exclusions: ["", ""]
-        })
-        expect(calcscores[1]).toEqual({
-            ids: [s3.id],
-            studentScore: calculateScore(s3),
-            languagesSpoken: ["ab"],
-            cppExperience: Experience.prof,
-            cExpericence: Experience.prof,
-            javaExperience: Experience.prof,
-            pythonExperience: Experience.prof,
-            names: ["3first 3last"],
-            exclusions: ["1first"]
-        })
-
-        expect(s1.markdone).toBe(true)
-        expect(s2.markdone).toBe(true)
-        expect(s3.markdone).toBe(true)
-
-        const groups = algorithm(calcscores)
-
-        expect(groups.length).toEqual(1)
-
-        console.log(calculateScore(s1))
-        console.log(calculateScore(s2))
-        console.log(calculateScore(s3))
-
-        expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort())
-        expect(groups[0].totalScore).toEqual(calculateScore(s1) + calculateScore(s2) + calculateScore(s3))
-        expect(groups[0].flagged).toEqual(true)
-    });
-})
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+    expect(s3.markdone).toBe(true);
+
+    const groups = algorithm(calcscores);
+
+    expect(groups.length).toEqual(1);
+
+    console.log(calculateScore(s1));
+    console.log(calculateScore(s2));
+    console.log(calculateScore(s3));
+
+    expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort());
+    expect(groups[0].totalScore).toEqual(
+      calculateScore(s1) + calculateScore(s2) + calculateScore(s3),
+    );
+    expect(groups[0].flagged).toEqual(true);
+  });
+});

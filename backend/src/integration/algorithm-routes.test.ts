@@ -1,9 +1,15 @@
 import request from "supertest";
 import express from "express";
 import { DatabaseConnection, teams, users } from "../db/index.js";
-import { adminRouter, studentRouter, teamRouter } from "../routers/index.js";
+import {
+  adminRouter,
+  authRouter,
+  studentRouter,
+  teamRouter,
+} from "../routers/index.js";
 import {
   AdminService,
+  AuthService,
   CoachService,
   ContestRegistrationService,
   SiteCoordinatorService,
@@ -15,48 +21,85 @@ import {
   CreateContestRegistrationForm,
   CreateStudentRequest,
 } from "../schemas/index.js";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+} from "vitest";
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
-
-let db: DatabaseConnection;
-let app: ReturnType<typeof express>;
-
-beforeAll(async () => {
-  const dbSetup = await setupTestDatabase();
-  db = dbSetup.db;
-  app = express()
-    .use(express.json())
-    .use("/api", studentRouter(new StudentService(db)))
-    .use("/api", contestRegistrationRouter(new ContestRegistrationService(db)))
-    .use("/api", teamRouter(new TeamService(db)))
-    .use(
-      "/api",
-      adminRouter(
-        new AdminService(db),
-        new CoachService(db),
-        new StudentService(db),
-        new SiteCoordinatorService(db),
-        new AlgorithmService(db),
-      ),
-    );
-});
-
-afterAll(async () => {
-  await dropTestDatabase();
-});
+import cookieParser from "cookie-parser";
+import { eq, not } from "drizzle-orm";
 
 describe("Algorithm Tests", () => {
+  let db: DatabaseConnection;
+  let app: ReturnType<typeof express>;
+  let cookies: string;
+  beforeAll(async () => {
+    const dbSetup = await setupTestDatabase();
+    db = dbSetup.db;
+    const authService = new AuthService(db);
+    app = express()
+      .use(express.json())
+      .use(cookieParser())
+      .use("/api/auth", authRouter(authService))
+      .use("/api/students", studentRouter(new StudentService(db), authService))
+      .use(
+        "/api/contest-registration",
+        contestRegistrationRouter(
+          new ContestRegistrationService(db),
+          authService,
+        ),
+      )
+      .use("/api/teams", teamRouter(new TeamService(db), authService))
+      .use(
+        "/api",
+        adminRouter(
+          new AdminService(db),
+          new CoachService(db),
+          new StudentService(db),
+          new SiteCoordinatorService(db),
+          authService,
+          new AlgorithmService(db),
+        ),
+      );
+  });
+
+  beforeEach(async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({
+        email: "admin@comp3900.com",
+        password: "tomatofactory",
+      })
+      .expect(200);
+    cookies = loginRes.headers["set-cookie"];
+  });
+
   afterEach(async () => {
-    await db.delete(users);
+    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
     await db.delete(teams);
   });
 
+  afterAll(async () => {
+    await dropTestDatabase();
+  });
+
   it("should just return success (no registrations)", async () => {
-    const numTeam = await request(app).post("/api/runalgo").expect(200);
+    const numTeam = await request(app)
+      .post("/api/runalgo")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(numTeam.body.success).toBe(true);
 
-    const teams = await request(app).get("/api/teams/all").expect(200);
+    const teams = await request(app)
+      .get("/api/teams/all")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -101,19 +144,27 @@ describe("Algorithm Tests", () => {
 
       await request(app)
         .post("/api/contest-registration")
+        .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
 
     const allRegistrationsResponse = await request(app)
       .get("/api/contest-registration")
+      .set("Cookie", cookies)
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(1);
 
-    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    const algoSuccess = await request(app)
+      .post("/api/runalgo")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app).get("/api/teams/all").expect(200);
+    const teams = await request(app)
+      .get("/api/teams/all")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -170,19 +221,27 @@ describe("Algorithm Tests", () => {
 
       await request(app)
         .post("/api/contest-registration")
+        .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
 
     const allRegistrationsResponse = await request(app)
       .get("/api/contest-registration")
+      .set("Cookie", cookies)
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(2);
 
-    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    const algoSuccess = await request(app)
+      .post("/api/runalgo")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app).get("/api/teams/all").expect(200);
+    const teams = await request(app)
+      .get("/api/teams/all")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -251,19 +310,27 @@ describe("Algorithm Tests", () => {
 
       await request(app)
         .post("/api/contest-registration")
+        .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
 
     const allRegistrationsResponse = await request(app)
       .get("/api/contest-registration")
+      .set("Cookie", cookies)
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
-    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    const algoSuccess = await request(app)
+      .post("/api/runalgo")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app).get("/api/teams/all").expect(200);
+    const teams = await request(app)
+      .get("/api/teams/all")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(teams.body).toHaveLength(1);
   });
 
@@ -332,19 +399,27 @@ describe("Algorithm Tests", () => {
 
       await request(app)
         .post("/api/contest-registration")
+        .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
 
     const allRegistrationsResponse = await request(app)
       .get("/api/contest-registration")
+      .set("Cookie", cookies)
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
-    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    const algoSuccess = await request(app)
+      .post("/api/runalgo")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app).get("/api/teams/all").expect(200);
+    const teams = await request(app)
+      .get("/api/teams/all")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -449,19 +524,27 @@ describe("Algorithm Tests", () => {
 
       await request(app)
         .post("/api/contest-registration")
+        .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
 
     const allRegistrationsResponse = await request(app)
       .get("/api/contest-registration")
+      .set("Cookie", cookies)
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(6);
 
-    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    const algoSuccess = await request(app)
+      .post("/api/runalgo")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app).get("/api/teams/all").expect(200);
+    const teams = await request(app)
+      .get("/api/teams/all")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(teams.body).toHaveLength(2);
   });
 
@@ -543,19 +626,27 @@ describe("Algorithm Tests", () => {
 
       await request(app)
         .post("/api/contest-registration")
+        .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
 
     const allRegistrationsResponse = await request(app)
       .get("/api/contest-registration")
+      .set("Cookie", cookies)
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(100);
 
-    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    const algoSuccess = await request(app)
+      .post("/api/runalgo")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app).get("/api/teams/all").expect(200);
+    const teams = await request(app)
+      .get("/api/teams/all")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(teams.body).toHaveLength(32);
   }, 60000);
 });
@@ -570,4 +661,3 @@ function gen(length: number): string {
   }
   return result;
 }
-
