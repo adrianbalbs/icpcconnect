@@ -16,6 +16,8 @@
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
+    "format:check": "prettier . --check",
+    "format": "prettier . --write",
     "lint": "eslint ./src/",
     "dev": "node --loader=ts-node/esm --env-file=.env --watch src/index.ts",
     "start": "node dist/src/index.js",
