@@ -585,7 +585,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     });
 
     it("algorithm: Should return a singular team (Pair and Single)", () => {
-        const s3: StudentInfo = {
+        const noCompat: StudentInfo = {
             id: 3,
             uniId: 1,
             contestExperience: 6,
