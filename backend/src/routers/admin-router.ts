@@ -83,7 +83,7 @@ export function adminRouter(
         },
     )
     .get(
-        "/admin/runalgo",
+        "/runalgo",
         async (_req: Request, res: Response, next: NextFunction) => {
             try {
                 const success = await algorithmService.callAlgorithm();

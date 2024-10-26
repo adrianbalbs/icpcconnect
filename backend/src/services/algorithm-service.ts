@@ -1,6 +1,5 @@
 import { eq, inArray } from "drizzle-orm";
-import { coursesCompletedByStudent, DatabaseConnection, languagesSpokenByStudent, registrationDetails, spokenLanguages, students, teams, universities, users } from "../db/index.js";
-import { uniqueKeyName } from "drizzle-orm/mysql-core";
+import { coursesCompletedByStudent, DatabaseConnection, languagesSpokenByStudent, registrationDetails, students, teams, universities, users } from "../db/index.js";
 import { runFullAlgorithm } from "../algorithm/algorithm.js";
 import { CreateTeamRequest } from "../schemas/team-schema.js";
 

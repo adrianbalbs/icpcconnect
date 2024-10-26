@@ -2,10 +2,16 @@
  * Team building algorithmic design
  */
 
-import { Console, group } from "console";
+import { group } from "console";
 import { CreateTeamRequest } from "../schemas/team-schema.js";
-import { AllUniIDResponse, AlgorithmStudentResponse, StudentResponse, AllCoursesCompleted, AllLanguagesSpoken, AlgorithmService } from "../services/algorithm-service.js";
-import { TeamService } from "../services/team-service.js";
+import {
+    AllUniIDResponse,
+    AlgorithmStudentResponse,
+    StudentResponse,
+    AllCoursesCompleted,
+    AllLanguagesSpoken,
+    AlgorithmService
+} from "../services/algorithm-service.js";
 
 /** Enums **/
 
@@ -35,7 +41,7 @@ const COURSES_WEIGHT = 3;
 /** Interfaces for Student Information and Scores **/
 
 export interface StudentInfo {
-    id: number,
+    id: string,
     uniName: string,
     contestExperience: number,
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
@@ -47,12 +53,12 @@ export interface StudentInfo {
     javaExperience: Experience,
     pythonExperience: Experience,
 
-    paired_with: number | null,
+    paired_with: string | null,
     markdone: boolean
 }
 
 export interface StudentScore {
-    ids: number[],
+    ids: string[],
     studentScore: number,
     spokenLanguages: string[],
     cppExperience: Experience,
@@ -62,7 +68,7 @@ export interface StudentScore {
 }
 
 export interface Group {
-    ids: number[],
+    ids: string[],
     totalScore: number
 }
 
@@ -91,6 +97,7 @@ export async function runFullAlgorithm(algorithmService: AlgorithmService): Prom
         const studentScores: StudentScore[] = getStudentScores(studentInfo)
         const groups: Group[] = algorithm(studentScores)
 
+        const pushedTeams: { teamId: string }[] = []
         const uniName = studentInfo[0].uniName
         let teamNum = 1
         for (const g of groups) {
@@ -102,15 +109,16 @@ export async function runFullAlgorithm(algorithmService: AlgorithmService): Prom
 
             teamNum++
 
-            const pushedTeams = []
-            algorithmService.createTeam(team)
+            
+            const teamId = await algorithmService.createTeam(team)
+            pushedTeams.push(teamId)
+        }
 
-            if (pushedTeams.length != groups.length) {
-                console.log('Something went wrong here!')
-                console.log('Teams pushed to DB: ' + pushedTeams.length.toString)
-                console.log('Groups formed: ' + group.length.toString())
-                return false;
-            }
+        if (pushedTeams.length != groups.length) {
+            console.log('Something went wrong here!')
+            console.log('Teams pushed to DB: ' + pushedTeams.length.toString)
+            console.log('Groups formed: ' + group.length.toString())
+            return false;
         }
     }
 
@@ -131,7 +139,7 @@ async function convertToStudentInfo(all: StudentResponse[], algorithmService: Al
         const courses: AllCoursesCompleted = await algorithmService.getCoursesFromStudent(s.id)
         const languages: AllLanguagesSpoken = await algorithmService.getLanguagesFromStudent(s.id)
         formattedInfo.push({
-            id: Number(s.id),
+            id: s.id,
             uniName: s.uniName,
             completedCourses : getCourses(courses),
             spokenLanguages: getLanguages(languages),
@@ -241,7 +249,7 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
     const studentsScores: StudentScore[] = [];
 
     let score: StudentScore = {
-        ids: [-1],
+        ids: ['-1'],
         studentScore: -1,
         spokenLanguages: [],
         cppExperience: Experience.none,
