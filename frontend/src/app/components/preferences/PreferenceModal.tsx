@@ -67,9 +67,9 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
             </Select>
           </FormControl>
           <hr className={pageStyles.divider}/>
-          {type === 'team' && <TeamInput />}
-          {type === 'pair' && <PairInput />}
-          {type === 'exclusions' && <ExclusionInput />}
+          {type === 'team' && <TeamInput setDisable={setDisable} />}
+          {type === 'pair' && <PairInput setDisable={setDisable} />}
+          {type === 'exclusions' && <ExclusionInput setDisable={setDisable} />}
           {type && <Button variant="contained" sx={addBtn} onClick={addPreference} ref={buttonRef} disabled={disable}>Add</Button>}
       </Paper>}
     </div>

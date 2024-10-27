@@ -1,14 +1,22 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Box, Stack, TextField } from '@mui/material';
 import styles from '@/styles/Experience.module.css';
 import { preferenceInput } from '@/styles/sxStyles';
 
-const TeamInput = () => {
+interface TeamProps {
+  setDisable: Dispatch<SetStateAction<boolean>>;
+}
+
+const TeamInput = ({ setDisable }: TeamProps) => {
   const [teammates, setTeammates] = useState({ one: '', two: '' });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTeammates({ ...teammates, [e.target.name]: e.target.value });
   }
+
+  useEffect(() => {
+    setDisable(teammates.one === '' || teammates.two === '');
+  }, [teammates]);
 
   return (
     <Box sx={{ m: '30px 35px', width: 'calc(100% - 70px)' }}>

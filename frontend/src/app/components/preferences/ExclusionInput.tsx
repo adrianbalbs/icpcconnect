@@ -1,14 +1,22 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Box, Stack, TextField } from '@mui/material';
 import styles from '@/styles/Experience.module.css';
 import { preferenceInput } from '@/styles/sxStyles';
 
-const ExclusionInput = () => {
+interface ExclusionProps {
+  setDisable: Dispatch<SetStateAction<boolean>>;
+}
+
+const ExclusionInput = ({ setDisable }: ExclusionProps) => {
   const [student, setStudent] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setStudent(e.target.value);
   }
+
+  useEffect(() => {
+    setDisable(student === '');
+  }, [student]);
 
   return (
     <Box sx={{ m: '30px 35px', width: 'calc(100% - 70px)' }}>
