@@ -73,3 +73,11 @@ export const sidebarBtn = {
     bgcolor: '#8094ab61'
   },
 }
+
+export const preferenceInput = {
+  '& .MuiInputBase-input': {
+    padding: '7px 14px',
+    fontSize: '14px',
+    color: '#666666'
+  },
+}
