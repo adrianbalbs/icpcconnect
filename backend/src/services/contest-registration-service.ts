@@ -3,6 +3,7 @@ import {
   coursesCompletedByStudent,
   DatabaseConnection,
   languagesSpokenByStudent,
+  RegistrationDetails,
   registrationDetails,
   SpokenLanguage,
 } from "../db/index.js";
@@ -164,55 +165,47 @@ export class ContestRegistrationService {
     studentId: string,
     updatedDetails: UpdateContestRegistrationForm,
   ): Promise<UpdateContestRegistrationFormResponse> {
-    const {
-      allergies,
-      cExperience,
-      codeforcesRating,
-      contestExperience,
-      coursesTaken,
-      cppExperience,
-      javaExperience,
-      leetcodeRating,
-      level,
-      photoConsent,
-      pythonExperience,
-      spokenLanguages,
-    } = updatedDetails;
+    const { coursesTaken, spokenLanguages, ...rest } = updatedDetails;
 
-    await this.db
-      .update(registrationDetails)
-      .set({
-        allergies,
-        contestExperience,
-        codeforcesRating,
-        leetcodeRating,
-        photoConsent,
-        level,
-        cExperience,
-        cppExperience,
-        javaExperience,
-        pythonExperience,
-      })
-      .where(eq(registrationDetails.student, studentId));
+    const cleanedUpdatedDetails = Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined),
+    );
 
-    await this.db
-      .delete(languagesSpokenByStudent)
-      .where(eq(languagesSpokenByStudent.studentId, studentId));
-    await this.db
-      .delete(coursesCompletedByStudent)
-      .where(eq(coursesCompletedByStudent.studentId, studentId));
+    const result = await this.db.transaction(async (tx) => {
+      if (Object.keys(cleanedUpdatedDetails).length > 0) {
+        await tx
+          .update(registrationDetails)
+          .set({
+            ...cleanedUpdatedDetails,
+            timeSubmitted: new Date(),
+          })
+          .where(eq(registrationDetails.student, studentId));
+      }
 
-    for (const languageCode of spokenLanguages) {
-      await this.db
-        .insert(languagesSpokenByStudent)
-        .values({ studentId, languageCode });
-    }
-    for (const courseId of coursesTaken) {
-      await this.db
-        .insert(coursesCompletedByStudent)
-        .values({ studentId, courseId });
-    }
-    return updatedDetails;
+      if (coursesTaken) {
+        await tx
+          .delete(coursesCompletedByStudent)
+          .where(eq(coursesCompletedByStudent.studentId, studentId));
+        for (const courseId of coursesTaken) {
+          await tx
+            .insert(coursesCompletedByStudent)
+            .values({ studentId, courseId });
+        }
+      }
+      if (spokenLanguages) {
+        await tx
+          .delete(languagesSpokenByStudent)
+          .where(eq(languagesSpokenByStudent.studentId, studentId));
+        for (const languageCode of spokenLanguages) {
+          await tx
+            .insert(languagesSpokenByStudent)
+            .values({ studentId, languageCode });
+        }
+      }
+      return { ...rest, spokenLanguages, coursesTaken };
+    });
+
+    return result;
   }
 
   async deleteRegistration(studentId: string): Promise<DeleteResponse> {
