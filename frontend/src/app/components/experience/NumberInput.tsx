@@ -1,11 +1,20 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styles from '@/styles/Experience.module.css';
 import { Box, Input, Stack } from "@mui/material";
+import { Experiences } from '@/profile/[id]/experience/page';
 
 interface InputProps {
   type: number;
   setDisable: Dispatch<SetStateAction<boolean>>;
+  experience: Experiences;
+  setExperience: Dispatch<SetStateAction<Experiences>>;
 };
+
+const typeToString = [
+  'contestExperience',
+  'leetcodeRating',
+  'codeforcesRating'
+]
 
 const typeToQuestion = [
   'How many contests have you participated in previously?',
@@ -13,7 +22,7 @@ const typeToQuestion = [
   'What is your Codeforces contest rating?'
 ]
 
-const NumberInput: React.FC<InputProps> = ({ type, setDisable }) => {
+const NumberInput: React.FC<InputProps> = ({ type, setDisable, experience, setExperience }) => {
   const [value, setValue] = useState<string>('0');
 
   const assertPositive = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +34,7 @@ const NumberInput: React.FC<InputProps> = ({ type, setDisable }) => {
 
   useEffect(() => {
     setDisable(Number(value) === 0);
+    setExperience({ ...experience, [typeToString[type]]: Number(value) });
   }, [value]);
 
   return (

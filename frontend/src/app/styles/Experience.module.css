@@ -34,3 +34,22 @@
 .heading {
   margin: 0 0 25px;
 }
+
+.contest-numbers {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.numbers {
+  position: absolute;
+  right: 0;
+  margin: 0px 10px;
+  padding: 0 7px;
+  height: 19px;
+  text-align: center;
+  color: rgb(111, 111, 163);
+  font-weight: bold;
+  /* border-top: 3px double white; */
+  /* border-bottom: 3px double rgb(111, 111, 163); */
+}

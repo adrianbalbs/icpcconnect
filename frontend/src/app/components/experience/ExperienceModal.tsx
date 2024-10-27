@@ -82,9 +82,9 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
             <LanguageSlider type="python" experience={newExperience} setExperience={setNewExperience} />
           </Box>}
           {type === 'coursesTaken' && <CourseCheckbox setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
-          {type === 'contestExperience' && <NumberInput type={0} setDisable={setDisable} />}
-          {type === 'leetcodeRating' && <NumberInput type={1} setDisable={setDisable} />}
-          {type === 'codeforcesRating' && <NumberInput type={2} setDisable={setDisable} />}
+          {type === 'contestExperience' && <NumberInput type={0} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
+          {type === 'leetcodeRating' && <NumberInput type={1} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
+          {type === 'codeforcesRating' && <NumberInput type={2} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
           {type && <Button variant="contained" sx={addBtn} onClick={addExperience} ref={buttonRef} disabled={disable}>Add</Button>}
       </Paper>}
     </div>

@@ -1,15 +1,16 @@
 'use client';
 
+import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { SERVER_URL } from '@/utils/constants';
 import profileStyles from '@/styles/Profile.module.css';
 import experienceStyles from '@/styles/Experience.module.css';
+import { Box } from '@mui/material';
 import ExperienceModal from '@/components/experience/ExperienceModal';
 import LanguageExperience from '@/components/experience/LanguageExperience';
 import CoursesExperience from '@/components/experience/CoursesExperience';
 import { ProfileProps } from '../page';
-import axios from 'axios';
-import { SERVER_URL } from '@/utils/constants';
-import { Box } from '@mui/material';
+import ContestExperience from '@/components/experience/ContestExperience';
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -91,6 +92,9 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
         {added.language && <LanguageExperience { ...experience } />}
         {added.coursesTaken && <CoursesExperience coursesTaken={experience.coursesTaken} />}
+        {(added.contestExperience || added.leetcodeRating || added.codeforcesRating) &&
+          <ContestExperience added={added} experience={experience} />
+        }
         <ExperienceModal  added={added} setAdded={setAdded} experience={experience} setExperience={setExperience} />
       </Box>
     </div>
