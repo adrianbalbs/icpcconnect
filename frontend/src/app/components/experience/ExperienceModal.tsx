@@ -58,15 +58,14 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
   };
 
   const addExperience = () => {
-    const newAdded = { ...added, [type]: true }
-    setAdded(newAdded);
+    setAdded({ ...added, [type]: true });
     setExperience(newExperience);
     handleClose();
   }
 
   useEffect(() => {
     if (buttonRef.current) {
-        buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }, [type]);
 

@@ -46,7 +46,7 @@ export const addBtn = {
 };
 
 export const experienceHeading = {
-  fontSize: '15px',
+  fontSize: '14px',
   fontWeight: 600,
 }
 

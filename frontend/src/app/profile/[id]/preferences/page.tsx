@@ -6,11 +6,23 @@ import experienceStyles from '@/styles/Experience.module.css';
 import { ProfileProps } from '../page';
 import { Box } from '@mui/material';
 import PreferenceModal from '@/components/preferences/PreferenceModal';
+import PairPreference from '@/components/preferences/PairPreference';
 
 export interface PreferenceType {
   team: boolean;
   pair: boolean;
   exclusions: boolean;
+}
+
+export interface Teammate {
+  studentId: string;
+  name: string | null;
+}
+
+export interface PreferenceInput {
+  team: Teammate[];
+  pair: Teammate;
+  exclusions: string[];
 }
 
 const Preferences: React.FC<ProfileProps> = ({ params }) => {
@@ -19,12 +31,14 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
     pair: false,
     exclusions: false,
   })
-  const [team, setTeam] = useState([
-    { studentId: '', name: '' },
-    { studentId: '', name: '' },
-  ]);
-  const [pair, setPair] = useState({ studentId: '', name: '' });
-  const [exclusions, setExclusions] = useState<string[]>([]);
+  const [preferences, setPreferences] = useState<PreferenceInput>({
+    team: [
+      { studentId: '', name: null },
+      { studentId: '', name: null },
+    ],
+    pair: { studentId: '', name: null },
+    exclusions: []
+  });
 
   return (
     <div className={profileStyles['inner-screen']}>
@@ -33,7 +47,8 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider}/>
       <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
-        <PreferenceModal  added={added} setAdded={setAdded} />
+        {added.pair && <PairPreference { ...preferences.pair } />}
+        <PreferenceModal added={added} setAdded={setAdded} preferences={preferences} setPreferences={setPreferences} />
       </Box>
     </div>
   );

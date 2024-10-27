@@ -2,13 +2,16 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'reac
 import { Box, Stack, TextField } from '@mui/material';
 import styles from '@/styles/Experience.module.css';
 import { preferenceInput } from '@/styles/sxStyles';
+import { PreferenceInput } from '@/profile/[id]/preferences/page';
 
 interface PairProps {
   setDisable: Dispatch<SetStateAction<boolean>>;
   alert: boolean;
+  pref: PreferenceInput;
+  setPref: Dispatch<SetStateAction<PreferenceInput>>;
 }
 
-const PairInput = ({ setDisable, alert }: PairProps) => {
+const PairInput = ({ setDisable, alert, pref, setPref }: PairProps) => {
   const [teammate, setTeammate] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -17,6 +20,7 @@ const PairInput = ({ setDisable, alert }: PairProps) => {
 
   useEffect(() => {
     setDisable(teammate === '');
+    setPref({ ...pref, pair: { studentId: teammate, name: null } });
   }, [teammate]);
 
   return (

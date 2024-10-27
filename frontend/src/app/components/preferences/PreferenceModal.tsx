@@ -4,23 +4,29 @@ import pageStyles from '@/styles/Page.module.css';
 import experienceStyles from '@/styles/Experience.module.css';
 import { Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent } from '@mui/material';
 import CloseBtn from '../utils/CloseBtn';
-import { PreferenceType } from '@/profile/[id]/preferences/page';
-import TeamInput from './TeamInput';
-import PairInput from './PairInput';
-import ExclusionInput from './ExclusionInput';
-import TeamPairAlert from './TeamPairAlert';
+import { PreferenceInput, PreferenceType } from '@/profile/[id]/preferences/page';
+import TeamInput from './modalInput/TeamInput';
+import PairInput from './modalInput/PairInput';
+import ExclusionInput from './modalInput/ExclusionInput';
+import TeamPairAlert from './modalInput/TeamPairAlert';
 
 interface ModalProps {
   added: PreferenceType;
   setAdded: Dispatch<SetStateAction<PreferenceType>>;
+  preferences: PreferenceInput;
+  setPreferences: Dispatch<SetStateAction<PreferenceInput>>;
 }
 
-const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
+const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded, preferences, setPreferences }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
   const [disable, setDisable] = useState(false);
   const [alert, setAlert] = useState({ old: '', curr: '' });
+  const [newPref, setNewPref] = useState<PreferenceInput>(preferences);
+  // const [team, setTeam] = useState(preferences.team);
+  // const [pair, setPair] = useState(preferences.pair);
+  // const [exclusions, setExclusions] = useState<string[]>(preferences.exclusions);
 
   const handleOpen = () => {
     setOpen(true);
@@ -31,11 +37,16 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
     setType('');
     setDisable(false);
     setAlert({ old: '', curr: '' });
+    setNewPref(preferences);
+    // setTeam(preferences.team);
+    // setPair(preferences.pair);
+    // setExclusions(preferences.exclusions);
   }
 
   const handleSelect = (event: SelectChangeEvent) => {
     const newType = event.target.value;
     setType(newType);
+    setNewPref(preferences);
     setAlert({ old: '', curr: '' });
     if (newType === 'team' && added.pair) {
       setAlert({ old: 'pair', curr: 'team' });
@@ -45,14 +56,14 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
   };
 
   const addPreference = () => {
-    const newAdded = { ...added, [type]: true }
-    setAdded(newAdded);
+    setAdded({ ...added, [type]: true });
+    setPreferences(newPref);
     handleClose();
   }
 
   useEffect(() => {
     if (buttonRef.current) {
-        buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }, [type]);
 
@@ -77,9 +88,9 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
           </FormControl>
           <TeamPairAlert { ...alert }/>
           <hr className={pageStyles.divider}/>
-          {type === 'team' && <TeamInput setDisable={setDisable} alert={alert.curr !== ''} />}
-          {type === 'pair' && <PairInput setDisable={setDisable} alert={alert.curr !== ''} />}
-          {type === 'exclusions' && <ExclusionInput setDisable={setDisable} />}
+          {type === 'team' && <TeamInput setDisable={setDisable} alert={alert.curr !== ''} pref={newPref} setPref={setNewPref} />}
+          {type === 'pair' && <PairInput setDisable={setDisable} alert={alert.curr !== ''} pref={newPref} setPref={setNewPref} />}
+          {type === 'exclusions' && <ExclusionInput setDisable={setDisable} pref={newPref} setPref={setNewPref} />}
           {type && <Button variant="contained" sx={addBtn} onClick={addPreference} ref={buttonRef} disabled={disable}>Add</Button>}
       </Paper>}
     </div>

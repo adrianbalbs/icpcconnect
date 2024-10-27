@@ -15,7 +15,7 @@ export const textToValue: Record<string, number> = {
 const LanguageProficiency: React.FC<ProficiencyProps> = ({ language, proficiency }) => {
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 4fr', alignItems: 'center', m: '20px 40px' }}>
-      <Typography sx={{ gridColumn: 1, fontSize: '15px'  }}>{language}</Typography>
+      <Typography sx={{ gridColumn: 1, fontSize: '14px'  }}>{language}</Typography>
       <Stack spacing={2} direction="row" sx={{ gridColumn: 2, alignItems: 'center' }}>
         <Typography sx={proficiencyLabel}>None</Typography>
         <LinearProgress variant="determinate" value={textToValue[proficiency]}
