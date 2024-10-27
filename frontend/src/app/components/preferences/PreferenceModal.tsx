@@ -8,6 +8,7 @@ import { PreferenceType } from '@/profile/[id]/preferences/page';
 import TeamInput from './TeamInput';
 import PairInput from './PairInput';
 import ExclusionInput from './ExclusionInput';
+import TeamPairAlert from './TeamPairAlert';
 
 interface ModalProps {
   added: PreferenceType;
@@ -19,6 +20,7 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
   const [disable, setDisable] = useState(false);
+  const [alert, setAlert] = useState({ old: '', curr: '' });
 
   const handleOpen = () => {
     setOpen(true);
@@ -28,11 +30,18 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
     setOpen(false);
     setType('');
     setDisable(false);
+    setAlert({ old: '', curr: '' });
   }
 
   const handleSelect = (event: SelectChangeEvent) => {
-    if (event.target.value === 'language') setDisable(false);
-    setType(event.target.value);
+    const newType = event.target.value;
+    setType(newType);
+    setAlert({ old: '', curr: '' });
+    if (newType === 'team' && added.pair) {
+      setAlert({ old: 'pair', curr: 'team' });
+    } else if (newType === 'pair' && added.team) {
+      setAlert({ old: 'team', curr: 'pair' });
+    }
   };
 
   const addPreference = () => {
@@ -52,7 +61,7 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
       {!open && <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>Add New Preference</Button>}
       {open && <Paper square elevation={3} sx={addModal}>
         <CloseBtn handleClose={handleClose}/>
-        <FormControl sx={{ margin: '10px 20px 25px', fontSize: '12px', width: 'calc(100% - 40px)' }} >
+        <FormControl sx={{ margin: '10px 20px 7px', fontSize: '12px', width: 'calc(100% - 40px)' }} >
           <InputLabel id="new-preference-label" sx={{ lineHeight: '15px', fontSize: '14px' }}>New Preference</InputLabel>
             <Select
               id="select-type"
@@ -66,9 +75,10 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded }) => {
               {!added.exclusions && <MenuItem sx={{ fontSize: '14px' }} value="exclusions">Exclusion Preference: &nbsp;don't want someone</MenuItem>}
             </Select>
           </FormControl>
+          <TeamPairAlert { ...alert }/>
           <hr className={pageStyles.divider}/>
-          {type === 'team' && <TeamInput setDisable={setDisable} />}
-          {type === 'pair' && <PairInput setDisable={setDisable} />}
+          {type === 'team' && <TeamInput setDisable={setDisable} alert={alert.curr !== ''} />}
+          {type === 'pair' && <PairInput setDisable={setDisable} alert={alert.curr !== ''} />}
           {type === 'exclusions' && <ExclusionInput setDisable={setDisable} />}
           {type && <Button variant="contained" sx={addBtn} onClick={addPreference} ref={buttonRef} disabled={disable}>Add</Button>}
       </Paper>}

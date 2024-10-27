@@ -5,9 +5,10 @@ import { preferenceInput } from '@/styles/sxStyles';
 
 interface PairProps {
   setDisable: Dispatch<SetStateAction<boolean>>;
+  alert: boolean;
 }
 
-const PairInput = ({ setDisable }: PairProps) => {
+const PairInput = ({ setDisable, alert }: PairProps) => {
   const [teammate, setTeammate] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -28,6 +29,7 @@ const PairInput = ({ setDisable }: PairProps) => {
           value={teammate}
           sx={preferenceInput}
           onChange={handleChange}
+          disabled={alert}
         />
       </Stack>
     </Box>

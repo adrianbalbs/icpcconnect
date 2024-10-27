@@ -5,9 +5,10 @@ import { preferenceInput } from '@/styles/sxStyles';
 
 interface TeamProps {
   setDisable: Dispatch<SetStateAction<boolean>>;
+  alert: boolean;
 }
 
-const TeamInput = ({ setDisable }: TeamProps) => {
+const TeamInput = ({ setDisable, alert }: TeamProps) => {
   const [teammates, setTeammates] = useState({ one: '', two: '' });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -28,6 +29,7 @@ const TeamInput = ({ setDisable }: TeamProps) => {
           value={teammates.one}
           sx={preferenceInput}
           onChange={handleChange}
+          disabled={alert}
         />
       </Stack>
       <Stack spacing={4} direction="row" sx={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -38,6 +40,7 @@ const TeamInput = ({ setDisable }: TeamProps) => {
           value={teammates.two}
           sx={preferenceInput}
           onChange={handleChange}
+          disabled={alert}
         />
       </Stack>
     </Box>
