@@ -22,17 +22,28 @@ export interface ExperienceType {
 
 // TODO: Fix types
 export interface Experiences {
-  cExperience: string;
-  codeforcesRating: number;
-  contestExperience: number;
-  coursesTaken: number[];
-  cppExperience: string;
-  javaExperience: string;
   level: string;
+  contestExperience: number;
   leetcodeRating: number;
+  codeforcesRating: number;
+  cppExperience: string;
+  cExperience: string;
+  javaExperience: string;
   pythonExperience: string;
-  student: string;
+  coursesCompleted: number[];
 }
+
+// student: string;
+// level: Level;
+// contestExperience: number;
+// leetcodeRating: number;
+// codeforcesRating: number;
+// cppExperience: LanguageExperience;
+// cExperience: LanguageExperience;
+// javaExperience: LanguageExperience;
+// pythonExperience: LanguageExperience;
+// timeSubmitted: Date;
+// coursesCompleted: Course[];
 
 const Experience: React.FC<ProfileProps> = ({ params }) => {
   const [added, setAdded] = useState<ExperienceType>({
@@ -44,23 +55,22 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
   });
 
   const [experience, setExperience] = useState<Experiences>({
-    cExperience: 'none',
-    codeforcesRating: 0,
-    contestExperience: 0,
-    coursesTaken: [],
-    cppExperience: 'none',
-    javaExperience: 'none',
     level: '',
+    contestExperience: 0,
     leetcodeRating: 0,
+    codeforcesRating: 0,
+    cppExperience: 'none',
+    cExperience: 'none',
+    javaExperience: 'none',
     pythonExperience: 'none',
-    student: '',
+    coursesCompleted: [],
   });
 
   const getExperience = async () => {
     try {
       const res = await axios.get(`${SERVER_URL}/api/contest-registration/${params.id}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { student, ...newExperience } = res.data;
+      const { student, timeSubmitted, ...newExperience } = res.data;
       // setExperience(newExperience);
     } catch (error) {
       console.log(`Get experience error: ${error}`);
@@ -91,7 +101,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       <hr className={experienceStyles.divider}/>
       <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
         {added.language && <LanguageExperience { ...experience } />}
-        {added.coursesTaken && <CoursesExperience coursesTaken={experience.coursesTaken} />}
+        {added.coursesTaken && <CoursesExperience coursesTaken={experience.coursesCompleted} />}
         {(added.contestExperience || added.leetcodeRating || added.codeforcesRating) &&
           <ContestExperience added={added} experience={experience} />
         }

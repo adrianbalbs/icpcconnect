@@ -16,12 +16,29 @@ interface ModalProps {
   setExperience: Dispatch<SetStateAction<Experiences>>;
 }
 
+interface Languages {
+  cppExperience: string;
+  cExperience: string;
+  javaExperience: string;
+  pythonExperience: string;
+}
+
 const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, setExperience }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
   const [disable, setDisable] = useState(false);
   const [newExperience, setNewExperience] = useState<Experiences>(experience);
+  // const [languages, setLanguages] = useState<Languages>({
+  //   cppExperience: 'none',
+  //   cExperience: 'none',
+  //   javaExperience: 'none',
+  //   pythonExperience: 'none'
+  // });
+  // const [courses, setCourses] = useState({ coursesCompleted: [] });
+  // const [contest, setContest] = useState({ contestExperience: 0 });
+  // const [leetcode, setLeetcode] = useState({ leetcodeRating: 0 });
+  // const [codeforces, setCodeforces] = useState({ codeforcesRating: 0 });
 
   const handleOpen = () => {
     setOpen(true);
