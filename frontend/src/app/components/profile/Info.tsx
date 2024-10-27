@@ -1,6 +1,6 @@
-'use client'
-import profileStyles from '@/styles/Profile.module.css';
-import pageStyles from '@/styles/Page.module.css';
+"use client";
+import profileStyles from "@/styles/Profile.module.css";
+import pageStyles from "@/styles/Page.module.css";
 
 interface InfoProps {
   name: string;
@@ -17,29 +17,32 @@ const Info: React.FC<InfoProps> = ({ name, value, edit, onChange }) => {
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value);
   };
-  
+
   return (
     <>
       <div className={profileStyles.content}>
         <p className={pageStyles.bold}>{name}</p>
         {edit ? (
           (() => {
-            if (name === 'Do you consent to appear in photos and videos taken on the day of the contest?') {
+            if (
+              name ===
+              "Do you consent to appear in photos and videos taken on the day of the contest?"
+            ) {
               return (
                 <select
                   id="consent"
                   value={value}
                   onChange={handleSelectChange}
-                  className={profileStyles['select-box']}
+                  className={profileStyles["select-box"]}
                 >
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
               );
-            } else if (name === 'Name') {
+            } else if (name === "Name") {
               return (
                 <input
-                  className={profileStyles['edit-box']}
+                  className={profileStyles["edit-box"]}
                   value={value}
                   onChange={handleInputChange}
                 />
@@ -47,7 +50,7 @@ const Info: React.FC<InfoProps> = ({ name, value, edit, onChange }) => {
             } else {
               return (
                 <input
-                  className={profileStyles['edit-box']}
+                  className={profileStyles["edit-box"]}
                   value={value}
                   onChange={handleInputChange}
                 />
