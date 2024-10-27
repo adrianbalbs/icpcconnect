@@ -3,7 +3,6 @@ import {
   coursesCompletedByStudent,
   DatabaseConnection,
   languagesSpokenByStudent,
-  RegistrationDetails,
   registrationDetails,
   SpokenLanguage,
 } from "../db/index.js";

@@ -1,8 +1,10 @@
 import { eq } from "drizzle-orm";
 import {
   DatabaseConnection,
+  SiteCoordinator,
   siteCoordinators,
   universities,
+  User,
   users,
 } from "../db/index.js";
 import {
@@ -137,27 +139,45 @@ export class SiteCoordinatorService {
     userId: string,
     updatedDetails: UpdateSiteCoordinatorRequest,
   ): Promise<SiteCoordinatorUpdateResponse> {
-    const { role, givenName, familyName, password, email, university } =
-      updatedDetails;
+    const { password, ...rest } = updatedDetails;
 
-    const hashedPassword = await passwordUtils().hash(password);
-    await this.db
-      .update(users)
-      .set({ role, givenName, familyName, password: hashedPassword, email })
-      .where(eq(users.id, userId));
-
-    await this.db
-      .update(siteCoordinators)
-      .set({ university })
-      .where(eq(siteCoordinators.userId, userId));
-
-    return {
-      role,
-      givenName,
-      familyName,
-      email,
-      university,
+    const userUpdates: Partial<User> = {
+      givenName: rest.givenName,
+      familyName: rest.familyName,
+      email: rest.email,
+      role: rest.role,
     };
+    const siteCoordinatorUpdates: Partial<SiteCoordinator> = {
+      university: rest.university,
+    };
+
+    if (password) {
+      userUpdates.password = await passwordUtils().hash(password);
+    }
+
+    const cleanedUserUpdates = Object.fromEntries(
+      Object.entries(userUpdates).filter(([, value]) => value !== undefined),
+    );
+    const cleanedSiteCoordinatorUpdates = Object.fromEntries(
+      Object.entries(siteCoordinatorUpdates).filter(
+        ([, value]) => value !== undefined,
+      ),
+    );
+
+    const result = await this.db.transaction(async (tx) => {
+      await tx
+        .update(users)
+        .set(cleanedUserUpdates)
+        .where(eq(users.id, userId));
+
+      await tx
+        .update(siteCoordinators)
+        .set(cleanedSiteCoordinatorUpdates)
+        .where(eq(siteCoordinators.userId, userId));
+      return { ...rest };
+    });
+
+    return result;
   }
 
   async deleteSiteCoordinator(userId: string): Promise<DeleteResponse> {
