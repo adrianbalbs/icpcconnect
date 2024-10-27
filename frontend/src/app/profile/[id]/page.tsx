@@ -6,9 +6,10 @@ import pageStyles from "@/styles/Page.module.css";
 import { IconButton } from "@mui/material";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import Info from "@/components/profile/Info";
-import { getInfo, capitalise } from "@/utils/profileInfo";
+import { getInfo, capitalise, EditInfo } from "@/utils/profileInfo";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
+import { Edit } from "@/components/profile/Edit";
 
 export interface ProfileProps {
   params: {
@@ -19,49 +20,37 @@ export interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ params }) => {
   const [info, setInfo] = useState<[string, string | number][]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editInfo, setEditInfo] = useState<EditInfo>({
+    pronouns: "",
+    languagesSpoken: [],
+    photoConsent: false,
+    dietaryRequirements: "",
+    tshirtSize: "",
+  });
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
     if (data !== undefined) {
       setInfo(data.info);
+      console.log(info);
     }
   };
-
-  const handleInfoChange = (index: number, newValue: string | number) => {
-    const updatedInfo = [...info];
-    updatedInfo[index] = [updatedInfo[index][0], newValue];
-    setInfo(updatedInfo);
-  };
-
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
   const handleSaveClick = async () => {
     setIsEditing(false);
-    const nameSplit = (info[0][1] as string).split(/\s+/); //separate name into first and last names
-    const firstName = nameSplit[0];
-    const lastName = nameSplit[1];
     console.log(info);
-    const pronouns = info[1][1] === "(Not added yet)" ? null : info[1][1];
-    const team = info[2][1] === "(Unallocated)" ? null : info[2][1];
-    const languagesSpoken = info[5][1] === "(Not added yet)" ? [] : info[5][1];
-    const dietaryRequirements =
-      info[6][1] === "(Not added yet)" ? null : info[6][1];
-    const photoConsent = info[7][1] === "Yes";
-    const tshirtSize = info[8][1] === "(Not added yet)" ? null : info[8][1];
-
     const update = {
-      firstName,
-      lastName,
-      pronouns,
-      team,
-      university: 1, //change this later
-      studentId: info[4][1],
-      languagesSpoken,
-      photoConsent,
-      dietaryRequirements,
-      tshirtSize,
+      pronouns: editInfo.pronouns === "" ? null : editInfo.pronouns,
+      languagesSpoken: editInfo.languagesSpoken,
+      photoConsent: editInfo.photoConsent,
+      dietaryRequirements:
+        editInfo.dietaryRequirements === ""
+          ? null
+          : editInfo.dietaryRequirements,
+      tshirtSize: editInfo.tshirtSize === "" ? null : editInfo.tshirtSize,
     };
     console.log(update);
     console.log(`${SERVER_URL}/api/students/${params.id}`);
@@ -74,7 +63,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
 
   useEffect(() => {
     storeInfo();
-  }, [params]);
+  }, [params.id]);
 
   return (
     <div className={profileStyles["inner-screen"]}>
@@ -94,15 +83,14 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
         )}
       </div>
       <hr className={pageStyles.divider} />
-      {info.map((i, index) => (
-        <Info
-          key={i[0]}
-          name={capitalise(i[0])}
-          value={i[1]}
-          edit={isEditing}
-          onChange={(newValue) => handleInfoChange(index, newValue)}
-        />
-      ))}
+
+      {!isEditing ? (
+        info.map((i) => (
+          <Info key={i[0]} name={capitalise(i[0])} value={i[1]} />
+        ))
+      ) : (
+        <Edit id={params.id} editInfo={editInfo} setEditInfo={setEditInfo} />
+      )}
     </div>
   );
 };

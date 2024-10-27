@@ -66,7 +66,7 @@ export const students = pgTable("students", {
     .notNull(),
   studentId: text("student_id").notNull(),
   pronouns: text("pronouns"),
-  dietaryRequirements: text("dietary_requirements"),
+  dietaryRequirements: text("dietary_requirements").default(""),
   tshirtSize: text("tshirt_size"),
   team: uuid("team").references(() => teams.id),
   photoConsent: boolean("photo_consent").notNull(),
@@ -300,3 +300,10 @@ export const authCodes = pgTable("auth_codes", {
 });
 
 export type AuthCodes = InferSelectModel<typeof authCodes>;
+
+export const verifyEmail = pgTable("verify_emails", {
+  code: integer("code").notNull().unique(),
+  email: text("email").notNull(),
+});
+
+export type VerifyEmail = InferSelectModel<typeof verifyEmail>;

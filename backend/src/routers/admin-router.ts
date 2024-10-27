@@ -7,12 +7,14 @@ import { SiteCoordinatorService } from "../services/index.js";
 import { HTTPError, badRequest } from "../utils/errors.js";
 import { CreateAdminRequest, CreateAdminRequestSchema } from "../schemas/user-schema.js";
 import { validateData } from "../middleware/validator-middleware.js";
+import { AlgorithmService } from "../services/algorithm-service.js";
 
 export function adminRouter(
     adminService: AdminService,
     coachService: CoachService,
     studentService: StudentService,
-    siteCoordinatorService: SiteCoordinatorService
+    siteCoordinatorService: SiteCoordinatorService,
+    algorithmService: AlgorithmService
 ) {
     return Router()
         .get(
@@ -87,37 +89,48 @@ export function adminRouter(
                 // The middleware handles the response, so no additional handle is required here
             }
         )
-        .post(
-            "/admin",
-            validateData(CreateAdminRequestSchema, "body"),
-            async (
-                req: Request<Record<string, never>, unknown, CreateAdminRequest>,
-                res: Response,
-                next: NextFunction,
-            ) => {
-                const adminDetails = req.body;
-                try {
-                    const result = await adminService.createAdmin(adminDetails);
-                    res.status(200).json(result);
-                } catch (err) {
-                    next(err);
-                }
-            },
-        )
-        .delete(
-            "/admin/:id",
-            async (
-                req: Request<{ id: string }, unknown>,
-                res: Response,
-                next: NextFunction,
-            ) => {
-                const { id } = req.params;
-                try {
-                    const result = await adminService.deleteAdmin(id);
-                    res.status(200).json(result);
-                } catch (err) {
-                    next(err);
-                }
-            },
-        );
+    .post(
+        "/admin",
+        validateData(CreateAdminRequestSchema, "body"),
+        async (
+            req: Request<Record<string, never>, unknown, CreateAdminRequest>,
+            res: Response,
+            next: NextFunction,
+        ) => {
+            const adminDetails = req.body;
+            try {
+                const result = await adminService.createAdmin(adminDetails);
+                res.status(200).json(result);
+            } catch (err) {
+                next(err);
+            }
+        },
+    )
+    .post(
+        "/runalgo",
+        async (_req: Request, res: Response, next: NextFunction) => {
+            try {
+                const success = await algorithmService.callAlgorithm();
+                res.status(200).json(success);
+            } catch (err) {
+                next(err);
+            }
+        },
+    )
+    .delete(
+        "/admin/:id",
+        async (
+            req: Request<{ id: string }, unknown>,
+            res: Response,
+            next: NextFunction,
+        ) => {
+            const { id } = req.params;
+            try {
+                const result = await adminService.deleteAdmin(id);
+                res.status(200).json(result);
+            } catch (err) {
+                next(err);
+            }
+        },
+    );
 }

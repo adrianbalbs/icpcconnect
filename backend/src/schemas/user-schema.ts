@@ -191,6 +191,18 @@ const SpokenLanguageEnum = z.enum([
 ]);
 
 export type SpokenLanguage = z.infer<typeof SpokenLanguageEnum>;
+export const SendEmailCodeRequestSchema = z.object({
+  email: z.string().email(),
+});
+
+export type SendEmailCodeRequest = z.infer<typeof SendEmailCodeRequestSchema>;
+
+export const PassVerificationSchema = z.object({
+  email: z.string().email(),
+  userProvidedCode: z.string()
+});
+
+export type PassVerificationRequest = z.infer<typeof PassVerificationSchema>;
 
 const UserRoleEnum = z.enum(["student", "coach", "site_coordinator", "admin"]);
 export type UserRole = z.infer<typeof UserRoleEnum>;

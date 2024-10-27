@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { SERVER_URL } from '@/utils/constants';
-import registerPage from '@/styles/Auth.module.css';
-import { useRouter } from 'next/navigation';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { SERVER_URL } from "@/utils/constants";
+import registerPage from "@/styles/Auth.module.css";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [roleName, setRoleName] = useState('');
-  const [givenName, setgivenName] = useState('');
-  const [familyName, setfamilyName] = useState('');
+  const [roleName, setRoleName] = useState("");
+  const [givenName, setgivenName] = useState("");
+  const [familyName, setfamilyName] = useState("");
   const [university, setUniversity] = useState(0);
-  const [studentId, setStudentId] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [inviteCode, setInviteCode] = useState('');
-  const [checked, setChecked] = useState(false);    
+  const [studentId, setStudentId] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [checked, setChecked] = useState(false);
   const [eligibility, setEligibility] = useState(false);
 
   const convertRole: { [key: string]: string } = {
@@ -29,8 +29,8 @@ export default function Register() {
   };
 
   const handleRoleName = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRoleName(e.target.value);
-  }
+    setRoleName(e.target.value);
+  };
 
   const submitForm = async () => {
     try {
@@ -50,8 +50,11 @@ export default function Register() {
             verificationCode,
             inviteCode,
           };
-          const res = await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
-          localStorage.setItem('id', res.data.id);
+          const res = await axios.post(
+            `${SERVER_URL}/api/site-coordinators`,
+            payload,
+          );
+          localStorage.setItem("id", res.data.id);
         } else if (roleName === "Coach") {
           role = "coach";
           const payload = {
@@ -65,7 +68,7 @@ export default function Register() {
             inviteCode,
           };
           const res = await axios.post(`${SERVER_URL}/api/coaches`, payload);
-          localStorage.setItem('id', res.data.id);
+          localStorage.setItem("id", res.data.id);
         } else {
           role = "student";
           const payload = {
@@ -81,22 +84,22 @@ export default function Register() {
             spokenLanguages,
           };
           const res = await axios.post(`${SERVER_URL}/api/students`, payload);
-          localStorage.setItem('id', res.data.userId);
+          localStorage.setItem("id", res.data.userId);
         }
-        localStorage.setItem('role', role);
-        router.push(role === 'student' ? '/team' : '/teams');
+        localStorage.setItem("role", role);
+        router.push(role === "student" ? "/team" : "/teams");
       } else if (password !== confirmPassword) {
         console.log("Passwords do not match");
       } else {
         console.log("Please agree to the terms and conditions.");
       }
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error("Registration failed:", error);
     }
-  }
+  };
 
   const handleNext = () => {
-    if (step === 5 && (password === '' || confirmPassword === '')) {
+    if (step === 5 && (password === "" || confirmPassword === "")) {
       alert("Please enter a password.");
     } else if (step === 5 && !checked) {
       alert("Please agree to the Terms and Conditions.");
@@ -104,87 +107,168 @@ export default function Register() {
       submitForm();
     } else if (password !== confirmPassword) {
       alert("Passwords do not match!");
-    } else if (step === 4 && verificationCode === '') {
+    } else if (step === 4 && verificationCode === "") {
       alert("Please enter a verification code.");
-    } else if (step === 3 && ((roleName === 'Student' && studentId === '') || (roleName !== 'Student' && inviteCode === '') || university === 0 || email === '')) {
+    } else if (
+      step === 3 &&
+      ((roleName === "Student" && studentId === "") ||
+        (roleName !== "Student" && inviteCode === "") ||
+        university === 0 ||
+        email === "")
+    ) {
       alert("Please fill in the page.");
-    } else if (step === 2 && roleName === 'Student' && !eligibility) {
+    } else if (step === 2 && roleName === "Student" && !eligibility) {
       alert("You have not declared yourself eligible for the competition.");
-    } else if (step === 1 && (givenName === '' || familyName === '' || roleName === '')) {
+    } else if (
+      step === 1 &&
+      (givenName === "" || familyName === "" || roleName === "")
+    ) {
       alert("Please fill in the page.");
     } else {
       setStep((curStep) => curStep + 1);
     }
-  }
+  };
 
   const handleBack = () => {
-    setStep((curStep) => curStep - 1)
+    setStep((curStep) => curStep - 1);
     if (step === 3) {
       setEligibility(false);
-      if (roleName !== 'Student') {
+      if (roleName !== "Student") {
         setStep((curStep) => curStep - 1);
       } else {
         setStep(1);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    const role = localStorage.getItem('role');
+    const role = localStorage.getItem("role");
     if (role !== null) {
-      router.replace(role === 'student' ? '/team' : '/teams');
+      router.replace(role === "student" ? "/team" : "/teams");
     }
   }, []);
 
   return (
     <>
-      <div className={registerPage['register-polygon']}></div>
-      <div className={registerPage['info-container']}>
+      <div className={registerPage["register-polygon"]}></div>
+      <div className={registerPage["info-container"]}>
         {step === 1 && (
           <>
             <h1 className={registerPage.h1}>Create an account</h1>
-            <div className={registerPage['horizontal-container']}>
-              <input placeholder="First Name" className={registerPage['input-field-short']} value={givenName} onChange={(e) => setgivenName(e.target.value)} />
-              <input placeholder="Last Name" className={registerPage['input-field-short']} value={familyName} onChange={(e) => setfamilyName(e.target.value)} />
+            <div className={registerPage["horizontal-container"]}>
+              <input
+                placeholder="First Name"
+                className={registerPage["input-field-short"]}
+                value={givenName}
+                onChange={(e) => setgivenName(e.target.value)}
+              />
+              <input
+                placeholder="Last Name"
+                className={registerPage["input-field-short"]}
+                value={familyName}
+                onChange={(e) => setfamilyName(e.target.value)}
+              />
             </div>
-            <select value={roleName} onChange={handleRoleName} id="select-role" name="Select Role" className={registerPage['input-field']}>
-              <option value="" disabled selected>Select Role</option>
+            <select
+              value={roleName}
+              onChange={handleRoleName}
+              id="select-role"
+              name="Select Role"
+              className={registerPage["input-field"]}
+            >
+              <option value="" disabled selected>
+                Select Role
+              </option>
               <option value="Student">Student</option>
               <option value="Coach">Coach</option>
               <option value="Site Coordinator">Site Coordinator</option>
             </select>
-            <div className={registerPage['horizontal-container']}>
-              <a href={"/login"} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back to Login</a>
-              <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Next</button>
+            <div className={registerPage["horizontal-container"]}>
+              <a
+                href={"/login"}
+                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+              >
+                Back to Login
+              </a>
+              <button
+                onClick={handleNext}
+                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+              >
+                Next
+              </button>
             </div>
           </>
         )}
         {step === 2 && (
           <>
-            {roleName === 'Student' ? (
+            {roleName === "Student" ? (
               <>
-                <h1 className={registerPage.h1}>Do you meet the ICPC eligibility rules?</h1>
+                <h1 className={registerPage.h1}>
+                  Do you meet the ICPC eligibility rules?
+                </h1>
                 <p>
                   The full eligbility rules can be found at &nbsp;
-                  <a href='https://icpc.global/regionals/rules/'>https://icpc.global/regionals/rules/</a>,
-                  but the most notable criteria are:
+                  <a href="https://icpc.global/regionals/rules/">
+                    https://icpc.global/regionals/rules/
+                  </a>
+                  , but the most notable criteria are:
                   <ul>
-                    <li>enrolled in a degree program at the team&apos;s institution</li>
-                    <li>taking at least 1/2 load, or co-op, exchange or intern student</li>
+                    <li>
+                      enrolled in a degree program at the team&apos;s
+                      institution
+                    </li>
+                    <li>
+                      taking at least 1/2 load, or co-op, exchange or intern
+                      student
+                    </li>
                     <li>have not competed in two ICPC World Finals</li>
-                    <li>have not competed in ICPC regional contests in five different years</li>
-                    <li>commenced post secondary studies in 2020 or later OR born in 2001 or later.</li>
+                    <li>
+                      have not competed in ICPC regional contests in five
+                      different years
+                    </li>
+                    <li>
+                      commenced post secondary studies in 2020 or later OR born
+                      in 2001 or later.
+                    </li>
                   </ul>
-                  You must meet the enrolment criteria in the term(s) that the contest is running. 
-                  If any team members are not ICPC eligible, then the team will not be considered for qualification to Regional Finals.
+                  You must meet the enrolment criteria in the term(s) that the
+                  contest is running. If any team members are not ICPC eligible,
+                  then the team will not be considered for qualification to
+                  Regional Finals.
                 </p>
-                <div className={registerPage['vertical-container']}>
-                  <label><input type="radio" name="eligbility" value="true" onChange={() => setEligibility(true)} />Yes</label>
-                  <label><input type="radio" name="eligbility" value="false" onChange={() => setEligibility(false)} />No</label>
+                <div className={registerPage["vertical-container"]}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="eligbility"
+                      value="true"
+                      onChange={() => setEligibility(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="eligbility"
+                      value="false"
+                      onChange={() => setEligibility(false)}
+                    />
+                    No
+                  </label>
                 </div>
-                <div className={registerPage['horizontal-container']}>
-                  <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
-                  <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Next</button>
+                <div className={registerPage["horizontal-container"]}>
+                  <button
+                    onClick={handleBack}
+                    className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+                  >
+                    Next
+                  </button>
                 </div>
               </>
             ) : (
@@ -196,27 +280,69 @@ export default function Register() {
           <>
             <h1 className={registerPage.h1}>Enter your details</h1>
             <h1 className={registerPage.h1}>{roleName}</h1>
-            <select id="select-university" name="Select University" className={registerPage['input-field']} value={university} onChange={(e) => setUniversity(Number(e.target.value))}>
-              <option value={0} disabled selected>Select University</option>
+            <select
+              id="select-university"
+              name="Select University"
+              className={registerPage["input-field"]}
+              value={university}
+              onChange={(e) => setUniversity(Number(e.target.value))}
+            >
+              <option value={0} disabled selected>
+                Select University
+              </option>
               <option value={1}>UNSW</option>
               <option value={2}>University of Sydney</option>
               <option value={3}>University of Technology Sydney</option>
               <option value={4}>Macquarie University</option>
             </select>
-            {roleName === 'Student' ? (
-              <form className={registerPage['form-container']}>
-                <input placeholder="Student ID" className={registerPage['input-field']} value={studentId} onChange={(e) => setStudentId(e.target.value)} />
-                <input type="Email" id="email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+            {roleName === "Student" ? (
+              <form className={registerPage["form-container"]}>
+                <input
+                  placeholder="Student ID"
+                  className={registerPage["input-field"]}
+                  value={studentId}
+                  onChange={(e) => setStudentId(e.target.value)}
+                />
+                <input
+                  type="Email"
+                  id="email"
+                  placeholder="Email"
+                  className={registerPage["input-field"]}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </form>
             ) : (
-              <form className={registerPage['form-container']}>
-                <input placeholder="Invite Code" className={registerPage['input-field']} value={inviteCode} onChange={(e) => setInviteCode(e.target.value)}/>
-                <input type="Email" id="email" placeholder="Email" className={registerPage['input-field']} value={email} onChange={(e) => setEmail(e.target.value)} />
+              <form className={registerPage["form-container"]}>
+                <input
+                  placeholder="Invite Code"
+                  className={registerPage["input-field"]}
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value)}
+                />
+                <input
+                  type="Email"
+                  id="email"
+                  placeholder="Email"
+                  className={registerPage["input-field"]}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </form>
             )}
-            <div className={registerPage['horizontal-container']}>
-              <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
-              <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Next</button>
+            <div className={registerPage["horizontal-container"]}>
+              <button
+                onClick={handleBack}
+                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+              >
+                Next
+              </button>
             </div>
           </>
         )}
@@ -224,10 +350,25 @@ export default function Register() {
           <>
             <h1 className={registerPage.h1}>Verify email address</h1>
             <h1 className={registerPage.h1}>{roleName}</h1>
-            <input placeholder="Enter Verification Code" className={registerPage['input-field']} value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
-            <div className={registerPage['horizontal-container']}>
-              <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
-              <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Next</button>
+            <input
+              placeholder="Enter Verification Code"
+              className={registerPage["input-field"]}
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+            />
+            <div className={registerPage["horizontal-container"]}>
+              <button
+                onClick={handleBack}
+                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+              >
+                Next
+              </button>
             </div>
           </>
         )}
@@ -235,29 +376,57 @@ export default function Register() {
           <>
             <h1 className={registerPage.h1}>Create a password</h1>
             <h1 className={registerPage.h1}>{roleName}</h1>
-            <input type="password" placeholder="Password" className={registerPage['input-field']} value={password} onChange={(e) => setPassword(e.target.value)}/>
-            <input type="password" placeholder="Confirm Password" className={registerPage['input-field']} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+            <input
+              type="password"
+              placeholder="Password"
+              className={registerPage["input-field"]}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className={registerPage["input-field"]}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
             {password !== confirmPassword && (
               <p style={{ color: "red" }}>Passwords do not match.</p>
             )}
             <label htmlFor="tnc">
-              <input id="tnc" type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
-              &nbsp;Yes, I agree to the <a className="link">Terms and Conditions of Use</a>
+              <input
+                id="tnc"
+                type="checkbox"
+                checked={checked}
+                onChange={(e) => setChecked(e.target.checked)}
+              />
+              &nbsp;Yes, I agree to the{" "}
+              <a className="link">Terms and Conditions of Use</a>
             </label>
             {!checked && (
-              <p style={{ color: "red" }}>Please agree to the terms and conditions.</p>
+              <p style={{ color: "red" }}>
+                Please agree to the terms and conditions.
+              </p>
             )}
-            <div className={registerPage['horizontal-container']}>
-              <button onClick={handleBack} className={`${registerPage['auth-button']} ${registerPage['white']} ${registerPage['short']}`}>Back</button>
-              <button onClick={handleNext} className={`${registerPage['auth-button']} ${registerPage['dark']} ${registerPage['short']}`}>Register</button>
+            <div className={registerPage["horizontal-container"]}>
+              <button
+                onClick={handleBack}
+                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+              >
+                Register
+              </button>
             </div>
           </>
         )}
         {/* Unimplemented Progress Bar */}
-        <div className={registerPage['progress-bar']}></div>
+        <div className={registerPage["progress-bar"]}></div>
       </div>
     </>
   );
 }
-
-

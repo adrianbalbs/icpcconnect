@@ -24,6 +24,7 @@ import {
 } from "../schemas/index.js";
 import { beforeAll, afterAll, describe, afterEach, it, expect } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
+import { AlgorithmService } from "../services/algorithm-service.js";
 
 let db: DatabaseConnection;
 let adminApp: ReturnType<typeof express>;
@@ -43,6 +44,7 @@ beforeAll(async () => {
         new CoachService(db),
         new StudentService(db),
         new SiteCoordinatorService(db),
+        new AlgorithmService(db)
       ),
     );
   coachApp = express()

@@ -1,5 +1,5 @@
 {
-  "id": "815f2c67-f10a-49b7-8ebf-be44d3a5c16a",
+  "id": "1950295e-b632-43c9-a8ec-0f54fc28b1fa",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -438,7 +438,8 @@
           "name": "dietary_requirements",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "''"
         },
         "tshirt_size": {
           "name": "tshirt_size",
@@ -633,6 +634,36 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        }
+      }
+    },
+    "public.verify_emails": {
+      "name": "verify_emails",
+      "schema": "",
+      "columns": {
+        "code": {
+          "name": "code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "verify_emails_code_unique": {
+          "name": "verify_emails_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
           ]
         }
       }
