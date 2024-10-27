@@ -7,6 +7,7 @@ import { ProfileProps } from '../page';
 import { Box } from '@mui/material';
 import PreferenceModal from '@/components/preferences/PreferenceModal';
 import PairPreference from '@/components/preferences/PairPreference';
+import TeamPreference from '@/components/preferences/TeamPreference';
 
 export interface PreferenceType {
   team: boolean;
@@ -47,6 +48,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider}/>
       <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
+        {added.team && <TeamPreference teammates={preferences.team} />}
         {added.pair && <PairPreference { ...preferences.pair } />}
         <PreferenceModal added={added} setAdded={setAdded} preferences={preferences} setPreferences={setPreferences} />
       </Box>
