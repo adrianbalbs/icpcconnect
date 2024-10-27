@@ -2,16 +2,15 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'reac
 import { Box, Stack, TextField } from '@mui/material';
 import styles from '@/styles/Experience.module.css';
 import { preferenceInput } from '@/styles/sxStyles';
-import { PreferenceInput } from '@/profile/[id]/preferences/page';
+import { Teammate } from '@/profile/[id]/preferences/page';
 
 interface TeamProps {
   setDisable: Dispatch<SetStateAction<boolean>>;
   alert: boolean;
-  pref: PreferenceInput;
-  setPref: Dispatch<SetStateAction<PreferenceInput>>;
+  setPref: Dispatch<SetStateAction<Teammate[]>>;
 }
 
-const TeamInput = ({ setDisable, alert, pref, setPref }: TeamProps) => {
+const TeamInput = ({ setDisable, alert, setPref }: TeamProps) => {
   const [teammates, setTeammates] = useState({ one: '', two: '' });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -19,12 +18,11 @@ const TeamInput = ({ setDisable, alert, pref, setPref }: TeamProps) => {
   }
 
   useEffect(() => {
-    const team = [
+    setDisable(teammates.one === '' || teammates.two === '');
+    setPref([
       { studentId: teammates.one, name: null },
       { studentId: teammates.two, name: null },
-    ];
-    setDisable(teammates.one === '' || teammates.two === '');
-    setPref({ ...pref, team });
+    ]);
   }, [teammates]);
 
   return (

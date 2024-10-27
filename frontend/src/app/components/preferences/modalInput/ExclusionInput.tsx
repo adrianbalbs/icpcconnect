@@ -2,15 +2,13 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'reac
 import { Box, Stack, TextField } from '@mui/material';
 import styles from '@/styles/Experience.module.css';
 import { preferenceInput } from '@/styles/sxStyles';
-import { PreferenceInput } from '@/profile/[id]/preferences/page';
 
 interface ExclusionProps {
   setDisable: Dispatch<SetStateAction<boolean>>;
-  pref: PreferenceInput;
-  setPref: Dispatch<SetStateAction<PreferenceInput>>;
+  setPref: Dispatch<SetStateAction<string>>;
 }
 
-const ExclusionInput = ({ setDisable, pref, setPref }: ExclusionProps) => {
+const ExclusionInput = ({ setDisable, setPref }: ExclusionProps) => {
   const [student, setStudent] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -19,9 +17,7 @@ const ExclusionInput = ({ setDisable, pref, setPref }: ExclusionProps) => {
 
   useEffect(() => {
     setDisable(student === '');
-    if (student) {
-      setPref({ ...pref, exclusions: [ ...pref.exclusions, student ] });
-    }
+    setPref(student);
   }, [student]);
 
   return (
