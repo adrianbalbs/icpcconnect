@@ -71,6 +71,7 @@ export const students = pgTable("students", {
   team: uuid("team").references(() => teams.id),
   photoConsent: boolean("photo_consent").notNull(),
   university: integer("university").references(() => universities.id).notNull(),
+  exclusions: text("exclusions").default("").notNull()
 });
 
 export const studentRelations = relations(students, ({ one, many }) => ({
@@ -269,6 +270,7 @@ export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
+  flagged: boolean("flagged").default(false).notNull()
 });
 
 export const teamRelations = relations(teams, ({ many, one }) => ({

@@ -5,7 +5,8 @@ import {
     algorithm,
     getStudentScores,
     isCompatible,
-    Courses
+    Courses,
+    checkExclusions
 } from "./algorithm.js"
 
 let test_studentInfo: StudentInfo[] = [];
@@ -16,8 +17,8 @@ beforeEach(() => {
     test_studentInfo = [];
 
     s1 = {
-        id: 1,
-        uniId: 1,
+        id: "1",
+        uniName: "1",
         contestExperience: 6,
         leetcodeRating: 1500,
         codeforcesRating: 1500,
@@ -32,14 +33,15 @@ beforeEach(() => {
         cExpericence: Experience.prof,
         javaExperience: Experience.prof,
         pythonExperience: Experience.prof,
+        exclusions: "",
 
         paired_with: null,
         markdone: false
     }
 
     s2 = {
-        id: 2,
-        uniId: 1,
+        id: "2",
+        uniName: "1",
         contestExperience: 6,
         leetcodeRating: 1500,
         codeforcesRating: 1500,
@@ -54,6 +56,7 @@ beforeEach(() => {
         cExpericence: Experience.prof,
         javaExperience: Experience.prof,
         pythonExperience: Experience.prof,
+        exclusions: "",
 
         paired_with: null,
         markdone: false
@@ -73,6 +76,24 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         const score2 = calculateScore(s2);
 
         expect(score1).toBeGreaterThan(score2);
+    });
+
+    it("checkExclusion: Tests basic exclusions", async () => {
+        const names = ["Jerry Yang", "Manav Dodia"]
+        const excl2 = ["Jerry"]
+        const excl1 = ["Manav"]
+        const excl3 = ["nav"]
+        const excl4 = ["Meow"]
+        const excl5 = ["12", "Python", "Jimmy"]
+        const excl6 = ["12", "Python", "Jimmy", "Manav"]
+
+
+        expect(checkExclusions(excl1, names)).toBe(true)
+        expect(checkExclusions(excl2, names)).toBe(true)
+        expect(checkExclusions(excl3, names)).toBe(true)
+        expect(checkExclusions(excl4, names)).toBe(false)
+        expect(checkExclusions(excl5, names)).toBe(false)
+        expect(checkExclusions(excl6, names)).toBe(true)
     });
 
     it("getStudentScores: Should return an array of two StudentScore objects", () => {
@@ -128,7 +149,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("getStudentScores: Should return an array of two StudentScore object (a pair and a single)", () => {
         const s3: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -142,6 +163,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: s1.id,
             markdone: false
@@ -182,7 +206,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("isCompatible: Should test single students compatabilities", async () => {
         const noCompat: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -205,7 +229,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const CProf: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -228,7 +252,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const JavaSome: StudentInfo = {
             id: 5,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -264,7 +288,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const noCompat: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -287,7 +311,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const CProf: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -316,7 +340,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("isCompatible: Test language compatabilities", async () => {
         const otherLang: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -330,6 +354,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -339,7 +366,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const bothLang: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -353,6 +380,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -371,7 +401,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("algorithm: Should return a singular team (Pair and Single)", () => {
         const noCompat: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -394,7 +424,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const CProf: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -423,7 +453,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("isCompatible: Test language compatabilities", async () => {
         const otherLang: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -437,6 +467,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -446,7 +479,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const bothLang: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -460,6 +493,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -478,7 +514,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("algorithm: Should return a singular team (Pair and Single)", () => {
         const noCompat: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -492,6 +528,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: 4,
             markdone: false
@@ -501,7 +540,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const CProf: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -530,7 +569,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("isCompatible: Test language compatabilities", async () => {
         const otherLang: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -544,6 +583,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -553,7 +595,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const bothLang: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -567,6 +609,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -585,7 +630,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("algorithm: Should return a singular team (Pair and Single)", () => {
         const noCompat: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -608,7 +653,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const CProf: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 1000,
             codeforcesRating: 3000,
@@ -637,7 +682,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("algorithm: Should return a singular team (Pair and Single)", () => {
         const s3: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -651,6 +696,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: s1.id,
             markdone: false
@@ -698,7 +746,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("algorithm: Should return a singular team (Three Singles)", () => {
         const s3: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -712,6 +760,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -766,7 +817,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("algorithm: Should return a singular team (Four Singles (1 Excluded))", () => {
         const s3: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -780,6 +831,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -787,7 +841,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
         const s4: StudentInfo = {
             id: 4,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 2,
             leetcodeRating: 500,
             codeforcesRating: 500,
@@ -799,6 +853,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+        exclusions: "",
+        exclusions: "",
+exclusions: []
     
             paired_with: null,
             markdone: false
@@ -864,7 +921,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
     it("algorithm: Should return no teams (Two Pairs, both excluded)", () => {
         const s3: StudentInfo = {
             id: 3,
-            uniId: 1,
+            uniName: "1",
             contestExperience: 6,
             leetcodeRating: 3000,
             codeforcesRating: 3000,
@@ -878,14 +935,15 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+            exclusions: "",
     
-            paired_with: 4,
+            paired_with: "4",
             markdone: false
         }
 
         const s4: StudentInfo = {
-            id: 4,
-            uniId: 1,
+            id: "4",
+            uniName: "1",
             contestExperience: 2,
             leetcodeRating: 500,
             codeforcesRating: 500,
@@ -897,8 +955,9 @@ describe("Algorithm Score Calculation Unit Tests", () => {
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
             pythonExperience: Experience.prof,
+            exclusions: "",
     
-            paired_with: 3,
+            paired_with: "3",
             markdone: false
         }
 

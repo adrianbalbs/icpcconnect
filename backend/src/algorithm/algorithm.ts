@@ -43,6 +43,8 @@ const COURSES_WEIGHT = 3;
 export interface StudentInfo {
     id: string,
     uniName: string,
+    stuGiven: string,
+    stuLast: string,
     contestExperience: number,
     leetcodeRating: number, // Refer to this: https://leetcode.com/discuss/general-discussion/4409738/Contest-Ratings-and-What-Do-They-Mean/
     codeforcesRating: number, // Refer to this: https://codeforces.com/blog/entry/68288
@@ -52,7 +54,7 @@ export interface StudentInfo {
     cExpericence: Experience,
     javaExperience: Experience,
     pythonExperience: Experience,
-
+    exclusions: string,
     paired_with: string | null,
     markdone: boolean
 }
@@ -65,11 +67,14 @@ export interface StudentScore {
     cExpericence: Experience,
     javaExperience: Experience,
     pythonExperience: Experience,
+    exclusions: string[],
+    names: string[]
 }
 
 export interface Group {
     ids: string[],
-    totalScore: number
+    totalScore: number,
+    flagged: boolean
 }
 
 /**
@@ -104,12 +109,12 @@ export async function runFullAlgorithm(algorithmService: AlgorithmService): Prom
             const team: CreateTeamRequest = {
                 name: uniName + '-Team' + teamNum.toString(),
                 university: uni.id,
-                memberIds: g.ids.map(String)
+                memberIds: g.ids.map(String),
+                flagged: g.flagged
             }
 
             teamNum++
 
-            
             const teamId = await algorithmService.createTeam(team)
             pushedTeams.push(teamId)
         }
@@ -140,6 +145,8 @@ async function convertToStudentInfo(all: StudentResponse[], algorithmService: Al
         const languages: AllLanguagesSpoken = await algorithmService.getLanguagesFromStudent(s.id)
         formattedInfo.push({
             id: s.id,
+            stuGiven: s.stuGiven,
+            stuLast: s.stuLast,
             uniName: s.uniName,
             completedCourses : getCourses(courses),
             languagesSpoken: getLanguages(languages),
@@ -150,6 +157,7 @@ async function convertToStudentInfo(all: StudentResponse[], algorithmService: Al
             cExpericence: convertToEnum(s.cppExperience),
             javaExperience: convertToEnum(s.javaExperience),
             pythonExperience: convertToEnum(s.pythonExperience),
+            exclusions: s.exclusions,
             paired_with: null,
             markdone: false
         })
@@ -255,7 +263,9 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
         cppExperience: Experience.none,
         cExpericence: Experience.none,
         javaExperience: Experience.none,
-        pythonExperience: Experience.none
+        pythonExperience: Experience.none,
+        exclusions: [],
+        names: []
     }
 
     for (const s of students) {
@@ -275,7 +285,13 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
                 cppExperience: Math.max(s.cppExperience, p.cppExperience),
                 cExpericence: Math.max(s.cExpericence, p.cExpericence),
                 javaExperience: Math.max(s.javaExperience, p.javaExperience),
-                pythonExperience: Math.max(s.pythonExperience, p.pythonExperience)
+                pythonExperience: Math.max(s.pythonExperience, p.pythonExperience),
+
+                // We concat the exclusions
+                exclusions: (s.exclusions + ", " + p.exclusions).split(", ").map(String),
+
+                // Add their name
+                names: [s.stuGiven + " " + s.stuLast, p.stuGiven + " " + p.stuLast]
             }
             p.markdone = true; 
         } else {
@@ -286,7 +302,10 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
                 cppExperience: s.cppExperience,
                 cExpericence: s.cExpericence,
                 javaExperience: s.javaExperience,
-                pythonExperience: s.pythonExperience
+                pythonExperience: s.pythonExperience,
+                exclusions: s.exclusions.split(", ").map(String),
+                // Add their name
+                names: [s.stuGiven + " " + s.stuLast]
             }
         }
 
@@ -313,7 +332,8 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
     while (true) {
         const group: Group = {
             ids: [],
-            totalScore: 0
+            totalScore: 0,
+            flagged: false
         }
 
         const stu1: StudentScore | undefined = studentsScores.pop();
@@ -330,6 +350,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
 
             group.ids = stu1.ids.concat(stu2.ids);
             group.totalScore = (stu1.studentScore * 2) + stu2.studentScore;
+            group.flagged = checkExclusions(stu1.exclusions, stu2.names) || checkExclusions(stu2.exclusions, stu1.names)
             groups.push(group)
             continue;
         }
@@ -343,12 +364,13 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
         if ((stu1.ids.length + stu2.ids.length) == 3) {
             group.ids = stu1.ids.concat(stu2.ids);
             group.totalScore = (stu1.studentScore * 2) + stu2.studentScore;
+            group.flagged = checkExclusions(stu1.exclusions, stu2.names) || checkExclusions(stu2.exclusions, stu1.names)
             groups.push(group)
             continue;
         }
 
         const stu3: StudentScore | undefined = getNext(studentsScores, stu1, stu2, false);
-
+ 
         // Stu1 with Stu2 has no compatible teammates
         if (stu3 === undefined) { continue }
 
@@ -356,6 +378,9 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
         if ((stu1.ids.length + stu2.ids.length + stu3.ids.length) == 3) {
             group.ids = stu1.ids.concat(stu2.ids).concat(stu3.ids);
             group.totalScore = stu1.studentScore + stu2.studentScore + stu3.studentScore;
+            group.flagged = checkExclusions(stu1.exclusions, stu2.names) || checkExclusions(stu1.exclusions, stu3.names)
+                        || checkExclusions(stu2.exclusions, stu1.names) || checkExclusions(stu2.exclusions, stu3.names)
+                        || checkExclusions(stu3.exclusions, stu1.names) || checkExclusions(stu3.exclusions, stu2.names)
             groups.push(group)
             continue;
         }
@@ -366,6 +391,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
             group.ids = stu1.ids.concat(stu3.ids);
             group.totalScore = stu1.studentScore + (stu3.studentScore * 2);
             groups.push(group)
+            group.flagged = checkExclusions(stu1.exclusions, stu3.names) || checkExclusions(stu3.exclusions, stu1.names)
             continue;
         }
 
@@ -438,4 +464,19 @@ export function isCompatible(s1: StudentScore, s2: StudentScore): boolean {
     const sameSpoken = s1.languagesSpoken.every(a => s2.languagesSpoken.includes(a));
 
     return sameCoding && sameSpoken;
+}
+
+export function checkExclusions(exclusions: string[], othernames: string[]): boolean {
+    // Need to do a string contains for each string in exclusions 
+    if (exclusions.length == 0) return false;
+
+    for (const name of othernames) {
+        for (const excl of exclusions) {
+            if (name.includes(excl)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
