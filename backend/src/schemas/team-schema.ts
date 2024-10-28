@@ -6,6 +6,7 @@ export const CreateTeamRequestSchema = z.object({
   name: z.string(),
   university: z.number(),
   memberIds: z.array(z.string()), 
+  flagged: z.boolean()
 });
 
 export type CreateTeamRequest = z.infer<typeof CreateTeamRequestSchema>;

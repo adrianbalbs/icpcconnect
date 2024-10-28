@@ -4,17 +4,17 @@ import express from "express";
 import {
   DatabaseConnection,
   users,
-} from "../../db/index.js";
+} from "../db/index.js";
 import {
   CreateTeamRequest,
   UpdateTeamRequest,
   CreateStudentRequest,
-} from "../../schemas/index.js";
-import { TeamService, StudentService } from "../../services/index.js";
+} from "../schemas/index.js";
+import { TeamService, StudentService } from "../services/index.js";
 import { beforeAll, afterAll, describe, it, expect } from "vitest";
-import { setupTestDatabase, dropTestDatabase } from "../db-test-helpers.js";
-import { teamRouter, studentRouter } from "../../routers/index.js";
-import { errorHandlerMiddleware } from "../../middleware/error-handler-middleware.js";
+import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
+import { teamRouter, studentRouter } from "../routers/index.js";
+import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
@@ -84,6 +84,7 @@ describe("TeamService tests", () => {
       name: "epicTeam",
       university: 1,
       memberIds: userIds,
+      flagged: false
     };
 
     const result = await request(app)
@@ -139,6 +140,7 @@ describe("TeamService tests", () => {
       name: "epicTeam",
       university: 1,
       memberIds: userIds,
+      flagged: false
     };
 
     const res = await request(app)
@@ -202,7 +204,8 @@ describe("TeamService tests", () => {
     const team: CreateTeamRequest = {
       name: "epicTeam",
       university: 1,
-      memberIds: userIds.slice(1)
+      memberIds: userIds.slice(1),
+      flagged: false
     };
 
     const id_res = await request(app)
@@ -220,7 +223,8 @@ describe("TeamService tests", () => {
     const req: UpdateTeamRequest = {
       name: "reallyEpicTeam",
       university: 1,
-      memberIds: userIds
+      memberIds: userIds,
+      flagged: false
     };
     const res = await request(app)
       .put(`/api/teams/update/${teamId}`)
@@ -237,6 +241,7 @@ describe("TeamService tests", () => {
       name: "epicTeam",
       university: 1,
       memberIds: [],
+      flagged: false
     };
 
     const id_res = await request(app)

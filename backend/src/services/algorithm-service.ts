@@ -17,6 +17,8 @@ export type AllCoursesCompleted = {
 
 export type StudentResponse = {
      id: string,
+     stuGiven: string,
+     stuLast: string, 
      uniName: string,
      contestExperience: number,
      leetcodeRating: number,
@@ -25,6 +27,7 @@ export type StudentResponse = {
      cExpericence: string,
      javaExperience: string,
      pythonExperience: string,
+     exclusions: string,
      // paired_with: number | null,
 }
 
@@ -62,6 +65,8 @@ export class AlgorithmService {
      const allStudents = await this.db
        .select({
           id: users.id,
+          stuGiven: users.givenName,
+          stuLast: users.familyName,
           uniName: universities.name,
           contestExperience: registrationDetails.contestExperience,
           leetcodeRating: registrationDetails.leetcodeRating,
@@ -70,6 +75,7 @@ export class AlgorithmService {
           cExpericence: registrationDetails.cExperience,
           javaExperience: registrationDetails.javaExperience,
           pythonExperience: registrationDetails.pythonExperience,
+          exclusions: students.exclusions
        })
        .from(users)
        .innerJoin(students, eq(students.userId, users.id))
@@ -107,6 +113,7 @@ export class AlgorithmService {
        name,
        university,
        memberIds,
+       flagged,
      } = req;
  
  
@@ -115,6 +122,7 @@ export class AlgorithmService {
        .values({
          name,
          university,
+         flagged,
        })
        .returning({teamId: teams.id})
  

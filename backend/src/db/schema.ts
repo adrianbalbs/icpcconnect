@@ -68,6 +68,7 @@ export const students = pgTable("students", {
   pronouns: text("pronouns"),
   team: uuid("team").references(() => teams.id),
   university: integer("university").references(() => universities.id),
+  exclusions: text("exclusions").default("").notNull()
 });
 
 export const studentRelations = relations(students, ({ one }) => ({
@@ -268,6 +269,7 @@ export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
+  flagged: boolean("flagged").default(false).notNull()
 });
 
 export const teamRelations = relations(teams, ({ many, one }) => ({
