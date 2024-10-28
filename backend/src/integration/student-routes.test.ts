@@ -7,6 +7,7 @@ import { studentRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateStudentRequest,
+  UpdateStudentExclusionsRequest,
   UpdateStudentRequest,
 } from "../schemas/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
@@ -212,5 +213,42 @@ describe("studentRouter tests", () => {
 
   it("should return an error when deleting a student that does not exist", async () => {
     await request(app).delete(`/api/students/${uuidv4()}`).expect(400);
+  });
+
+  it("should update the students exclusion preferences", async () => {
+    const req: CreateStudentRequest = {
+      role: "student",
+      givenName: "Adrian",
+      familyName: "Balbalosa",
+      email: "adrianbalbs@comp3900.com",
+      studentId: "z5397730",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+    };
+    const response = await request(app)
+      .post("/api/students")
+      .send(req)
+      .expect(200);
+
+    expect(response.body).toHaveProperty("userId");
+    const userid = response.body.userId
+
+    const emptyExclu = await request(app).get(`/api/students/exclusions/${userid}`).expect(200)
+    expect(emptyExclu.body[0]).toHaveProperty("exclusions");
+    expect(emptyExclu.body[0].exclusions).toBe("")
+
+    const putExclu: UpdateStudentExclusionsRequest = {
+      exclusions: "Jerry M Yang, Ur Mother"
+    }
+
+    await request(app)
+      .put(`/api/students/exclusions/${userid}`).expect(200)
+      .send(putExclu)
+      .expect(200)
+    
+    const updatedExclu = await request(app).get(`/api/students/exclusions/${userid}`).expect(200)
+    expect(updatedExclu.body[0]).toHaveProperty("exclusions");
+    expect(updatedExclu.body[0].exclusions).toBe("Jerry M Yang, Ur Mother")
   });
 });

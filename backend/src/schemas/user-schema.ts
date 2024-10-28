@@ -55,6 +55,12 @@ export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
 
+export const UpdateStudentExclusionsRequestSchema = z.object({
+  exclusions: z.string(),
+})
+
+export type UpdateStudentExclusionsRequest = z.infer<typeof UpdateStudentExclusionsRequestSchema>;
+
 export const CreateCoachRequestSchema = z.object({
   givenName: z.string().min(1).max(35),
   familyName: z.string().min(1).max(35),
