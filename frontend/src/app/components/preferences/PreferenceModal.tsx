@@ -29,9 +29,18 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded, preferences, s
   const [exclude, setExclude] = useState('');
 
   const reset = () => {
+    setAlert({ old: '', curr: '' });
     setTeam(preferences.team);
     setPair(preferences.pair);
     setExclude('');
+  }
+
+  const checkExclusivity = (newType: string) => {
+    if (newType === 'team' && added.pair) {
+      setAlert({ old: 'pair', curr: 'team' });
+    } else if (newType === 'pair' && added.team) {
+      setAlert({ old: 'team', curr: 'pair' });
+    }
   }
 
   const handleOpen = () => {
@@ -42,20 +51,14 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded, preferences, s
     setOpen(false);
     setType('');
     setDisable(false);
-    setAlert({ old: '', curr: '' });
     reset();
   }
 
   const handleSelect = (event: SelectChangeEvent) => {
     const newType = event.target.value;
     setType(newType);
-    setAlert({ old: '', curr: '' });
-    if (newType === 'team' && added.pair) {
-      setAlert({ old: 'pair', curr: 'team' });
-    } else if (newType === 'pair' && added.team) {
-      setAlert({ old: 'team', curr: 'pair' });
-    }
     reset();
+    checkExclusivity(newType);
   };
 
   const addPreference = () => {
@@ -74,7 +77,12 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded, preferences, s
     if (buttonRef.current) {
       buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-}, [type]);
+  }, [type]);
+
+  useEffect(() => {
+    setAlert({ old: '', curr: '' });
+    checkExclusivity(type);
+  }, [added]);
 
   return (
     <div className={experienceStyles.modal}>

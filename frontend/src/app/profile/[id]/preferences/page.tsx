@@ -43,6 +43,24 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
     exclusions: []
   });
 
+  const deletePreference = (type: string) => {
+    if (type === 'team') {
+      setAdded({ ...added, team: false });
+      setPreferences({ ...preferences, team: [
+          { studentId: '', name: null },
+          { studentId: '', name: null },
+        ]
+      });
+    } else if (type === 'pair') {
+      setAdded({ ...added, pair: false });
+      setPreferences({ ...preferences, pair: { studentId: '', name: null } });
+    } else {
+      const newList = preferences.exclusions.filter(e => e !== type);
+      newList.length === 0 && setAdded({ ...added, exclusions: false });
+      setPreferences({ ...preferences, exclusions: newList });
+    }
+  }
+
   return (
     <div className={profileStyles['inner-screen']}>
       <div className={profileStyles.title}>
@@ -50,8 +68,8 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider}/>
       <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
-        {added.team && <TeamPreference teammates={preferences.team} />}
-        {added.pair && <PairPreference { ...preferences.pair } />}
+        {added.team && <TeamPreference teammates={preferences.team} deletePreference={deletePreference} />}
+        {added.pair && <PairPreference { ...preferences.pair } deletePreference={deletePreference} />}
         {added.exclusions && <ExclusionPreference students={preferences.exclusions} />}
         <PreferenceModal added={added} setAdded={setAdded} preferences={preferences} setPreferences={setPreferences} />
       </Box>
