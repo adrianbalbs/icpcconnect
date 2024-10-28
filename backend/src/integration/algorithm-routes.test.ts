@@ -72,6 +72,8 @@ describe("Algorithm Tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       }
     ];
 
@@ -87,18 +89,15 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
         coursesTaken: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -134,6 +133,8 @@ describe("Algorithm Tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -144,6 +145,8 @@ describe("Algorithm Tests", () => {
         password: "password123",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       }
     ];
 
@@ -159,18 +162,15 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
         coursesTaken: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -206,6 +206,8 @@ describe("Algorithm Tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -216,6 +218,8 @@ describe("Algorithm Tests", () => {
         password: "password123",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -226,6 +230,8 @@ describe("Algorithm Tests", () => {
         password: "securepass",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
     ];
 
@@ -241,18 +247,15 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
         coursesTaken: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -288,6 +291,8 @@ describe("Algorithm Tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -298,6 +303,8 @@ describe("Algorithm Tests", () => {
         password: "password123",
         university: 1,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -308,6 +315,8 @@ describe("Algorithm Tests", () => {
         password: "securepass",
         university: 2,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
     ];
 
@@ -323,18 +332,15 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
         coursesTaken: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -370,6 +376,8 @@ describe("Algorithm Tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -380,6 +388,8 @@ describe("Algorithm Tests", () => {
         password: "password123",
         university: 1,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -390,6 +400,8 @@ describe("Algorithm Tests", () => {
         password: "securepass",
         university: 1,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -400,6 +412,8 @@ describe("Algorithm Tests", () => {
         password: "helloworld",
         university: 2,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -410,6 +424,8 @@ describe("Algorithm Tests", () => {
         password: "password123",
         university: 2,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -420,6 +436,8 @@ describe("Algorithm Tests", () => {
         password: "securepass",
         university: 2,
         verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
       },
     ];
 
@@ -435,18 +453,15 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
         coursesTaken: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -485,6 +500,8 @@ describe("Algorithm Tests", () => {
             password: "securepass",
             university: 1,
             verificationCode: "test",
+            photoConsent: false,
+            languagesSpoken: [],
         }
         students.push(student)
 
@@ -498,6 +515,8 @@ describe("Algorithm Tests", () => {
                 password: "securepass",
                 university: 2,
                 verificationCode: "test",
+                photoConsent: false,
+                languagesSpoken: [],
             }
             students.push(student2)
         }
@@ -512,6 +531,8 @@ describe("Algorithm Tests", () => {
                 password: "securepass",
                 university: 3,
                 verificationCode: "test",
+                photoConsent: false,
+                languagesSpoken: [],
             }
             students.push(student3)
         }
@@ -531,18 +552,15 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
         coursesTaken: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        languagesSpoken: ["en"],
       };
 
       await request(app)
