@@ -138,7 +138,7 @@ export class StudentService {
       teamName = null;
     }
 
-    const { ...studentProps } = student;
+    const { user, ...studentProps } = student;
     return {
       ...studentProps,
       university: uniName,
