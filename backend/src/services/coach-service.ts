@@ -15,7 +15,6 @@ import {
   NewUserResponse,
   UserProfileResponse,
 } from "../types/index.js";
-import { StudentService } from "./student-service.js";
 
 export type CoachProfileResponse = UserProfileResponse & {
   university: string;
