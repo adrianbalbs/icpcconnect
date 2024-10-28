@@ -163,17 +163,20 @@ export class SiteCoordinatorService {
         ([, value]) => value !== undefined,
       ),
     );
-
     const result = await this.db.transaction(async (tx) => {
-      await tx
-        .update(users)
-        .set(cleanedUserUpdates)
-        .where(eq(users.id, userId));
+      if (Object.keys(cleanedUserUpdates).length > 0) {
+        await tx
+          .update(users)
+          .set(cleanedUserUpdates)
+          .where(eq(users.id, userId));
+      }
 
-      await tx
-        .update(siteCoordinators)
-        .set(cleanedSiteCoordinatorUpdates)
-        .where(eq(siteCoordinators.userId, userId));
+      if (Object.keys(cleanedSiteCoordinatorUpdates).length > 0) {
+        await tx
+          .update(siteCoordinators)
+          .set(cleanedSiteCoordinatorUpdates)
+          .where(eq(siteCoordinators.userId, userId));
+      }
       return { ...rest };
     });
 

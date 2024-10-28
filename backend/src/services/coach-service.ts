@@ -127,15 +127,20 @@ export class CoachService {
     );
 
     const result = await this.db.transaction(async (tx) => {
-      await tx
-        .update(users)
-        .set(cleanedUserUpdates)
-        .where(eq(users.id, userId));
+      if (Object.keys(cleanedUserUpdates).length > 0) {
+        await tx
+          .update(users)
+          .set(cleanedUserUpdates)
+          .where(eq(users.id, userId));
+      }
 
-      await tx
-        .update(coaches)
-        .set(cleanedCoachUpdates)
-        .where(eq(coaches.userId, userId));
+      if (Object.keys(cleanedCoachUpdates).length > 0) {
+        await tx
+          .update(coaches)
+          .set(cleanedCoachUpdates)
+          .where(eq(coaches.userId, userId));
+      }
+
       return { ...rest };
     });
 
