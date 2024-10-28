@@ -136,42 +136,37 @@ export class ContestRegistrationService {
     studentId: string,
     updatedDetails: UpdateContestRegistrationForm,
   ): Promise<UpdateContestRegistrationFormResponse> {
-    const {
-      cExperience,
-      codeforcesRating,
-      contestExperience,
-      coursesTaken,
-      cppExperience,
-      javaExperience,
-      leetcodeRating,
-      level,
-      pythonExperience,
-    } = updatedDetails;
+    const { coursesTaken, ...rest } = updatedDetails;
 
-    await this.db
-      .update(registrationDetails)
-      .set({
-        contestExperience,
-        codeforcesRating,
-        leetcodeRating,
-        level,
-        cExperience,
-        cppExperience,
-        javaExperience,
-        pythonExperience,
-      })
-      .where(eq(registrationDetails.student, studentId));
+    const cleanedUpdatedDetails = Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined),
+    );
 
-    await this.db
-      .delete(coursesCompletedByStudent)
-      .where(eq(coursesCompletedByStudent.studentId, studentId));
+    const result = await this.db.transaction(async (tx) => {
+      if (Object.keys(cleanedUpdatedDetails).length > 0) {
+        await tx
+          .update(registrationDetails)
+          .set({
+            ...cleanedUpdatedDetails,
+            timeSubmitted: new Date(),
+          })
+          .where(eq(registrationDetails.student, studentId));
+      }
 
-    for (const courseId of coursesTaken) {
-      await this.db
-        .insert(coursesCompletedByStudent)
-        .values({ studentId, courseId });
-    }
-    return updatedDetails;
+      if (coursesTaken) {
+        await tx
+          .delete(coursesCompletedByStudent)
+          .where(eq(coursesCompletedByStudent.studentId, studentId));
+        for (const courseId of coursesTaken) {
+          await tx
+            .insert(coursesCompletedByStudent)
+            .values({ studentId, courseId });
+        }
+      }
+      return { ...rest, coursesTaken };
+    });
+
+    return result;
   }
 
   async deleteRegistration(studentId: string): Promise<DeleteResponse> {

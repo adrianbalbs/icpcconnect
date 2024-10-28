@@ -1,14 +1,6 @@
 import { eq, inArray } from "drizzle-orm";
-import {
-  DatabaseConnection,
-  teams,
-  students,
-  users,
-} from "../db/index.js";
-import {
-  CreateTeamRequest,
-  UpdateTeamRequest,
-} from "../schemas/index.js";
+import { DatabaseConnection, teams, students, users } from "../db/index.js";
+import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 
 export class TeamService {
@@ -19,25 +11,19 @@ export class TeamService {
   }
 
   async createTeam(req: CreateTeamRequest) {
-    const {
-      name,
-      university,
-      memberIds,
-    } = req;
+    const { name, university, memberIds } = req;
 
-
-    const [id] = await this.db 
+    const [id] = await this.db
       .insert(teams)
       .values({
         name,
         university,
       })
-      .returning({teamId: teams.id})
+      .returning({ teamId: teams.id });
 
-    const members = await this.db
-      .query.students.findMany({
-        where: inArray(students.userId, memberIds)
-      });
+    const members = await this.db.query.students.findMany({
+      where: inArray(students.userId, memberIds),
+    });
 
     for (const member of members) {
       await this.db
@@ -46,15 +32,15 @@ export class TeamService {
         .where(eq(students.userId, member.userId));
     }
 
-    return id
+    return id;
   }
 
   async getTeam(teamId: string) {
     const team = await this.db.query.teams.findFirst({
-        where: eq(teams.id, teamId),
-        columns: {university: false},
-        with: {members: true, university: true}, 
-      })
+      where: eq(teams.id, teamId),
+      columns: { university: false },
+      with: { members: true, university: true },
+    });
 
     if (team == undefined) {
       throw new HTTPError(badRequest);
@@ -67,7 +53,7 @@ export class TeamService {
     const [team] = await this.db
       .select({
         id: teams.id,
-        name: teams.name
+        name: teams.name,
       })
       .from(students)
       .where(eq(students.userId, studentId))
@@ -83,20 +69,20 @@ export class TeamService {
         givenName: users.givenName,
         familyName: users.familyName,
         studentId: students.studentId,
-        email: users.email
+        email: users.email,
       })
       .from(students)
       .where(eq(students.team, String(team.id)))
       .innerJoin(users, eq(users.id, students.userId));
-    
+
     return { ...team, members };
   }
 
   async getAllTeams() {
     return await this.db.query.teams.findMany({
-        columns: {university: false},
-        with: {members: true, university: true}, 
-      })
+      columns: { university: false },
+      with: { members: true, university: true },
+    });
   }
 
   //Expects all team-members to be sent
@@ -104,58 +90,59 @@ export class TeamService {
   //
   //Albeit this behaviour can easily be adjusted
   async updateTeam(teamId: string, updatedDetails: UpdateTeamRequest) {
-    const {
-      university,
-      name,
-      memberIds,
-    } = updatedDetails;
+    const { memberIds, ...rest } = updatedDetails;
 
-    //Unset old team-members
-    {
-      const members = await this.db
-        .query.students.findMany({
-          where: eq(students.team, teamId)
+    const cleanedTeamUpdates = Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined),
+    );
+
+    const result = await this.db.transaction(async (tx) => {
+      if (memberIds) {
+        //Unset old team-members
+        {
+          const members = await tx.query.students.findMany({
+            where: eq(students.team, teamId),
+          });
+
+          for (const member of members) {
+            await tx
+              .update(students)
+              .set({ team: null })
+              .where(eq(students.userId, member.userId));
+          }
+        }
+
+        //Set team-id for new members
+        const members = await tx.query.students.findMany({
+          where: inArray(students.userId, memberIds),
         });
 
-      for (const member of members) {
-        await this.db
-          .update(students)
-          .set({ team: null })
-          .where(eq(students.userId, member.userId));
+        for (const member of members) {
+          await tx
+            .update(students)
+            .set({ team: teamId })
+            .where(eq(students.userId, member.userId));
+        }
       }
-    }
 
-    //Set team-id for new members
-    const members = await this.db
-      .query.students.findMany({
-        where: inArray(students.userId, memberIds)
-      });
+      if (Object.keys(cleanedTeamUpdates).length > 0) {
+        await tx
+          .update(teams)
+          .set(cleanedTeamUpdates)
+          .where(eq(teams.id, teamId));
+      }
 
-    for (const member of members) {
-      await this.db
-        .update(students)
-        .set({ team: teamId })
-        .where(eq(students.userId, member.userId));
-    }
+      return { ...rest, memberIds };
+    });
 
-    await this.db
-      .update(teams)
-      .set({ university, name })
-      .where(eq(teams.id, teamId));
-
-    return {
-      id: teamId,
-      university, 
-      name,
-      members: members,
-    };
+    return result;
   }
 
   async deleteTeam(teamId: string) {
     const [team] = await this.db
       .select({ teamId: teams.id })
       .from(teams)
-      .where(eq(teams.id, teamId))
+      .where(eq(teams.id, teamId));
 
     if (!team) {
       throw new HTTPError({

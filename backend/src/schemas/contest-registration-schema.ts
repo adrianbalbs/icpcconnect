@@ -33,7 +33,7 @@ export type CreateContestRegistrationForm = z.infer<
 >;
 
 export const UpdateContestRegistrationFormSchema =
-  CreateContestRegistrationFormSchema.omit({ student: true });
+  CreateContestRegistrationFormSchema.omit({ student: true }).partial();
 export type UpdateContestRegistrationForm = z.infer<
   typeof UpdateContestRegistrationFormSchema
 >;

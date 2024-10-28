@@ -145,7 +145,6 @@ describe("siteCoordinatorRouter tests", () => {
       .expect(200);
 
     const req: UpdateSiteCoordinatorRequest = {
-      ...newSiteCoordinator,
       email: "newemail@comp3900.com",
     };
 

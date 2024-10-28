@@ -130,7 +130,6 @@ describe("coachRouter tests", () => {
     await request(app).get(`/api/coaches/${res.body.userId}`).expect(200);
 
     const req: UpdateCoachRequest = {
-      ...newCoach,
       email: "newemail@comp3900.com",
     };
 

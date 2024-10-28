@@ -199,7 +199,7 @@ export type SendEmailCodeRequest = z.infer<typeof SendEmailCodeRequestSchema>;
 
 export const PassVerificationSchema = z.object({
   email: z.string().email(),
-  userProvidedCode: z.string()
+  userProvidedCode: z.string(),
 });
 
 export type PassVerificationRequest = z.infer<typeof PassVerificationSchema>;
@@ -263,7 +263,7 @@ export type CreateCoachRequest = z.infer<typeof CreateCoachRequestSchema>;
 
 export const UpdateCoachRequestSchema = CreateCoachRequestSchema.omit({
   verificationCode: true,
-});
+}).partial();
 
 export type UpdateCoachRequest = z.infer<typeof UpdateCoachRequestSchema>;
 
@@ -282,7 +282,7 @@ export type CreateSiteCoordinatorRequest = z.infer<
 >;
 
 export const UpdateSiteCoordinatorRequestSchema =
-  CreateSiteCoordinatorRequestSchema.omit({ verificationCode: true });
+  CreateSiteCoordinatorRequestSchema.omit({ verificationCode: true }).partial();
 
 export type UpdateSiteCoordinatorRequest = z.infer<
   typeof UpdateSiteCoordinatorRequestSchema
