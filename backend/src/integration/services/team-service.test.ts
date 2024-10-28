@@ -8,7 +8,7 @@ import {
   CreateStudentRequest,
 } from "../../schemas/index.js";
 import { TeamService, StudentService } from "../../services/index.js";
-import { beforeAll, afterAll, describe, it, expect } from "vitest";
+import { beforeAll, afterAll, describe, it, expect, afterEach } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "../db-test-helpers.js";
 import { teamRouter, studentRouter } from "../../routers/index.js";
 import { errorHandlerMiddleware } from "../../middleware/error-handler-middleware.js";
