@@ -45,11 +45,11 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
       pronouns: editInfo.pronouns === "" ? null : editInfo.pronouns,
       languagesSpoken: editInfo.languagesSpoken,
       photoConsent: editInfo.photoConsent,
+      tshirtSize: editInfo.tshirtSize === "" ? null : editInfo.tshirtSize,
       dietaryRequirements:
         editInfo.dietaryRequirements === ""
           ? null
           : editInfo.dietaryRequirements,
-      tshirtSize: editInfo.tshirtSize === "" ? null : editInfo.tshirtSize,
     };
     console.log(update);
     try {

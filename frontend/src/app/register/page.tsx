@@ -34,7 +34,7 @@ export default function Register() {
 
   const submitForm = async () => {
     try {
-      const spokenLanguages: string[] = [];
+      const languagesSpoken: string[] = [];
       const photoConsent: boolean = false;
       if (password === confirmPassword && checked) {
         let role = convertRole[roleName];
@@ -81,7 +81,7 @@ export default function Register() {
             university,
             verificationCode,
             photoConsent,
-            spokenLanguages,
+            languagesSpoken,
           };
           const res = await axios.post(`${SERVER_URL}/api/students`, payload);
           localStorage.setItem("id", res.data.userId);

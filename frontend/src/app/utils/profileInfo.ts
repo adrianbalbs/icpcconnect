@@ -45,7 +45,7 @@ export const getInfo = async (id: string | null) => {
     console.log("fetch");
     const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
     const data: StudentInfo = res.data;
-    const languages = data.languagesSpoken?.map(i => i.name).toString();
+    const languages = data.languagesSpoken?.map(i => i.name).join(", ");
     console.log(data);
     const infoArr: [string, string | number][] = [
       ['Name', `${data.givenName} ${data.familyName}`],
@@ -55,7 +55,7 @@ export const getInfo = async (id: string | null) => {
       ['Languages Spoken', languages ?? '(Not added yet)'],
       ['Dietary Requirements', data.dietaryRequirements ? data.dietaryRequirements : '(Not added yet)'],
       ['Do you consent to appear in photos taken at the contest?', data.photoConsent ? 'Yes' : 'No'],
-      ['T-Shirt Size', data.tShirtSize ?? '(Not added yet)']
+      ['T-Shirt Size', data.tshirtSize ?? '(Not added yet)']
     ];
     current.id = data.id;
     current.id = data.university;
@@ -70,7 +70,7 @@ export const getInfo = async (id: string | null) => {
       languagesSpoken: data.languagesSpoken ? data.languagesSpoken.map(l => l.code) : [],
       photoConsent: data.photoConsent,
       dietaryRequirements: data.dietaryRequirements,
-      tshirtSize: data.tShirtSize,
+      tshirtSize: data.tshirtSize,
     }
     return current;
   } catch (error) {
