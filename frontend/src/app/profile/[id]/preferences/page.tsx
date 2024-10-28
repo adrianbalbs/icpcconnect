@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import profileStyles from '@/styles/Profile.module.css';
 import experienceStyles from '@/styles/Experience.module.css';
 import { ProfileProps } from '../page';
@@ -28,6 +28,7 @@ export interface PreferenceInput {
 }
 
 const Preferences: React.FC<ProfileProps> = ({ params }) => {
+  console.log(params);
   const [added, setAdded] = useState<PreferenceType>({
     team: false,
     pair: false,
@@ -51,7 +52,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
         {added.team && <TeamPreference teammates={preferences.team} />}
         {added.pair && <PairPreference { ...preferences.pair } />}
-        <ExclusionPreference students={preferences.exclusions} />
+        {added.exclusions && <ExclusionPreference students={preferences.exclusions} />}
         <PreferenceModal added={added} setAdded={setAdded} preferences={preferences} setPreferences={setPreferences} />
       </Box>
     </div>

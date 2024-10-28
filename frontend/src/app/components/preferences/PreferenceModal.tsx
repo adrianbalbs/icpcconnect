@@ -92,7 +92,7 @@ const PreferenceModal: React.FC<ModalProps> = ({ added, setAdded, preferences, s
             >
               {!added.team && <MenuItem sx={{ fontSize: '14px' }} value="team">Team Preference: &nbsp;already have two teammates</MenuItem>}
               {!added.pair && <MenuItem sx={{ fontSize: '14px' }} value="pair">Pair Preference: &nbsp;have one other teammate</MenuItem>}
-              <MenuItem sx={{ fontSize: '14px' }} value="exclusions">Exclusion Preference: &nbsp;don't want someone</MenuItem>
+              <MenuItem sx={{ fontSize: '14px' }} value="exclusions">Exclusion Preference: &nbsp;don&apos;t want someone</MenuItem>
             </Select>
           </FormControl>
           <TeamPairAlert { ...alert }/>

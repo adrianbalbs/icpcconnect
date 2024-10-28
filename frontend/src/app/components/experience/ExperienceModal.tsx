@@ -16,12 +16,12 @@ interface ModalProps {
   setExperience: Dispatch<SetStateAction<Experiences>>;
 }
 
-interface Languages {
-  cppExperience: string;
-  cExperience: string;
-  javaExperience: string;
-  pythonExperience: string;
-}
+// interface Languages {
+//   cppExperience: string;
+//   cExperience: string;
+//   javaExperience: string;
+//   pythonExperience: string;
+// }
 
 const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, setExperience }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
