@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -10,6 +9,11 @@ import { Checkbox, ListItemText } from "@mui/material";
 import { languagesList } from "@/utils/language";
 import pageStyles from "@/styles/Page.module.css";
 import profileStyles from "@/styles/Profile.module.css";
+
+interface LanguageProps {
+  languages: string[];
+  setLanguages: (languages: string[]) => void;
+}
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -30,9 +34,8 @@ function getStyles(name: string, languages: readonly string[], theme: Theme) {
   };
 }
 
-export default function SelectLanguage() {
+export const SelectLanguage = ({ languages, setLanguages }: LanguageProps) => {
   const theme = useTheme();
-  const [languages, setLanguages] = React.useState<string[]>([]);
 
   const handleChange = (event: SelectChangeEvent<typeof languages>) => {
     const {
@@ -77,4 +80,4 @@ export default function SelectLanguage() {
       <hr className={pageStyles.divider} />
     </>
   );
-}
+};
