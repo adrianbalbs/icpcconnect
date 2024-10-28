@@ -32,7 +32,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     const data = await getInfo(params.id);
     if (data !== undefined) {
       setInfo(data.info);
-      console.log(info);
+      setEditInfo(data.editInfo);
     }
   };
   const handleEditClick = () => {
@@ -41,7 +41,6 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
 
   const handleSaveClick = async () => {
     setIsEditing(false);
-    console.log(info);
     const update = {
       pronouns: editInfo.pronouns === "" ? null : editInfo.pronouns,
       languagesSpoken: editInfo.languagesSpoken,
@@ -53,9 +52,9 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
       tshirtSize: editInfo.tshirtSize === "" ? null : editInfo.tshirtSize,
     };
     console.log(update);
-    console.log(`${SERVER_URL}/api/students/${params.id}`);
     try {
       await axios.put(`${SERVER_URL}/api/students/${params.id}`, update);
+      storeInfo();
     } catch (error) {
       console.error("Failed to update:", error);
     }
@@ -89,7 +88,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
           <Info key={i[0]} name={capitalise(i[0])} value={i[1]} />
         ))
       ) : (
-        <Edit id={params.id} editInfo={editInfo} setEditInfo={setEditInfo} />
+        <Edit editInfo={editInfo} setEditInfo={setEditInfo} />
       )}
     </div>
   );

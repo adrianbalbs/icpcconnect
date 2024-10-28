@@ -13,6 +13,7 @@ export interface EditInfo {
 
 interface Info {
   id: string;
+  university: string;
   info: [string, string | number][];
   sideInfo: { name: string; role: string; pronouns: string; };
   editInfo: EditInfo;
@@ -20,6 +21,7 @@ interface Info {
 
 const current: Info = {
   id: '',
+  university: '',
   info: [],
   sideInfo: {
     name: '',
@@ -44,18 +46,19 @@ export const getInfo = async (id: string | null) => {
     const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
     const data: StudentInfo = res.data;
     const languages = data.languagesSpoken?.map(i => i.name).toString();
+    console.log(data);
     const infoArr: [string, string | number][] = [
       ['Name', `${data.givenName} ${data.familyName}`],
-      ['Pronouns', data.pronouns],
-      ['Team', data.team ? data.team : '(Unallocated)'],
+      ['Team', data.team ?? '(Unallocated)'],
       ['University', nameToId(data.university)],
       ['Student ID', data.studentId],
-      ['Languages Spoken', languages ? languages : '(Not added yet)'],
-      ['Dietary Requirements', data.dietaryRequirements],
+      ['Languages Spoken', languages ?? '(Not added yet)'],
+      ['Dietary Requirements', data.dietaryRequirements ? data.dietaryRequirements : '(Not added yet)'],
       ['Do you consent to appear in photos taken at the contest?', data.photoConsent ? 'Yes' : 'No'],
-      ['T-Shirt Size', data.tShirtSize ? data.tShirtSize : '(Not added yet)']
+      ['T-Shirt Size', data.tShirtSize ?? '(Not added yet)']
     ];
     current.id = data.id;
+    current.id = data.university;
     current.info = infoArr;
     current.sideInfo = {
       name: `${data.givenName} ${data.familyName}`,

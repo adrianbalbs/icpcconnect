@@ -14,7 +14,7 @@ export interface StudentInfo {
   email: string;
   role: string;
   pronouns: string;
-  studentId: number;
+  studentId: string;
   university: string;
   team: string;
   languagesSpoken?: { code: string; name: string }[];
