@@ -132,6 +132,8 @@ async function createDifferentUserObjs() {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     },
     {
       role: "student",
@@ -142,6 +144,8 @@ async function createDifferentUserObjs() {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     },
   ];
 

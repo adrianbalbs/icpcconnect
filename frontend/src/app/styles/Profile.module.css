@@ -121,3 +121,37 @@
   font-size: 12px;
   color: grey;
 }
+
+.edit-box {
+  width: 250px;
+  height: 22px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #BBBBBB;
+}
+
+.select-box {
+  width: 262px;
+  height: 35px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #BBBBBB;
+}
+
+.profile-button {
+  background-color: #333333;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  align-items: center;
+  width: 100px;
+  height: 35px;
+  position: absolute;
+  right: 120px;
+}
+
+
+.profile-button:hover {
+  opacity: 90%;
+  cursor: pointer;
+}
