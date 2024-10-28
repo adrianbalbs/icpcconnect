@@ -46,6 +46,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -56,6 +58,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -66,6 +70,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
     ];
 
@@ -104,6 +110,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -114,6 +122,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -124,6 +134,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
     ];
 
@@ -171,6 +183,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -181,6 +195,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
       {
         role: "student",
@@ -191,6 +207,8 @@ describe("TeamService tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
       },
     ];
 
