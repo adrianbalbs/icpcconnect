@@ -1,10 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import {
-  DatabaseConnection,
-  users,
-} from "../../db/index.js";
+import { DatabaseConnection, users } from "../../db/index.js";
 import {
   CreateTeamRequest,
   UpdateTeamRequest,
@@ -27,7 +24,6 @@ beforeAll(async () => {
     .use("/api", studentRouter(new StudentService(db)))
     .use("/api", teamRouter(new TeamService(db)))
     .use(errorHandlerMiddleware);
-
 });
 
 afterAll(async () => {
@@ -73,10 +69,13 @@ describe("TeamService tests", () => {
       },
     ];
 
-    const userIds : string[] = [];
+    const userIds: string[] = [];
     for (const student of students) {
-      const res = await request(app).post("/api/students").send(student).expect(200);
-      const { userId} = res.body;
+      const res = await request(app)
+        .post("/api/students")
+        .send(student)
+        .expect(200);
+      const { userId } = res.body;
       userIds.push(userId);
     }
 
@@ -128,10 +127,13 @@ describe("TeamService tests", () => {
       },
     ];
 
-    const userIds : string[] = [];
+    const userIds: string[] = [];
     for (const student of students) {
-      const res = await request(app).post("/api/students").send(student).expect(200);
-      const { userId} = res.body;
+      const res = await request(app)
+        .post("/api/students")
+        .send(student)
+        .expect(200);
+      const { userId } = res.body;
       userIds.push(userId);
     }
 
@@ -192,17 +194,20 @@ describe("TeamService tests", () => {
       },
     ];
 
-    const userIds : string[] = [];
+    const userIds: string[] = [];
     for (const student of students) {
-      const res = await request(app).post("/api/students").send(student).expect(200);
-      const { userId} = res.body;
+      const res = await request(app)
+        .post("/api/students")
+        .send(student)
+        .expect(200);
+      const { userId } = res.body;
       userIds.push(userId);
     }
 
     const team: CreateTeamRequest = {
       name: "epicTeam",
       university: 1,
-      memberIds: userIds.slice(1)
+      memberIds: userIds.slice(1),
     };
 
     const id_res = await request(app)
@@ -210,7 +215,6 @@ describe("TeamService tests", () => {
       .send(team)
       .expect(200);
     const { teamId } = id_res.body;
-
 
     const prevDetRes = await request(app)
       .get(`/api/teams/${teamId}`)
@@ -220,7 +224,7 @@ describe("TeamService tests", () => {
     const req: UpdateTeamRequest = {
       name: "reallyEpicTeam",
       university: 1,
-      memberIds: userIds
+      memberIds: userIds,
     };
     const res = await request(app)
       .put(`/api/teams/update/${teamId}`)
@@ -253,7 +257,6 @@ describe("TeamService tests", () => {
 
     await request(app).delete(`/api/teams/${teamId}`).expect(200);
     await request(app).delete(`/api/teams/${teamId}`).expect(400);
-
   });
 
   it("Throw when deleting a team that does not exist", async () => {
