@@ -363,7 +363,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
         // Stu1 = Single, Stu 2 = Pair
         if ((stu1.ids.length + stu2.ids.length) == 3) {
             group.ids = stu1.ids.concat(stu2.ids);
-            group.totalScore = (stu1.studentScore * 2) + stu2.studentScore;
+            group.totalScore = (stu2.studentScore * 2) + stu1.studentScore;
             group.flagged = checkExclusions(stu1.exclusions, stu2.names) || checkExclusions(stu2.exclusions, stu1.names)
             groups.push(group)
             continue;
@@ -472,6 +472,7 @@ export function checkExclusions(exclusions: string[], othernames: string[]): boo
 
     for (const name of othernames) {
         for (const excl of exclusions) {
+            if (excl == "" || excl == " ") { continue; }
             if (name.includes(excl)) {
                 return true;
             }
