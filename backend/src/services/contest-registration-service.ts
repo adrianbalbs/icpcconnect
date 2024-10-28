@@ -2,9 +2,7 @@ import {
   Course,
   coursesCompletedByStudent,
   DatabaseConnection,
-  languagesSpokenByStudent,
   registrationDetails,
-  SpokenLanguage,
 } from "../db/index.js";
 import {
   CreateContestRegistrationForm,
@@ -26,14 +24,11 @@ export type GetRegistrationFormResponse = {
   contestExperience: number;
   leetcodeRating: number;
   codeforcesRating: number;
-  allergies: string;
-  photoConsent: boolean;
   cppExperience: LanguageExperience;
   cExperience: LanguageExperience;
   javaExperience: LanguageExperience;
   pythonExperience: LanguageExperience;
   timeSubmitted: Date;
-  languagesSpoken: SpokenLanguage[];
   coursesCompleted: Course[];
 };
 
@@ -53,7 +48,6 @@ export class ContestRegistrationService {
     newRegistrationDetails: CreateContestRegistrationForm,
   ): Promise<CreateRegistrationFormResponse> {
     const {
-      allergies,
       cExperience,
       codeforcesRating,
       contestExperience,
@@ -62,9 +56,7 @@ export class ContestRegistrationService {
       javaExperience,
       level,
       leetcodeRating,
-      photoConsent,
       pythonExperience,
-      spokenLanguages,
       student,
     } = newRegistrationDetails;
 
@@ -72,11 +64,9 @@ export class ContestRegistrationService {
       .insert(registrationDetails)
       .values({
         student,
-        allergies,
         contestExperience,
         codeforcesRating,
         leetcodeRating,
-        photoConsent,
         level,
         cExperience,
         cppExperience,
@@ -84,12 +74,6 @@ export class ContestRegistrationService {
         pythonExperience,
       })
       .returning({ studentId: registrationDetails.student });
-
-    for (const languageCode of spokenLanguages) {
-      await this.db
-        .insert(languagesSpokenByStudent)
-        .values({ studentId, languageCode });
-    }
 
     for (const courseId of coursesTaken) {
       await this.db
@@ -106,11 +90,6 @@ export class ContestRegistrationService {
     const result = await this.db.query.registrationDetails.findFirst({
       where: eq(registrationDetails.student, studentId),
       with: {
-        languagesSpoken: {
-          with: {
-            language: true,
-          },
-        },
         coursesCompleted: {
           with: {
             course: true,
@@ -126,7 +105,6 @@ export class ContestRegistrationService {
     }
     return {
       ...result,
-      languagesSpoken: result.languagesSpoken.map((ls) => ls.language),
       coursesCompleted: result.coursesCompleted.map((ls) => ls.course),
     };
   }
@@ -139,11 +117,6 @@ export class ContestRegistrationService {
             university: true,
           },
         },
-        languagesSpoken: {
-          with: {
-            language: true,
-          },
-        },
         coursesCompleted: {
           with: {
             course: true,
@@ -154,7 +127,6 @@ export class ContestRegistrationService {
     return {
       registrations: registrations.map((registration) => ({
         ...registration,
-        languagesSpoken: registration.languagesSpoken.map((ls) => ls.language),
         coursesCompleted: registration.coursesCompleted.map((ls) => ls.course),
       })),
     };
@@ -164,55 +136,37 @@ export class ContestRegistrationService {
     studentId: string,
     updatedDetails: UpdateContestRegistrationForm,
   ): Promise<UpdateContestRegistrationFormResponse> {
-    const {
-      allergies,
-      cExperience,
-      codeforcesRating,
-      contestExperience,
-      coursesTaken,
-      cppExperience,
-      javaExperience,
-      leetcodeRating,
-      level,
-      photoConsent,
-      pythonExperience,
-      spokenLanguages,
-    } = updatedDetails;
+    const { coursesTaken, ...rest } = updatedDetails;
 
-    await this.db
-      .update(registrationDetails)
-      .set({
-        allergies,
-        contestExperience,
-        codeforcesRating,
-        leetcodeRating,
-        photoConsent,
-        level,
-        cExperience,
-        cppExperience,
-        javaExperience,
-        pythonExperience,
-      })
-      .where(eq(registrationDetails.student, studentId));
+    const cleanedUpdatedDetails = Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined),
+    );
 
-    await this.db
-      .delete(languagesSpokenByStudent)
-      .where(eq(languagesSpokenByStudent.studentId, studentId));
-    await this.db
-      .delete(coursesCompletedByStudent)
-      .where(eq(coursesCompletedByStudent.studentId, studentId));
+    const result = await this.db.transaction(async (tx) => {
+      if (Object.keys(cleanedUpdatedDetails).length > 0) {
+        await tx
+          .update(registrationDetails)
+          .set({
+            ...cleanedUpdatedDetails,
+            timeSubmitted: new Date(),
+          })
+          .where(eq(registrationDetails.student, studentId));
+      }
 
-    for (const languageCode of spokenLanguages) {
-      await this.db
-        .insert(languagesSpokenByStudent)
-        .values({ studentId, languageCode });
-    }
-    for (const courseId of coursesTaken) {
-      await this.db
-        .insert(coursesCompletedByStudent)
-        .values({ studentId, courseId });
-    }
-    return updatedDetails;
+      if (coursesTaken) {
+        await tx
+          .delete(coursesCompletedByStudent)
+          .where(eq(coursesCompletedByStudent.studentId, studentId));
+        for (const courseId of coursesTaken) {
+          await tx
+            .insert(coursesCompletedByStudent)
+            .values({ studentId, courseId });
+        }
+      }
+      return { ...rest, coursesTaken };
+    });
+
+    return result;
   }
 
   async deleteRegistration(studentId: string): Promise<DeleteResponse> {

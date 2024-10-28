@@ -3,15 +3,17 @@ import { UserRole } from "../schemas/user-schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { getLogger } from "../utils/logger.js";
 import { DatabaseConnection } from "./database.js";
+import { SpokenLanguage } from "../schemas/user-schema.js";
 import {
   coaches,
   Course,
   courses,
   siteCoordinators,
-  spokenLanguages,
+  languagesSpoken,
   students,
   universities,
   users,
+  languagesSpokenByStudent,
 } from "./schema.js";
 
 type UserTable = {
@@ -28,6 +30,8 @@ type StudentTable = UserTable & {
   team: string | null;
   pronouns: string;
   studentId: string;
+  photoConsent: boolean,
+  languagesSpoken: SpokenLanguage[],
 };
 
 type CoachTable = UserTable & {
@@ -48,6 +52,8 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
     team,
     pronouns,
     studentId,
+    photoConsent,
+    languagesSpoken,
   } = student;
 
   const newPassword = await passwordUtils().hash(password);
@@ -61,18 +67,16 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
     if (!existing) {
       const [user] = await tx
         .insert(users)
-        .values({
-          id,
-          givenName,
-          familyName,
-          email,
-          password: newPassword,
-          role,
-        })
+        .values({ id, givenName, familyName, email, password: newPassword, role })
         .returning({ userId: users.id });
       await tx
         .insert(students)
-        .values({ userId: user.userId, university, team, pronouns, studentId });
+        .values({ userId: user.userId, university, team, pronouns, studentId, photoConsent });
+      for (const languageCode of languagesSpoken) {
+        await tx
+          .insert(languagesSpokenByStudent)
+          .values({ studentId: user.userId, languageCode });
+      }
     }
   });
 };
@@ -162,8 +166,8 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding Language Information");
   await db
-    .insert(spokenLanguages)
-    .values(data.default.spokenLanguages)
+    .insert(languagesSpoken)
+    .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 
   logger.info("Adding dummy students");
@@ -211,7 +215,7 @@ export const seedTest = async (db: DatabaseConnection) => {
     .values(data.default.courses as Course[])
     .onConflictDoNothing();
   await db
-    .insert(spokenLanguages)
-    .values(data.default.spokenLanguages)
+    .insert(languagesSpoken)
+    .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 };

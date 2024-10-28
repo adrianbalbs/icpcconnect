@@ -26,6 +26,7 @@ import {
 } from "./middleware/index.js";
 import { getLogger } from "./utils/logger.js";
 import { contestRegistrationRouter } from "./routers/contest-registration-router.js";
+import { AlgorithmService } from "./services/algorithm-service.js";
 
 const logger = getLogger();
 
@@ -46,6 +47,7 @@ const contestRegistrationService = new ContestRegistrationService(
 const authService = new AuthService(databaseConnection);
 const codesService = new CodesService(databaseConnection);
 const adminService = new AdminService(databaseConnection);
+const algorithmService = new AlgorithmService(databaseConnection);
 
 logger.info("Setup HTTP Server");
 app
@@ -60,7 +62,16 @@ app
   .use("/api", contestRegistrationRouter(contestRegistrationService))
   .use("/api", authRouter(authService))
   .use("/api", codesRouter(codesService))
-  .use("/api", adminRouter(adminService, coachService, studentService, siteCoordinatorService))
+  .use(
+    "/api",
+    adminRouter(
+      adminService,
+      coachService,
+      studentService,
+      siteCoordinatorService,
+      algorithmService
+    ),
+  )
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {

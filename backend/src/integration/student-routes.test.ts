@@ -43,6 +43,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -63,6 +65,8 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -73,6 +77,8 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -83,6 +89,8 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
     ];
 
@@ -104,6 +112,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const user = await request(app).post("/api/students").send(req).expect(200);
 
@@ -130,25 +140,69 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const res = await request(app)
       .post("/api/students")
       .send(newStudent)
       .expect(200);
 
-    await request(app).get(`/api/students/${res.body.userId}`).expect(200);
+    const oldStudentDetails = await request(app)
+      .get(`/api/students/${res.body.userId}`)
+      .expect(200);
 
     const req: UpdateStudentRequest = {
-      ...newStudent,
       pronouns: "he/him",
       team: null,
+      dietaryRequirements: "vegan",
+      tshirtSize: "M",
     };
 
-    const result = await request(app)
+    await request(app)
       .put(`/api/students/${res.body.userId}`)
       .send(req)
       .expect(200);
-    expect(result.body.pronouns).toEqual(req.pronouns);
+
+    const newStudentDetails = await request(app)
+      .get(`/api/students/${res.body.userId}`)
+      .expect(200);
+    expect(oldStudentDetails.body).not.toEqual(newStudentDetails.body);
+  });
+
+  it("should not update the students details when there are no changes", async () => {
+    const newStudent: CreateStudentRequest = {
+      role: "student",
+      givenName: "Adrian",
+      familyName: "Balbalosa",
+      email: "adrianbalbs@comp3900.com",
+      studentId: "z5397730",
+      password: "helloworld",
+      university: 1,
+      verificationCode: "test",
+      photoConsent: false,
+      languagesSpoken: [],
+    };
+    const res = await request(app)
+      .post("/api/students")
+      .send(newStudent)
+      .expect(200);
+
+    const oldStudentDetails = await request(app)
+      .get(`/api/students/${res.body.userId}`)
+      .expect(200);
+
+    const req: UpdateStudentRequest = {};
+
+    await request(app)
+      .put(`/api/students/${res.body.userId}`)
+      .send(req)
+      .expect(200);
+
+    const newStudentDetails = await request(app)
+      .get(`/api/students/${res.body.userId}`)
+      .expect(200);
+    expect(oldStudentDetails.body).toEqual(newStudentDetails.body);
   });
 
   it("should remove student from the database", async () => {
@@ -161,6 +215,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const res = await request(app)
       .post("/api/students")

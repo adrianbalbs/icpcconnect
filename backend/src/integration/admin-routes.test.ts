@@ -24,6 +24,7 @@ import {
 } from "../schemas/index.js";
 import { beforeAll, afterAll, describe, afterEach, it, expect } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
+import { AlgorithmService } from "../services/algorithm-service.js";
 
 let db: DatabaseConnection;
 let adminApp: ReturnType<typeof express>;
@@ -43,6 +44,7 @@ beforeAll(async () => {
         new CoachService(db),
         new StudentService(db),
         new SiteCoordinatorService(db),
+        new AlgorithmService(db)
       ),
     );
   coachApp = express()
@@ -130,6 +132,8 @@ async function createDifferentUserObjs() {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     },
     {
       role: "student",
@@ -140,6 +144,8 @@ async function createDifferentUserObjs() {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     },
   ];
 
@@ -265,9 +271,9 @@ describe("adminRouter tests", () => {
     const new_pronouns = "he/him";
     const new_email = "adrianbalbs@comp3900.com";
     const req: UpdateStudentRequest = {
-      ...fouthObj,
       email: new_email,
       pronouns: new_pronouns,
+      role: "student",
       team: null,
     };
 
