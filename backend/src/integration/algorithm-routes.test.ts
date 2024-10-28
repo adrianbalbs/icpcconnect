@@ -98,7 +98,7 @@ describe("Algorithm Tests", () => {
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -170,7 +170,7 @@ describe("Algorithm Tests", () => {
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -252,7 +252,7 @@ describe("Algorithm Tests", () => {
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -334,7 +334,7 @@ describe("Algorithm Tests", () => {
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -446,7 +446,7 @@ describe("Algorithm Tests", () => {
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
       };
 
       await request(app)
@@ -542,7 +542,7 @@ describe("Algorithm Tests", () => {
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
       };
 
       await request(app)

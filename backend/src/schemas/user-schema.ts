@@ -231,7 +231,7 @@ export const CreateStudentRequestSchema = z.object({
   university: z.number(),
   verificationCode: z.string(),
   photoConsent: z.boolean(),
-  spokenLanguages: z.array(SpokenLanguageEnum),
+  languagesSpoken: z.array(SpokenLanguageEnum),
 });
 
 export type CreateStudentRequest = z.infer<typeof CreateStudentRequestSchema>;

@@ -43,7 +43,7 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -65,7 +65,7 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
         photoConsent: true,
       },
       {
@@ -77,7 +77,7 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
         photoConsent: true,
       },
       {
@@ -89,7 +89,7 @@ describe("studentRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
         photoConsent: true,
       },
     ];
@@ -112,7 +112,7 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const user = await request(app).post("/api/students").send(req).expect(200);
@@ -140,7 +140,7 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const res = await request(app)
@@ -181,7 +181,7 @@ describe("studentRouter tests", () => {
       university: 1,
       verificationCode: "test",
       photoConsent: false,
-      spokenLanguages: [],
+      languagesSpoken: [],
     };
     const res = await request(app)
       .post("/api/students")
@@ -215,7 +215,7 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const res = await request(app)

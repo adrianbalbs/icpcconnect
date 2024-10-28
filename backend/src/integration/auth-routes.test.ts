@@ -55,7 +55,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -88,7 +88,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -221,7 +221,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -254,7 +254,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -282,7 +282,7 @@ describe("authRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)

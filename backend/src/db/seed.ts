@@ -9,7 +9,7 @@ import {
   Course,
   courses,
   siteCoordinators,
-  spokenLanguages,
+  languagesSpoken,
   students,
   universities,
   users,
@@ -166,8 +166,8 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding Language Information");
   await db
-    .insert(spokenLanguages)
-    .values(data.default.spokenLanguages)
+    .insert(languagesSpoken)
+    .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 
   logger.info("Adding dummy students");
@@ -215,7 +215,7 @@ export const seedTest = async (db: DatabaseConnection) => {
     .values(data.default.courses as Course[])
     .onConflictDoNothing();
   await db
-    .insert(spokenLanguages)
-    .values(data.default.spokenLanguages)
+    .insert(languagesSpoken)
+    .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 };

@@ -125,12 +125,12 @@ export const registrationDetailsRelations = relations(
   }),
 );
 
-export const spokenLanguages = pgTable("spoken_languages", {
+export const languagesSpoken = pgTable("spoken_languages", {
   code: text("code").primaryKey().notNull(),
   name: text("name").notNull(),
 });
 
-export type SpokenLanguage = InferSelectModel<typeof spokenLanguages>;
+export type SpokenLanguage = InferSelectModel<typeof languagesSpoken>;
 
 export const languagesSpokenByStudent = pgTable(
   "languages_spoken_by_student",
@@ -139,7 +139,7 @@ export const languagesSpokenByStudent = pgTable(
       .references(() => students.userId, { onDelete: "cascade" })
       .notNull(),
     languageCode: text("language_code")
-      .references(() => spokenLanguages.code, { onDelete: "cascade" })
+      .references(() => languagesSpoken.code, { onDelete: "cascade" })
       .notNull(),
   },
   (table) => {
@@ -156,15 +156,15 @@ export const languagesSpokenByStudentRelations = relations(
       fields: [languagesSpokenByStudent.studentId],
       references: [students.userId],
     }),
-    language: one(spokenLanguages, {
+    language: one(languagesSpoken, {
       fields: [languagesSpokenByStudent.languageCode],
-      references: [spokenLanguages.code],
+      references: [languagesSpoken.code],
     }),
   }),
 );
 
-export const spokenLanguagesRelations = relations(
-  spokenLanguages,
+export const languagesSpokenRelations = relations(
+  languagesSpoken,
   ({ many }) => ({
     spokenBy: many(languagesSpokenByStudent),
   }),

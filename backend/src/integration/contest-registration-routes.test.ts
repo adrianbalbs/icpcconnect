@@ -51,7 +51,7 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -89,7 +89,7 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -135,7 +135,7 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)
@@ -196,7 +196,7 @@ describe("contestRegistrationRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
         photoConsent: true,
       },
       {
@@ -208,7 +208,7 @@ describe("contestRegistrationRouter tests", () => {
         password: "password123",
         university: 2,
         verificationCode: "test",
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
         photoConsent: true,
       },
       {
@@ -220,7 +220,7 @@ describe("contestRegistrationRouter tests", () => {
         password: "securepass",
         university: 3,
         verificationCode: "test",
-        spokenLanguages: ["en"],
+        languagesSpoken: ["en"],
         photoConsent: true,
       },
     ];
@@ -270,7 +270,7 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
-      spokenLanguages: ["en"],
+      languagesSpoken: ["en"],
       photoConsent: true,
     };
     const response = await request(app)

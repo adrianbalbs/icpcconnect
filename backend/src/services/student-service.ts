@@ -52,7 +52,7 @@ export class StudentService {
       role,
       studentId,
       university,
-      spokenLanguages,
+      languagesSpoken,
       photoConsent,
     } = req;
 
@@ -76,7 +76,7 @@ export class StudentService {
     });
 
 
-    for (const languageCode of spokenLanguages) {
+    for (const languageCode of languagesSpoken) {
       await this.db
         .insert(languagesSpokenByStudent)
         //This is meant to be the student's userId, not their *studentId* 
@@ -236,6 +236,9 @@ export class StudentService {
       studentId: rest.studentId,
       university: rest.university,
       pronouns: rest.pronouns,
+      tshirtSize: rest.tshirtSize,
+      dietaryRequirements: rest.dietaryRequirements,
+      photoConsent: rest.photoConsent,
       team: rest.team,
     };
     if (password) {
@@ -264,12 +267,12 @@ export class StudentService {
           .where(eq(students.userId, userId));
       }
 
-      if (rest.spokenLanguages) {
+      if (rest.languagesSpoken) {
         await tx
           .delete(languagesSpokenByStudent)
           .where(eq(languagesSpokenByStudent.studentId, userId));
 
-        for (const languageCode of rest.spokenLanguages) {
+        for (const languageCode of rest.languagesSpoken) {
           await tx
             .insert(languagesSpokenByStudent)
             .values({ studentId: userId, languageCode });
