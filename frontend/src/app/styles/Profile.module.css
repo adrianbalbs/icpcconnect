@@ -127,7 +127,7 @@
   height: 22px;
   padding: 5px;
   border-radius: 5px;
-  border: 1px solid gray;
+  border: 1px solid #BBBBBB;
 }
 
 .select-box {
@@ -135,7 +135,7 @@
   height: 35px;
   padding: 5px;
   border-radius: 5px;
-  border: 1px solid gray;
+  border: 1px solid #BBBBBB;
 }
 
 .profile-button {

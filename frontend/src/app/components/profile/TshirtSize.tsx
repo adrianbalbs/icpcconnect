@@ -30,6 +30,7 @@ export const TshirtSize = ({ tshirtSize, setTshirtSize }: TshirtProps) => {
       <div className={profileStyles.content}>
         <p className={pageStyles.bold}>T-Shirt Size</p>
         <select
+          className={profileStyles["select-box"]}
           value={tshirtSize ?? "Select T-Shirt Size"}
           onChange={setTshirtSize}
         >
