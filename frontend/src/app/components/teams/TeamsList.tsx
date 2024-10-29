@@ -17,7 +17,9 @@ const TeamsList: React.FC = () => {
 
   const getTeams = async () => {
     try {
-      const res = await axios.get(`${SERVER_URL}/api/teams/all`);
+      const res = await axios.get(`${SERVER_URL}/api/teams/all`, {
+        withCredentials: true,
+      });
       const data = res.data;
       console.log(data);
       // setTeams(data);

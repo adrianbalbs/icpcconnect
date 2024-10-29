@@ -30,7 +30,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
 
   useEffect(() => {
     storeInfo();
-  }, []);
+  }, [params.id]);
 
   return (
     <div className={profileStyles.screen}>
