@@ -1015,7 +1015,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
                 Courses.data_struct_and_algos,
                 Courses.algorithm_design
             ],
-            spokenLanguages: ["ab"],
+            languagesSpoken: ["ab"],
             cppExperience: Experience.prof,
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
@@ -1037,7 +1037,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[0]).toEqual({
             ids: [s1.id, s2.id],
             studentScore: (calculateScore(s1) + calculateScore(s2)) / 2,
-            spokenLanguages: ["ab", "ab"],
+            languagesSpoken: ["ab", "ab"],
             cppExperience: Experience.prof,
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,
@@ -1048,7 +1048,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
         expect(calcscores[1]).toEqual({
             ids: [s3.id],
             studentScore: calculateScore(s3),
-            spokenLanguages: ["ab"],
+            languagesSpoken: ["ab"],
             cppExperience: Experience.prof,
             cExpericence: Experience.prof,
             javaExperience: Experience.prof,

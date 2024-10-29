@@ -50,6 +50,11 @@ CREATE TABLE IF NOT EXISTS "invite_codes" (
 	"created_at::timestamp without time zone" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "spoken_languages" (
+	"code" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "languages_spoken_by_student" (
 	"student_id" uuid NOT NULL,
 	"language_code" text NOT NULL,
@@ -74,11 +79,6 @@ CREATE TABLE IF NOT EXISTS "site_coordinators" (
 	"university" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "spoken_languages" (
-	"code" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "students" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"student_id" text NOT NULL,
@@ -87,13 +87,15 @@ CREATE TABLE IF NOT EXISTS "students" (
 	"tshirt_size" text,
 	"team" uuid,
 	"photo_consent" boolean NOT NULL,
-	"university" integer NOT NULL
+	"university" integer NOT NULL,
+	"exclusions" text DEFAULT '' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "teams" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(50),
-	"university" integer
+	"university" integer,
+	"flagged" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "universities" (

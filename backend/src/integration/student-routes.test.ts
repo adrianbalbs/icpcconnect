@@ -244,6 +244,8 @@ describe("studentRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      photoConsent: true,
+      languagesSpoken: ["ab"]
     };
     const response = await request(app)
       .post("/api/students")
