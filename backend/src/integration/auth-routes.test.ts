@@ -331,6 +331,8 @@ describe("authRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -373,6 +375,8 @@ describe("authRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
