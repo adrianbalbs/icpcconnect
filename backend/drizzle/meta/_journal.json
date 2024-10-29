@@ -15,6 +15,13 @@
       "when": 1730697405959,
       "tag": "0001_rare_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1730201723244,
+      "tag": "0001_brave_warbird",
+      "breakpoints": true
     }
   ]
 }

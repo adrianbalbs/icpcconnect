@@ -60,6 +60,7 @@ export const universityRelations = relations(universities, ({ one, many }) => ({
   hostedUniversities: many(universities, {
     relationName: "hosted_universities",
   }),
+  contests: one(contests),
 }));
 
 export type University = InferSelectModel<typeof universities>;
@@ -265,3 +266,21 @@ export const verifyEmail = pgTable("verify_emails", {
 });
 
 export type VerifyEmail = InferSelectModel<typeof verifyEmail>;
+
+export const contests = pgTable("contests", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: varchar("name", { length: 256 }),
+  earlyBirdDate: timestamp("early_bird_date", { mode: "date" }).notNull(),
+  cutoffDate: timestamp("cutoff_date", { mode: "date" }).notNull(),
+  contestDate: timestamp("contest_date", { mode: "date" }).notNull(),
+  site: integer("university")
+    .references(() => universities.id)
+    .notNull(),
+});
+
+export const contestRelations = relations(contests, ({ one }) => ({
+  site: one(universities, {
+    fields: [contests.site],
+    references: [universities.id],
+  }),
+}));
