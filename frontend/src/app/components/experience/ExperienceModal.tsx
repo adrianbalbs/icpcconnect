@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { SERVER_URL } from '@/utils/constants';
 import { addBtn, addExperienceBtn, addModal } from '@/styles/sxStyles';
 import pageStyles from '@/styles/Page.module.css';
 import experienceStyles from '@/styles/Experience.module.css';
@@ -10,35 +12,18 @@ import NumberInput from './NumberInput';
 import CourseCheckbox from './CourseCheckbox';
 
 interface ModalProps {
+  id: string;
   added: ExperienceType;
   setAdded: Dispatch<SetStateAction<ExperienceType>>;
   experience: Experiences;
-  setExperience: Dispatch<SetStateAction<Experiences>>;
 }
 
-// interface Languages {
-//   cppExperience: string;
-//   cExperience: string;
-//   javaExperience: string;
-//   pythonExperience: string;
-// }
-
-const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, setExperience }) => {
+const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
   const [disable, setDisable] = useState(false);
   const [newExperience, setNewExperience] = useState<Experiences>(experience);
-  // const [languages, setLanguages] = useState<Languages>({
-  //   cppExperience: 'none',
-  //   cExperience: 'none',
-  //   javaExperience: 'none',
-  //   pythonExperience: 'none'
-  // });
-  // const [courses, setCourses] = useState({ coursesCompleted: [] });
-  // const [contest, setContest] = useState({ contestExperience: 0 });
-  // const [leetcode, setLeetcode] = useState({ leetcodeRating: 0 });
-  // const [codeforces, setCodeforces] = useState({ codeforcesRating: 0 });
 
   const handleOpen = () => {
     setOpen(true);
@@ -57,16 +42,23 @@ const ExperienceModal: React.FC<ModalProps> = ({ added, setAdded, experience, se
     setType(event.target.value);
   };
 
-  const addExperience = () => {
-    const newAdded = { ...added, [type]: true }
-    setAdded(newAdded);
-    setExperience(newExperience);
+  // const handleChange = (changed: string, value: string | number | number[]) => {
+  //   setNewExperience({ ...newExperience, [changed]: value });
+  // }
+
+  const addExperience = async () => {
+    try {
+      await axios.put(`${SERVER_URL}/api/contest-registration/${id}`, newExperience);
+      setAdded({ ...added, [type]: true });
+    } catch (error) {
+      console.log(`Update experience error: ${error}`);
+    }
     handleClose();
   }
 
   useEffect(() => {
     if (buttonRef.current) {
-        buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }, [type]);
 
