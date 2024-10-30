@@ -57,31 +57,30 @@ const TeamRegistration = () => {
       <p className={teamStyles.indent}>
         <span className={teamStyles.bold}>{completed} of 3 </span> 
         completed
-        <div className={pageStyles['horizontal-container']}>
-          <Tile
-            title="Edit your Profile"
-            description="Add your preferred pronouns, any allergies or dietary requirements and choose a photo to represent yourself"
-            buttonText="Edit"
-            buttonTo={`profile/${id}`}
-            added={added.profile}
-          />
-          <Tile 
-            title="Add Experiences"
-            description="Tell us what you’re good at, so we can match you with like-minded teammates!"
-            buttonText="Fill In"
-            buttonTo={`profile/${id}/experience`}
-            added={added.experience}
-          />
-          <Tile 
-            title="Complete Preferences"
-            description="Let us know who you do or do not want to be matched with! Other students won’t see your preferences."
-            buttonText="Complete"
-            buttonTo={`profile/${id}/preferences`}
-            added={added.preference}
-            setAdded={checkPreference}
-          />
-        </div>
       </p>
+      <div className={pageStyles['horizontal-container']}>
+        <Tile
+          title="Edit your Profile"
+          description="Add your preferred pronouns, any allergies or dietary requirements and choose a photo to represent yourself"
+          buttonText="Edit"
+          buttonTo={`profile/${id}`}
+          added={added.profile}
+        />
+        <Tile 
+          title="Add Experiences"
+          description="Tell us what you’re good at, so we can match you with like-minded teammates!"
+          buttonText="Fill In"
+          buttonTo={`profile/${id}/experience`}
+          added={added.experience}
+        />
+        <Tile 
+          title="Complete Preferences"
+          description="Let us know who you do or do not want to be matched with! Other students won’t see your preferences."
+          buttonText="Complete"
+          buttonTo={`profile/${id}/preferences`}
+          added={added.preference}
+        />
+      </div>
       {/* <Button disabled={completed < 3} onClick={() => setEnrolled(!enrolled)} sx={{ m: '0 auto' }}>
         {enrolled ? 'Withdraw enrolment' : 'Enrol for team'}
       </Button> */}

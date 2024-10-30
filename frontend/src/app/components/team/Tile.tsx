@@ -12,9 +12,7 @@ interface Props {
 const Tile: React.FC<Props> = ({ title, description, buttonText, buttonTo, added, setAdded }) => {
   return (
     <div className={pageStyles.tile}>
-      <div className={pageStyles['tile-title']}>
-        <h2>{title}</h2>
-      </div>
+      <h2 className={pageStyles['tile-title']}>{title}</h2>
       <div className={pageStyles['tile-description']}>
         <p>{description}</p>
       </div>
