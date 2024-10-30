@@ -84,7 +84,7 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
               onChange={handleSelect}
             >
               <MenuItem sx={{ fontSize: '14px' }} value="language">Programming Language Experience</MenuItem>
-              <MenuItem sx={{ fontSize: '14px' }} value="coursesTaken">Relevant Courses</MenuItem>
+              <MenuItem sx={{ fontSize: '14px' }} value="coursesCompleted">Relevant Courses</MenuItem>
               <MenuItem sx={{ fontSize: '14px' }} value="contestExperience">Past Contests</MenuItem>
               <MenuItem sx={{ fontSize: '14px' }} value="leetcodeRating">LeetCode Contest Rating</MenuItem>
               <MenuItem sx={{ fontSize: '14px' }} value="codeforcesRating">Codeforces Contest Rating</MenuItem>
@@ -97,7 +97,7 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
             <LanguageSlider type="java" experience={newExperience} setExperience={setNewExperience} />
             <LanguageSlider type="python" experience={newExperience} setExperience={setNewExperience} />
           </Box>}
-          {type === 'coursesTaken' && <CourseCheckbox setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
+          {type === 'coursesCompleted' && <CourseCheckbox setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
           {type === 'contestExperience' && <NumberInput type={0} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
           {type === 'leetcodeRating' && <NumberInput type={1} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
           {type === 'codeforcesRating' && <NumberInput type={2} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}

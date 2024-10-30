@@ -27,7 +27,7 @@ const ContestExperience = ({ added, experience }: ContestProps) => {
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { coursesTaken, language, ...contests } = added;
+    const { coursesCompleted, language, ...contests } = added;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { codeforcesRating, contestExperience, leetcodeRating, ...other } = experience;
     setContestAdded(contests);

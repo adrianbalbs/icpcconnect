@@ -17,9 +17,9 @@ const CourseCheckbox: React.FC<CheckboxProps> = ({ setDisable, experience, setEx
     setCourses({ ...courses, [course]: event.target.checked });
 
     // Attempt to filter out course regardless of adding or removing (avoid duplicates)
-    const coursesCompleted = experience.coursesTaken.filter(i => i !== course);
+    const coursesCompleted = experience.coursesCompleted.filter(i => i !== course);
     if (event.target.checked) coursesCompleted.push(course);
-    setExperience({ ...experience, coursesTaken: coursesCompleted });
+    setExperience({ ...experience, coursesCompleted });
   }
 
   useEffect(() => {

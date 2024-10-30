@@ -15,7 +15,7 @@ import ContestExperience from '@/components/experience/ContestExperience';
 export interface ExperienceType {
   codeforcesRating: boolean;
   contestExperience: boolean;
-  coursesTaken: boolean;
+  coursesCompleted: boolean;
   language: boolean;
   leetcodeRating: boolean;
 }
@@ -30,7 +30,7 @@ export interface Experiences {
   cExperience: string;
   javaExperience: string;
   pythonExperience: string;
-  coursesTaken: number[];
+  coursesCompleted: number[];
 }
 
 const Experience: React.FC<ProfileProps> = ({ params }) => {
@@ -44,7 +44,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
   const [added, setAdded] = useState<ExperienceType>({
     codeforcesRating: false,
     contestExperience: false,
-    coursesTaken: false,
+    coursesCompleted: false,
     language: false,
     leetcodeRating: false,
   });
@@ -58,7 +58,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     cExperience: 'none',
     javaExperience: 'none',
     pythonExperience: 'none',
-    coursesTaken: [],
+    coursesCompleted: [],
   });
 
   const createRegistration = async () => {
@@ -73,7 +73,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     setAdded({
       codeforcesRating: experience.codeforcesRating > 0,
       contestExperience: experience.contestExperience > 0,
-      coursesTaken: experience.coursesTaken.length > 0,
+      coursesCompleted: experience.coursesCompleted.length > 0,
       language: true,
       leetcodeRating: experience.leetcodeRating > 0,
     });
@@ -83,9 +83,9 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     try {
       const res = await axios.get(`${SERVER_URL}/api/contest-registration/${params.id}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { student, timeSubmitted, coursesCompleted, ...newExperience } = res.data;
+      const { student, timeSubmitted, ...newExperience } = res.data;
       console.log(res.data);
-      setExperience({ ...newExperience, coursesTaken: coursesCompleted });
+      setExperience(newExperience);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 404) {
@@ -120,7 +120,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       <hr className={experienceStyles.divider}/>
       <Box sx={{ height: 'calc(100% - 121px)', overflow: 'scroll' }}>
         {added.language && <LanguageExperience { ...experience } />}
-        {added.coursesTaken && <CoursesExperience coursesTaken={experience.coursesTaken} />}
+        {added.coursesCompleted && <CoursesExperience coursesTaken={experience.coursesCompleted} />}
         {(added.contestExperience || added.leetcodeRating || added.codeforcesRating) &&
           <ContestExperience added={added} experience={experience} />
         }
