@@ -198,7 +198,6 @@ describe("contestRegistrationRouter tests", () => {
       .send(registration)
       .expect(200);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { student: _, ...registrationWithoutStudent } = registration;
     const newDetails: UpdateContestRegistrationForm = {
       ...registrationWithoutStudent,
