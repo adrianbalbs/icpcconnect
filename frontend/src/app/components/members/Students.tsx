@@ -14,28 +14,17 @@ export interface StudentInfo {
   email: string;
   role: string;
   pronouns: string;
-  studentId: number;
+  studentId: string;
   university: string;
   team: string;
+  languagesSpoken?: { code: string; name: string }[];
+  dietaryRequirements: string;
+  photoConsent: boolean;
+  tshirtSize: string | null;
 }
 
 const Students: React.FC = () => {
-  const [students, setStudents] = useState<StudentProps[]>([
-    {
-      id: "123",
-      name: "Rachel Chen",
-      team: "Randos",
-      institution: "UNSW",
-      email: "asdlakds",
-    },
-    {
-      id: "123",
-      name: "Rachel Chen",
-      team: "Randos",
-      institution: "UNSW",
-      email: "asdlakds",
-    },
-  ]);
+  const [students, setStudents] = useState<StudentProps[]>([]);
 
   const getStudents = async () => {
     try {
@@ -46,13 +35,13 @@ const Students: React.FC = () => {
       const filteredInfo: StudentProps[] = allStudents.map((student) => ({
         id: student.id,
         name: student.givenName + " " + student.familyName,
-        team: student.team,
+        team: student.team ? student.team : "(not allocated)",
         institution: student.university,
         email: student.email,
       }));
       setStudents(filteredInfo);
     } catch (error) {
-      alert(`Get students: ${error}`);
+      console.log(`Get students: ${error}`);
     }
   };
 

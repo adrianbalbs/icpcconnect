@@ -1,0 +1,60 @@
+.teams {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  row-gap: 50px;
+  margin-top: 30px;
+}
+
+.team-container {
+  display: block;
+  height: 240px;
+  width: 300px;
+  padding: 20px 20.5px;
+  background-color: #D9D9D9;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+}
+
+.team {
+  height: 200px;
+  width: 259px;
+  padding: 20px;
+  background-color: white;
+}
+
+.team-heading {
+  margin: 130px 0 0 20px;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.status {
+  font-weight: normal;
+  font-style: italic;
+  color: grey;
+}
+
+.university {
+  margin: 10px 0 30px 40px;
+  font-size: 13px;
+}
+
+.todo {
+  margin: 40px 0 10px 20px;
+  font-size: 23px;
+  font-weight: 600;
+}
+
+.indent {
+  margin-left: 20px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.teams-heading {
+  margin: 130px 0 0 5px;
+  font-size: 16px;
+  font-weight: 600;
+}

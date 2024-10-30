@@ -17,7 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ id }) => {
   const handleClick = (event: React.MouseEvent<HTMLElement>, nextTab: string) => {
     if (nextTab === null) return;
     const navTo = nextTab === 'profile' ? '' : nextTab;
-    router.push(`/profile/${id}/${navTo}`);
+    router.replace(`/profile/${id}/${navTo}`);
   };
 
   useEffect(() => {

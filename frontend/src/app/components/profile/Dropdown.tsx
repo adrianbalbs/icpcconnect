@@ -1,5 +1,8 @@
-import { Divider, Menu, MenuItem } from '@mui/material';
+'use client';
+
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Divider, Menu, MenuItem } from '@mui/material';
 
 interface DropdownProps {
   anchorEl: null | HTMLElement;
@@ -9,7 +12,7 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
   const router = useRouter();
-  const ownId = '1';
+  const [ownId, setOwnId] = useState<string | null>();
 
   const to = (route: string) => {
     router.push(`/profile/${ownId}${route}`);
@@ -20,6 +23,10 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
     router.push('/login');
     localStorage.removeItem('role');
   }
+
+  useEffect(() => {
+    setOwnId(localStorage.getItem('id'));
+  }, []);
 
   return <Menu
     anchorEl={anchorEl}

@@ -1,8 +1,10 @@
 import { eq } from "drizzle-orm";
 import {
+  Coach,
   coaches,
   DatabaseConnection,
   universities,
+  User,
   users,
 } from "../db/index.js";
 import { CreateCoachRequest, UpdateCoachRequest } from "../schemas/index.js";
@@ -101,27 +103,48 @@ export class CoachService {
     userId: string,
     updatedDetails: UpdateCoachRequest,
   ): Promise<CoachProfileUpdateResponse> {
-    const { role, givenName, familyName, password, email, university } =
-      updatedDetails;
+    const { password, ...rest } = updatedDetails;
 
-    const hashedPassword = await passwordUtils().hash(password);
-    await this.db
-      .update(users)
-      .set({ role, givenName, familyName, password: hashedPassword, email })
-      .where(eq(users.id, userId));
-
-    await this.db
-      .update(coaches)
-      .set({ university })
-      .where(eq(coaches.userId, userId));
-
-    return {
-      role,
-      givenName,
-      familyName,
-      email,
-      university,
+    const userUpdates: Partial<User> = {
+      givenName: rest.givenName,
+      familyName: rest.familyName,
+      email: rest.email,
+      role: rest.role,
     };
+    const coachUpdates: Partial<Coach> = {
+      university: rest.university,
+    };
+
+    if (password) {
+      userUpdates.password = await passwordUtils().hash(password);
+    }
+
+    const cleanedUserUpdates = Object.fromEntries(
+      Object.entries(userUpdates).filter(([, value]) => value !== undefined),
+    );
+    const cleanedCoachUpdates = Object.fromEntries(
+      Object.entries(coachUpdates).filter(([, value]) => value !== undefined),
+    );
+
+    const result = await this.db.transaction(async (tx) => {
+      if (Object.keys(cleanedUserUpdates).length > 0) {
+        await tx
+          .update(users)
+          .set(cleanedUserUpdates)
+          .where(eq(users.id, userId));
+      }
+
+      if (Object.keys(cleanedCoachUpdates).length > 0) {
+        await tx
+          .update(coaches)
+          .set(cleanedCoachUpdates)
+          .where(eq(coaches.userId, userId));
+      }
+
+      return { ...rest };
+    });
+
+    return result;
   }
 
   async deleteCoach(userId: string): Promise<DeleteResponse> {

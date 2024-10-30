@@ -5,71 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1728000390884,
-      "tag": "0000_marvelous_morg",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1728109323529,
-      "tag": "0001_flippant_tyrannus",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1728267615366,
-      "tag": "0002_absurd_green_goblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1728279098512,
-      "tag": "0003_boring_maria_hill",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1728389008335,
-      "tag": "0004_striped_surge",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1728439093094,
-      "tag": "0005_cultured_nomad",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1728449572990,
-      "tag": "0006_thick_rattler",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1728528189605,
-      "tag": "0007_light_pretty_boy",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1728542095526,
-      "tag": "0008_fair_scorpion",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1728971061563,
-      "tag": "0009_careless_colleen_wing",
+      "when": 1730026884240,
+      "tag": "0000_heavy_hardball",
       "breakpoints": true
     },
     {

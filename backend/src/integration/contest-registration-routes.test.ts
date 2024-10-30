@@ -33,7 +33,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await dropTestDatabase(dbName);
+  await dropTestDatabase();
 });
 
 describe("contestRegistrationRouter tests", () => {
@@ -51,6 +51,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -59,18 +61,15 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     const regRes = await request(app)
@@ -90,6 +89,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -98,18 +99,15 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     await request(app)
@@ -137,6 +135,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -145,18 +145,15 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     await request(app)
@@ -168,7 +165,7 @@ describe("contestRegistrationRouter tests", () => {
     const { student: _, ...registrationWithoutStudent } = registration;
     const newDetails: UpdateContestRegistrationForm = {
       ...registrationWithoutStudent,
-      coursesTaken: [1, 2],
+      coursesCompleted: [1, 2],
       level: "B",
     };
 
@@ -199,6 +196,8 @@ describe("contestRegistrationRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -209,6 +208,8 @@ describe("contestRegistrationRouter tests", () => {
         password: "password123",
         university: 2,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -219,6 +220,8 @@ describe("contestRegistrationRouter tests", () => {
         password: "securepass",
         university: 3,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
     ];
 
@@ -234,18 +237,15 @@ describe("contestRegistrationRouter tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
       };
 
       await request(app)
@@ -270,6 +270,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -278,18 +280,15 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     await request(app)
