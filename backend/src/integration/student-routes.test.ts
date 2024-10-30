@@ -294,7 +294,7 @@ describe("studentRouter tests", () => {
       university: 1,
       verificationCode: "test",
       photoConsent: true,
-      languagesSpoken: ["ab"]
+      languagesSpoken: ["ab"],
     };
     const response = await request(app)
       .post("/api/students")
@@ -302,23 +302,31 @@ describe("studentRouter tests", () => {
       .expect(200);
 
     expect(response.body).toHaveProperty("userId");
-    const userid = response.body.userId
+    const userid = response.body.userId;
 
-    const emptyExclu = await request(app).get(`/api/students/exclusions/${userid}`).expect(200)
+    const emptyExclu = await request(app)
+      .get(`/api/students/exclusions/${userid}`)
+      .set("Cookie", cookies)
+      .expect(200);
     expect(emptyExclu.body[0]).toHaveProperty("exclusions");
-    expect(emptyExclu.body[0].exclusions).toBe("")
+    expect(emptyExclu.body[0].exclusions).toBe("");
 
     const putExclu: UpdateStudentExclusionsRequest = {
-      exclusions: "Jerry M Yang, Ur Mother"
-    }
+      exclusions: "Jerry M Yang, Ur Mother",
+    };
 
     await request(app)
-      .put(`/api/students/exclusions/${userid}`).expect(200)
-      .send(putExclu)
+      .put(`/api/students/exclusions/${userid}`)
+      .set("Cookie", cookies)
       .expect(200)
-    
-    const updatedExclu = await request(app).get(`/api/students/exclusions/${userid}`).expect(200)
+      .send(putExclu)
+      .expect(200);
+
+    const updatedExclu = await request(app)
+      .get(`/api/students/exclusions/${userid}`)
+      .set("Cookie", cookies)
+      .expect(200);
     expect(updatedExclu.body[0]).toHaveProperty("exclusions");
-    expect(updatedExclu.body[0].exclusions).toBe("Jerry M Yang, Ur Mother")
+    expect(updatedExclu.body[0].exclusions).toBe("Jerry M Yang, Ur Mother");
   });
 });
