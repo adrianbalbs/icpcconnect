@@ -33,7 +33,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await dropTestDatabase(dbName);
+  await dropTestDatabase();
 });
 
 describe("contestRegistrationRouter tests", () => {
@@ -61,7 +61,7 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
@@ -99,7 +99,7 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
@@ -145,7 +145,7 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
@@ -165,7 +165,7 @@ describe("contestRegistrationRouter tests", () => {
     const { student: _, ...registrationWithoutStudent } = registration;
     const newDetails: UpdateContestRegistrationForm = {
       ...registrationWithoutStudent,
-      coursesTaken: [1, 2],
+      coursesCompleted: [1, 2],
       level: "B",
     };
 
@@ -237,7 +237,7 @@ describe("contestRegistrationRouter tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
@@ -280,7 +280,7 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
