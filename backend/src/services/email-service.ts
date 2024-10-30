@@ -3,7 +3,7 @@ import { PassVerificationRequest, SendEmailCodeRequest } from "../schemas/index.
 import { eq } from "drizzle-orm";
 // import { sendVerificationCode } from "./email-handler"
 import { sendEmail } from './email-handler/email.js'; // Adjust the path as necessary
-import { HTTPError, badRequest } from "../utils/errors.js";
+import { HTTPError, internalServerError } from "../utils/errors.js";
 export class EmailService {
     private readonly db: DatabaseConnection;
 
@@ -94,13 +94,14 @@ export class EmailService {
     public async sendEmailVerificationCode(req: SendEmailCodeRequest): Promise<string> {
         const { email } = req;
         if (!this.isValidUniversityEmail(email)) {
+
             throw new HTTPError({
-                errorCode: badRequest.errorCode,
+                errorCode: internalServerError.errorCode,
                 message: "Invalid University Email Address provided.",
             });
         } else if (!await this.isNewRegisteredEmail(email)) {
             throw new HTTPError({
-                errorCode: badRequest.errorCode,
+                errorCode: internalServerError.errorCode,
                 message: "Email Address provided has been used by others before.",
             });
         }
@@ -118,7 +119,7 @@ export class EmailService {
             .where(eq(verifyEmail.email, email));
         if (targetCode.length === 0) {
             throw new HTTPError({
-                errorCode: badRequest.errorCode,
+                errorCode: internalServerError.errorCode,
                 message: "You need to send email verification first.",
             });
         }

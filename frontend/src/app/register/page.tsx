@@ -19,8 +19,10 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [inviteCode, setInviteCode] = useState("");
+  const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
   const [eligibility, setEligibility] = useState(false);
+  // const [verified, isVerified] = useState(false);
 
   const convertRole: { [key: string]: string } = {
     Student: "student",
@@ -98,7 +100,58 @@ export default function Register() {
     }
   };
 
-  const handleNext = () => {
+  const verifyCode = async () => {
+    if (verificationCode === "") {
+      alert("Please enter a verification code.");
+    } else {
+      try {
+        setLoading(true);
+        const obj = {
+          email,
+          userProvidedCode: verificationCode,
+        };
+        await axios.post(`${SERVER_URL}/api/verify`, obj);
+        setStep((curStep) => curStep + 1);
+      } catch (error) {
+        alert("Invalid or incorrect verification code!");
+        console.error("error:", error);
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const sendEmail = async () => {
+    if (
+      (roleName === "Student" && studentId === "") ||
+      (roleName !== "Student" && inviteCode === "") ||
+      university === 0 ||
+      email === ""
+    ) {
+      alert("Please fill in the page.");
+    } else {
+      try {
+        setLoading(true);
+        const obj = {
+          email,
+        };
+        await axios.post(`${SERVER_URL}/api/send`, obj);
+        alert(
+          "A verification code has been sent to the email address you entered.",
+        );
+        setStep((curStep) => curStep + 1);
+      } catch (error) {
+        alert(
+          "An error occurred while trying to send a verification email. Did you enter a valid email address?",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleNext = async () => {
     if (step === 5 && (password === "" || confirmPassword === "")) {
       alert("Please enter a password.");
     } else if (step === 5 && !checked) {
@@ -107,16 +160,10 @@ export default function Register() {
       submitForm();
     } else if (password !== confirmPassword) {
       alert("Passwords do not match!");
-    } else if (step === 4 && verificationCode === "") {
-      alert("Please enter a verification code.");
-    } else if (
-      step === 3 &&
-      ((roleName === "Student" && studentId === "") ||
-        (roleName !== "Student" && inviteCode === "") ||
-        university === 0 ||
-        email === "")
-    ) {
-      alert("Please fill in the page.");
+    } else if (step === 4) {
+      await verifyCode();
+    } else if (step === 3 && !loading) {
+      await sendEmail();
     } else if (step === 2 && roleName === "Student" && !eligibility) {
       alert("You have not declared yourself eligible for the competition.");
     } else if (

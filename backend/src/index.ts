@@ -10,6 +10,7 @@ import {
   TeamService,
   AuthService,
   AdminService,
+  EmailService,
 } from "./services/index.js";
 import {
   coachRouter,
@@ -19,6 +20,7 @@ import {
   teamRouter,
   authRouter,
   adminRouter,
+  emailRouter,
 } from "./routers/index.js";
 import {
   errorHandlerMiddleware,
@@ -48,6 +50,7 @@ const authService = new AuthService(databaseConnection);
 const codesService = new CodesService(databaseConnection);
 const adminService = new AdminService(databaseConnection);
 const algorithmService = new AlgorithmService(databaseConnection);
+const emailService = new EmailService(databaseConnection);
 
 logger.info("Setup HTTP Server");
 app
@@ -57,7 +60,7 @@ app
   .use(loggingMiddlware)
   .use("/api", teamRouter(teamService))
   .use("/api", studentRouter(studentService))
-  .use("/api", coachRouter(coachService))
+  .use("/", coachRouter(coachService))
   .use("/api", siteCoordinatorRouter(siteCoordinatorService))
   .use("/api", contestRegistrationRouter(contestRegistrationService))
   .use("/api", authRouter(authService))
@@ -72,6 +75,7 @@ app
       algorithmService
     ),
   )
+  .use("/api", emailRouter(emailService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {
