@@ -114,6 +114,10 @@
   opacity: 90%;
 }
 
+.added {
+  background-color: #9A9A9A;
+}
+
 .horizontal-container {
   display: flex;
   flex-direction: row;

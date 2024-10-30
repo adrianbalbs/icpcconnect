@@ -1,16 +1,10 @@
 
 import pageStyles from '@/styles/Page.module.css';
 import memberStyles from '@/styles/Members.module.css';
-import Member from './Member';
+import Member, { MemberProps } from './Member';
 
 interface AssignedProps {
-  members: Array<{
-    id: string;
-    givenName: string;
-    familyName: string;
-    studentId: string;
-    email: string;
-  }>;
+  members: MemberProps[];
 }
 
 const Assigned: React.FC<AssignedProps> = ({ members }) => {

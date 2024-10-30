@@ -5,9 +5,11 @@ interface Props {
   description: string;
   buttonText: string;
   buttonTo: string;
+  added: boolean;
+  setAdded?: () => void;
 }
 
-const Tile: React.FC<Props> = ({ title, description, buttonText, buttonTo }) => {
+const Tile: React.FC<Props> = ({ title, description, buttonText, buttonTo, added, setAdded }) => {
   return (
     <div className={pageStyles.tile}>
       <div className={pageStyles['tile-title']}>
@@ -17,7 +19,13 @@ const Tile: React.FC<Props> = ({ title, description, buttonText, buttonTo }) => 
         <p>{description}</p>
       </div>
       <div className={pageStyles['tile-button-container']}>
-        <a href={buttonTo} className={pageStyles['tile-button']}>{buttonText}</a>
+        <a 
+          href={buttonTo} 
+          onClick={setAdded}
+          className={`${pageStyles['tile-button']} ${added && pageStyles.added}`}
+        >
+          {buttonText}
+        </a>
       </div>
     </div>
   );

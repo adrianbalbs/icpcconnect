@@ -51,10 +51,6 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
     setType(event.target.value);
   };
 
-  // const handleChange = (changed: string, value: string | number | number[]) => {
-  //   setNewExperience({ ...newExperience, [changed]: value });
-  // }
-
   const addExperience = async () => {
     try {
       await axios.put(`${SERVER_URL}/api/contest-registration/${id}`, newExperience);

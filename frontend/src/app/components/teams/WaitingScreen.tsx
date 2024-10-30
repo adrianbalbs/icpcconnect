@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 import { purpleBtn } from '@/styles/sxStyles';
 
 interface WaitingProps {
-  setStatus: Dispatch<SetStateAction<number>>;
+  setStatus?: Dispatch<SetStateAction<number>>;
 }
 
 const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
@@ -12,7 +12,9 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
   const [access, setAccess] = useState(false);
   
   const nextStatus = () => {
-    setStatus(1);
+    if (setStatus) {
+      setStatus(1);
+    }
   }
 
   useEffect(() => {

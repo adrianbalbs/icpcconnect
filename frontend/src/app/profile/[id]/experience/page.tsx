@@ -20,7 +20,6 @@ export interface ExperienceType {
   leetcodeRating: boolean;
 }
 
-// TODO: Fix types
 export interface Experiences {
   level: string;
   contestExperience: number;
@@ -34,7 +33,7 @@ export interface Experiences {
 }
 
 const Experience: React.FC<ProfileProps> = ({ params }) => {
-  // States key
+  // State keys
   // 0: db does not have record of user registration
   // 1: user registration record is in db
   // 2: page is rendered
@@ -61,6 +60,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     coursesCompleted: [],
   });
 
+  // Used to create registration when one does not already exist in db for student
   const createRegistration = async () => {
     try {
       await axios.post(`${SERVER_URL}/api/contest-registration`, { student: params.id, ...experience });
@@ -69,6 +69,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     }
   }
 
+  // Renders all experiences that have been added by student already
   const renderPage = () => {
     setAdded({
       codeforcesRating: experience.codeforcesRating > 0,
@@ -79,6 +80,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     });
   }
 
+  // Fetch experience data from backend
   const getExperience = async () => {
     try {
       const res = await axios.get(`${SERVER_URL}/api/contest-registration/${params.id}`);
@@ -104,6 +106,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     if (state === 0) setState(1);
   }
 
+  // Used to do initial render of page when it first loads
   useEffect(() => {
     if (state === 1) {
       renderPage();
@@ -111,6 +114,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     }
   }, [state]);
 
+  // Every time an experience is added, fetch it again from backend
   useEffect(() => {
     getExperience();
   }, [added]);
