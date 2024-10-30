@@ -23,18 +23,22 @@ const typeToQuestion = [
 ]
 
 const NumberInput: React.FC<InputProps> = ({ type, setDisable, experience, setExperience }) => {
-  const [value, setValue] = useState<string>('0');
+  const [value, setValue] = useState(0);
 
   const assertPositive = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     if (newValue === '' || /^[0-9]*$/.test(newValue)) {
-      setValue(newValue);
+      setValue(Number(newValue));
     }
   }
 
   useEffect(() => {
-    setDisable(Number(value) === 0);
-    setExperience({ ...experience, [typeToString[type]]: Number(value) });
+    setValue(experience[typeToString[type] as keyof Experiences] as number);
+  }, []);
+
+  useEffect(() => {
+    setDisable(value === 0);
+    setExperience({ ...experience, [typeToString[type]]: value });
   }, [value]);
 
   return (

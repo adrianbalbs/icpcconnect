@@ -26,6 +26,14 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
   const [disable, setDisable] = useState(false);
   const [newExperience, setNewExperience] = useState<Experiences>(experience);
 
+  const renderButton = () => {
+    const add = Object.values(added).includes(false);
+    const edit = Object.values(added).includes(true);
+    if (add && edit) return `Add or Edit Skill / Experience`;
+    else if (add) return `Add New Skill / Experience`;
+    else return `Edit Skill / Experience`;
+  }
+
   const handleOpen = () => {
     setOpen(true);
   }
@@ -71,7 +79,7 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
 
   return (
     <div className={experienceStyles.modal}>
-      {!open && <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>Add {Object.values(added).includes(true) ? 'or Edit' : 'New'} Skill/Experience</Button>}
+      {!open && <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>{renderButton()}</Button>}
       {open && <Paper square elevation={3} sx={addModal}>
         <CloseBtn handleClose={handleClose}/>
         <FormControl sx={{ margin: '10px 20px 25px', fontSize: '12px', width: 'calc(100% - 40px)' }} >

@@ -4,8 +4,8 @@ import experienceStyles from '@/styles/Experience.module.css';
 import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import SchoolRoundedIcon from '@mui/icons-material/SchoolRounded';
 
-const valueToText = [
-  'Introduction to Programming',
+export const valueToText = [
+  'Programming Fundamentals',
   'Data Structures and Algorithms',
   'Algorithmic Design',
   'Programming Challenges'

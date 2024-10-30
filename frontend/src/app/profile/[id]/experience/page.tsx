@@ -83,9 +83,12 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     try {
       const res = await axios.get(`${SERVER_URL}/api/contest-registration/${params.id}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { student, timeSubmitted, ...newExperience } = res.data;
+      const {student, timeSubmitted, coursesCompleted, ...newExperience } = res.data;
       console.log(res.data);
-      setExperience(newExperience);
+      setExperience({
+        ...newExperience,
+        coursesCompleted: coursesCompleted.map((c: { id: number, type: string }) => c.id)
+      });
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 404) {

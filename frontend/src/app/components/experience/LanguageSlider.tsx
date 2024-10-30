@@ -25,18 +25,17 @@ const marks = [
   },
 ];
 
-const valueToText: Record<number, string> = {
-  0: 'none',
-  50: 'some',
-  100: 'prof'
-}
-
 const LanguageSlider: React.FC<SliderProps> = ({ type, experience, setExperience }) => {
+  const key = `${type}Experience` as keyof Experiences;
+
+  const getValue = () => {
+    const entry = marks.find(m => m.label === experience[key]);
+    return entry?.value;
+  }
 
   const onChange = (event: Event, value: number | number[]) => {
-    const key = `${type}Experience`;
-    const assertValue = Number(value);
-    setExperience({ ...experience, [key]: valueToText[assertValue] });
+    const entry = marks.find(m => m.value === Number(value));
+    setExperience({ ...experience, [key]: entry?.label });
   }
 
   return (
@@ -44,7 +43,7 @@ const LanguageSlider: React.FC<SliderProps> = ({ type, experience, setExperience
       <p className={styles.language}>{type === 'cpp' ? 'C++' : capitalise(type)} Experience</p>
       <Slider
         aria-label={`${type}Experience`}
-        defaultValue={0}
+        defaultValue={getValue()}
         size="small"
         step={null}
         valueLabelDisplay="off"

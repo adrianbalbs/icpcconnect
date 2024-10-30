@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styles from '@/styles/Experience.module.css';
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
 import { Experiences } from '@/profile/[id]/experience/page';
+import { valueToText } from './CoursesExperience';
 
 interface CheckboxProps {
   setDisable: Dispatch<SetStateAction<boolean>>;
@@ -23,6 +24,15 @@ const CourseCheckbox: React.FC<CheckboxProps> = ({ setDisable, experience, setEx
   }
 
   useEffect(() => {
+    setCourses({
+      1: experience.coursesCompleted.includes(1),
+      2: experience.coursesCompleted.includes(2),
+      3: experience.coursesCompleted.includes(3),
+      4: experience.coursesCompleted.includes(4)
+    });
+  }, []);
+
+  useEffect(() => {
     setDisable(!Object.values(courses).includes(true));
   }, [courses]);
 
@@ -31,30 +41,19 @@ const CourseCheckbox: React.FC<CheckboxProps> = ({ setDisable, experience, setEx
       <p className={styles.question}>What relevant courses have you completed?</p>
       <FormControl sx={{ alignSelf: 'center' }} component="fieldset" variant="standard">
         <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox checked={courses['1']} onChange={handleChange} name="1" />
-            }
-            label={<span className={styles['checkbox-label']}>Introduction to Programming</span>}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox checked={courses['2']} onChange={handleChange} name="2" />
-            }
-            label={<span className={styles['checkbox-label']}>Data Structures and Algorithms</span>}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox checked={courses['3']} onChange={handleChange} name="3" />
-            }
-            label={<span className={styles['checkbox-label']}>Algorithmic Design</span>}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox checked={courses['4']} onChange={handleChange} name="4" />
-            }
-            label={<span className={styles['checkbox-label']}>Programming Challenges</span>}
-          />
+          {Object.entries(courses).map(([id, isAdded]) => (
+            <FormControlLabel
+              key={id}
+              control={
+                <Checkbox checked={isAdded} onChange={handleChange} name={id} />
+              }
+              label={
+                <span className={styles['checkbox-label']}>
+                  {valueToText[Number(id) - 1]}
+                </span>
+              }
+            />
+          ))}
         </FormGroup>
       </FormControl>
     </Box>
