@@ -37,7 +37,6 @@ export const addModal = {
 export const addBtn = {
   display: 'block',
   margin: '0 auto',
-  width: '110px',
   padding: '5px 40px',
   fontSize: '13px',
   textTransform: 'none',

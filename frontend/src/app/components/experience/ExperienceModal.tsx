@@ -19,6 +19,7 @@ interface ModalProps {
 }
 
 const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience }) => {
+  const hrRef = useRef<HTMLHRElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState('');
@@ -57,6 +58,12 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
   }
 
   useEffect(() => {
+    if (hrRef.current) {
+      hrRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (buttonRef.current) {
       buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -64,26 +71,26 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
 
   return (
     <div className={experienceStyles.modal}>
-      {!open && <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>Add New Skill/Experience</Button>}
+      {!open && <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>Add {Object.values(added).includes(true) ? 'or Edit' : 'New'} Skill/Experience</Button>}
       {open && <Paper square elevation={3} sx={addModal}>
         <CloseBtn handleClose={handleClose}/>
         <FormControl sx={{ margin: '10px 20px 25px', fontSize: '12px', width: 'calc(100% - 40px)' }} >
-          <InputLabel id="new-experience-label" sx={{ lineHeight: '15px', fontSize: '14px' }}>New Skill / Experience</InputLabel>
+          <InputLabel id="new-experience-label" sx={{ lineHeight: '15px', fontSize: '14px' }}>Select Skill / Experience</InputLabel>
             <Select
               id="select-type"
               value={type}
-              label="New Skill / Experience"
+              label="Select Skill / Experience"
               sx={{ height: '45px', fontSize: '14px' }}
               onChange={handleSelect}
             >
-              {!added.language && <MenuItem sx={{ fontSize: '14px' }} value="language">Programming Language Experience</MenuItem>}
-              {!added.coursesTaken && <MenuItem sx={{ fontSize: '14px' }} value="coursesTaken">Relevant Courses</MenuItem>}
-              {!added.contestExperience && <MenuItem sx={{ fontSize: '14px' }} value="contestExperience">Past Contests</MenuItem>}
-              {!added.leetcodeRating && <MenuItem sx={{ fontSize: '14px' }} value="leetcodeRating">LeetCode Contest Rating</MenuItem>}
-              {!added.codeforcesRating && <MenuItem sx={{ fontSize: '14px' }} value="codeforcesRating">Codeforces Contest Rating</MenuItem>}
+              <MenuItem sx={{ fontSize: '14px' }} value="language">Programming Language Experience</MenuItem>
+              <MenuItem sx={{ fontSize: '14px' }} value="coursesTaken">Relevant Courses</MenuItem>
+              <MenuItem sx={{ fontSize: '14px' }} value="contestExperience">Past Contests</MenuItem>
+              <MenuItem sx={{ fontSize: '14px' }} value="leetcodeRating">LeetCode Contest Rating</MenuItem>
+              <MenuItem sx={{ fontSize: '14px' }} value="codeforcesRating">Codeforces Contest Rating</MenuItem>
             </Select>
           </FormControl>
-          <hr className={pageStyles.divider}/>
+          <hr className={pageStyles.divider} ref={hrRef}/>
           {type === 'language' && <Box sx={{ m: '25px 45px 55px 30px', width: 'calc(100% - 75px)' }}>
             <LanguageSlider type="c" experience={newExperience} setExperience={setNewExperience} />
             <LanguageSlider type="cpp"  experience={newExperience} setExperience={setNewExperience} />
@@ -94,7 +101,7 @@ const ExperienceModal: React.FC<ModalProps> = ({ id, added, setAdded, experience
           {type === 'contestExperience' && <NumberInput type={0} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
           {type === 'leetcodeRating' && <NumberInput type={1} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
           {type === 'codeforcesRating' && <NumberInput type={2} setDisable={setDisable} experience={newExperience} setExperience={setNewExperience} />}
-          {type && <Button variant="contained" sx={addBtn} onClick={addExperience} ref={buttonRef} disabled={disable}>Add</Button>}
+          {type && <Button variant="contained" sx={addBtn} onClick={addExperience} ref={buttonRef} disabled={disable}>{added[type as keyof ExperienceType] ? 'Save Edit' : 'Add'}</Button>}
       </Paper>}
     </div>
   );

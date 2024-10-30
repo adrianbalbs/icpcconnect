@@ -74,7 +74,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       codeforcesRating: experience.codeforcesRating > 0,
       contestExperience: experience.contestExperience > 0,
       coursesTaken: experience.coursesTaken.length > 0,
-      language: false,
+      language: true,
       leetcodeRating: experience.leetcodeRating > 0,
     });
   }
@@ -90,6 +90,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 404) {
           createRegistration();
+          setState(2);
         } else {
           console.log(`Get experience error: ${err}`);
         }
