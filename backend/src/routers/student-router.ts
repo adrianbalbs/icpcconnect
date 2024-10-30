@@ -3,6 +3,8 @@ import { validateData } from "../middleware/index.js";
 import {
   CreateStudentRequest,
   CreateStudentRequestSchema,
+  UpdateStudentExclusionsRequest,
+  UpdateStudentExclusionsRequestSchema,
   UpdateStudentRequest,
   UpdateStudentRequestSchema,
 } from "../schemas/index.js";
@@ -37,6 +39,22 @@ export function studentRouter(studentService: StudentService) {
         }
       },
     )
+    .get(
+      "/students/exclusions/:id",
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const exclusions = await studentService.getStudentExclusions(id);
+          res.status(200).json(exclusions)
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .delete(
       "/students/:id",
       async (
@@ -64,6 +82,24 @@ export function studentRouter(studentService: StudentService) {
         const studentDetails = req.body;
         try {
           const result = await studentService.createStudent(studentDetails);
+          res.status(200).json(result);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .put(
+      "/students/exclusions/:id",
+      validateData(UpdateStudentExclusionsRequestSchema, "body"),
+      async (
+        req: Request<{ id: string }, unknown, UpdateStudentExclusionsRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        const { exclusions } = req.body;
+        try {
+          const result = await studentService.updateStudentExclusions(id, exclusions);
           res.status(200).json(result);
         } catch (err) {
           next(err);
