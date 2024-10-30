@@ -270,6 +270,7 @@ export type VerifyEmail = InferSelectModel<typeof verifyEmail>;
 export const contests = pgTable("contests", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: varchar("name", { length: 256 }),
+  description: text("description").notNull().default(""),
   earlyBirdDate: timestamp("early_bird_date", { mode: "date" }).notNull(),
   cutoffDate: timestamp("cutoff_date", { mode: "date" }).notNull(),
   contestDate: timestamp("contest_date", { mode: "date" }).notNull(),
@@ -284,3 +285,5 @@ export const contestRelations = relations(contests, ({ one }) => ({
     references: [universities.id],
   }),
 }));
+
+export type Contest = InferSelectModel<typeof contests>;
