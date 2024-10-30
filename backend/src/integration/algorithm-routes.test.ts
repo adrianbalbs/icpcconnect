@@ -3,12 +3,12 @@ import express from "express";
 import { DatabaseConnection, teams, users } from "../db/index.js";
 import { adminRouter, studentRouter, teamRouter } from "../routers/index.js";
 import {
-    AdminService,
-    CoachService,
-    ContestRegistrationService,
-    SiteCoordinatorService,
-    StudentService,
-    TeamService,
+  AdminService,
+  CoachService,
+  ContestRegistrationService,
+  SiteCoordinatorService,
+  StudentService,
+  TeamService,
 } from "../services/index.js";
 import { contestRegistrationRouter } from "../routers/index.js";
 import {
@@ -30,13 +30,16 @@ beforeAll(async () => {
     .use("/api", studentRouter(new StudentService(db)))
     .use("/api", contestRegistrationRouter(new ContestRegistrationService(db)))
     .use("/api", teamRouter(new TeamService(db)))
-    .use("/api", adminRouter(
+    .use(
+      "/api",
+      adminRouter(
         new AdminService(db),
         new CoachService(db),
         new StudentService(db),
         new SiteCoordinatorService(db),
-        new AlgorithmService(db)
-    ));
+        new AlgorithmService(db),
+      ),
+    );
 });
 
 afterAll(async () => {
@@ -50,14 +53,10 @@ describe("Algorithm Tests", () => {
   });
 
   it("should just return success (no registrations)", async () => {
-    const numTeam = await request(app)
-        .post("/api/runalgo")
-        .expect(200);
-    expect(numTeam.body.success).toBe(true)
+    const numTeam = await request(app).post("/api/runalgo").expect(200);
+    expect(numTeam.body.success).toBe(true);
 
-    const teams = await request(app)
-        .get("/api/teams/all")
-        .expect(200);
+    const teams = await request(app).get("/api/teams/all").expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -74,7 +73,7 @@ describe("Algorithm Tests", () => {
         verificationCode: "test",
         photoConsent: true,
         languagesSpoken: [],
-      }
+      },
     ];
 
     const studentIds: string[] = [];
@@ -89,7 +88,7 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
@@ -111,14 +110,10 @@ describe("Algorithm Tests", () => {
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(1);
 
-    const algoSuccess = await request(app)
-        .post("/api/runalgo")
-        .expect(200);
-    expect(algoSuccess.body.success).toBe(true)
+    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app)
-        .get("/api/teams/all")
-        .expect(200);
+    const teams = await request(app).get("/api/teams/all").expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -147,7 +142,7 @@ describe("Algorithm Tests", () => {
         verificationCode: "test",
         photoConsent: true,
         languagesSpoken: [],
-      }
+      },
     ];
 
     const studentIds: string[] = [];
@@ -162,7 +157,7 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
@@ -184,14 +179,10 @@ describe("Algorithm Tests", () => {
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(2);
 
-    const algoSuccess = await request(app)
-        .post("/api/runalgo")
-        .expect(200);
-    expect(algoSuccess.body.success).toBe(true)
+    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app)
-        .get("/api/teams/all")
-        .expect(200);
+    const teams = await request(app).get("/api/teams/all").expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -247,7 +238,7 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
@@ -269,14 +260,10 @@ describe("Algorithm Tests", () => {
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
-    const algoSuccess = await request(app)
-        .post("/api/runalgo")
-        .expect(200);
-    expect(algoSuccess.body.success).toBe(true)
+    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app)
-        .get("/api/teams/all")
-        .expect(200);
+    const teams = await request(app).get("/api/teams/all").expect(200);
     expect(teams.body).toHaveLength(1);
   });
 
@@ -332,7 +319,7 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
@@ -354,14 +341,10 @@ describe("Algorithm Tests", () => {
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
-    const algoSuccess = await request(app)
-        .post("/api/runalgo")
-        .expect(200);
-    expect(algoSuccess.body.success).toBe(true)
+    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app)
-        .get("/api/teams/all")
-        .expect(200);
+    const teams = await request(app).get("/api/teams/all").expect(200);
     expect(teams.body).toHaveLength(0);
   });
 
@@ -453,7 +436,7 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
@@ -475,70 +458,65 @@ describe("Algorithm Tests", () => {
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(6);
 
-    const algoSuccess = await request(app)
-        .post("/api/runalgo")
-        .expect(200);
-    expect(algoSuccess.body.success).toBe(true)
+    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app)
-        .get("/api/teams/all")
-        .expect(200);
+    const teams = await request(app).get("/api/teams/all").expect(200);
     expect(teams.body).toHaveLength(2);
   });
 
   it("should generate 50 students at the same uni, 30 at another, and 20 at another, and create a total of 32 teams", async () => {
-
     const students: CreateStudentRequest[] = [];
 
     for (let i = 0; i < 50; i++) {
-        const student: CreateStudentRequest = {
-            role: "student",
-            givenName: gen(6),
-            familyName: gen(6),
-            email: gen(7) + "@comp3900.com",
-            studentId: gen(10),
-            password: "securepass",
-            university: 1,
-            verificationCode: "test",
-            photoConsent: false,
-            languagesSpoken: [],
-        }
-        students.push(student)
+      const student: CreateStudentRequest = {
+        role: "student",
+        givenName: gen(6),
+        familyName: gen(6),
+        email: gen(7) + "@comp3900.com",
+        studentId: gen(10),
+        password: "securepass",
+        university: 1,
+        verificationCode: "test",
+        photoConsent: false,
+        languagesSpoken: [],
+      };
+      students.push(student);
 
-        if (i < 20) {
-            const student2: CreateStudentRequest = {
-                role: "student",
-                givenName: gen(6),
-                familyName: gen(6),
-                email: gen(7) + "@comp3900.com",
-                studentId: gen(10),
-                password: "securepass",
-                university: 2,
-                verificationCode: "test",
-                photoConsent: false,
-                languagesSpoken: [],
-            }
-            students.push(student2)
-        }
+      if (i < 20) {
+        const student2: CreateStudentRequest = {
+          role: "student",
+          givenName: gen(6),
+          familyName: gen(6),
+          email: gen(7) + "@comp3900.com",
+          studentId: gen(10),
+          password: "securepass",
+          university: 2,
+          verificationCode: "test",
+          photoConsent: false,
+          languagesSpoken: [],
+        };
+        students.push(student2);
+      }
 
-        if (i < 41 && i > 10) {
-            const student3: CreateStudentRequest = {
-                role: "student",
-                givenName: gen(6),
-                familyName: gen(6),
-                email: gen(7) + "@comp3900.com",
-                studentId: gen(10),
-                password: "securepass",
-                university: 3,
-                verificationCode: "test",
-                photoConsent: false,
-                languagesSpoken: [],
-            }
-            students.push(student3)
-        }
+      if (i < 41 && i > 10) {
+        const student3: CreateStudentRequest = {
+          role: "student",
+          givenName: gen(6),
+          familyName: gen(6),
+          email: gen(7) + "@comp3900.com",
+          studentId: gen(10),
+          password: "securepass",
+          university: 3,
+          verificationCode: "test",
+          photoConsent: false,
+          languagesSpoken: [],
+        };
+        students.push(student3);
+      }
     }
 
-    expect(students).toHaveLength(100)
+    expect(students).toHaveLength(100);
 
     const studentIds: string[] = [];
 
@@ -552,7 +530,7 @@ describe("Algorithm Tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
@@ -574,24 +552,22 @@ describe("Algorithm Tests", () => {
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(100);
 
-    const algoSuccess = await request(app)
-        .post("/api/runalgo")
-        .expect(200);
-    expect(algoSuccess.body.success).toBe(true)
+    const algoSuccess = await request(app).post("/api/runalgo").expect(200);
+    expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app)
-        .get("/api/teams/all")
-        .expect(200);
+    const teams = await request(app).get("/api/teams/all").expect(200);
     expect(teams.body).toHaveLength(32);
   }, 60000);
 });
 
 function gen(length: number): string {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      result += characters[randomIndex];
-    }
-    return result;
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
   }
+  return result;
+}
+
