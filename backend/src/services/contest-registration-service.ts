@@ -51,7 +51,7 @@ export class ContestRegistrationService {
       cExperience,
       codeforcesRating,
       contestExperience,
-      coursesTaken,
+      coursesCompleted,
       cppExperience,
       javaExperience,
       level,
@@ -75,7 +75,7 @@ export class ContestRegistrationService {
       })
       .returning({ studentId: registrationDetails.student });
 
-    for (const courseId of coursesTaken) {
+    for (const courseId of coursesCompleted) {
       await this.db
         .insert(coursesCompletedByStudent)
         .values({ studentId, courseId });
@@ -136,7 +136,7 @@ export class ContestRegistrationService {
     studentId: string,
     updatedDetails: UpdateContestRegistrationForm,
   ): Promise<UpdateContestRegistrationFormResponse> {
-    const { coursesTaken, ...rest } = updatedDetails;
+    const { coursesCompleted, ...rest } = updatedDetails;
 
     const cleanedUpdatedDetails = Object.fromEntries(
       Object.entries(rest).filter(([, value]) => value !== undefined),
@@ -153,17 +153,17 @@ export class ContestRegistrationService {
           .where(eq(registrationDetails.student, studentId));
       }
 
-      if (coursesTaken) {
+      if (coursesCompleted) {
         await tx
           .delete(coursesCompletedByStudent)
           .where(eq(coursesCompletedByStudent.studentId, studentId));
-        for (const courseId of coursesTaken) {
+        for (const courseId of coursesCompleted) {
           await tx
             .insert(coursesCompletedByStudent)
             .values({ studentId, courseId });
         }
       }
-      return { ...rest, coursesTaken };
+      return { ...rest, coursesCompleted };
     });
 
     return result;

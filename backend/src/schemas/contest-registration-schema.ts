@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 const LevelEnum = z.enum(["A", "B"]);
 export type Level = z.infer<typeof LevelEnum>;
 
@@ -25,7 +24,7 @@ export const CreateContestRegistrationFormSchema = z.object({
   cExperience: LanguageExperienceEnum,
   javaExperience: LanguageExperienceEnum,
   pythonExperience: LanguageExperienceEnum,
-  coursesTaken: z.array(CoursesTakenUnion),
+  coursesCompleted: z.array(CoursesTakenUnion),
 });
 
 export type CreateContestRegistrationForm = z.infer<
