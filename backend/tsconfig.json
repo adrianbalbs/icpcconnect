@@ -4,7 +4,11 @@
     "rootDir": "./",
     "outDir": "./dist",
     "resolveJsonModule": true,
-    "types": ["node", "vitest/globals"]
+    "typeRoots": ["src/types"],
+    "baseUrl": "./",
+    "paths": {
+      "@common/*": ["../common/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "src/**/*.test.ts"]

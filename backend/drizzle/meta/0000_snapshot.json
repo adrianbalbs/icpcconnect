@@ -1,5 +1,5 @@
 {
-  "id": "11665918-d990-4852-a98e-6211243247a1",
+  "id": "7c5a1173-4cab-4671-9533-a6cbcac9d4da",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -637,6 +637,13 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
+        },
+        "refresh_token_version": {
+          "name": "refresh_token_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
         }
       },
       "indexes": {},

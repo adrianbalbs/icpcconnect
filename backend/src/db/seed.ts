@@ -218,4 +218,14 @@ export const seedTest = async (db: DatabaseConnection) => {
     .insert(languagesSpoken)
     .values(data.default.languagesSpoken)
     .onConflictDoNothing();
+
+  const admins = data.default.admins as UserTable[];
+  for (const admin of admins) {
+    const { id, givenName, familyName, password, email, role } = admin;
+    const newPassword = await passwordUtils().hash(password);
+    await db
+      .insert(users)
+      .values({ id, givenName, familyName, password: newPassword, email, role })
+      .onConflictDoNothing();
+  }
 };

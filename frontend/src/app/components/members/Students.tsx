@@ -30,6 +30,7 @@ const Students: React.FC = () => {
     try {
       const res = await axios.get<{ allStudents: StudentInfo[] }>(
         `${SERVER_URL}/api/students`,
+        { withCredentials: true },
       );
       const allStudents: StudentInfo[] = res.data.allStudents;
       const filteredInfo: StudentProps[] = allStudents.map((student) => ({

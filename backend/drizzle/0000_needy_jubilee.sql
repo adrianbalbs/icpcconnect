@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"password" varchar(128) NOT NULL,
 	"email" text NOT NULL,
 	"role" "role" NOT NULL,
+	"refresh_token_version" integer DEFAULT 1 NOT NULL,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

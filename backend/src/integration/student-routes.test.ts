@@ -1,9 +1,17 @@
-import { beforeAll, afterAll, afterEach, describe, expect, it } from "vitest";
+import {
+  beforeAll,
+  afterAll,
+  afterEach,
+  describe,
+  expect,
+  it,
+  beforeEach,
+} from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { StudentService } from "../services/index.js";
-import { studentRouter } from "../routers/index.js";
+import { AuthService, StudentService } from "../services/index.js";
+import { authRouter, studentRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateStudentRequest,
@@ -12,26 +20,43 @@ import {
 } from "../schemas/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
-
-let db: DatabaseConnection;
-let app: ReturnType<typeof express>;
-
-beforeAll(async () => {
-  const dbSetup = await setupTestDatabase();
-  db = dbSetup.db;
-  app = express()
-    .use(express.json())
-    .use("/api", studentRouter(new StudentService(db)))
-    .use(errorHandlerMiddleware);
-});
-
-afterAll(async () => {
-  await dropTestDatabase();
-});
+import cookieParser from "cookie-parser";
+import { eq, not } from "drizzle-orm";
 
 describe("studentRouter tests", () => {
+  let db: DatabaseConnection;
+  let app: ReturnType<typeof express>;
+  let cookies: string;
+
+  beforeAll(async () => {
+    const dbSetup = await setupTestDatabase();
+    db = dbSetup.db;
+    const authService = new AuthService(db);
+    app = express()
+      .use(express.json())
+      .use(cookieParser())
+      .use("/api/auth", authRouter(authService))
+      .use("/api/students", studentRouter(new StudentService(db), authService))
+      .use(errorHandlerMiddleware);
+  });
+
+  beforeEach(async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({
+        email: "admin@comp3900.com",
+        password: "tomatofactory",
+      })
+      .expect(200);
+    cookies = loginRes.headers["set-cookie"];
+  });
+
   afterEach(async () => {
-    await db.delete(users);
+    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+  });
+
+  afterAll(async () => {
+    await dropTestDatabase();
   });
 
   it("should register a new student", async () => {
@@ -94,12 +119,14 @@ describe("studentRouter tests", () => {
         photoConsent: true,
       },
     ];
-
     for (const student of students) {
       await request(app).post("/api/students").send(student).expect(200);
     }
 
-    const response = await request(app).get("/api/students").expect(200);
+    const response = await request(app)
+      .get("/api/students")
+      .set("Cookie", cookies)
+      .expect(200);
     expect(response.body.allStudents.length).toEqual(students.length);
   });
 
@@ -122,13 +149,17 @@ describe("studentRouter tests", () => {
 
     const response = await request(app)
       .get(`/api/students/${userId}`)
+      .set("Cookie", cookies)
       .expect(200);
 
     expect(response.body.id).toEqual(userId);
   });
 
   it("should throw if a student cannot be found", async () => {
-    await request(app).get(`/api/students/${uuidv4()}`).expect(404);
+    await request(app)
+      .get(`/api/students/${uuidv4()}`)
+      .set("Cookie", cookies)
+      .expect(404);
   });
 
   it("should update the students details", async () => {
@@ -151,6 +182,7 @@ describe("studentRouter tests", () => {
 
     const oldStudentDetails = await request(app)
       .get(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
 
     const req: UpdateStudentRequest = {
@@ -162,11 +194,13 @@ describe("studentRouter tests", () => {
 
     await request(app)
       .put(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
     const newStudentDetails = await request(app)
       .get(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     expect(oldStudentDetails.body).not.toEqual(newStudentDetails.body);
   });
@@ -191,17 +225,20 @@ describe("studentRouter tests", () => {
 
     const oldStudentDetails = await request(app)
       .get(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
 
     const req: UpdateStudentRequest = {};
 
     await request(app)
       .put(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
 
     const newStudentDetails = await request(app)
       .get(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     expect(oldStudentDetails.body).toEqual(newStudentDetails.body);
   });
@@ -224,14 +261,26 @@ describe("studentRouter tests", () => {
       .send(newStudent)
       .expect(200);
 
-    await request(app).get(`/api/students/${res.body.userId}`).expect(200);
-    await request(app).delete(`/api/students/${res.body.userId}`).expect(200);
+    await request(app)
+      .get(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+    await request(app)
+      .delete(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
+      .expect(200);
 
-    await request(app).get(`/api/students/${res.body.userId}`).expect(404);
+    await request(app)
+      .get(`/api/students/${res.body.userId}`)
+      .set("Cookie", cookies)
+      .expect(404);
   });
 
   it("should return an error when deleting a student that does not exist", async () => {
-    await request(app).delete(`/api/students/${uuidv4()}`).expect(400);
+    await request(app)
+      .delete(`/api/students/${uuidv4()}`)
+      .set("Cookie", cookies)
+      .expect(400);
   });
 
   it("should update the students exclusion preferences", async () => {
@@ -245,7 +294,7 @@ describe("studentRouter tests", () => {
       university: 1,
       verificationCode: "test",
       photoConsent: true,
-      languagesSpoken: ["ab"]
+      languagesSpoken: ["ab"],
     };
     const response = await request(app)
       .post("/api/students")
@@ -253,23 +302,31 @@ describe("studentRouter tests", () => {
       .expect(200);
 
     expect(response.body).toHaveProperty("userId");
-    const userid = response.body.userId
+    const userid = response.body.userId;
 
-    const emptyExclu = await request(app).get(`/api/students/exclusions/${userid}`).expect(200)
+    const emptyExclu = await request(app)
+      .get(`/api/students/exclusions/${userid}`)
+      .set("Cookie", cookies)
+      .expect(200);
     expect(emptyExclu.body[0]).toHaveProperty("exclusions");
-    expect(emptyExclu.body[0].exclusions).toBe("")
+    expect(emptyExclu.body[0].exclusions).toBe("");
 
     const putExclu: UpdateStudentExclusionsRequest = {
-      exclusions: "Jerry M Yang, Ur Mother"
-    }
+      exclusions: "Jerry M Yang, Ur Mother",
+    };
 
     await request(app)
-      .put(`/api/students/exclusions/${userid}`).expect(200)
-      .send(putExclu)
+      .put(`/api/students/exclusions/${userid}`)
+      .set("Cookie", cookies)
       .expect(200)
-    
-    const updatedExclu = await request(app).get(`/api/students/exclusions/${userid}`).expect(200)
+      .send(putExclu)
+      .expect(200);
+
+    const updatedExclu = await request(app)
+      .get(`/api/students/exclusions/${userid}`)
+      .set("Cookie", cookies)
+      .expect(200);
     expect(updatedExclu.body[0]).toHaveProperty("exclusions");
-    expect(updatedExclu.body[0].exclusions).toBe("Jerry M Yang, Ur Mother")
+    expect(updatedExclu.body[0].exclusions).toBe("Jerry M Yang, Ur Mother");
   });
 });

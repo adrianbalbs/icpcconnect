@@ -204,7 +204,12 @@ export const PassVerificationSchema = z.object({
 
 export type PassVerificationRequest = z.infer<typeof PassVerificationSchema>;
 
-const UserRoleEnum = z.enum(["student", "coach", "site_coordinator", "admin"]);
+export const UserRoleEnum = z.enum([
+  "student",
+  "coach",
+  "site_coordinator",
+  "admin",
+]);
 export type UserRole = z.infer<typeof UserRoleEnum>;
 
 export const CreateAdminRequestSchema = z.object({

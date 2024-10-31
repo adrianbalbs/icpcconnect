@@ -43,7 +43,7 @@ try {
     if (-not $PATTERN) {
         $PATTERN = '.*'
     }
-    npx vitest run --config vitest.config.integration.ts -t "${PATTERN}"
+    npx vitest run --config vitest.config.integration.ts "${PATTERN}"
 }
 finally {
     Cleanup

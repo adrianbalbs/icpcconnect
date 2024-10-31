@@ -51,9 +51,10 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
           ? null
           : editInfo.dietaryRequirements,
     };
-    console.log(update);
     try {
-      await axios.put(`${SERVER_URL}/api/students/${params.id}`, update);
+      await axios.put(`${SERVER_URL}/api/students/${params.id}`, update, {
+        withCredentials: true,
+      });
       storeInfo();
     } catch (error) {
       console.error("Failed to update:", error);
