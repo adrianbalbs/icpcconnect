@@ -35,7 +35,6 @@ export async function sendEmail(
         html: updatedContent, // HTML body
         text: 'Hello, please verify your email using the code sent in the HTML body.', // Plain text body
     };
-
     try {
         await transporter.sendMail(mailOptions);
         return 'Email sent successfully!';

@@ -17,7 +17,6 @@ export function emailRouter(Service: EmailService) {
         ) => {
             const sendEmail = req.body;
             try {
-                console.log("inside router");
                 const result = await Service.sendEmailVerificationCode(sendEmail);
                 res.status(200).json({ codes: result });
             } catch (err) {

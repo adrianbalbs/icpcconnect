@@ -4,24 +4,33 @@ import { SERVER_URL } from "@/utils/constants";
 import axios from "axios";
 import { useState } from "react";
 import authStyles from "@/styles/Auth.module.css";
+import { useRouter } from "next/navigation";
 
 const ForgotPassword = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const sendEmail = async () => {
-    try {
-      const obj = {
-        email,
-        isNormalVerificationEmail: false,
-      };
-      await axios.post(`${SERVER_URL}/api/send`, obj);
-      alert(
-        "A verification code has been sent to the email address you entered.",
-      );
-      setEmail("");
-    } catch (error) {
-      alert(
-        "An error occurred while trying to send a verification email. Did you enter a valid email address?",
-      );
+    if (!loading) {
+      try {
+        const obj = {
+          email,
+          isNormalVerificationEmail: false,
+        };
+        setLoading(true);
+        await axios.post(`${SERVER_URL}/api/send`, obj);
+        alert(
+          "An email with instructions to reset your password has been sent.",
+        );
+        router.push("/reset-password");
+      } catch (error) {
+        console.error(error);
+        alert(
+          "An error occurred while trying to send a verification email. Did you enter a valid email address?",
+        );
+      } finally {
+        setLoading(false);
+      }
     }
   };
   return (
@@ -43,6 +52,9 @@ const ForgotPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         ></input>
+        <a href="/reset-password" className={authStyles.link}>
+          Already have a code?
+        </a>
         <button
           className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["long"]}`}
           onClick={sendEmail}
@@ -53,7 +65,7 @@ const ForgotPassword = () => {
           href="/"
           className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["long"]}`}
         >
-          Back to Home
+          Back to Login
         </a>
       </div>
     </div>

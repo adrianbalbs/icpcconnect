@@ -115,7 +115,6 @@ export default function Register() {
       } catch (error) {
         alert("Invalid or incorrect verification code!");
         console.error("error:", error);
-        console.log(error);
       } finally {
         setLoading(false);
       }

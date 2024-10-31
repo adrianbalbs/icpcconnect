@@ -9,7 +9,7 @@ export const verification_email_content =
 </head>
 <body>
     <!-- Please don't change line below -->
-    <h1> Hi, <span>USER_NAME</span>! Welcome to ICPC!</h1>
+    <h1> Hi, <span>USER_NAME</span>! Welcome to ICPC Connect!</h1>
     <p>Please enter the verification code in the website to verify your email account.</p>
 
     <!-- Please don't change this line below, since the rust will replace part of the code content in the line below. -->

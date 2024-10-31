@@ -224,8 +224,6 @@ export class StudentService {
   ): Promise<UpdateStudentResponse> {
     const { password, ...rest } = updatedDetails;
 
-    console.log("backend: funny cat", updatedDetails);
-
     const userUpdates: Partial<User> = {
       givenName: rest.givenName,
       familyName: rest.familyName,
@@ -278,11 +276,6 @@ export class StudentService {
             .values({ studentId: userId, languageCode });
         }
       }
-
-      const stumeow = await this.db.query.students.findFirst({
-        where: eq(students.userId, userId)
-      })
-      console.log(stumeow);
       return { ...rest };
     });
     return result;

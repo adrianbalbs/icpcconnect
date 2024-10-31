@@ -93,16 +93,21 @@ export class EmailService {
     // Will throw err if it is not a uni email/ valid email/ or email that has been created by someone before.
     public async sendEmailVerificationCode(req: SendEmailCodeRequest): Promise<string> {
         const { email, isNormalVerificationEmail } = req;
+        const isNewRegisteredEmail = await this.isNewRegisteredEmail(email);
         if (!this.isValidUniversityEmail(email)) {
-
             throw new HTTPError({
                 errorCode: internalServerError.errorCode,
                 message: "Invalid University Email Address provided.",
             });
-        } else if (!await this.isNewRegisteredEmail(email)) {
+        } else if (isNormalVerificationEmail && !isNewRegisteredEmail) {
             throw new HTTPError({
                 errorCode: internalServerError.errorCode,
                 message: "Email Address provided has been used by others before.",
+            });
+        } else if (!isNormalVerificationEmail && isNewRegisteredEmail) {
+            throw new HTTPError({
+                errorCode: internalServerError.errorCode,
+                message: "Require a forgot password email. But user provide a brand new email address.",
             });
         }
         const code = (await this.generateUniqueCode(email)).toString();
