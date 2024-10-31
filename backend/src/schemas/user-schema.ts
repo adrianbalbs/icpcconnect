@@ -193,6 +193,7 @@ const SpokenLanguageEnum = z.enum([
 export type SpokenLanguage = z.infer<typeof SpokenLanguageEnum>;
 export const SendEmailCodeRequestSchema = z.object({
   email: z.string().email(),
+  isNormalVerificationEmail: z.boolean(),
 });
 
 export type SendEmailCodeRequest = z.infer<typeof SendEmailCodeRequestSchema>;

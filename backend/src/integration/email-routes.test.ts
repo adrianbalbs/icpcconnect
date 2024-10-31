@@ -45,7 +45,8 @@ describe("emailRouter tests", () => {
 
   it("should fail if user provide a non valid email address", async () => {
     const req: SendEmailCodeRequest = {
-      email: "wrong@com"
+      email: "wrong@com",
+      isNormalVerificationEmail: true
     };
 
     // It is not a valid email
@@ -58,7 +59,8 @@ describe("emailRouter tests", () => {
 
   it("should fail if user provide a non university email address", async () => {
     const req: SendEmailCodeRequest = {
-      email: "icpc_test@outlook.com"
+      email: "kobeshen123@gmail.com",
+      isNormalVerificationEmail: false
     };
 
     // It is not a valid university email
@@ -74,7 +76,8 @@ describe("emailRouter tests", () => {
 
   it("should send valid link to a valid email address and user can verify", async () => {
     const req: SendEmailCodeRequest = {
-      email: "z5354052@ad.unsw.edu.au"
+      email: "z5354052@ad.unsw.edu.au",
+      isNormalVerificationEmail: false
     };
     const response = await request(emailApp)
       .post("/api/send")

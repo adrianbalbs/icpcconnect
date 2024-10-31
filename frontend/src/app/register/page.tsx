@@ -135,6 +135,7 @@ export default function Register() {
         setLoading(true);
         const obj = {
           email,
+          isNormalVerificationEmail: true,
         };
         await axios.post(`${SERVER_URL}/api/send`, obj);
         alert(
@@ -196,7 +197,7 @@ export default function Register() {
   }, []);
 
   return (
-    <>
+    <div className={registerPage.background}>
       <div className={registerPage["register-polygon"]}></div>
       <div className={registerPage["info-container"]}>
         {step === 1 && (
@@ -474,6 +475,6 @@ export default function Register() {
         {/* Unimplemented Progress Bar */}
         <div className={registerPage["progress-bar"]}></div>
       </div>
-    </>
+    </div>
   );
 }

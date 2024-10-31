@@ -92,7 +92,7 @@ export class EmailService {
     // Note that the email address provided should be valid: I.e, no previous user uses the same email.
     // Will throw err if it is not a uni email/ valid email/ or email that has been created by someone before.
     public async sendEmailVerificationCode(req: SendEmailCodeRequest): Promise<string> {
-        const { email } = req;
+        const { email, isNormalVerificationEmail } = req;
         if (!this.isValidUniversityEmail(email)) {
 
             throw new HTTPError({
@@ -106,7 +106,7 @@ export class EmailService {
             });
         }
         const code = (await this.generateUniqueCode(email)).toString();
-        await sendEmail("New User", email, "ICPC Verification Code", code);
+        await sendEmail("New User", email, "ICPC Verification Code", code, isNormalVerificationEmail);
 
         return code;
     }
