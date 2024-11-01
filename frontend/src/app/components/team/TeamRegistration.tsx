@@ -36,9 +36,9 @@ const TeamRegistration = () => {
     }
   }
 
-  const checkPreference = () => {
-    setAdded({ ...added, preference: true });
-  }
+  // const checkPreference = () => {
+  //   setAdded({ ...added, preference: true });
+  // }
 
   useEffect(() => {
     const storedId = localStorage.getItem('id');
