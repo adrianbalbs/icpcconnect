@@ -35,7 +35,10 @@ const LanguageSlider: React.FC<SliderProps> = ({ type, experience, setExperience
 
   const onChange = (event: Event, value: number | number[]) => {
     const entry = marks.find(m => m.value === Number(value));
-    setExperience({ ...experience, [key]: entry?.label });
+    let label = entry ? (entry.label).toLowerCase() : 'none';
+    label = label === 'proficient' ? 'prof' : label;
+    console.log(key, label);
+    setExperience({ ...experience, [key]: label });
   }
 
   return (

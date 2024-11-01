@@ -75,7 +75,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       codeforcesRating: experience.codeforcesRating > 0,
       contestExperience: experience.contestExperience > 0,
       coursesCompleted: experience.coursesCompleted.length > 0,
-      language: true,
+      language: experience.cExperience !== 'none' || experience.cppExperience !== 'none' || experience.pythonExperience !== 'none' || experience.javaExperience !== 'none',
       leetcodeRating: experience.leetcodeRating > 0,
     });
   }
