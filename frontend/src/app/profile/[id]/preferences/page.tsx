@@ -56,7 +56,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       setPreferences({ ...preferences, pair: { studentId: '', name: null } });
     } else {
       const newList = preferences.exclusions.filter(e => e !== type);
-      newList.length === 0 && setAdded({ ...added, exclusions: false });
+      if (newList.length === 0) setAdded({ ...added, exclusions: false });
       setPreferences({ ...preferences, exclusions: newList });
     }
   }
