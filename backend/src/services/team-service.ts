@@ -1,7 +1,19 @@
 import { eq, inArray } from "drizzle-orm";
-import { DatabaseConnection, teams, students, users } from "../db/index.js";
+import { DatabaseConnection, teams, students, users, universities } from "../db/index.js";
 import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
+
+export type GetTeamsFromInstitution = {
+  university: string,
+  teamName: string | null,
+  teamId: string,
+  members: string[],
+  flagged: boolean
+}
+
+export type GetTeamsFromInstitutionResponse = {
+  teams: GetTeamsFromInstitution[]
+}
 
 export class TeamService {
   private readonly db: DatabaseConnection;
@@ -153,5 +165,91 @@ export class TeamService {
 
     await this.db.delete(teams).where(eq(teams.id, teamId));
     return { status: "OK" };
+  }
+
+  async getTeamsFromSite(siteId: number): Promise<GetTeamsFromInstitutionResponse> {
+    const returnedTeams: GetTeamsFromInstitution[] = [];
+
+    const groups = await this.db
+      .select({
+        flagged: teams.flagged,
+        university: universities.name,
+        teamName: teams.name,
+        teamid: teams.id
+      })
+      .from(teams)
+      .innerJoin(universities, eq(universities.hostedAt, siteId))
+      .where(eq(teams.university, universities.id))
+
+      for (const group of groups) {
+        const stus = await this.db
+          .select({
+            given: users.givenName,
+            family: users.familyName,
+          })
+          .from(users)
+          .innerJoin(students, eq(students.team, group.teamid))
+          .where(eq(users.id, students.userId))
+        
+        const groupStus: string[] = []
+        for (const stu of stus) {
+          groupStus.push(stu.given + " " + stu.family)
+        }
+
+        const finalGroup: GetTeamsFromInstitution = {
+          university: group.university,
+          teamName: group.teamName,
+          teamId: group.teamid,
+          members: groupStus,
+          flagged: group.flagged,
+        }
+
+        returnedTeams.push(finalGroup)
+      }
+
+    return { teams: returnedTeams };
+  }
+
+  async getTeamsFromUni(uniId: number): Promise<GetTeamsFromInstitutionResponse> {
+    const returnedTeams: GetTeamsFromInstitution[] = [];
+
+    const groups = await this.db
+      .select({
+        flagged: teams.flagged,
+        university: universities.name,
+        teamName: teams.name,
+        teamid: teams.id
+      })
+      .from(teams)
+      .innerJoin(universities, eq(universities.id, uniId))
+      .where(eq(teams.university, universities.id))
+
+      for (const group of groups) {
+        const stus = await this.db
+          .select({
+            given: users.givenName,
+            family: users.familyName,
+          })
+          .from(users)
+          .innerJoin(students, eq(students.team, group.teamid))
+          .where(eq(users.id, students.userId))
+        
+          const groupStus: string[] = []
+          for (const stu of stus) {
+            groupStus.push(stu.given + " " + stu.family)
+          }
+
+        const finalGroup: GetTeamsFromInstitution = {
+          university: group.university,
+          teamName: group.teamName,
+          teamId: group.teamid,
+          members: groupStus.sort(),
+          flagged: group.flagged,
+        }
+
+        returnedTeams.push(finalGroup)
+      }
+
+    return { teams: returnedTeams };
   }
 }

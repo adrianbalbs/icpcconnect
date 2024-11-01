@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { DatabaseConnection, users } from "../db/index.js";
+import { DatabaseConnection, teams, users } from "../db/index.js";
 import {
   CreateTeamRequest,
   UpdateTeamRequest,
   CreateStudentRequest,
 } from "../schemas/index.js";
-import { TeamService, StudentService, AuthService } from "../services/index.js";
+import { TeamService, StudentService, AuthService, GetTeamsFromInstitutionResponse } from "../services/index.js";
 import {
   beforeAll,
   afterAll,
@@ -54,6 +54,7 @@ describe("TeamService tests", () => {
 
   afterEach(async () => {
     await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+    await db.delete(teams)
   });
 
   afterAll(async () => {
@@ -332,4 +333,314 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(400);
   });
+
+  it("should create a team at a uni and check that getteamsfromuni works", async () => {
+    const students: CreateStudentRequest[] = [
+      {
+        role: "student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/students")
+        .set("Cookie", cookies)
+        .send(student)
+        .expect(200);
+      const { userId } = res.body;
+      userIds.push(userId);
+    }
+
+    const team: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds,
+      flagged: false,
+    };
+
+    const teamIdRes = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(team)
+      .expect(200);
+    const { teamId } = teamIdRes.body;
+    
+    const res = await request(app)
+      .get("/api/teams/uni/1")
+      .set("Cookie", cookies)
+      .expect(200)
+
+    const teams: GetTeamsFromInstitutionResponse = res.body
+
+    console.log(teams)
+
+    expect(teams.teams.length).toBe(1)
+    expect(teams.teams[0].university).toBe("University of New South Wales")
+    expect(teams.teams[0].teamName).toBe("epicTeam")
+    expect(teams.teams[0].teamId).toBe(teamId)
+    expect(teams.teams[0].members.sort()).toStrictEqual(["Test User2", "Test User", "Adrian Balbalosa"].sort())
+    expect(teams.teams[0].flagged).toBe(false)
+  })
+
+  it("should create a team at a different uni and check that getteamsfromuni returns nothing", async () => {
+    const students: CreateStudentRequest[] = [
+      {
+        role: "student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 2,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 2,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 2,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/students")
+        .set("Cookie", cookies)
+        .send(student)
+        .expect(200);
+      const { userId } = res.body;
+      userIds.push(userId);
+    }
+
+    const team: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 2,
+      memberIds: userIds,
+      flagged: false,
+    };
+
+    await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(team)
+      .expect(200);
+    
+    const res = await request(app)
+      .get("/api/teams/uni/1")
+      .set("Cookie", cookies)
+      .expect(200)
+
+    const teams: GetTeamsFromInstitutionResponse = res.body
+
+    console.log(teams)
+
+    expect(teams.teams.length).toBe(0)
+  })
+
+  it("should create a team at a uni and check that getteamsfromuni works", async () => {
+    const students1: CreateStudentRequest[] = [
+      {
+        role: "student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+    ];
+
+    const students2: CreateStudentRequest[] = [
+      {
+        role: "student",
+        givenName: "Meow",
+        familyName: "1",
+        email: "meow1@comp3900.com",
+        studentId: "z9999991",
+        password: "helloworld",
+        university: 2,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Meow",
+        familyName: "2",
+        email: "meow2@comp3900.com",
+        studentId: "z9999992",
+        password: "helloworld",
+        university: 2,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+      {
+        role: "student",
+        givenName: "Meow",
+        familyName: "3",
+        email: "meow3@comp3900.com",
+        studentId: "z9999993",
+        password: "helloworld",
+        university: 2,
+        verificationCode: "test",
+        photoConsent: true,
+        languagesSpoken: [],
+      },
+    ]
+
+    const userIds1: string[] = [];
+    for (const student1 of students1) {
+      const res = await request(app)
+        .post("/api/students")
+        .set("Cookie", cookies)
+        .send(student1)
+        .expect(200);
+      const { userId } = res.body;
+      userIds1.push(userId);
+    }
+
+    const userIds2: string[] = [];
+    for (const student2 of students2) {
+      const res = await request(app)
+        .post("/api/students")
+        .set("Cookie", cookies)
+        .send(student2)
+        .expect(200);
+      const { userId } = res.body;
+      userIds2.push(userId);
+    }
+
+    const team1: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds1,
+      flagged: false,
+    };
+
+    const team2: CreateTeamRequest = {
+      name: "meowTeam",
+      university: 2,
+      memberIds: userIds2,
+      flagged: false,
+    };
+
+    const teamId1Res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(team1)
+      .expect(200);
+    const teamId1 = teamId1Res.body.teamId;
+
+    const teamId2Res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(team2)
+      .expect(200);
+    const teamId2 = teamId2Res.body.teamId;
+
+    const res = await request(app)
+      .get("/api/teams/site/1")
+      .set("Cookie", cookies)
+      .expect(200)
+
+    const teams: GetTeamsFromInstitutionResponse = res.body
+
+    console.log(teams)
+
+    expect(teams.teams.length).toBe(2)
+    expect(teams.teams[0].university).toBe("University of New South Wales")
+    expect(teams.teams[0].teamName).toBe("epicTeam")
+    expect(teams.teams[0].teamId).toBe(teamId1)
+    expect(teams.teams[0].members.sort()).toStrictEqual(["Test User2", "Test User", "Adrian Balbalosa"].sort())
+    expect(teams.teams[0].flagged).toBe(false)
+
+    expect(teams.teams[1].university).toBe("University of Sydney")
+    expect(teams.teams[1].teamName).toBe("meowTeam")
+    expect(teams.teams[1].teamId).toBe(teamId2)
+    expect(teams.teams[1].members.sort()).toStrictEqual(["Meow 1", "Meow 2", "Meow 3"].sort())
+    expect(teams.teams[1].flagged).toBe(false)
+  })
 });

@@ -18,10 +18,44 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     .use(authenticate)
     .get(
       "/all",
-      authorise(["admin", "coach", "site_coordinator"]),
+      authorise(["admin"]),
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
           const teams = await teamService.getAllTeams();
+          res.status(200).json(teams);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .get(
+      "/uni/:id",
+      authorise(["coach", "site_coordinator", "admin"]),
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const teams = await teamService.getTeamsFromUni(Number(id));
+          res.status(200).json(teams);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .get(
+      "/site/:id",
+      authorise(["site_coordinator", "admin"]),
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const teams = await teamService.getTeamsFromSite(Number(id));
           res.status(200).json(teams);
         } catch (err) {
           next(err);
