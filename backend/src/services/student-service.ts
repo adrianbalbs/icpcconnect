@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import {
   DatabaseConnection,
-  students,
+  studentDetails,
   users,
   languagesSpokenByStudent,
   SpokenLanguage,
@@ -38,11 +38,11 @@ export type UpdateStudentResponse = Omit<UpdateStudentRequest, "password">;
 
 export type GetStudentExclusionsResponse = {
   exclusions: string;
-}[]
+}[];
 
 export type UpdateStudentExclusionsResponse = {
-  exclusions: string
-}
+  exclusions: string;
+};
 
 export class StudentService {
   private readonly db: DatabaseConnection;
@@ -76,18 +76,17 @@ export class StudentService {
       })
       .returning({ userId: users.id });
 
-    await this.db.insert(students).values({
+    await this.db.insert(studentDetails).values({
       userId: student.userId,
       studentId,
       university,
       photoConsent,
     });
 
-
     for (const languageCode of languagesSpoken) {
       await this.db
         .insert(languagesSpokenByStudent)
-        //This is meant to be the student's userId, not their *studentId* 
+        //This is meant to be the student's userId, not their *studentId*
         .values({ studentId: student.userId, languageCode });
     }
 
@@ -96,7 +95,7 @@ export class StudentService {
 
   async getStudentById(userId: string): Promise<StudentProfileResponse> {
     const student = await this.db.query.students.findFirst({
-      where: eq(students.userId, userId),
+      where: eq(studentDetails.userId, userId),
       columns: { team: false, university: false },
       with: {
         team: {
@@ -112,15 +111,15 @@ export class StudentService {
         user: {
           columns: {
             password: false,
-          }
+          },
         },
         languagesSpoken: {
           with: {
             language: true,
-          }
+          },
         },
       },
-    })
+    });
 
     if (!student) {
       throw new HTTPError({
@@ -129,13 +128,7 @@ export class StudentService {
       });
     }
 
-    const {
-      givenName,
-      familyName,
-      email,
-      role,
-      id
-    } = student.user;
+    const { givenName, familyName, email, role, id } = student.user;
 
     const uniName = student.university.name;
 
@@ -156,8 +149,8 @@ export class StudentService {
       familyName,
       email,
       role,
-      id
-    }
+      id,
+    };
   }
 
   async getAllStudents(): Promise<StudentsResponse> {
@@ -177,46 +170,39 @@ export class StudentService {
         user: {
           columns: {
             password: false,
-          }
+          },
         },
         languagesSpoken: {
           with: {
             language: true,
-          }
+          },
         },
       },
-    })
+    });
 
     return {
-      allStudents:
-        allStudents.map((student) => {
-          const {
-            givenName,
-            familyName,
-            email,
-            role,
-            id
-          } = student.user;
+      allStudents: allStudents.map((student) => {
+        const { givenName, familyName, email, role, id } = student.user;
 
-          const uniName = student.university.name;
+        const uniName = student.university.name;
 
-          let teamName = student.team?.name;
-          if (!teamName) {
-            teamName = null;
-          }
+        let teamName = student.team?.name;
+        if (!teamName) {
+          teamName = null;
+        }
 
-          return {
-            ...student,
-            university: uniName,
-            team: teamName,
-            languagesSpoken: student.languagesSpoken.map((ls) => ls.language),
-            givenName,
-            familyName,
-            email,
-            role,
-            id
-          }
-        }),
+        return {
+          ...student,
+          university: uniName,
+          team: teamName,
+          languagesSpoken: student.languagesSpoken.map((ls) => ls.language),
+          givenName,
+          familyName,
+          email,
+          role,
+          id,
+        };
+      }),
     };
   }
 
@@ -270,9 +256,9 @@ export class StudentService {
 
       if (Object.keys(cleanedStudentUpdates).length > 0) {
         await tx
-          .update(students)
+          .update(studentDetails)
           .set(cleanedStudentUpdates)
-          .where(eq(students.userId, userId));
+          .where(eq(studentDetails.userId, userId));
       }
 
       if (rest.languagesSpoken) {
@@ -288,8 +274,8 @@ export class StudentService {
       }
 
       const stumeow = await this.db.query.students.findFirst({
-        where: eq(students.userId, userId)
-      })
+        where: eq(studentDetails.userId, userId),
+      });
       console.log(stumeow);
       return { ...rest };
     });
@@ -313,21 +299,26 @@ export class StudentService {
     return { status: "OK" };
   }
 
-  async getStudentExclusions(userId: string): Promise<GetStudentExclusionsResponse> {
+  async getStudentExclusions(
+    userId: string,
+  ): Promise<GetStudentExclusionsResponse> {
     const exclusions = await this.db
-      .select({ exclusions: students.exclusions })
+      .select({ exclusions: studentDetails.exclusions })
       .from(users)
-      .innerJoin(students, eq(users.id, students.userId))
+      .innerJoin(studentDetails, eq(users.id, studentDetails.userId))
       .where(eq(users.id, userId));
 
-      return exclusions;
+    return exclusions;
   }
 
-  async updateStudentExclusions(userId: string, newExclusions: string): Promise<boolean> {
+  async updateStudentExclusions(
+    userId: string,
+    newExclusions: string,
+  ): Promise<boolean> {
     await this.db
-      .update(students)
+      .update(studentDetails)
       .set({ exclusions: newExclusions })
-      .where(eq(students.userId, userId))
+      .where(eq(studentDetails.userId, userId));
 
     return true;
   }

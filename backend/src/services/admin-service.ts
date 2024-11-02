@@ -3,7 +3,7 @@ import {
   DatabaseConnection,
   coaches,
   siteCoordinators,
-  students,
+  studentDetails,
   teams,
   universities,
   users,
@@ -76,15 +76,15 @@ export class AdminService {
         familyName: users.familyName,
         email: users.email,
         role: users.role,
-        pronouns: students.pronouns,
-        studentId: students.studentId,
+        pronouns: studentDetails.pronouns,
+        studentId: studentDetails.studentId,
         university: universities.name,
         team: teams.name,
       })
       .from(users)
-      .innerJoin(students, eq(users.id, students.userId))
-      .innerJoin(universities, eq(universities.id, students.university))
-      .leftJoin(teams, eq(teams.id, students.team));
+      .innerJoin(studentDetails, eq(users.id, studentDetails.userId))
+      .innerJoin(universities, eq(universities.id, studentDetails.university))
+      .leftJoin(teams, eq(teams.id, studentDetails.team));
 
     const allCoaches = await this.db
       .select({

@@ -4,7 +4,7 @@ import {
   DatabaseConnection,
   languagesSpokenByStudent,
   registrationDetails,
-  students,
+  studentDetails,
   teams,
   universities,
   users,
@@ -86,14 +86,14 @@ export class AlgorithmService {
         cExpericence: registrationDetails.cExperience,
         javaExperience: registrationDetails.javaExperience,
         pythonExperience: registrationDetails.pythonExperience,
-        exclusions: students.exclusions,
+        exclusions: studentDetails.exclusions,
       })
       .from(users)
-      .innerJoin(students, eq(students.userId, users.id))
-      .innerJoin(universities, eq(universities.id, students.university))
+      .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
+      .innerJoin(universities, eq(universities.id, studentDetails.university))
       .innerJoin(
         registrationDetails,
-        eq(registrationDetails.student, students.userId),
+        eq(registrationDetails.student, studentDetails.userId),
       )
       .where(eq(universities.id, universityId));
 
@@ -137,14 +137,14 @@ export class AlgorithmService {
       .returning({ teamId: teams.id });
 
     const members = await this.db.query.students.findMany({
-      where: inArray(students.userId, memberIds),
+      where: inArray(studentDetails.userId, memberIds),
     });
 
     for (const member of members) {
       await this.db
-        .update(students)
+        .update(studentDetails)
         .set({ team: id.teamId })
-        .where(eq(students.userId, member.userId));
+        .where(eq(studentDetails.userId, member.userId));
     }
 
     return id;
