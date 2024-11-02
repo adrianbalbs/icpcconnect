@@ -13,10 +13,10 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", [
-  "student",
-  "coach",
-  "site_coordinator",
-  "admin",
+  "Student",
+  "Coach",
+  "Site Coordinator",
+  "Admin",
 ]);
 
 export const users = pgTable("users", {
@@ -26,13 +26,18 @@ export const users = pgTable("users", {
   password: varchar("password", { length: 128 }).notNull(),
   email: text("email").notNull().unique(),
   role: roleEnum("role").notNull(),
+  university: integer("university")
+    .references(() => universities.id)
+    .notNull(),
   refreshTokenVersion: integer("refresh_token_version").default(1).notNull(),
 });
 
 export const usersRelations = relations(users, ({ one }) => ({
   student: one(students),
-  coach: one(coaches),
-  siteCoordinator: one(siteCoordinators),
+  university: one(universities, {
+    fields: [users.university],
+    references: [universities.id],
+  }),
 }));
 
 export type User = InferSelectModel<typeof users>;
@@ -49,13 +54,11 @@ export const universityRelations = relations(universities, ({ one, many }) => ({
     references: [universities.id],
     relationName: "hosted_universities",
   }),
-  coaches: many(coaches),
-  students: many(students),
+  users: many(users),
   teams: many(teams),
   hostedUniversities: many(universities, {
     relationName: "hosted_universities",
   }),
-  siteCoordinator: one(siteCoordinators),
 }));
 
 export type University = InferSelectModel<typeof universities>;
@@ -71,17 +74,12 @@ export const students = pgTable("students", {
   tshirtSize: text("tshirt_size"),
   team: uuid("team").references(() => teams.id),
   photoConsent: boolean("photo_consent").notNull(),
-  university: integer("university").references(() => universities.id).notNull(),
-  exclusions: text("exclusions").default("").notNull()
+  exclusions: text("exclusions").default("").notNull(),
 });
 
 export const studentRelations = relations(students, ({ one, many }) => ({
   languagesSpoken: many(languagesSpokenByStudent),
   user: one(users, { fields: [students.userId], references: [users.id] }),
-  university: one(universities, {
-    fields: [students.university],
-    references: [universities.id],
-  }),
   team: one(teams, {
     fields: [students.team],
     references: [teams.id],
@@ -221,57 +219,11 @@ export const coursesCompletedByStudentRelations = relations(
   }),
 );
 
-export const coaches = pgTable("coaches", {
-  userId: uuid("id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  university: integer("university")
-    .references(() => universities.id)
-    .notNull(),
-});
-
-export const coachesRelations = relations(coaches, ({ one }) => ({
-  user: one(users, { fields: [coaches.userId], references: [users.id] }),
-  university: one(universities, {
-    fields: [coaches.university],
-    references: [universities.id],
-  }),
-}));
-
-export type Coach = InferSelectModel<typeof coaches>;
-
-export const siteCoordinators = pgTable("site_coordinators", {
-  userId: uuid("id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  university: integer("university")
-    .references(() => universities.id)
-    .notNull(),
-});
-
-export const siteCoordinatorRelations = relations(
-  siteCoordinators,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [siteCoordinators.userId],
-      references: [users.id],
-    }),
-    site: one(universities, {
-      fields: [siteCoordinators.university],
-      references: [universities.id],
-    }),
-  }),
-);
-
-export type SiteCoordinator = InferSelectModel<typeof siteCoordinators>;
-
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
-  flagged: boolean("flagged").default(false).notNull()
+  flagged: boolean("flagged").default(false).notNull(),
 });
 
 export const teamRelations = relations(teams, ({ many, one }) => ({
