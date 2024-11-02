@@ -205,10 +205,10 @@ export const PassVerificationSchema = z.object({
 export type PassVerificationRequest = z.infer<typeof PassVerificationSchema>;
 
 export const UserRoleEnum = z.enum([
-  "student",
-  "coach",
-  "site_coordinator",
-  "admin",
+  "Student",
+  "Coach",
+  "Site Coordinator",
+  "Admin",
 ]);
 export type UserRole = z.infer<typeof UserRoleEnum>;
 
@@ -217,7 +217,7 @@ export const CreateAdminRequestSchema = z.object({
   familyName: z.string().min(1).max(35),
   password: z.string().min(1).max(128),
   email: z.string().email(),
-  role: UserRoleEnum.refine((val) => val === "admin", {
+  role: UserRoleEnum.refine((val) => val === "Admin", {
     message: "Role must be admin",
   }),
 });
@@ -243,22 +243,26 @@ export type CreateStudentRequest = z.infer<typeof CreateStudentRequestSchema>;
 
 export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
   verificationCode: true,
-}).extend({
-  university: z.number(),
-  pronouns: z.string(),
-  team: z.string().nullable(),
-  dietaryRequirements: z.string().nullable(),
-  tshirtSize: z.string(), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
-  photoConsent: z.boolean(),
-}).partial();
+})
+  .extend({
+    university: z.number(),
+    pronouns: z.string(),
+    team: z.string().nullable(),
+    dietaryRequirements: z.string().nullable(),
+    tshirtSize: z.string(), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
+    photoConsent: z.boolean(),
+  })
+  .partial();
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
 
 export const UpdateStudentExclusionsRequestSchema = z.object({
   exclusions: z.string(),
-})
+});
 
-export type UpdateStudentExclusionsRequest = z.infer<typeof UpdateStudentExclusionsRequestSchema>;
+export type UpdateStudentExclusionsRequest = z.infer<
+  typeof UpdateStudentExclusionsRequestSchema
+>;
 
 export const CreateCoachRequestSchema = z.object({
   givenName: z.string().min(1).max(35),
@@ -305,3 +309,35 @@ export const LoginRequestSchema = z.object({
 });
 
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
+
+export const StudentDetailsScehma = z.strictObject({
+  studentId: z.string().min(1),
+  pronouns: z.string().default(""),
+  team: z.string().nullable(),
+  dietaryRequirements: z.string().default(""),
+  tshirtSize: z.string().default(""), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
+  photoConsent: z.boolean().default(false),
+  exclusions: z.string().default(""),
+  languagesSpoken: z.array(z.string()).default([]),
+});
+
+export const UserSchema = z
+  .strictObject({
+    id: z.string(),
+    givenName: z.string().min(1).max(35),
+    familyName: z.string().min(1).max(35),
+    email: z.string().email(),
+    password: z.string().min(1).max(255),
+    role: UserRoleEnum,
+    university: z.number(),
+    studentDetails: StudentDetailsScehma.optional(),
+  })
+  .refine((data) => data.role === "Student" && data.studentDetails, {
+    message: "studentDetails must be provided if the role is student",
+    path: ["studentDetails"],
+  });
+
+export type User = z.infer<typeof UserSchema>;
+export type UserDTO = Omit<User, "password" | "university"> & {
+  university: string;
+};

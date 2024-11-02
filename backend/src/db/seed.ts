@@ -9,8 +9,8 @@ import {
   Course,
   courses,
   siteCoordinators,
-  languagesSpoken,
-  students,
+  languages,
+  studentDetails,
   universities,
   users,
   languagesSpokenByStudent,
@@ -30,8 +30,8 @@ type StudentTable = UserTable & {
   team: string | null;
   pronouns: string;
   studentId: string;
-  photoConsent: boolean,
-  languagesSpoken: SpokenLanguage[],
+  photoConsent: boolean;
+  languagesSpoken: SpokenLanguage[];
 };
 
 type CoachTable = UserTable & {
@@ -67,11 +67,23 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
     if (!existing) {
       const [user] = await tx
         .insert(users)
-        .values({ id, givenName, familyName, email, password: newPassword, role })
+        .values({
+          id,
+          givenName,
+          familyName,
+          email,
+          password: newPassword,
+          role,
+        })
         .returning({ userId: users.id });
-      await tx
-        .insert(students)
-        .values({ userId: user.userId, university, team, pronouns, studentId, photoConsent });
+      await tx.insert(studentDetails).values({
+        userId: user.userId,
+        university,
+        team,
+        pronouns,
+        studentId,
+        photoConsent,
+      });
       for (const languageCode of languagesSpoken) {
         await tx
           .insert(languagesSpokenByStudent)
@@ -166,7 +178,7 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding Language Information");
   await db
-    .insert(languagesSpoken)
+    .insert(languages)
     .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 
@@ -215,7 +227,7 @@ export const seedTest = async (db: DatabaseConnection) => {
     .values(data.default.courses as Course[])
     .onConflictDoNothing();
   await db
-    .insert(languagesSpoken)
+    .insert(languages)
     .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 

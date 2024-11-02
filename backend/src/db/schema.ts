@@ -33,7 +33,7 @@ export const users = pgTable("users", {
 });
 
 export const usersRelations = relations(users, ({ one }) => ({
-  student: one(students),
+  studentDetails: one(studentDetails),
   university: one(universities, {
     fields: [users.university],
     references: [universities.id],
@@ -63,31 +63,31 @@ export const universityRelations = relations(universities, ({ one, many }) => ({
 
 export type University = InferSelectModel<typeof universities>;
 
-export const students = pgTable("students", {
+export const studentDetails = pgTable("student_details", {
   userId: uuid("id")
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   studentId: text("student_id").notNull(),
-  pronouns: text("pronouns"),
-  dietaryRequirements: text("dietary_requirements").default(""),
-  tshirtSize: text("tshirt_size"),
+  pronouns: text("pronouns").notNull().default(""),
+  dietaryRequirements: text("dietary_requirements").notNull().default(""),
+  tshirtSize: text("tshirt_size").notNull().default(""),
   team: uuid("team").references(() => teams.id),
   photoConsent: boolean("photo_consent").notNull(),
   exclusions: text("exclusions").default("").notNull(),
 });
 
-export const studentRelations = relations(students, ({ one, many }) => ({
+export const studentRelations = relations(studentDetails, ({ one, many }) => ({
   languagesSpoken: many(languagesSpokenByStudent),
-  user: one(users, { fields: [students.userId], references: [users.id] }),
+  user: one(users, { fields: [studentDetails.userId], references: [users.id] }),
   team: one(teams, {
-    fields: [students.team],
+    fields: [studentDetails.team],
     references: [teams.id],
   }),
   registrationDetails: one(registrationDetails),
 }));
 
-export type Student = InferSelectModel<typeof students>;
+export type Student = InferSelectModel<typeof studentDetails>;
 
 export const levelEnum = pgEnum("level", ["A", "B"]);
 export const languageExperienceEnum = pgEnum("language_experience", [
@@ -99,7 +99,7 @@ export const languageExperienceEnum = pgEnum("language_experience", [
 export const registrationDetails = pgTable("registration_details", {
   student: uuid("id")
     .primaryKey()
-    .references(() => students.userId, { onDelete: "cascade" })
+    .references(() => studentDetails.userId, { onDelete: "cascade" })
     .notNull(),
   level: levelEnum("level").notNull(),
   contestExperience: integer("contest_experience").default(0).notNull(),
@@ -118,28 +118,28 @@ export const registrationDetailsRelations = relations(
   registrationDetails,
   ({ many, one }) => ({
     coursesCompleted: many(coursesCompletedByStudent),
-    registeredBy: one(students, {
+    registeredBy: one(studentDetails, {
       fields: [registrationDetails.student],
-      references: [students.userId],
+      references: [studentDetails.userId],
     }),
   }),
 );
 
-export const languagesSpoken = pgTable("spoken_languages", {
+export const languages = pgTable("languages", {
   code: text("code").primaryKey().notNull(),
   name: text("name").notNull(),
 });
 
-export type SpokenLanguage = InferSelectModel<typeof languagesSpoken>;
+export type SpokenLanguage = InferSelectModel<typeof languages>;
 
 export const languagesSpokenByStudent = pgTable(
   "languages_spoken_by_student",
   {
     studentId: uuid("student_id")
-      .references(() => students.userId, { onDelete: "cascade" })
+      .references(() => studentDetails.userId, { onDelete: "cascade" })
       .notNull(),
     languageCode: text("language_code")
-      .references(() => languagesSpoken.code, { onDelete: "cascade" })
+      .references(() => languages.code, { onDelete: "cascade" })
       .notNull(),
   },
   (table) => {
@@ -152,23 +152,20 @@ export const languagesSpokenByStudent = pgTable(
 export const languagesSpokenByStudentRelations = relations(
   languagesSpokenByStudent,
   ({ one }) => ({
-    student: one(students, {
+    student: one(studentDetails, {
       fields: [languagesSpokenByStudent.studentId],
-      references: [students.userId],
+      references: [studentDetails.userId],
     }),
-    language: one(languagesSpoken, {
+    language: one(languages, {
       fields: [languagesSpokenByStudent.languageCode],
-      references: [languagesSpoken.code],
+      references: [languages.code],
     }),
   }),
 );
 
-export const languagesSpokenRelations = relations(
-  languagesSpoken,
-  ({ many }) => ({
-    spokenBy: many(languagesSpokenByStudent),
-  }),
-);
+export const languagesSpokenRelations = relations(languages, ({ many }) => ({
+  spokenBy: many(languagesSpokenByStudent),
+}));
 
 export const courseTypeEnum = pgEnum("course_type", [
   "Programming Fundamentals",
@@ -227,7 +224,7 @@ export const teams = pgTable("teams", {
 });
 
 export const teamRelations = relations(teams, ({ many, one }) => ({
-  members: many(students),
+  members: many(studentDetails),
   university: one(universities, {
     fields: [teams.university],
     references: [universities.id],
