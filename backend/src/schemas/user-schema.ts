@@ -310,6 +310,11 @@ export const LoginRequestSchema = z.object({
 
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 
+export const LanguagesSchema = z.strictObject({
+  code: z.string(),
+  name: z.string(),
+});
+
 export const StudentDetailsScehma = z.strictObject({
   studentId: z.string().min(1),
   pronouns: z.string().default(""),
@@ -318,26 +323,47 @@ export const StudentDetailsScehma = z.strictObject({
   tshirtSize: z.string().default(""), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
   photoConsent: z.boolean().default(false),
   exclusions: z.string().default(""),
-  languagesSpoken: z.array(z.string()).default([]),
+  languagesSpoken: z.array(LanguagesSchema).default([]),
 });
+export type StudentDetailsDTO = z.infer<typeof StudentDetailsScehma>;
 
-export const UserSchema = z
-  .strictObject({
-    id: z.string(),
-    givenName: z.string().min(1).max(35),
-    familyName: z.string().min(1).max(35),
-    email: z.string().email(),
-    password: z.string().min(1).max(255),
-    role: UserRoleEnum,
-    university: z.number(),
-    studentDetails: StudentDetailsScehma.optional(),
-  })
-  .refine((data) => data.role === "Student" && data.studentDetails, {
-    message: "studentDetails must be provided if the role is student",
-    path: ["studentDetails"],
-  });
+export const UpdateStudentDetailsSchema = StudentDetailsScehma.extend({
+  languagesSpoken: z.array(z.string().min(1)), // Array of language IDs for updating
+}).partial();
+export type UpdateStudentDetails = z.infer<typeof UpdateStudentDetailsSchema>;
 
-export type User = z.infer<typeof UserSchema>;
-export type UserDTO = Omit<User, "password" | "university"> & {
+export const BaseUserSchema = z.strictObject({
+  id: z.string(),
+  givenName: z.string().min(1).max(35),
+  familyName: z.string().min(1).max(35),
+  email: z.string().email(),
+  password: z.string().min(1).max(255),
+  role: UserRoleEnum,
+  university: z.number(),
+});
+export type BaseUser = z.infer<typeof BaseUserSchema>;
+export type BaseUserDTO = Omit<BaseUser, "password" | "university"> & {
+  university: string;
+};
+
+export const UpdateUserSchema = BaseUserSchema.omit({
+  id: true,
+  password: true,
+}).partial();
+export type UpdateUser = z.infer<typeof UpdateUserSchema>;
+
+export const BaseUserWithStudentDetailsSchema = BaseUserSchema.extend({
+  studentDetails: StudentDetailsScehma.optional(),
+}).refine((data) => data.role === "Student" && data.studentDetails, {
+  message: "studentDetails must be provided if the role is student",
+  path: ["studentDetails"],
+});
+export type BaseUserWithStudentDetails = z.infer<
+  typeof BaseUserWithStudentDetailsSchema
+>;
+export type BaseUserWithStudentDetailsDTO = Omit<
+  BaseUserWithStudentDetails,
+  "password" | "university"
+> & {
   university: string;
 };
