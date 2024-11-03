@@ -142,7 +142,9 @@ export class UserService {
     return user;
   }
 
-  async getAllUsers(role?: UserRole): Promise<BaseUserWithStudentDetailsDTO[]> {
+  async getAllUsers(
+    role?: UserRole,
+  ): Promise<{ users: BaseUserWithStudentDetailsDTO[] }> {
     const users = await this.db.query.users.findMany({
       where: role ? (users, { eq }) => eq(users.role, role) : undefined,
       columns: { password: false, university: false },
@@ -161,24 +163,26 @@ export class UserService {
         },
       },
     });
-    return users.map((user) => {
-      return {
-        ...user,
-        university: user.university.name,
-        studentDetails:
-          user.studentDetails !== null
-            ? {
-                ...user.studentDetails,
-                team: user.studentDetails.team
-                  ? user.studentDetails.team.name
-                  : null,
-                languagesSpoken: user.studentDetails?.languagesSpoken.map(
-                  (lang) => lang.language,
-                ),
-              }
-            : undefined,
-      };
-    });
+    return {
+      users: users.map((user) => {
+        return {
+          ...user,
+          university: user.university.name,
+          studentDetails:
+            user.studentDetails !== null
+              ? {
+                  ...user.studentDetails,
+                  team: user.studentDetails.team
+                    ? user.studentDetails.team.name
+                    : null,
+                  languagesSpoken: user.studentDetails?.languagesSpoken.map(
+                    (lang) => lang.language,
+                  ),
+                }
+              : undefined,
+        };
+      }),
+    };
   }
 
   async deleteUser(id: string): Promise<DeleteResponse> {
