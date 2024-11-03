@@ -10,12 +10,10 @@ import {
   TeamService,
   AuthService,
   AdminService,
+  UserService,
 } from "./services/index.js";
 import {
-  coachRouter,
   codesRouter,
-  siteCoordinatorRouter,
-  studentRouter,
   teamRouter,
   authRouter,
   adminRouter,
@@ -28,6 +26,7 @@ import { getLogger } from "./utils/logger.js";
 import { contestRegistrationRouter } from "./routers/contest-registration-router.js";
 import cookieParser from "cookie-parser";
 import { AlgorithmService } from "./services/algorithm-service.js";
+import { userRouter } from "./routers/user-router.js";
 
 const logger = getLogger();
 
@@ -39,6 +38,7 @@ const db = new DevDatabase();
 const dbConn = db.getConnection();
 await seed(dbConn);
 
+const userService = new UserService(dbConn);
 const studentService = new StudentService(dbConn);
 const teamService = new TeamService(dbConn);
 const coachService = new CoachService(dbConn);
@@ -62,13 +62,8 @@ app
   .use(cookieParser())
   .use(loggingMiddlware)
   .use("/api/auth", authRouter(authService))
+  .use("/api/users", userRouter(userService, authService))
   .use("/api/teams", teamRouter(teamService, authService))
-  .use("/api/students", studentRouter(studentService, authService))
-  .use("/api/coaches", coachRouter(coachService, authService))
-  .use(
-    "/api/site-coordinators",
-    siteCoordinatorRouter(siteCoordinatorService, authService),
-  )
   .use(
     "/api/contest-registration",
     contestRegistrationRouter(contestRegistrationService, authService),

@@ -350,7 +350,14 @@ export const UpdateUserSchema = BaseUserSchema.omit({
   id: true,
   password: true,
 }).partial();
+
 export type UpdateUser = z.infer<typeof UpdateUserSchema>;
+
+export const UpdatePasswordSchema = z.strictObject({
+  password: z.string().min(1).max(255),
+});
+
+export type UpdatePassword = z.infer<typeof UpdatePasswordSchema>;
 
 export const BaseUserWithStudentDetailsSchema = BaseUserSchema.extend({
   studentDetails: StudentDetailsScehma.optional(),
