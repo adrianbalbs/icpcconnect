@@ -7,12 +7,13 @@ import { validateData } from "src/middleware/validator-middleware.js";
 import {
   BaseUserWithStudentDetails,
   BaseUserWithStudentDetailsSchema,
-  UpdatePassword,
+  GetAllUsersQuerySchema,
   UpdatePasswordSchema,
   UpdateStudentDetails,
   UpdateStudentDetailsSchema,
   UpdateUser,
   UpdateUserSchema,
+  UserRole,
 } from "src/schemas/user-schema.js";
 
 export function userRouter(userService: UserService, authService: AuthService) {
@@ -35,11 +36,21 @@ export function userRouter(userService: UserService, authService: AuthService) {
     )
     .get(
       "/",
-      [authenticate, authorise(["Admin", "Coach", "Site Coordinator"])],
-      handle(async (_req, res) => {
-        const users = await userService.getAllUsers();
-        res.status(200).send(users);
-      }),
+      [
+        authenticate,
+        authorise(["Admin", "Coach", "Site Coordinator"]),
+        validateData(GetAllUsersQuerySchema, "query"),
+      ],
+      handle(
+        async (
+          req: Request<unknown, unknown, unknown, { role?: UserRole }>,
+          res,
+        ) => {
+          const { role } = req.query;
+          const users = await userService.getAllUsers(role);
+          res.status(200).send(users);
+        },
+      ),
     )
     .get(
       "/:id",
@@ -106,7 +117,10 @@ export function userRouter(userService: UserService, authService: AuthService) {
         validateData(UpdatePasswordSchema, "body"),
       ],
       handle(
-        async (req: Request<{ id: string }, unknown, UpdatePassword>, res) => {
+        async (
+          req: Request<{ id: string }, unknown, { password: string }>,
+          res,
+        ) => {
           const { id } = req.params;
           const {
             body: { password },
@@ -121,8 +135,8 @@ export function userRouter(userService: UserService, authService: AuthService) {
       [authenticate, authorise(["Admin", "Coach"])],
       handle(async (req: Request<{ id: string }, unknown>, res) => {
         const { id } = req.params;
-        const result = await userService.deleteUser(id);
-        res.status(200).send(result);
+        const user = await userService.deleteUser(id);
+        res.status(200).send(user);
       }),
     );
 }

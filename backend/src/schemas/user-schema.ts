@@ -357,8 +357,6 @@ export const UpdatePasswordSchema = z.strictObject({
   password: z.string().min(1).max(255),
 });
 
-export type UpdatePassword = z.infer<typeof UpdatePasswordSchema>;
-
 export const BaseUserWithStudentDetailsSchema = BaseUserSchema.extend({
   studentDetails: StudentDetailsScehma.optional(),
 }).refine((data) => data.role === "Student" && data.studentDetails, {
@@ -374,3 +372,7 @@ export type BaseUserWithStudentDetailsDTO = Omit<
 > & {
   university: string;
 };
+
+export const GetAllUsersQuerySchema = z.strictObject({
+  role: UserRoleEnum.optional(),
+});
