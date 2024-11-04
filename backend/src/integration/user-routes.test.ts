@@ -92,7 +92,9 @@ describe("userRoutes tests", () => {
       .get("/api/users")
       .set("Cookie", cookies)
       .expect(200);
-    expect(res.body.allUsers.length).toBe(users.length);
+
+    // the admin user is also fetched
+    expect(res.body.allUsers.length).toBe(users.length + 1);
   });
 
   it("should get all based on role", async () => {
