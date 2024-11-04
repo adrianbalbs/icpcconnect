@@ -1,19 +1,7 @@
 import { eq } from "drizzle-orm";
-import {
-  DatabaseConnection,
-  coaches,
-  siteCoordinators,
-  studentDetails,
-  teams,
-  universities,
-  users,
-} from "../db/index.js";
-import {
-  DeleteResponse,
-  NewUserResponse,
-  UserProfileResponse,
-} from "../types/api-res.js";
-import { CreateAdminRequest, UpdateAdminRequest } from "../schemas/index.js";
+import { DatabaseConnection, users } from "../db/index.js";
+import { DeleteResponse, UserProfileResponse } from "../types/api-res.js";
+import { UpdateAdminRequest } from "../schemas/index.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { HTTPError, badRequest } from "../utils/errors.js";
 
@@ -30,107 +18,6 @@ export class AdminService {
 
   constructor(db: DatabaseConnection) {
     this.db = db;
-  }
-
-  async createAdmin(req: CreateAdminRequest): Promise<NewUserResponse> {
-    const { givenName, familyName, password, email } = req;
-
-    const hashedPassword = await passwordUtils().hash(password);
-
-    const id = await this.db
-      .insert(users)
-      .values({
-        givenName,
-        familyName,
-        password: hashedPassword,
-        email,
-        role: "admin",
-      })
-      .returning({ userId: users.id });
-
-    // Return the newly created admin's ID
-    return { userId: id[0].userId };
-  }
-
-  async getAllMembers(): Promise<AllUsersResponse> {
-    const allUsers = await this.db
-      .select({
-        id: users.id,
-        givenName: users.givenName,
-        familyName: users.familyName,
-        email: users.email,
-        role: users.role,
-      })
-      .from(users);
-    return { users: allUsers };
-  }
-
-  // Not expect to be used, but remain here just for cases
-  // will return all a list of obj with details
-  // No promise, since different obj has different properties: i.e, student has studentId property
-  async getAllMembersInDetails() {
-    const allStudents = await this.db
-      .select({
-        id: users.id,
-        givenName: users.givenName,
-        familyName: users.familyName,
-        email: users.email,
-        role: users.role,
-        pronouns: studentDetails.pronouns,
-        studentId: studentDetails.studentId,
-        university: universities.name,
-        team: teams.name,
-      })
-      .from(users)
-      .innerJoin(studentDetails, eq(users.id, studentDetails.userId))
-      .innerJoin(universities, eq(universities.id, studentDetails.university))
-      .leftJoin(teams, eq(teams.id, studentDetails.team));
-
-    const allCoaches = await this.db
-      .select({
-        id: users.id,
-        givenName: users.givenName,
-        familyName: users.familyName,
-        email: users.email,
-        role: users.role,
-        university: universities.name,
-      })
-      .from(users)
-      .innerJoin(coaches, eq(users.id, coaches.userId))
-      .innerJoin(universities, eq(universities.id, coaches.university));
-
-    const allSiteCoordinator = await this.db
-      .select({
-        id: users.id,
-        givenName: users.givenName,
-        familyName: users.familyName,
-        email: users.email,
-        role: users.role,
-        university: siteCoordinators.university,
-      })
-      .from(users)
-      .innerJoin(siteCoordinators, eq(users.id, siteCoordinators.userId))
-      .innerJoin(
-        universities,
-        eq(universities.id, siteCoordinators.university),
-      );
-
-    // const allMembers = [
-    //     ...allStudents.map(student => ({
-    //       ...student,
-    //       type: 'student',
-    //     })),
-    //     ...allCoaches.map(coach => ({
-    //       ...coach,
-    //       type: 'coach',
-    //     })),
-    //     ...allSiteCoordinator.map(coordinator => ({
-    //       ...coordinator,
-    //       type: 'site_coordinator',
-    //     })),
-    //   ];
-    const allMembers = [...allStudents, ...allCoaches, ...allSiteCoordinator];
-    return allMembers;
   }
 
   async updateAdmin(

@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import {
   DatabaseConnection,
   teams,
@@ -25,16 +25,15 @@ export class TeamService {
         university,
       })
       .returning({ teamId: teams.id });
-
-    const members = await this.db.query.students.findMany({
-      where: inArray(studentDetails.userId, memberIds),
+    const members = await this.db.query.users.findMany({
+      where: and(inArray(users.id, memberIds), eq(users.role, "Student")),
     });
 
     for (const member of members) {
       await this.db
         .update(studentDetails)
         .set({ team: id.teamId })
-        .where(eq(studentDetails.userId, member.userId));
+        .where(eq(studentDetails.userId, member.id));
     }
 
     return id;
@@ -105,7 +104,7 @@ export class TeamService {
       if (memberIds) {
         //Unset old team-members
         {
-          const members = await tx.query.students.findMany({
+          const members = await tx.query.users.findMany({
             where: eq(studentDetails.team, teamId),
           });
 
@@ -113,20 +112,20 @@ export class TeamService {
             await tx
               .update(studentDetails)
               .set({ team: null })
-              .where(eq(studentDetails.userId, member.userId));
+              .where(eq(studentDetails.userId, member.id));
           }
         }
 
         //Set team-id for new members
-        const members = await tx.query.students.findMany({
-          where: inArray(studentDetails.userId, memberIds),
+        const members = await tx.query.users.findMany({
+          where: inArray(users.id, memberIds),
         });
 
         for (const member of members) {
           await tx
             .update(studentDetails)
             .set({ team: teamId })
-            .where(eq(studentDetails.userId, member.userId));
+            .where(eq(studentDetails.userId, member.id));
         }
       }
 

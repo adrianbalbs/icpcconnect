@@ -21,7 +21,7 @@ export function contestRegistrationRouter(
     .use(authenticate)
     .get(
       "/",
-      [authorise(["admin", "coach"])],
+      [authorise(["Admin", "Coach"])],
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
           const registrations =
@@ -34,7 +34,7 @@ export function contestRegistrationRouter(
     )
     .get(
       "/:id",
-      [authorise(["admin", "coach", "student"])],
+      [authorise(["Admin", "Coach", "Student"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -52,7 +52,7 @@ export function contestRegistrationRouter(
     )
     .delete(
       "/:id",
-      [authorise(["admin", "coach", "student"])],
+      [authorise(["Admin", "Coach", "Student"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -71,7 +71,7 @@ export function contestRegistrationRouter(
     .post(
       "/",
       [
-        authorise(["admin", "coach", "student"]),
+        authorise(["Admin", "Coach", "Student"]),
         validateData(CreateContestRegistrationFormSchema, "body"),
       ],
 
@@ -98,7 +98,7 @@ export function contestRegistrationRouter(
     .put(
       "/:id",
       [
-        authorise(["admin", "coach", "student"]),
+        authorise(["Admin", "Coach", "Student"]),
         validateData(UpdateContestRegistrationFormSchema, "body"),
       ],
       async (

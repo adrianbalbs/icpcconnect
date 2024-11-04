@@ -1,12 +1,9 @@
 import express from "express";
 import cors from "cors";
-import { DevDatabase, seed } from "./db/index.js";
+import { DevDatabase, runMigrations, seed } from "./db/index.js";
 import {
-  CoachService,
   CodesService,
   ContestRegistrationService,
-  SiteCoordinatorService,
-  StudentService,
   TeamService,
   AuthService,
   AdminService,
@@ -36,13 +33,12 @@ const port = process.env.PORT || "3000";
 
 const db = new DevDatabase();
 const dbConn = db.getConnection();
+
+await runMigrations(dbConn);
 await seed(dbConn);
 
 const userService = new UserService(dbConn);
-const studentService = new StudentService(dbConn);
 const teamService = new TeamService(dbConn);
-const coachService = new CoachService(dbConn);
-const siteCoordinatorService = new SiteCoordinatorService(dbConn);
 const contestRegistrationService = new ContestRegistrationService(dbConn);
 const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
@@ -69,17 +65,7 @@ app
     contestRegistrationRouter(contestRegistrationService, authService),
   )
   .use("/api", codesRouter(codesService, authService))
-  .use(
-    "/api",
-    adminRouter(
-      adminService,
-      coachService,
-      studentService,
-      siteCoordinatorService,
-      authService,
-      algorithmService,
-    ),
-  )
+  .use("/api", adminRouter(adminService, authService, algorithmService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {

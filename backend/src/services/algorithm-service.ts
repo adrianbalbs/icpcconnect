@@ -90,7 +90,7 @@ export class AlgorithmService {
       })
       .from(users)
       .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
-      .innerJoin(universities, eq(universities.id, studentDetails.university))
+      .innerJoin(universities, eq(universities.id, users.university))
       .innerJoin(
         registrationDetails,
         eq(registrationDetails.student, studentDetails.userId),
@@ -136,15 +136,15 @@ export class AlgorithmService {
       })
       .returning({ teamId: teams.id });
 
-    const members = await this.db.query.students.findMany({
-      where: inArray(studentDetails.userId, memberIds),
+    const members = await this.db.query.users.findMany({
+      where: inArray(users.id, memberIds),
     });
 
     for (const member of members) {
       await this.db
         .update(studentDetails)
         .set({ team: id.teamId })
-        .where(eq(studentDetails.userId, member.userId));
+        .where(eq(studentDetails.userId, member.id));
     }
 
     return id;

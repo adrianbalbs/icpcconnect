@@ -18,7 +18,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     .use(authenticate)
     .get(
       "/all",
-      authorise(["admin", "coach", "site_coordinator"]),
+      authorise(["Admin", "Coach", "Site Coordinator"]),
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
           const teams = await teamService.getAllTeams();
@@ -30,7 +30,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     )
     .get(
       "/:id",
-      authorise(["admin", "coach", "site_coordinator", "student"]),
+      authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -47,7 +47,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     )
     .get(
       "/student/:id",
-      authorise(["admin", "coach", "site_coordinator", "student"]),
+      authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -64,7 +64,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     )
     .delete(
       "/:id",
-      authorise(["admin", "coach"]),
+      authorise(["Admin", "Coach"]),
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -82,7 +82,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     .post(
       "/register",
       [
-        authorise(["admin", "coach", "student"]),
+        authorise(["Admin", "Coach", "Student"]),
         validateData(CreateTeamRequestSchema, "body"),
       ],
       async (
@@ -102,7 +102,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     .put(
       "/update/:id",
       [
-        authorise(["admin", "coach"]),
+        authorise(["Admin", "Coach"]),
         validateData(UpdateTeamRequestSchema, "body"),
       ],
       async (

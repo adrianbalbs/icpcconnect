@@ -18,7 +18,7 @@ describe("createAuthoriseMiddleware", () => {
   });
 
   it("should return 400 if role is missing", async () => {
-    const middleware = authorise(["admin"]);
+    const middleware = authorise(["Admin"]);
 
     await middleware(req as Request, res as Response, next);
 
@@ -29,7 +29,7 @@ describe("createAuthoriseMiddleware", () => {
   it("should call next with unauthorized error if role is not allowed", async () => {
     req.role = "student";
 
-    const middleware = authorise(["admin"]);
+    const middleware = authorise(["Admin"]);
 
     await middleware(req as Request, res as Response, next);
 
@@ -41,7 +41,7 @@ describe("createAuthoriseMiddleware", () => {
   it("should call next when authorisation is successful", async () => {
     req.role = "admin";
 
-    const middleware = authorise(["admin", "student"]);
+    const middleware = authorise(["Admin", "Student"]);
 
     await middleware(req as Request, res as Response, next);
 

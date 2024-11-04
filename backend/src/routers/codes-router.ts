@@ -21,7 +21,7 @@ export function codesRouter(
       /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/
       .get(
         "/allRoleCodes",
-        [authenticate, authorise(["admin"])],
+        [authenticate, authorise(["Admin"])],
         async (_req: Request, res: Response, next: NextFunction) => {
           try {
             const codes = await codesService.getAllRoleCodes();
@@ -35,7 +35,7 @@ export function codesRouter(
       /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/
       .get(
         "/allAuthCodes",
-        [authenticate, authorise(["admin"])],
+        [authenticate, authorise(["Admin"])],
         async (_req: Request, res: Response, next: NextFunction) => {
           try {
             const codes = await codesService.getAllAuthCodes();
@@ -48,7 +48,7 @@ export function codesRouter(
 
       .get(
         "/newCoachCode",
-        [authenticate, authorise(["admin"])],
+        [authenticate, authorise(["Admin"])],
         async (_req: Request, res: Response, next: NextFunction) => {
           try {
             const code = await pushCodeCoach(codesService);
@@ -61,7 +61,7 @@ export function codesRouter(
 
       .get(
         "/newSiteCoordCode",
-        [authenticate, authorise(["admin"])],
+        [authenticate, authorise(["Admin"])],
         async (_req: Request, res: Response, next: NextFunction) => {
           try {
             const code = await pushCodeSiteCoord(codesService);
@@ -74,7 +74,7 @@ export function codesRouter(
 
       .post(
         "/newAuthCode",
-        [authenticate, authorise(["admin"])],
+        [authenticate, authorise(["Admin"])],
         async (
           req: Request<
             Record<string, never>,
