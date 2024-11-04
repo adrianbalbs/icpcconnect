@@ -1,10 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { AdminService, AuthService } from "../services/index.js";
-import { adminRouter, authRouter } from "../routers/index.js";
+import { AdminService, AuthService, UserService } from "../services/index.js";
+import { adminRouter, authRouter, userRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
-import { CreateAdminRequest } from "../schemas/index.js";
 import {
   beforeAll,
   afterAll,
@@ -17,6 +16,7 @@ import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
 import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
 import { AlgorithmService } from "../services/algorithm-service.js";
+import { generateCreateUserFixture } from "./fixtures.js";
 
 let db: DatabaseConnection;
 let adminApp: ReturnType<typeof express>;
@@ -30,6 +30,7 @@ beforeAll(async () => {
     .use(express.json())
     .use(cookieParser())
     .use("/api/auth", authRouter(authService))
+    .use("/api/users", userRouter(new UserService(db), authService))
     .use(
       "/api",
       adminRouter(new AdminService(db), authService, new AlgorithmService(db)),
@@ -56,29 +57,28 @@ describe("adminRouter tests", () => {
     await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
   });
   it("should remove the admin itself", async () => {
-    const req: CreateAdminRequest = {
+    const req = generateCreateUserFixture({
       role: "Admin",
       givenName: "Yuyun",
       familyName: "Zhou",
       password: "why I'm happy to study computer science",
       email: "hello_word@comp3900.com",
-    };
+    });
     const response = await request(adminApp)
-      .post("/api/admin")
-      .set("Cookie", cookies)
+      .post("/api/users")
       .send(req)
       .expect(200);
 
     await request(adminApp)
-      .get(`/api/admin/${response.body.userId}`)
+      .get(`/api/users/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
     await request(adminApp)
-      .delete(`/api/admin/${response.body.userId}`)
+      .delete(`/api/admin/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
     await request(adminApp)
-      .get(`/api/admin/${response.body.userId}`)
+      .get(`/api/users/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(500);
   });
