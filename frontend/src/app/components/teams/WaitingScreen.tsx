@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import pageStyles from "@/styles/Page.module.css";
 import { Button } from "@mui/material";
-import { purpleBtn } from "@/styles/Overriding";
+import { purpleBtn } from "@/styles/sxStyles";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface WaitingProps {
