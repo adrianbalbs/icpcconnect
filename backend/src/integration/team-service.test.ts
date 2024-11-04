@@ -2,12 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
 import { DatabaseConnection, users } from "../db/index.js";
-import {
-  CreateTeamRequest,
-  UpdateTeamRequest,
-  CreateStudentRequest,
-} from "../schemas/index.js";
-import { TeamService, StudentService, AuthService } from "../services/index.js";
+import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
+import { TeamService, AuthService, UserService } from "../services/index.js";
 import {
   beforeAll,
   afterAll,
@@ -18,10 +14,11 @@ import {
   afterEach,
 } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
-import { teamRouter, studentRouter, authRouter } from "../routers/index.js";
+import { teamRouter, authRouter, userRouter } from "../routers/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
+import { generateCreateUserFixture } from "./fixtures.js";
 
 describe("TeamService tests", () => {
   let db: DatabaseConnection;
@@ -36,7 +33,7 @@ describe("TeamService tests", () => {
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/students", studentRouter(new StudentService(db), authService))
+      .use("/api/users", userRouter(new UserService(db), authService))
       .use("/api/teams", teamRouter(new TeamService(db), authService))
       .use(errorHandlerMiddleware);
   });
@@ -61,53 +58,44 @@ describe("TeamService tests", () => {
   });
 
   it("Should register a new team", async () => {
-    const students: CreateStudentRequest[] = [
-      {
-        role: "student",
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Adrian",
         familyName: "Balbalosa",
         email: "adrianbalbs@comp3900.com",
         studentId: "z5397730",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Test",
         familyName: "User",
         email: "testuser@comp3900.com",
         studentId: "z1234567",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Test",
         familyName: "User2",
         email: "testuser2@comp3900.com",
         studentId: "z1234568",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
+      }),
     ];
 
     const userIds: string[] = [];
     for (const student of students) {
       const res = await request(app)
-        .post("/api/students")
+        .post("/api/users")
         .send(student)
         .expect(200);
-      const { userId } = res.body;
-      userIds.push(userId);
+      const { id } = res.body;
+      userIds.push(id);
     }
 
     const req: CreateTeamRequest = {
@@ -127,53 +115,44 @@ describe("TeamService tests", () => {
   });
 
   it("Should get the teams's details with a uuid", async () => {
-    const students: CreateStudentRequest[] = [
-      {
-        role: "student",
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Adrian",
         familyName: "Balbalosa",
         email: "adrianbalbs@comp3900.com",
         studentId: "z5397730",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Test",
         familyName: "User",
         email: "testuser@comp3900.com",
         studentId: "z1234567",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Test",
         familyName: "User2",
         email: "testuser2@comp3900.com",
         studentId: "z1234568",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
+      }),
     ];
 
     const userIds: string[] = [];
     for (const student of students) {
       const res = await request(app)
-        .post("/api/students")
+        .post("/api/users")
         .send(student)
         .expect(200);
-      const { userId } = res.body;
-      userIds.push(userId);
+      const { id } = res.body;
+      userIds.push(id);
     }
 
     const req: CreateTeamRequest = {
@@ -206,53 +185,44 @@ describe("TeamService tests", () => {
   });
 
   it("Should update the teams details", async () => {
-    const students: CreateStudentRequest[] = [
-      {
-        role: "student",
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Adrian",
         familyName: "Balbalosa",
         email: "adrianbalbs@comp3900.com",
         studentId: "z5397730",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Test",
         familyName: "User",
         email: "testuser@comp3900.com",
         studentId: "z1234567",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Test",
         familyName: "User2",
         email: "testuser2@comp3900.com",
         studentId: "z1234568",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        photoConsent: true,
-        languagesSpoken: [],
-      },
+      }),
     ];
 
     const userIds: string[] = [];
     for (const student of students) {
       const res = await request(app)
-        .post("/api/students")
+        .post("/api/users")
         .send(student)
         .expect(200);
-      const { userId } = res.body;
-      userIds.push(userId);
+      const { id } = res.body;
+      userIds.push(id);
     }
 
     const team: CreateTeamRequest = {

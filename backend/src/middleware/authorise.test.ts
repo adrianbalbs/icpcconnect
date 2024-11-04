@@ -39,7 +39,7 @@ describe("createAuthoriseMiddleware", () => {
   });
 
   it("should call next when authorisation is successful", async () => {
-    req.role = "admin";
+    req.role = "Admin";
 
     const middleware = authorise(["Admin", "Student"]);
 
