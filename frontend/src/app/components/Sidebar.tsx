@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import profileStyles from '@/styles/Profile.module.css';
-import { Paper, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { sidebarBtn } from '@/styles/sxStyles';
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import profileStyles from "@/styles/Profile.module.css";
+import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { sidebarBtn } from "@/styles/sxStyles";
 
 interface SidebarProps {
   id: string;
@@ -13,37 +13,47 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ id }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const [tab, setTab] = useState('profile');
+  const [tab, setTab] = useState("profile");
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>, nextTab: string) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLElement>,
+    nextTab: string,
+  ) => {
     if (nextTab === null) return;
-    const navTo = nextTab === 'profile' ? '' : nextTab;
+    const navTo = nextTab === "profile" ? "" : nextTab;
     router.replace(`/profile/${id}/${navTo}`);
   };
 
   useEffect(() => {
-    if (pathname.includes('experience')) setTab('experience');
-    else if (pathname.includes('preferences')) setTab('preferences');
-    else if (pathname.includes('account-settings')) setTab('account-settings');
-    else setTab('profile');
+    if (pathname.includes("experience")) setTab("experience");
+    else if (pathname.includes("preferences")) setTab("preferences");
+    else if (pathname.includes("account-settings")) setTab("account-settings");
+    else setTab("profile");
   }, [pathname]);
 
-  return <Paper elevation={3} className={profileStyles.sidebar}>
-    <ToggleButtonGroup orientation="vertical" value={tab} onChange={handleClick} exclusive>
-      <ToggleButton value="profile" sx={sidebarBtn}>
-        Profile
-      </ToggleButton>
-      <ToggleButton value="experience" sx={sidebarBtn}>
-        Experience
-      </ToggleButton>
-      <ToggleButton value="preferences" sx={sidebarBtn}>
-        Preferences
-      </ToggleButton>
-      <ToggleButton value="account-settings" sx={sidebarBtn}>
-        Account Settings
-      </ToggleButton>
-    </ToggleButtonGroup>
-  </Paper>
-}
+  return (
+    <Paper elevation={3} className={profileStyles.sidebar}>
+      <ToggleButtonGroup
+        orientation="vertical"
+        value={tab}
+        onChange={handleClick}
+        exclusive
+      >
+        <ToggleButton value="profile" sx={sidebarBtn}>
+          Profile
+        </ToggleButton>
+        <ToggleButton value="experience" sx={sidebarBtn}>
+          Experience
+        </ToggleButton>
+        <ToggleButton value="preferences" sx={sidebarBtn}>
+          Preferences
+        </ToggleButton>
+        <ToggleButton value="account-settings" sx={sidebarBtn}>
+          Account Settings
+        </ToggleButton>
+      </ToggleButtonGroup>
+    </Paper>
+  );
+};
 
 export default Sidebar;

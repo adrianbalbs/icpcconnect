@@ -8,28 +8,31 @@ dotenv.config();
 
 export type DatabaseConnection = NodePgDatabase<typeof schema>;
 
-export class Database {
-  private static instance: NodePgDatabase<typeof schema> | null;
-  private static pool: pg.Pool;
-  private static logger = getLogger();
-  private static connectionString = process.env.DATABASE_URL;
+export interface Database {
+  getConnection(): DatabaseConnection;
+  endConnection(): Promise<void>;
+}
 
-  static getConnection() {
-    if (!Database.instance) {
-      Database.logger.info(
-        `Establishing pool connection with Postgres on ${Database.connectionString}`,
-      );
-      Database.pool = new pg.Pool({
-        connectionString: Database.connectionString,
-      });
-    }
-    Database.instance = drizzle(Database.pool, { schema });
+export class DevDatabase implements Database {
+  private logger = getLogger();
+  private connectionString = process.env.DATABASE_URL;
+  private pool: pg.Pool;
+  private connection: DatabaseConnection;
 
-    return Database.instance;
+  constructor() {
+    this.logger.info("Establishing connection with Postgres");
+    this.pool = new pg.Pool({
+      connectionString: this.connectionString,
+    });
+    this.connection = drizzle(this.pool, { schema });
   }
 
-  static async endConnection() {
-    Database.logger.info("Connection ended with Postgres");
-    await Database.pool.end();
+  getConnection() {
+    return this.connection;
+  }
+
+  async endConnection() {
+    this.logger.info("Connection ended with Postgres");
+    await this.pool.end();
   }
 }

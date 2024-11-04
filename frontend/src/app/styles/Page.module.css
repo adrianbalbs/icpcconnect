@@ -37,7 +37,7 @@
   padding: 0 3vw;
   height: 60px;
   width: 100vw;
-  background-color: #E4EEFF;
+  background-color: #e4eeff;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
@@ -57,8 +57,8 @@
   height: 24px;
   width: calc(100% - 150px);
   font-weight: lighter;
-  color: #4B4B4B;
-  background-color: #E5EAF3;
+  color: #4b4b4b;
+  background-color: #e5eaf3;
 }
 
 .website {
@@ -86,12 +86,12 @@
 
 .tile-title {
   margin: 10px 0 20px;
-  color: #595D7B;
+  color: #595d7b;
   font-size: 21px;
 }
 
 .tile-description {
-  color: #9A9A9A;
+  color: #9a9a9a;
   line-height: 2.5;
   font-size: 16.5px;
 }
@@ -113,7 +113,7 @@
   padding: 0 35px;
   color: white;
   font-weight: bold;
-  background-color: #7D84AF;
+  background-color: #7d84af;
 }
 
 .tile-button:hover {
@@ -122,7 +122,7 @@
 }
 
 .added {
-  background-color: #9A9A9A;
+  background-color: #9a9a9a;
 }
 
 .horizontal-container {

@@ -28,4 +28,4 @@ docker compose --profile test up -d test-db
 
 wait_for_postgres
 
-npx vitest run --config vitest.config.integration.ts -t "${PATTERN}"
+npx vitest run --config vitest.config.integration.ts "${PATTERN}"

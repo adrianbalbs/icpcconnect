@@ -43,7 +43,7 @@
 
 .sidebar-btn {
   padding-left: 25px;
-  color: #4E5C88;
+  color: #4e5c88;
   height: 51px;
   width: 220px;
   text-align: left;
@@ -62,7 +62,7 @@
   height: 1px;
   width: 215px;
   border: none;
-  background-color: #E2E2E2;
+  background-color: #e2e2e2;
 }
 
 .inner-screen {
@@ -128,7 +128,7 @@
   height: 22px;
   padding: 5px;
   border-radius: 5px;
-  border: 1px solid #BBBBBB;
+  border: 1px solid #bbbbbb;
 }
 
 .select-box {
@@ -136,7 +136,7 @@
   height: 35px;
   padding: 5px;
   border-radius: 5px;
-  border: 1px solid #BBBBBB;
+  border: 1px solid #bbbbbb;
 }
 
 .profile-button {
@@ -150,7 +150,6 @@
   position: absolute;
   right: 120px;
 }
-
 
 .profile-button:hover {
   opacity: 90%;

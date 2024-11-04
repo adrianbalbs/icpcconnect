@@ -2,15 +2,19 @@ import { eq } from "drizzle-orm";
 import { DatabaseConnection } from "../db/database.js";
 import { users } from "../db/schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
-import { HTTPError, unauthorizedError } from "../utils/errors.js";
-import jwt, { Secret } from "jsonwebtoken";
+import { createAuthTokens } from "../utils/jwt.js";
+import {
+  HTTPError,
+  notFoundError,
+  unauthorizedError,
+} from "../utils/errors.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 export interface LoginRequest {
   email: string;
   password: string;
 }
-
-export const SECRET_KEY: Secret = "placeholder-key";
 
 export class AuthService {
   private readonly db: DatabaseConnection;
@@ -36,16 +40,42 @@ export class AuthService {
     const isPasswordValid = await passwordUtils().compare(password, storedHash);
 
     if (isPasswordValid) {
-      const token = jwt.sign(
-        { id: user[0].id, role: user[0].role },
-        SECRET_KEY,
-        {
-          expiresIn: "2 days",
+      return {
+        ...createAuthTokens(
+          user[0].id,
+          user[0].role,
+          user[0].refreshTokenVersion,
+        ),
+        userInfo: {
+          givenName: user[0].givenName,
+          familyName: user[0].familyName,
+          refreshTokenVersion: user[0].refreshTokenVersion,
+          id: user[0].id,
+          role: user[0].role,
+          email: user[0].email,
         },
-      );
-      return { token: token, id: user[0].id, role: user[0].role };
+      };
     } else {
       throw new HTTPError(unauthorizedError);
     }
+  }
+
+  async getUserAuthInfo(userId: string) {
+    const [user] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!user) {
+      throw new HTTPError(notFoundError);
+    }
+    return {
+      givenName: user.givenName,
+      familyName: user.familyName,
+      refreshTokenVersion: user.refreshTokenVersion,
+      email: user.email,
+      role: user.role,
+      id: user.id,
+    };
   }
 }

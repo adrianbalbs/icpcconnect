@@ -1,7 +1,6 @@
-
-import pageStyles from '@/styles/Page.module.css';
-import memberStyles from '@/styles/Members.module.css';
-import Member, { MemberProps } from './Member';
+import pageStyles from "@/styles/Page.module.css";
+import memberStyles from "@/styles/Members.module.css";
+import Member, { MemberProps } from "./Member";
 
 interface AssignedProps {
   members: MemberProps[];
@@ -16,9 +15,11 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
         <p>Email</p>
       </div>
       <hr className={pageStyles.divider} />
-      {members.map(member => <Member key={member.id} {...member} />)}
+      {members.map((member) => (
+        <Member key={member.id} {...member} />
+      ))}
     </div>
   );
-}
+};
 
 export default Assigned;

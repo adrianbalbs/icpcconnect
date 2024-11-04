@@ -1,14 +1,14 @@
-import axios from 'axios';
-import { SERVER_URL } from './constants';
-import { StudentInfo } from '@/components/members/Students';
-import { nameToId } from './university';
+import axios from "axios";
+import { SERVER_URL } from "./constants";
+import { StudentInfo } from "@/components/members/Students";
+import { nameToId } from "./university";
 
 export interface EditInfo {
-  pronouns: string,
-  languagesSpoken: string[],
-  photoConsent: boolean,
-  dietaryRequirements: string,
-  tshirtSize: string | null,
+  pronouns: string;
+  languagesSpoken: string[];
+  photoConsent: boolean;
+  dietaryRequirements: string;
+  tshirtSize: string | null;
 }
 
 interface Info {
@@ -16,19 +16,19 @@ interface Info {
   university: string;
   studentId: string;
   info: [string, string | number][];
-  sideInfo: { name: string; role: string; pronouns: string; };
+  sideInfo: { name: string; role: string; pronouns: string };
   editInfo: EditInfo;
 }
 
 const current: Info = {
-  id: '',
-  university: '',
-  studentId: '',
+  id: "",
+  university: "",
+  studentId: "",
   info: [],
   sideInfo: {
-    name: '',
-    role: '',
-    pronouns: '',
+    name: "",
+    role: "",
+    pronouns: "",
   },
   editInfo: {
     pronouns: "",
@@ -36,7 +36,7 @@ const current: Info = {
     photoConsent: false,
     dietaryRequirements: "",
     tshirtSize: "",
-  }
+  },
 };
 
 export const getInfo = async (id: string | null) => {
@@ -44,20 +44,27 @@ export const getInfo = async (id: string | null) => {
   // if (id === current.id) return current;
 
   try {
-    console.log("fetch");
-    const res = await axios.get(`${SERVER_URL}/api/admin/${id}`);
+    const res = await axios.get(`${SERVER_URL}/api/admin/${id}`, {
+      withCredentials: true,
+    });
     const data: StudentInfo = res.data;
-    const languages = data.languagesSpoken?.map(i => i.name).join(", ");
+    const languages = data.languagesSpoken?.map((i) => i.name).join(", ");
     console.log(data);
     const infoArr: [string, string | number][] = [
-      ['Name', `${data.givenName} ${data.familyName}`],
-      ['Team', data.team ?? '(Unallocated)'],
-      ['University', nameToId(data.university)],
-      ['Student ID', data.studentId],
-      ['Languages Spoken', languages ?? '(Not added yet)'],
-      ['Dietary Requirements', data.dietaryRequirements ? data.dietaryRequirements : '(Not added yet)'],
-      ['Do you consent to appear in photos taken at the contest?', data.photoConsent ? 'Yes' : 'No'],
-      ['T-Shirt Size', data.tshirtSize ?? '(Not added yet)']
+      ["Name", `${data.givenName} ${data.familyName}`],
+      ["Team", data.team ?? "(Unallocated)"],
+      ["University", nameToId(data.university)],
+      ["Student ID", data.studentId],
+      ["Languages Spoken", languages ?? "(Not added yet)"],
+      [
+        "Dietary Requirements",
+        data.dietaryRequirements ? data.dietaryRequirements : "(Not added yet)",
+      ],
+      [
+        "Do you consent to appear in photos taken at the contest?",
+        data.photoConsent ? "Yes" : "No",
+      ],
+      ["T-Shirt Size", data.tshirtSize ?? "(Not added yet)"],
     ];
     current.id = data.id;
     current.university = data.university;
@@ -66,22 +73,24 @@ export const getInfo = async (id: string | null) => {
     current.sideInfo = {
       name: `${data.givenName} ${data.familyName}`,
       role: data.role,
-      pronouns: data.pronouns
+      pronouns: data.pronouns,
     };
     current.editInfo = {
       pronouns: data.pronouns,
-      languagesSpoken: data.languagesSpoken ? data.languagesSpoken.map(l => l.code) : [],
+      languagesSpoken: data.languagesSpoken
+        ? data.languagesSpoken.map((l) => l.code)
+        : [],
       photoConsent: data.photoConsent,
       dietaryRequirements: data.dietaryRequirements,
       tshirtSize: data.tshirtSize,
-    }
+    };
     return current;
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 export const capitalise = (name: string) => {
   if (!name) return name;
   return name.charAt(0).toUpperCase() + name.slice(1);
-}
+};
