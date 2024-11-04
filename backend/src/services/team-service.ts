@@ -104,7 +104,7 @@ export class TeamService {
       if (memberIds) {
         //Unset old team-members
         {
-          const members = await tx.query.users.findMany({
+          const members = await tx.query.studentDetails.findMany({
             where: eq(studentDetails.team, teamId),
           });
 
@@ -112,7 +112,7 @@ export class TeamService {
             await tx
               .update(studentDetails)
               .set({ team: null })
-              .where(eq(studentDetails.userId, member.id));
+              .where(eq(studentDetails.userId, member.userId));
           }
         }
 
