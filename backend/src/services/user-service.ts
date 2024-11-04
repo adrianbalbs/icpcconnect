@@ -1,4 +1,4 @@
-import { DatabaseConnection } from "src/db/database.js";
+import { DatabaseConnection } from "../db/database.js";
 import {
   languages,
   languagesSpokenByStudent,
@@ -6,24 +6,24 @@ import {
   teams,
   universities,
   users,
-} from "src/db/schema.js";
+} from "../db/schema.js";
 import {
   CreateUser,
   UpdateStudentDetails,
   UpdateUser,
   UserDTO,
   UserRole,
-} from "src/schemas/index.js";
-import { DeleteResponse } from "src/types/api-res.js";
-import { passwordUtils } from "src/utils/encrypt.js";
-import { badRequest, HTTPError, notFoundError } from "src/utils/errors.js";
+} from "../schemas/index.js";
+import { DeleteResponse } from "../types/api-res.js";
+import { passwordUtils } from "../utils/encrypt.js";
+import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { eq, getTableColumns } from "drizzle-orm";
 
 export class UserService {
   constructor(private readonly db: DatabaseConnection) {}
 
   async createUser(req: CreateUser): Promise<{ id: string }> {
-    const { studentDetails: details, password, ...rest } = req;
+    const { studentId, password, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
 
     return this.db.transaction(async (trx) => {
@@ -31,8 +31,7 @@ export class UserService {
         .insert(users)
         .values({ password: hashedPassword, ...rest })
         .returning({ id: users.id });
-      const { languagesSpoken, ...restDetails } = details || {};
-      await trx.insert(studentDetails).values({ userId: id, ...restDetails });
+      await trx.insert(studentDetails).values({ userId: id, studentId });
       return { id };
     });
   }
@@ -63,9 +62,9 @@ export class UserService {
 
     const languagesSpoken = await this.db
       .select({ code: languages.code, name: languages.name })
-      .from(languages)
+      .from(languagesSpokenByStudent)
       .innerJoin(
-        languagesSpokenByStudent,
+        languages,
         eq(languages.code, languagesSpokenByStudent.languageCode),
       )
       .where(eq(languagesSpokenByStudent.studentId, id));
@@ -105,7 +104,6 @@ export class UserService {
       if (Object.keys(rest).length > 0) {
         await tx.update(studentDetails).set(rest);
       }
-
       if (languagesSpoken) {
         await tx
           .delete(languagesSpokenByStudent)

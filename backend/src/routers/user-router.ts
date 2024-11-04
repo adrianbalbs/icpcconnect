@@ -1,9 +1,9 @@
 import { Request, Router } from "express";
-import { createAuthenticationMiddleware } from "src/middleware/authenticate.js";
-import { authorise } from "src/middleware/authorise.js";
-import { AuthService, UserService } from "src/services/index.js";
+import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
+import { authorise } from "../middleware/authorise.js";
+import { AuthService, UserService } from "../services/index.js";
 import { handle } from "./handler.js";
-import { validateData } from "src/middleware/validator-middleware.js";
+import { validateData } from "../middleware/validator-middleware.js";
 import {
   CreateUser,
   CreateUserSchema,
@@ -14,7 +14,7 @@ import {
   UpdateUser,
   UpdateUserSchema,
   UserRole,
-} from "src/schemas/user-schema.js";
+} from "../schemas/user-schema.js";
 
 export function userRouter(userService: UserService, authService: AuthService) {
   const authenticate = createAuthenticationMiddleware(authService);

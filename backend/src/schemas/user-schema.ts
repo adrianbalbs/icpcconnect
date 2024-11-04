@@ -358,7 +358,7 @@ export const UpdatePasswordSchema = z.strictObject({
 });
 
 export const CreateUserSchema = BaseUserSchema.extend({
-  studentDetails: StudentDetailsScehma.optional(),
+  studentId: z.string().min(1).optional(),
 });
 export type CreateUser = z.infer<typeof CreateUserSchema>;
 
