@@ -333,7 +333,7 @@ export const UpdateStudentDetailsSchema = StudentDetailsScehma.extend({
 export type UpdateStudentDetails = z.infer<typeof UpdateStudentDetailsSchema>;
 
 export const BaseUserSchema = z.strictObject({
-  id: z.string(),
+  id: z.string().uuid(),
   givenName: z.string().min(1).max(35),
   familyName: z.string().min(1).max(35),
   email: z.string().email(),

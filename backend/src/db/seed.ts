@@ -5,10 +5,8 @@ import { getLogger } from "../utils/logger.js";
 import { DatabaseConnection } from "./database.js";
 import { SpokenLanguage } from "../schemas/user-schema.js";
 import {
-  coaches,
   Course,
   courses,
-  siteCoordinators,
   languages,
   studentDetails,
   universities,
@@ -23,22 +21,16 @@ type UserTable = {
   email: string;
   password: string;
   role: UserRole;
+  university: number;
 };
 
 type StudentTable = UserTable & {
-  university: number;
   team: string | null;
   pronouns: string;
   studentId: string;
   photoConsent: boolean;
   languagesSpoken: SpokenLanguage[];
 };
-
-type CoachTable = UserTable & {
-  university: number;
-};
-
-type SiteCoordinatorTable = CoachTable;
 
 const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
   const {
@@ -73,12 +65,12 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
           familyName,
           email,
           password: newPassword,
+          university,
           role,
         })
         .returning({ userId: users.id });
       await tx.insert(studentDetails).values({
         userId: user.userId,
-        university,
         team,
         pronouns,
         studentId,
@@ -95,7 +87,7 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
 
 const addSiteCoordinator = async (
   db: DatabaseConnection,
-  siteCoordinator: SiteCoordinatorTable,
+  siteCoordinator: UserTable,
 ) => {
   const { id, givenName, familyName, email, password, role, university } =
     siteCoordinator;
@@ -116,21 +108,17 @@ const addSiteCoordinator = async (
           givenName,
           familyName,
           email,
+          university,
           password: newPassword,
           role,
         })
         .returning({ userId: users.id });
-      await tx
-        .insert(siteCoordinators)
-        .values({ userId: user.userId, university });
+      await tx.insert(studentDetails).values({ userId: user.userId });
     }
   });
 };
 
-const addCoach = async (
-  db: DatabaseConnection,
-  siteCoordinator: CoachTable,
-) => {
+const addCoach = async (db: DatabaseConnection, siteCoordinator: UserTable) => {
   const { id, givenName, familyName, email, password, role, university } =
     siteCoordinator;
 
@@ -151,10 +139,11 @@ const addCoach = async (
           familyName,
           email,
           password: newPassword,
+          university,
           role,
         })
         .returning({ userId: users.id });
-      await tx.insert(coaches).values({ userId: user.userId, university });
+      await tx.insert(studentDetails).values({ userId: user.userId });
     }
   });
 };
@@ -189,14 +178,13 @@ export const seed = async (db: DatabaseConnection) => {
   }
 
   logger.info("Adding dummy coaches");
-  const coaches = data.default.coaches as CoachTable[];
+  const coaches = data.default.coaches as UserTable[];
   for (const coach of coaches) {
     await addCoach(db, coach);
   }
 
   logger.info("Adding dummy site coordinators");
-  const siteCoordinators = data.default
-    .siteCoordinators as SiteCoordinatorTable[];
+  const siteCoordinators = data.default.siteCoordinators as UserTable[];
   for (const siteCoordinator of siteCoordinators) {
     await addSiteCoordinator(db, siteCoordinator);
   }
@@ -204,11 +192,20 @@ export const seed = async (db: DatabaseConnection) => {
   logger.info("Adding default admin");
   const admins = data.default.admins as UserTable[];
   for (const admin of admins) {
-    const { id, givenName, familyName, password, email, role } = admin;
+    const { id, givenName, familyName, password, email, role, university } =
+      admin;
     const newPassword = await passwordUtils().hash(password);
     await db
       .insert(users)
-      .values({ id, givenName, familyName, password: newPassword, email, role })
+      .values({
+        id,
+        givenName,
+        familyName,
+        password: newPassword,
+        email,
+        role,
+        university,
+      })
       .onConflictDoNothing();
   }
 };
@@ -233,11 +230,20 @@ export const seedTest = async (db: DatabaseConnection) => {
 
   const admins = data.default.admins as UserTable[];
   for (const admin of admins) {
-    const { id, givenName, familyName, password, email, role } = admin;
+    const { id, givenName, familyName, password, email, role, university } =
+      admin;
     const newPassword = await passwordUtils().hash(password);
     await db
       .insert(users)
-      .values({ id, givenName, familyName, password: newPassword, email, role })
+      .values({
+        id,
+        givenName,
+        familyName,
+        password: newPassword,
+        email,
+        role,
+        university,
+      })
       .onConflictDoNothing();
   }
 };

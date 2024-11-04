@@ -231,10 +231,16 @@
       "familyName": "Account",
       "password": "tomatofactory",
       "email": "admin@comp3900.com",
-      "role": "admin"
+      "role": "admin",
+      "university": 0
     }
   ],
   "universities": [
+    {
+      "name": "N/A",
+      "id": 0,
+      "hostedAt": 0
+    },
     {
       "name": "University of New South Wales",
       "id": 1,
