@@ -19,9 +19,14 @@ export default function Login() {
         <div className={styles["login-polygon"]} />
       </div>
       <div className={styles["info-container"]}>
-        <Image src={logo} alt="" width={400} />
+        <Image
+          src={logo}
+          alt="ICPC Connect"
+          width={400}
+          className={styles["web-name"]}
+        />
         <br />
-        <div className={styles["form-container"]}>
+        <form className={styles["form-container"]} onSubmit={handleLogin}>
           <input
             type="email"
             id="email"
@@ -41,17 +46,17 @@ export default function Login() {
           <a href="/forgot-password" className={styles.link}>
             Forgot Password?
           </a>
-        </div>
-        <button
-          onClick={handleLogin}
-          className={`${styles["auth-button"]} ${styles["dark"]} ${styles["long"]}`}
-        >
-          Login
-        </button>
+          <button
+            type="submit"
+            className={`${styles["auth-button"]} ${styles["dark"]} ${styles["long"]}`}
+          >
+            Login
+          </button>
+        </form>
         <div className={styles["horizontal-container"]}>
-          <hr />
+          <hr className={styles.hr} />
           or
-          <hr />
+          <hr className={styles.hr} />
         </div>
         <div className={styles["horizontal-container"]}>
           Don&apos;t have an account?&nbsp;
