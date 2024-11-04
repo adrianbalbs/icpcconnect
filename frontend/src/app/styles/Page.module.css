@@ -74,10 +74,9 @@
 .tile {
   position: relative;
   border-radius: 5%;
-  padding: 40px 20px;
+  padding: 35px 20px;
   text-align: center;
-  height: 270px;
-  width: 270px;
+  width: 280px;
   align-items: center;
   border: 1px solid gray;
   display: flex;
@@ -91,14 +90,13 @@
 }
 
 .tile-description {
+  height: 155px;
   color: #9a9a9a;
-  line-height: 2.5;
+  line-height: 2;
   font-size: 16.5px;
 }
 
 .tile-button-container {
-  position: absolute;
-  bottom: 40px;
   flex: 1;
 }
 
