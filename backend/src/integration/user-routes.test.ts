@@ -8,24 +8,9 @@ import { AuthService, UserService } from "../services/index.js";
 import cookieParser from "cookie-parser";
 import { authRouter, userRouter } from "../routers/index.js";
 import { eq, not } from "drizzle-orm";
-import { CreateUser } from "../schemas/user-schema.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
+import { generateCreateUserFixture } from "./fixtures.js";
 
-const generateCreateUserFixture = (
-  overrides: Partial<CreateUser> = {},
-): CreateUser => {
-  const defaultUser: CreateUser = {
-    id: v4(),
-    givenName: "John",
-    familyName: "Doe",
-    email: "johndoe@example.com",
-    password: "securePassword123!",
-    role: "Student",
-    university: 1,
-  };
-
-  return { ...defaultUser, ...overrides };
-};
 describe("userRoutes tests", () => {
   let db: DatabaseConnection;
   let app: ReturnType<typeof express>;
