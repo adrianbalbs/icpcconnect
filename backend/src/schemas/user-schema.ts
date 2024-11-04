@@ -245,7 +245,7 @@ export const StudentDetailsScehma = z.strictObject({
 export type StudentDetailsDTO = z.infer<typeof StudentDetailsScehma>;
 
 export const UpdateStudentDetailsSchema = StudentDetailsScehma.extend({
-  languagesSpoken: z.array(z.string().min(1)), // Array of language IDs for updating
+  languagesSpoken: z.array(SpokenLanguageEnum), // Array of language IDs for updating
 }).partial();
 export type UpdateStudentDetails = z.infer<typeof UpdateStudentDetailsSchema>;
 
