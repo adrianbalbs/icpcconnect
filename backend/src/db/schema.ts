@@ -34,6 +34,7 @@ export const users = pgTable("users", {
 
 export const usersRelations = relations(users, ({ one }) => ({
   studentDetails: one(studentDetails),
+  registrationDetails: one(registrationDetails),
   university: one(universities, {
     fields: [users.university],
     references: [universities.id],
@@ -77,15 +78,20 @@ export const studentDetails = pgTable("student_details", {
   exclusions: text("exclusions").default("").notNull(),
 });
 
-export const studentRelations = relations(studentDetails, ({ one, many }) => ({
-  languagesSpoken: many(languagesSpokenByStudent),
-  user: one(users, { fields: [studentDetails.userId], references: [users.id] }),
-  team: one(teams, {
-    fields: [studentDetails.team],
-    references: [teams.id],
+export const studentDetailsRelations = relations(
+  studentDetails,
+  ({ one, many }) => ({
+    languagesSpoken: many(languagesSpokenByStudent),
+    user: one(users, {
+      fields: [studentDetails.userId],
+      references: [users.id],
+    }),
+    team: one(teams, {
+      fields: [studentDetails.team],
+      references: [teams.id],
+    }),
   }),
-  registrationDetails: one(registrationDetails),
-}));
+);
 
 export type Student = InferSelectModel<typeof studentDetails>;
 
@@ -99,7 +105,7 @@ export const languageExperienceEnum = pgEnum("language_experience", [
 export const registrationDetails = pgTable("registration_details", {
   student: uuid("id")
     .primaryKey()
-    .references(() => studentDetails.userId, { onDelete: "cascade" })
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   level: levelEnum("level").notNull(),
   contestExperience: integer("contest_experience").default(0).notNull(),
@@ -118,9 +124,9 @@ export const registrationDetailsRelations = relations(
   registrationDetails,
   ({ many, one }) => ({
     coursesCompleted: many(coursesCompletedByStudent),
-    registeredBy: one(studentDetails, {
+    registeredBy: one(users, {
       fields: [registrationDetails.student],
-      references: [studentDetails.userId],
+      references: [users.id],
     }),
   }),
 );
