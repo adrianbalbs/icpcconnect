@@ -80,7 +80,7 @@ export default function Register() {
           };
           await axios.post(`${SERVER_URL}/api/students`, payload);
         }
-        router.push("/login");
+        router.push(role === "student" ? "/team" : "/teams");
       } else if (password !== confirmPassword) {
         console.log("Passwords do not match");
       } else {

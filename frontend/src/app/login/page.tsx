@@ -1,5 +1,5 @@
 "use client";
-import loginPage from "../styles/Auth.module.css";
+import styles from "@/styles/Auth.module.css";
 import Image from "next/image";
 import logo from "../assets/logo.png";
 import { useState } from "react";
@@ -14,17 +14,19 @@ export default function Login() {
   };
 
   return (
-    <>
-      <div className={loginPage["login-polygon"]}></div>
-      <div className={loginPage["info-container"]}>
+    <div className={styles.background}>
+      <div className={styles.shadow}>
+        <div className={styles["login-polygon"]} />
+      </div>
+      <div className={styles["info-container"]}>
         <Image src={logo} alt="" width={400} />
         <br />
-        <div className={loginPage["form-container"]}>
+        <div className={styles["form-container"]}>
           <input
             type="email"
             id="email"
             placeholder="Email"
-            className={loginPage["input-field"]}
+            className={styles["input-field"]}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -32,32 +34,32 @@ export default function Login() {
             type="password"
             id="password"
             placeholder="Password"
-            className={loginPage["input-field"]}
+            className={styles["input-field"]}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <a href="/forgot-password" className={loginPage.link}>
+          <a href="/forgot-password" className={styles.link}>
             Forgot Password?
           </a>
         </div>
         <button
           onClick={handleLogin}
-          className={`${loginPage["auth-button"]} ${loginPage["dark"]} ${loginPage["long"]}`}
+          className={`${styles["auth-button"]} ${styles["dark"]} ${styles["long"]}`}
         >
           Login
         </button>
-        <div className={loginPage["horizontal-container"]}>
-          <hr></hr>
+        <div className={styles["horizontal-container"]}>
+          <hr />
           or
-          <hr></hr>
+          <hr />
         </div>
-        <div className={loginPage["horizontal-container"]}>
+        <div className={styles["horizontal-container"]}>
           Don&apos;t have an account?&nbsp;
-          <a href="register" className={loginPage.link}>
+          <a href="register" className={styles.link}>
             Register
           </a>
         </div>
       </div>
-    </>
+    </div>
   );
 }

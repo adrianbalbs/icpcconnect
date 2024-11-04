@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
   const { userSession } = useAuth();
   const handleChange = (event: React.SyntheticEvent, newTab: number) => {
     setTab(newTab);
-    router.push(tab === 1 ? `/${tabAllowed}` : "/members");
+    router.push(newTab === 1 ? "/members" : `/${tabAllowed}`);
   };
 
   // useEffect(() => {
@@ -94,7 +94,6 @@ const Navbar: React.FC = () => {
 
       <Box sx={{ width: "100%", gridColumn: "5" }}>
         <StyledTabs value={tab} onChange={handleChange} aria-label="tabs">
-          {/* { (!isStudent && <Tab sx={{ height: '60px', color: '#415478' }} value="teams" label="Teams"/>} */}
           <StyledTab sx={{ height: "60px" }} label={tabAllowed} />
           {tabAllowed === "teams" && <StyledTab label="members" />}
         </StyledTabs>
