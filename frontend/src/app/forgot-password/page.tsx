@@ -41,8 +41,8 @@ const ForgotPassword = () => {
       <div className={authStyles["info-container"]}>
         <h1 className={authStyles.h1}>Forgot your password?</h1>
         <p>
-          Please enter the email address linked to your account and we'll send
-          you a link to reset your password.
+          Please enter the email address linked to your account and we&apos;ll
+          send you a link to reset your password.
         </p>
         <input
           className={authStyles["input-field"]}

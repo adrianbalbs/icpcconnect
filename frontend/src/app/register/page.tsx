@@ -145,6 +145,7 @@ export default function Register() {
         alert(
           "An error occurred while trying to send a verification email. Did you enter a valid email address?",
         );
+        console.log(error);
       } finally {
         setLoading(false);
       }
