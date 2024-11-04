@@ -22,6 +22,7 @@ import { eq, getTableColumns } from "drizzle-orm";
 export class UserService {
   constructor(private readonly db: DatabaseConnection) {}
 
+  // TODO: Handle invite codes for refactor
   async createUser(req: CreateUser): Promise<{ id: string }> {
     const { studentId, password, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);

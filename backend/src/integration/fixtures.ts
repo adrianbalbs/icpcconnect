@@ -5,7 +5,6 @@ export const generateCreateUserFixture = (
   overrides: Partial<CreateUser> = {},
 ): CreateUser => {
   const defaultUser: CreateUser = {
-    id: v4(),
     givenName: "John",
     familyName: "Doe",
     email: "johndoe@example.com",

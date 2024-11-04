@@ -50,7 +50,7 @@ describe("userRoutes tests", () => {
     });
 
     const res = await request(app).post("/api/users").send(user).expect(200);
-    expect(res.body.id).toBe(user.id);
+    expect(res.body).toHaveProperty("id");
   });
 
   it("should register a user that is not a student", async () => {
@@ -58,7 +58,7 @@ describe("userRoutes tests", () => {
       role: "Coach",
     });
     const res = await request(app).post("/api/users").send(user).expect(200);
-    expect(res.body.id).toBe(user.id);
+    expect(res.body).toHaveProperty("id");
   });
 
   it("should get all users", async () => {
@@ -136,12 +136,12 @@ describe("userRoutes tests", () => {
     const user = generateCreateUserFixture({
       role: "Coach",
     });
-    await request(app).post("/api/users").send(user).expect(200);
+    const idRes = await request(app).post("/api/users").send(user).expect(200);
     const req = await request(app)
-      .get(`/api/users/${user.id}`)
+      .get(`/api/users/${idRes.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
-    expect(req.body.id).toEqual(user.id);
+    expect(req.body.id).toEqual(idRes.body.id);
   });
 
   it("should return 404 if user is missing", async () => {
@@ -156,14 +156,14 @@ describe("userRoutes tests", () => {
       givenName: "Bob",
       role: "Coach",
     });
-    await request(app).post("/api/users").send(user).expect(200);
+    const idRes = await request(app).post("/api/users").send(user).expect(200);
     await request(app)
-      .patch(`/api/users/${user.id}`)
+      .patch(`/api/users/${idRes.body.id}`)
       .send({ givenName: "Adrian" })
       .set("Cookie", cookies)
       .expect(200);
     const req = await request(app)
-      .get(`/api/users/${user.id}`)
+      .get(`/api/users/${idRes.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
     expect(req.body.givenName).toEqual("Adrian");
@@ -174,9 +174,9 @@ describe("userRoutes tests", () => {
       givenName: "Bob",
       role: "Coach",
     });
-    await request(app).post("/api/users").send(user).expect(200);
+    const idRes = await request(app).post("/api/users").send(user).expect(200);
     await request(app)
-      .put(`/api/users/${user.id}/password`)
+      .put(`/api/users/${idRes.body.id}/password`)
       .send({ password: "Bruh" })
       .set("Cookie", cookies)
       .expect(200);
@@ -187,22 +187,22 @@ describe("userRoutes tests", () => {
       studentId: "z5397730",
       role: "Student",
     });
-    await request(app).post("/api/users").send(user).expect(200);
+    const idRes = await request(app).post("/api/users").send(user).expect(200);
     const initial = await request(app)
-      .get(`/api/users/${user.id}`)
+      .get(`/api/users/${idRes.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
     expect(initial.body.pronouns).toEqual("");
     expect(initial.body.languagesSpoken).toEqual([]);
 
     await request(app)
-      .patch(`/api/users/${user.id}/student-details`)
+      .patch(`/api/users/${idRes.body.id}/student-details`)
       .send({ pronouns: "he/him", languagesSpoken: ["en"] })
       .set("Cookie", cookies)
       .expect(200);
 
     const update = await request(app)
-      .get(`/api/users/${user.id}`)
+      .get(`/api/users/${idRes.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
 
@@ -217,19 +217,19 @@ describe("userRoutes tests", () => {
       studentId: "z5397730",
       role: "Student",
     });
-    await request(app).post("/api/users").send(user).expect(200);
+    const idRes = await request(app).post("/api/users").send(user).expect(200);
     await request(app)
-      .get(`/api/users/${user.id}`)
+      .get(`/api/users/${idRes.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
 
     await request(app)
-      .delete(`/api/users/${user.id}`)
+      .delete(`/api/users/${idRes.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
 
     await request(app)
-      .get(`/api/users/${user.id}`)
+      .get(`/api/users/${idRes.body.id}`)
       .set("Cookie", cookies)
       .expect(404);
   });
