@@ -357,21 +357,17 @@ export const UpdatePasswordSchema = z.strictObject({
   password: z.string().min(1).max(255),
 });
 
-export const BaseUserWithStudentDetailsSchema = BaseUserSchema.extend({
+export const CreateUserSchema = BaseUserSchema.extend({
   studentDetails: StudentDetailsScehma.optional(),
-}).refine((data) => data.role === "Student" && data.studentDetails, {
-  message: "studentDetails must be provided if the role is student",
-  path: ["studentDetails"],
 });
-export type BaseUserWithStudentDetails = z.infer<
-  typeof BaseUserWithStudentDetailsSchema
->;
-export type BaseUserWithStudentDetailsDTO = Omit<
-  BaseUserWithStudentDetails,
+export type CreateUser = z.infer<typeof CreateUserSchema>;
+
+export const UserSchema = BaseUserSchema.merge(StudentDetailsScehma);
+
+export type UserDTO = Omit<
+  z.infer<typeof UserSchema>,
   "password" | "university"
-> & {
-  university: string;
-};
+> & { university: string };
 
 export const GetAllUsersQuerySchema = z.strictObject({
   role: UserRoleEnum.optional(),

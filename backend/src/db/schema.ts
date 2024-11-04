@@ -68,12 +68,12 @@ export const studentDetails = pgTable("student_details", {
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  studentId: text("student_id").notNull(),
+  studentId: text("student_id").notNull().default(""),
   pronouns: text("pronouns").notNull().default(""),
   dietaryRequirements: text("dietary_requirements").notNull().default(""),
   tshirtSize: text("tshirt_size").notNull().default(""),
   team: uuid("team").references(() => teams.id),
-  photoConsent: boolean("photo_consent").notNull(),
+  photoConsent: boolean("photo_consent").notNull().default(false),
   exclusions: text("exclusions").default("").notNull(),
 });
 

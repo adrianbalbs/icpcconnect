@@ -1,27 +1,28 @@
 import { DatabaseConnection } from "src/db/database.js";
 import {
+  languages,
   languagesSpokenByStudent,
   studentDetails,
+  teams,
+  universities,
   users,
 } from "src/db/schema.js";
 import {
-  BaseUserDTO,
-  BaseUserWithStudentDetails,
-  BaseUserWithStudentDetailsDTO,
-  StudentDetailsDTO,
+  CreateUser,
   UpdateStudentDetails,
   UpdateUser,
+  UserDTO,
   UserRole,
 } from "src/schemas/index.js";
 import { DeleteResponse } from "src/types/api-res.js";
 import { passwordUtils } from "src/utils/encrypt.js";
 import { badRequest, HTTPError, notFoundError } from "src/utils/errors.js";
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 
 export class UserService {
   constructor(private readonly db: DatabaseConnection) {}
 
-  async createUser(req: BaseUserWithStudentDetails): Promise<{ id: string }> {
+  async createUser(req: CreateUser): Promise<{ id: string }> {
     const { studentDetails: details, password, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
 
@@ -30,66 +31,46 @@ export class UserService {
         .insert(users)
         .values({ password: hashedPassword, ...rest })
         .returning({ id: users.id });
-
-      if (rest.role === "Student" && details) {
-        const { languagesSpoken, ...restDetails } = details;
-        await trx.insert(studentDetails).values({ userId: id, ...restDetails });
-      }
-
+      const { languagesSpoken, ...restDetails } = details || {};
+      await trx.insert(studentDetails).values({ userId: id, ...restDetails });
       return { id };
     });
   }
 
-  async getUserById(id: string): Promise<BaseUserDTO> {
-    const user = await this.db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.id, id),
-      columns: { password: false, university: false },
-      with: {
-        university: { columns: { name: true } },
-      },
-    });
+  async getUserById(id: string): Promise<UserDTO> {
+    const { password, refreshTokenVersion, ...usersRest } =
+      getTableColumns(users);
+    const { userId, ...studentDetailsRest } = getTableColumns(studentDetails);
+    const [user] = await this.db
+      .select({
+        ...usersRest,
+        ...studentDetailsRest,
+        university: universities.name,
+        team: teams.name,
+      })
+      .from(users)
+      .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
+      .innerJoin(universities, eq(universities.id, users.university))
+      .leftJoin(teams, eq(teams.id, studentDetails.team))
+      .where(eq(users.id, id));
 
     if (!user) {
       throw new HTTPError({
         errorCode: notFoundError.errorCode,
-        message: `User with id: ${id} does not exist`,
+        message: `User wih id ${id} not found`,
       });
     }
 
-    return {
-      ...user,
-      university: user.university.name,
-    };
-  }
+    const languagesSpoken = await this.db
+      .select({ code: languages.code, name: languages.name })
+      .from(languages)
+      .innerJoin(
+        languagesSpokenByStudent,
+        eq(languages.code, languagesSpokenByStudent.languageCode),
+      )
+      .where(eq(languagesSpokenByStudent.studentId, id));
 
-  async getUserStudentDetails(id: string): Promise<StudentDetailsDTO> {
-    const studentDetails = await this.db.query.studentDetails.findFirst({
-      where: (studentDetails, { eq }) => eq(studentDetails.userId, id),
-      with: {
-        team: {
-          columns: { name: true },
-        },
-        languagesSpoken: {
-          columns: { studentId: false, languageCode: false },
-          with: {
-            language: true,
-          },
-        },
-      },
-    });
-
-    if (!studentDetails) {
-      throw new HTTPError({
-        errorCode: notFoundError.errorCode,
-        message: `Student details with id: ${id} does not exist`,
-      });
-    }
-
-    return {
-      ...studentDetails,
-      team: studentDetails.team ? studentDetails.team.name : null,
-      languagesSpoken: studentDetails.languagesSpoken.map((l) => l.language),
-    };
+    return { ...user, languagesSpoken };
   }
 
   async updateUser(id: string, req: UpdateUser): Promise<{ id: string }> {
@@ -142,47 +123,45 @@ export class UserService {
     return user;
   }
 
-  async getAllUsers(
-    role?: UserRole,
-  ): Promise<{ users: BaseUserWithStudentDetailsDTO[] }> {
-    const users = await this.db.query.users.findMany({
-      where: role ? (users, { eq }) => eq(users.role, role) : undefined,
-      columns: { password: false, university: false },
-      with: {
-        university: { columns: { name: true } },
-        studentDetails: {
-          with: {
-            team: {
-              columns: { name: true },
-            },
-            languagesSpoken: {
-              columns: { languageCode: false },
-              with: { language: true },
-            },
-          },
-        },
-      },
-    });
-    return {
-      users: users.map((user) => {
-        return {
-          ...user,
-          university: user.university.name,
-          studentDetails:
-            user.studentDetails !== null
-              ? {
-                  ...user.studentDetails,
-                  team: user.studentDetails.team
-                    ? user.studentDetails.team.name
-                    : null,
-                  languagesSpoken: user.studentDetails?.languagesSpoken.map(
-                    (lang) => lang.language,
-                  ),
-                }
-              : undefined,
-        };
+  async getAllUsers(role?: UserRole): Promise<{ allUsers: UserDTO[] }> {
+    const { password, refreshTokenVersion, ...usersRest } =
+      getTableColumns(users);
+
+    const { userId, ...studentDetailsRest } = getTableColumns(studentDetails);
+    const query = this.db
+      .select({
+        ...usersRest,
+        ...studentDetailsRest,
+        university: universities.name,
+        team: teams.name,
+      })
+      .from(users)
+      .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
+      .innerJoin(universities, eq(universities.id, users.university))
+      .leftJoin(teams, eq(teams.id, studentDetails.team))
+      .$dynamic();
+
+    if (role) {
+      query.where(eq(users.role, role));
+    }
+
+    const rawUsers = await query;
+    const allUsers = await Promise.all(
+      rawUsers.map(async (user) => {
+        const languagesSpoken = await this.db
+          .select({ code: languages.code, name: languages.name })
+          .from(languages)
+          .innerJoin(
+            languagesSpokenByStudent,
+            eq(languages.code, languagesSpokenByStudent.languageCode),
+          )
+          .where(eq(languagesSpokenByStudent.studentId, user.id));
+
+        return { ...user, languagesSpoken };
       }),
-    };
+    );
+
+    return { allUsers };
   }
 
   async deleteUser(id: string): Promise<DeleteResponse> {

@@ -5,8 +5,8 @@ import { AuthService, UserService } from "src/services/index.js";
 import { handle } from "./handler.js";
 import { validateData } from "src/middleware/validator-middleware.js";
 import {
-  BaseUserWithStudentDetails,
-  BaseUserWithStudentDetailsSchema,
+  CreateUser,
+  CreateUserSchema,
   GetAllUsersQuerySchema,
   UpdatePasswordSchema,
   UpdateStudentDetails,
@@ -22,17 +22,12 @@ export function userRouter(userService: UserService, authService: AuthService) {
   return Router()
     .post(
       "/",
-      validateData(BaseUserWithStudentDetailsSchema, "body"),
-      handle(
-        async (
-          req: Request<unknown, unknown, BaseUserWithStudentDetails>,
-          res,
-        ) => {
-          const { body } = req;
-          const user = await userService.createUser(body);
-          res.status(200).send(user);
-        },
-      ),
+      validateData(CreateUserSchema, "body"),
+      handle(async (req: Request<unknown, unknown, CreateUser>, res) => {
+        const { body } = req;
+        const user = await userService.createUser(body);
+        res.status(200).send(user);
+      }),
     )
     .get(
       "/",
@@ -61,18 +56,6 @@ export function userRouter(userService: UserService, authService: AuthService) {
       handle(async (req: Request<{ id: string }, unknown>, res) => {
         const { id } = req.params;
         const user = await userService.getUserById(id);
-        res.status(200).send(user);
-      }),
-    )
-    .get(
-      "/:id/student-details",
-      [
-        authenticate,
-        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
-      ],
-      handle(async (req: Request<{ id: string }, unknown>, res) => {
-        const { id } = req.params;
-        const user = await userService.getUserStudentDetails(id);
         res.status(200).send(user);
       }),
     )
