@@ -207,6 +207,7 @@ export const seed = async (db: DatabaseConnection) => {
         university,
       })
       .onConflictDoNothing();
+    await db.insert(studentDetails).values({ userId: id });
   }
 };
 
@@ -245,5 +246,6 @@ export const seedTest = async (db: DatabaseConnection) => {
         university,
       })
       .onConflictDoNothing();
+    await db.insert(studentDetails).values({ userId: id });
   }
 };
