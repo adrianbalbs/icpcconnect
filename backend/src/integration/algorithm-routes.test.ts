@@ -4,17 +4,15 @@ import { DatabaseConnection, teams, users } from "../db/index.js";
 import {
   adminRouter,
   authRouter,
-  studentRouter,
   teamRouter,
+  userRouter,
 } from "../routers/index.js";
 import {
   AdminService,
   AuthService,
-  CoachService,
   ContestRegistrationService,
-  SiteCoordinatorService,
-  StudentService,
   TeamService,
+  UserService,
 } from "../services/index.js";
 import { contestRegistrationRouter } from "../routers/index.js";
 import {
@@ -47,7 +45,7 @@ describe("Algorithm Tests", () => {
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/students", studentRouter(new StudentService(db), authService))
+      .use("/api/users", userRouter(new UserService(db), authService))
       .use(
         "/api/contest-registration",
         contestRegistrationRouter(
@@ -60,9 +58,6 @@ describe("Algorithm Tests", () => {
         "/api",
         adminRouter(
           new AdminService(db),
-          new CoachService(db),
-          new StudentService(db),
-          new SiteCoordinatorService(db),
           authService,
           new AlgorithmService(db),
         ),
@@ -106,7 +101,7 @@ describe("Algorithm Tests", () => {
   it("should just return success (1 registrations)", async () => {
     const students: CreateStudentRequest[] = [
       {
-        role: "student",
+        role: "Student",
         givenName: "Adrian",
         familyName: "Balbalosa",
         email: "adrianbalbs@comp3900.com",

@@ -1,17 +1,7 @@
 import request from "supertest";
 import express from "express";
-import {
-  AuthService,
-  CoachService,
-  SiteCoordinatorService,
-  StudentService,
-} from "../services/index.js";
-import {
-  authRouter,
-  coachRouter,
-  siteCoordinatorRouter,
-  studentRouter,
-} from "../routers/index.js";
+import { AuthService } from "../services/index.js";
+import { authRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateCoachRequest,
@@ -33,12 +23,6 @@ beforeAll(async () => {
   app = express()
     .use(express.json())
     .use(cookieParser())
-    .use(
-      "/api/site-coordinators",
-      siteCoordinatorRouter(new SiteCoordinatorService(db), authService),
-    )
-    .use("/api/coaches", coachRouter(new CoachService(db), authService))
-    .use("/api/students", studentRouter(new StudentService(db), authService))
     .use("/api/auth", authRouter(authService));
 });
 
