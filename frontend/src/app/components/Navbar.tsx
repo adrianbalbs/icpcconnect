@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (userSession.role !== "student") {
+    if (userSession.role !== "Student") {
       setTabAllowed("teams");
     }
   }, []);

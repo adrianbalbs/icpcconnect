@@ -16,7 +16,7 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
   const { logout, userSession } = useAuth();
 
   const to = (route: string) => {
-    router.push(`/profile/${userSession?.id}${route}`);
+    router.push(`/profile/${userSession.id}${route}`);
     handleClose();
   };
 

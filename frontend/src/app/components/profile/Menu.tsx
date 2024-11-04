@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import styles from "@/styles/Profile.module.css";
 import Dropdown from "./Dropdown";
 import { Avatar, IconButton, Tooltip } from "@mui/material";
-import { capitalise } from "@/utils/profileInfo";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 const Menu: React.FC = () => {
@@ -24,9 +23,7 @@ const Menu: React.FC = () => {
   };
 
   const storeInfo = () => {
-    const capitalisedRole =
-      role === "site_coordinator" ? "Site Coordinator" : capitalise(role);
-    setInfo({ role: capitalisedRole, name: `${givenName} ${familyName}` });
+    setInfo({ role, name: `${givenName} ${familyName}` });
   };
 
   useEffect(() => {

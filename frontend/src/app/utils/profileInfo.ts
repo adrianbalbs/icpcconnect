@@ -44,11 +44,11 @@ export const getInfo = async (id: string | null) => {
   // if (id === current.id) return current;
 
   try {
-    const res = await axios.get(`${SERVER_URL}/api/admin/${id}`, {
+    const res = await axios.get(`${SERVER_URL}/api/users/${id}`, {
       withCredentials: true,
     });
     const data: StudentInfo = res.data;
-    const languages = data.languagesSpoken?.map((i) => i.name).join(", ");
+    const languages = data.languagesSpoken.map((i) => i.name).join(", ");
     console.log(data);
     const infoArr: [string, string | number][] = [
       ["Name", `${data.givenName} ${data.familyName}`],
