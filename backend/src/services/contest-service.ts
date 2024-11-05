@@ -61,6 +61,22 @@ export class ContestService {
     return contest;
   }
 
+  async getAll(): Promise<{ allContests: GetContestResponse[] }> {
+    const allContests = await this.db
+      .select({
+        id: contests.id,
+        description: contests.description,
+        earlyBirdDate: contests.earlyBirdDate,
+        cutoffDate: contests.cutoffDate,
+        contestDate: contests.contestDate,
+        site: universities.name,
+      })
+      .from(contests)
+      .innerJoin(universities, eq(contests.site, universities.id));
+
+    return { allContests };
+  }
+
   async delete(contestId: string): Promise<DeleteResponse> {
     const [contest] = await this.db
       .select()
