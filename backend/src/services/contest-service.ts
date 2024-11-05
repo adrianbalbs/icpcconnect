@@ -21,6 +21,7 @@ export type UpdateContestResponse = UpdateContestRequest;
 
 export type GetContestResponse = {
   id: string;
+  name: string;
   description: string;
   earlyBirdDate: Date;
   cutoffDate: Date;
@@ -43,6 +44,7 @@ export class ContestService {
     const [contest] = await this.db
       .select({
         id: contests.id,
+        name: contests.name,
         description: contests.description,
         earlyBirdDate: contests.earlyBirdDate,
         cutoffDate: contests.cutoffDate,
@@ -65,6 +67,7 @@ export class ContestService {
     const allContests = await this.db
       .select({
         id: contests.id,
+        name: contests.name,
         description: contests.description,
         earlyBirdDate: contests.earlyBirdDate,
         cutoffDate: contests.cutoffDate,
