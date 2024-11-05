@@ -272,7 +272,7 @@ export type VerifyEmail = InferSelectModel<typeof verifyEmail>;
 
 export const contests = pgTable("contests", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
-  name: varchar("name", { length: 256 }),
+  name: varchar("name", { length: 256 }).notNull(),
   description: text("description").notNull().default(""),
   earlyBirdDate: timestamp("early_bird_date", { mode: "date" }).notNull(),
   cutoffDate: timestamp("cutoff_date", { mode: "date" }).notNull(),
