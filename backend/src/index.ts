@@ -7,6 +7,7 @@ import {
   TeamService,
   AuthService,
   AdminService,
+  ContestService,
   UserService,
 } from "./services/index.js";
 import {
@@ -14,6 +15,7 @@ import {
   teamRouter,
   authRouter,
   adminRouter,
+  contestRouter,
 } from "./routers/index.js";
 import {
   errorHandlerMiddleware,
@@ -44,6 +46,7 @@ const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
 const algorithmService = new AlgorithmService(dbConn);
+const contestService = new ContestService(dbConn);
 
 logger.info("Setup HTTP Server");
 app
