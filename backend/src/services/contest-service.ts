@@ -9,17 +9,20 @@ export const CreateContestSchema = z
   .strictObject({
     name: z.string().min(5),
     earlyBirdDate: z
-      .date({ required_error: "Early Bird Date is required" })
+      .string()
+      .transform((dateStr) => new Date(dateStr))
       .refine((date) => date > new Date(), {
         message: "Early Bird Date must be in the future",
       }),
     cutoffDate: z
-      .date({ required_error: "Cutoff Date is required" })
+      .string()
+      .transform((dateStr) => new Date(dateStr))
       .refine((date) => date > new Date(), {
         message: "Cutoff Date must be in the future",
       }),
     contestDate: z
-      .date({ required_error: "Contest Date is required" })
+      .string()
+      .transform((dateStr) => new Date(dateStr))
       .refine((date) => date > new Date(), {
         message: "Contest Date must be in the future",
       }),
@@ -55,7 +58,12 @@ export class ContestService {
   async create(req: CreateContest): Promise<{ id: string }> {
     const [res] = await this.db
       .insert(contests)
-      .values(req)
+      .values({
+        ...req,
+        earlyBirdDate: new Date(req.earlyBirdDate),
+        cutoffDate: new Date(req.cutoffDate),
+        contestDate: new Date(req.contestDate),
+      })
       .returning({ id: contests.id });
     return res;
   }
@@ -65,7 +73,6 @@ export class ContestService {
       .select({
         id: contests.id,
         name: contests.name,
-        description: contests.description,
         earlyBirdDate: contests.earlyBirdDate,
         cutoffDate: contests.cutoffDate,
         contestDate: contests.contestDate,
@@ -80,7 +87,6 @@ export class ContestService {
     if (!contest) {
       throw new HTTPError(notFoundError);
     }
-
     return contest;
   }
 
@@ -89,7 +95,6 @@ export class ContestService {
       .select({
         id: contests.id,
         name: contests.name,
-        description: contests.description,
         earlyBirdDate: contests.earlyBirdDate,
         cutoffDate: contests.cutoffDate,
         contestDate: contests.contestDate,
@@ -122,9 +127,15 @@ export class ContestService {
     contestId: string,
     req: UpdateContest,
   ): Promise<UpdateContestResponse> {
-    if (Object.keys(req).length > 0) {
-      await this.db.update(contests).set(req).where(eq(contests.id, contestId));
-    }
+    await this.db
+      .update(contests)
+      .set({
+        ...req,
+        earlyBirdDate: new Date(req.earlyBirdDate),
+        cutoffDate: new Date(req.cutoffDate),
+        contestDate: new Date(req.contestDate),
+      })
+      .where(eq(contests.id, contestId));
     return req;
   }
 }
