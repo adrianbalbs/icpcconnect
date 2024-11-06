@@ -25,7 +25,7 @@ import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { useState } from "react";
 import { z } from "zod";
 import { CreateContestSchema } from "@/types/contests";
-import CreateContestDialog from "@/components/contests/CreateContestDialog";
+import ContestDialog from "@/components/contests/ContestDialog";
 
 export type ContestResponse = {
   id: string;
@@ -33,6 +33,7 @@ export type ContestResponse = {
   earlyBirdDate: string;
   cutoffDate: string;
   contestDate: string;
+  siteId: number;
   site: string;
 };
 
@@ -44,6 +45,7 @@ const rows: ContestResponse[] = [
     earlyBirdDate: testDate,
     cutoffDate: testDate,
     contestDate: testDate,
+    siteId: 1,
     site: "University of New South Wales",
   },
   {
@@ -52,6 +54,7 @@ const rows: ContestResponse[] = [
     earlyBirdDate: testDate,
     cutoffDate: testDate,
     contestDate: testDate,
+    siteId: 1,
     site: "University of New South Wales",
   },
   {
@@ -60,6 +63,7 @@ const rows: ContestResponse[] = [
     earlyBirdDate: testDate,
     cutoffDate: testDate,
     contestDate: testDate,
+    siteId: 1,
     site: "University of New South Wales",
   },
 
@@ -69,6 +73,7 @@ const rows: ContestResponse[] = [
     earlyBirdDate: testDate,
     cutoffDate: testDate,
     contestDate: testDate,
+    siteId: 1,
     site: "University of New South Wales",
   },
   {
@@ -77,6 +82,7 @@ const rows: ContestResponse[] = [
     earlyBirdDate: testDate,
     cutoffDate: testDate,
     contestDate: testDate,
+    siteId: 1,
     site: "University of New South Wales",
   },
   {
@@ -85,6 +91,7 @@ const rows: ContestResponse[] = [
     earlyBirdDate: testDate,
     cutoffDate: testDate,
     contestDate: testDate,
+    siteId: 1,
     site: "University of New South Wales",
   },
 ];
@@ -141,8 +148,13 @@ type FormData = {
 };
 
 export default function Contests() {
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [selectedContest, setSelectedContest] =
+    useState<ContestResponse | null>(null);
+  const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
+
   const [errors, setErrors] = useState<
     z.inferFlattenedErrors<typeof CreateContestSchema>
   >({ formErrors: [], fieldErrors: {} });
@@ -151,12 +163,22 @@ export default function Contests() {
     userSession: { role },
   } = useAuth();
 
-  const handleClickOpen = () => {
-    setCreateDialogOpen(true);
+  const handleCreate = () => {
+    setDialogMode("create");
+    setSelectedContest(null);
+    setDialogOpen(true);
   };
 
-  const handleClose = () => {
-    setCreateDialogOpen(false);
+  const handleEdit = (contest: ContestResponse) => {
+    setDialogMode("edit");
+    setSelectedContest(contest);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setSelectedContest(null);
+    setDialogOpen(false);
+    setErrors({ formErrors: [], fieldErrors: {} });
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -169,7 +191,7 @@ export default function Contests() {
     try {
       setErrors({ formErrors: [], fieldErrors: {} });
       console.log(formData);
-      handleClose();
+      handleDialogClose();
     } catch (error) {
       console.error("Error:", error);
     }
@@ -186,20 +208,27 @@ export default function Contests() {
       headerName: "Actions",
       width: 300,
       sortable: false,
-      renderCell: (params: GridRenderCellParams) => (
+      renderCell: (params: GridRenderCellParams<ContestResponse>) => (
         <>
           <Button variant="contained" sx={purpleBtn}>
             Info
           </Button>
           {role === "admin" && (
             <>
-              <Button variant="contained" sx={{ ...editBtn, ml: 1 }}>
+              <Button
+                variant="contained"
+                sx={{ ...editBtn, ml: 1 }}
+                onClick={() => handleEdit(params.row)}
+              >
                 Edit
               </Button>
               <Button
                 variant="contained"
                 sx={{ ...deleteBtn, ml: 1 }}
-                onClick={() => setDeleteDialogOpen(true)}
+                onClick={() => {
+                  setDeleteId(params.row.id);
+                  setDeleteDialogOpen(true);
+                }}
               >
                 Delete
               </Button>
@@ -223,7 +252,7 @@ export default function Contests() {
               sx={purpleBtn}
               variant="contained"
               endIcon={<AddIcon />}
-              onClick={handleClickOpen}
+              onClick={handleCreate}
             >
               Create Contest
             </Button>
@@ -237,16 +266,21 @@ export default function Contests() {
           sx={{ mt: 2 }}
         />
       </Stack>
-      <CreateContestDialog
-        open={createDialogOpen}
-        onClose={handleClose}
+      <ContestDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
         onSubmit={handleSubmit}
         universities={universities}
         errors={errors}
+        mode={dialogMode}
+        contestData={selectedContest}
       />
       <DeleteContestDialog
         open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
+        onClose={() => {
+          setDeleteId(null);
+          setDeleteDialogOpen(false);
+        }}
       />
     </Container>
   );

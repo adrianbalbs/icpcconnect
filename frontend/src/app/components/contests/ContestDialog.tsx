@@ -12,9 +12,10 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { z } from "zod";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { CreateContestSchema } from "@/types/contests";
+import { ContestResponse } from "@/contests/page";
 
 interface ContestDialogProps {
   open: boolean;
@@ -28,14 +29,18 @@ interface ContestDialogProps {
   }) => void;
   universities: { id: number; label: string }[];
   errors: z.inferFlattenedErrors<typeof CreateContestSchema>;
+  mode: "create" | "edit";
+  contestData?: ContestResponse | null;
 }
 
-const CreateContestDialog: React.FC<ContestDialogProps> = ({
+const ContestDialog: React.FC<ContestDialogProps> = ({
   open,
   onClose,
   onSubmit,
   universities,
   errors,
+  mode,
+  contestData,
 }) => {
   const [contestName, setContestName] = useState("");
   const [earlyBirdDate, setEarlyBirdDate] = useState<Dayjs | null>(null);
@@ -47,7 +52,16 @@ const CreateContestDialog: React.FC<ContestDialogProps> = ({
   } | null>(null);
 
   useEffect(() => {
-    if (!open) {
+    if (mode === "edit" && contestData && open) {
+      setContestName(contestData.name);
+      setEarlyBirdDate(dayjs(contestData.earlyBirdDate));
+      setCutoffDate(dayjs(contestData.cutoffDate));
+      setContestDate(dayjs(contestData.contestDate));
+      const university = universities.find(
+        (uni) => uni.id === contestData.siteId,
+      );
+      setSelectedUniversity(university || null);
+    } else if (!open) {
       resetForm();
     }
   }, [open]);
@@ -73,14 +87,20 @@ const CreateContestDialog: React.FC<ContestDialogProps> = ({
     onSubmit(formData);
   };
 
+  const dialogTitle = mode === "create" ? "Create Contest" : "Edit Contest";
+  const submitButtonText = mode === "create" ? "Create" : "Save Changes";
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm">
       <form onSubmit={handleFormSubmit}>
-        <DialogTitle>Create Contest</DialogTitle>
+        <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Create a new contest. Teams will be automatically allocated on the
-            Early Bird Date and will run again on the Cutoff Date.
+            {mode === "create"
+              ? "Create a new contest."
+              : "Edit contest details."}{" "}
+            Teams will be automatically allocated on the Early Bird Date and
+            will run again on the Cutoff Date.
           </DialogContentText>
           <Divider sx={{ mt: 1 }} />
           <Stack>
@@ -157,11 +177,11 @@ const CreateContestDialog: React.FC<ContestDialogProps> = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit">Create</Button>
+          <Button type="submit">{submitButtonText}</Button>
         </DialogActions>
       </form>
     </Dialog>
   );
 };
 
-export default CreateContestDialog;
+export default ContestDialog;
