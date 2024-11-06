@@ -1,8 +1,7 @@
 "use client";
 
-import { purpleBtn } from "@/styles/Overriding";
+import { purpleBtn, deleteBtn, editBtn } from "@/styles/Overriding";
 import {
-  Autocomplete,
   Box,
   Button,
   Container,
@@ -13,16 +12,20 @@ import {
   DialogTitle,
   Divider,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridToolbar,
+} from "@mui/x-data-grid";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { useState } from "react";
-import { DatePicker } from "@mui/x-date-pickers";
 import { z } from "zod";
-import { Dayjs } from "dayjs";
+import { CreateContestSchema } from "@/types/contests";
+import CreateContestDialog from "@/components/contests/CreateContestDialog";
 
 export type ContestResponse = {
   id: string;
@@ -32,35 +35,6 @@ export type ContestResponse = {
   contestDate: string;
   site: string;
 };
-
-const contestSchema = z
-  .object({
-    contestName: z.string().min(5),
-    earlyBirdDate: z
-      .date({ required_error: "Early Bird Date is required" })
-      .refine((date) => date >= new Date(), {
-        message: "Early Bird Date must be today or in the future",
-      }),
-    cutoffDate: z
-      .date({ required_error: "Cutoff Date is required" })
-      .refine((date) => date >= new Date(), {
-        message: "Cutoff Date must be today or in the future",
-      }),
-    contestDate: z
-      .date({ required_error: "Contest Date is required" })
-      .refine((date) => date >= new Date(), {
-        message: "Contest Date must be today or in the future",
-      }),
-    university: z.number(),
-  })
-  .refine((data) => data.earlyBirdDate <= data.cutoffDate, {
-    message: "Early Bird Date should be before Cutoff Date",
-    path: ["earlyBirdDate"],
-  })
-  .refine((data) => data.cutoffDate <= data.contestDate, {
-    message: "Cutoff Date should be before Contest Date",
-    path: ["cutoffDate"],
-  });
 
 const testDate = new Date().toISOString().split("T")[0];
 const rows: ContestResponse[] = [
@@ -115,14 +89,6 @@ const rows: ContestResponse[] = [
   },
 ];
 
-type ValidationErrors = {
-  contestName?: string;
-  earlyBirdDate?: string;
-  cutoffDate?: string;
-  contestDate?: string;
-  university?: string;
-};
-
 const universities = [
   { id: 1, label: "University of New South Wales" },
   { id: 2, label: "University of Sydney" },
@@ -130,59 +96,82 @@ const universities = [
   { id: 4, label: "Macquarie University" },
 ];
 
+type DeleteContestDialogProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
+const DeleteContestDialog: React.FC<DeleteContestDialogProps> = ({
+  open,
+  onClose,
+}) => {
+  return (
+    <>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete this contest?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Deleting this contest is an irreversible step.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
+
+type FormData = {
+  contestName: string;
+  earlyBirdDate: Date | undefined;
+  cutoffDate: Date | undefined;
+  contestDate: Date | undefined;
+  university: number | undefined;
+};
+
 export default function Contests() {
-  const [open, setOpen] = useState(false);
-  const [contestName, setContestName] = useState("");
-  const [earlyBirdDate, setEarlyBirdDate] = useState<Dayjs | null>(null);
-  const [cutoffDate, setCutoffDate] = useState<Dayjs | null>(null);
-  const [contestDate, setContestDate] = useState<Dayjs | null>(null);
-  const [selectedUniversity, setSelectedUniversity] = useState<{
-    id: number;
-    label: string;
-  } | null>(null);
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [errors, setErrors] = useState<
+    z.inferFlattenedErrors<typeof CreateContestSchema>
+  >({ formErrors: [], fieldErrors: {} });
 
   const {
     userSession: { role },
   } = useAuth();
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setCreateDialogOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setCreateDialogOpen(false);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const formData = {
-      contestName,
-      earlyBirdDate: earlyBirdDate?.toDate(),
-      cutoffDate: cutoffDate?.toDate(),
-      contestDate: contestDate?.toDate(),
-      university: selectedUniversity?.id,
-    };
-
+  const handleSubmit = async (formData: FormData) => {
+    const result = CreateContestSchema.safeParse(formData);
+    if (!result.success) {
+      const errorMessages = result.error.flatten();
+      setErrors(errorMessages);
+      return;
+    }
     try {
-      setErrors({});
-      contestSchema.parse(formData);
+      setErrors({ formErrors: [], fieldErrors: {} });
       console.log(formData);
       handleClose();
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: ValidationErrors = error.errors.reduce(
-          (acc: ValidationErrors, err) => {
-            acc[err.path[0] as keyof ValidationErrors] = err.message;
-            return acc;
-          },
-          {},
-        );
-        setErrors(newErrors);
-      } else {
-        console.error("Error:", error);
-      }
+      console.error("Error:", error);
     }
   };
 
@@ -191,11 +180,38 @@ export default function Contests() {
     { field: "earlyBirdDate", headerName: "Early Bird Date", width: 150 },
     { field: "cutoffDate", headerName: "Cutoff Date", width: 150 },
     { field: "contestDate", headerName: "Start Date", width: 150 },
-    { field: "site", headerName: "Site", width: 300 },
+    { field: "site", headerName: "Site", width: 380 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 300,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <>
+          <Button variant="contained" sx={purpleBtn}>
+            Info
+          </Button>
+          {role === "admin" && (
+            <>
+              <Button variant="contained" sx={{ ...editBtn, ml: 1 }}>
+                Edit
+              </Button>
+              <Button
+                variant="contained"
+                sx={{ ...deleteBtn, ml: 1 }}
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                Delete
+              </Button>
+            </>
+          )}
+        </>
+      ),
+    },
   ];
 
   return (
-    <Container sx={{ mt: 15 }}>
+    <Container sx={{ mt: 15 }} maxWidth="xl">
       <Stack>
         <Typography variant="h5" fontWeight="bold">
           Contests
@@ -217,104 +233,21 @@ export default function Contests() {
           rows={rows}
           columns={columns}
           slots={{ toolbar: GridToolbar }}
+          disableRowSelectionOnClick
           sx={{ mt: 2 }}
         />
       </Stack>
-      <Dialog open={open} onClose={handleClose} maxWidth="sm">
-        <form onSubmit={handleSubmit}>
-          <DialogTitle>Create Contest</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Create a new contest. Teams will be automatically allocated on the
-              Early Bird Date and will run again Cutoff Date.
-            </DialogContentText>
-            <Divider sx={{ mt: 1 }}></Divider>
-            <Stack>
-              <DialogContentText sx={{ mt: 2 }}>Contest Name</DialogContentText>
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="name"
-                fullWidth
-                variant="outlined"
-                value={contestName}
-                onChange={(e) => setContestName(e.target.value)}
-                error={!!errors.contestName}
-                helperText={errors.contestName}
-              />
-              <DialogContentText sx={{ mt: 2 }}>
-                Early Bird Date
-              </DialogContentText>
-              <DatePicker
-                sx={{ mt: 2 }}
-                value={earlyBirdDate}
-                onChange={(newValue: Dayjs | null) => {
-                  setEarlyBirdDate(newValue);
-                }}
-                format="DD/MM/YYYY"
-                slotProps={{
-                  textField: {
-                    error: !!errors.earlyBirdDate,
-                    helperText: errors.earlyBirdDate,
-                  },
-                }}
-              />
-              <DialogContentText sx={{ mt: 2 }}>Cutoff Date</DialogContentText>
-              <DatePicker
-                sx={{ mt: 2 }}
-                value={cutoffDate}
-                onChange={(newValue: Dayjs | null) => {
-                  setCutoffDate(newValue);
-                }}
-                format="DD/MM/YYYY"
-                slotProps={{
-                  textField: {
-                    error: !!errors.cutoffDate,
-                    helperText: errors.cutoffDate,
-                  },
-                }}
-              />
-              <DialogContentText sx={{ mt: 2 }}>Contest Date</DialogContentText>
-              <DatePicker
-                sx={{ mt: 2 }}
-                value={cutoffDate}
-                onChange={(newValue: Dayjs | null) => {
-                  setContestDate(newValue);
-                }}
-                format="DD/MM/YYYY"
-                slotProps={{
-                  textField: {
-                    error: !!errors.contestDate,
-                    helperText: errors.contestDate,
-                  },
-                }}
-              />
-              <DialogContentText sx={{ mt: 2 }}>Site</DialogContentText>
-              <Autocomplete
-                options={universities}
-                value={selectedUniversity}
-                onChange={(event, newValue) => {
-                  setSelectedUniversity(newValue);
-                }}
-                sx={{ mt: 2 }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select University"
-                    error={!!errors.university}
-                    helperText={errors.university}
-                  />
-                )}
-              />
-            </Stack>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Create</Button>
-          </DialogActions>
-        </form>
-      </Dialog>
+      <CreateContestDialog
+        open={createDialogOpen}
+        onClose={handleClose}
+        onSubmit={handleSubmit}
+        universities={universities}
+        errors={errors}
+      />
+      <DeleteContestDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      />
     </Container>
   );
 }
