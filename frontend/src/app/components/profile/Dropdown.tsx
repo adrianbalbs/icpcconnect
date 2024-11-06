@@ -42,11 +42,9 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
         "aria-labelledby": "basic-button",
       }}
     >
-      {userSession.role === "student" && (
-        <MenuItem sx={menuBtn} onClick={() => to("")}>
-          Profile
-        </MenuItem>
-      )}
+      <MenuItem sx={menuBtn} onClick={() => to("")}>
+        Profile
+      </MenuItem>
       {userSession.role === "student" && (
         <MenuItem sx={menuBtn} onClick={() => to("/experience")}>
           Experience

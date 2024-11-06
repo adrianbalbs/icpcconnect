@@ -86,7 +86,16 @@
   grid-template-columns: repeat(2, 1fr);
   align-items: center;
   padding: 0 50px;
-  height: 60px;
+  height: 55px;
+  width: 100%;
+}
+
+.edit-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  padding: 0 50px;
+  height: 65px;
   width: 100%;
 }
 
@@ -123,9 +132,9 @@
 }
 
 .edit-box {
-  width: 250px;
-  height: 22px;
-  padding: 5px;
+  width: 262px;
+  height: 34px;
+  padding: 5px 14px;
   border-radius: 5px;
   border: 1px solid #bbbbbb;
 }

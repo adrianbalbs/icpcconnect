@@ -5,6 +5,7 @@ import { EditInput } from "./EditInput";
 import { EditInfo } from "@/utils/profileInfo";
 import { Dispatch, SetStateAction } from "react";
 import { TshirtSize } from "./TshirtSize";
+import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 interface EditProps {
   editInfo: EditInfo;
@@ -12,7 +13,7 @@ interface EditProps {
 }
 
 export const Edit: React.FC<EditProps> = ({ editInfo, setEditInfo }) => {
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
     setEditInfo({ ...editInfo, photoConsent: e.target.value === "yes" });
   };
 
@@ -24,7 +25,7 @@ export const Edit: React.FC<EditProps> = ({ editInfo, setEditInfo }) => {
     setEditInfo({ ...editInfo, languagesSpoken: languages });
   };
 
-  const handleTshirtChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTshirtChange = (e: SelectChangeEvent<string>) => {
     const size =
       e.target.value === "Select T-Shirt Size" ? null : e.target.value;
     setEditInfo({ ...editInfo, tshirtSize: size });
@@ -45,22 +46,26 @@ export const Edit: React.FC<EditProps> = ({ editInfo, setEditInfo }) => {
         value={editInfo.dietaryRequirements}
         onChange={handleInfoChange}
       />
-      <div className={profileStyles.content}>
+      <div className={profileStyles["edit-content"]}>
         <p className={pageStyles.bold}>
           Do you consent to appear in photos taken at the contest?
         </p>
-        <select
+        <Select
           id="consent"
+          placeholder="Yes or No"
+          sx={{ height: "34px", width: "262px", fontSize: "13.3px" }}
           value={editInfo.photoConsent ? "yes" : "no"}
           onChange={handleSelectChange}
-          className={profileStyles["select-box"]}
         >
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
+          <MenuItem value="yes" sx={{ fontSize: "13.3px" }}>
+            Yes
+          </MenuItem>
+          <MenuItem value="no" sx={{ fontSize: "13.3px" }}>
+            No
+          </MenuItem>
+        </Select>
       </div>
       <hr className={pageStyles.divider} />
-      ,
       <TshirtSize
         tshirtSize={editInfo.tshirtSize}
         setTshirtSize={handleTshirtChange}
