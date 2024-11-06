@@ -1,4 +1,9 @@
 {
+  "contests": [
+    { "name": "Epic Contest", "site": 1 },
+    { "name": "ICPC Regionals", "site": 1 },
+    { "name": "ICPC Preliminary Contest", "site": 1 }
+  ],
   "students": [
     {
       "id": "b6fd8dfb-5e30-49c9-97ec-7a9e349fabc1",
