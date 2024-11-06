@@ -10,6 +10,7 @@ import {
   uuid,
   varchar,
   primaryKey,
+  date,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", [
@@ -270,10 +271,9 @@ export type VerifyEmail = InferSelectModel<typeof verifyEmail>;
 export const contests = pgTable("contests", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull(),
-  description: text("description").notNull().default(""),
-  earlyBirdDate: timestamp("early_bird_date", { mode: "date" }).notNull(),
-  cutoffDate: timestamp("cutoff_date", { mode: "date" }).notNull(),
-  contestDate: timestamp("contest_date", { mode: "date" }).notNull(),
+  earlyBirdDate: date("early_bird_date", { mode: "date" }).notNull(),
+  cutoffDate: date("cutoff_date", { mode: "date" }).notNull(),
+  contestDate: date("contest_date", { mode: "date" }).notNull(),
   site: integer("university")
     .references(() => universities.id)
     .notNull(),
