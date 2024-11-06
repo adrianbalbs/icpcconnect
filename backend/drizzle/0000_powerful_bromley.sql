@@ -124,11 +124,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "verify_emails" (
-	"id" text NOT NULL,
 	"code" integer NOT NULL,
 	"email" text NOT NULL,
-	"userName" text NOT NULL,
-	"verified" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "verify_emails_code_unique" UNIQUE("code")
 );
 --> statement-breakpoint
@@ -178,7 +175,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "registration_details" ADD CONSTRAINT "registration_details_id_users_id_fk" FOREIGN KEY ("id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "registration_details" ADD CONSTRAINT "registration_details_id_student_details_id_fk" FOREIGN KEY ("id") REFERENCES "public"."student_details"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
