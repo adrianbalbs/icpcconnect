@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Divider, Menu, MenuItem } from "@mui/material";
 import { useAuth } from "../AuthProvider/AuthProvider";
+import { menuBtn } from "@/styles/sxStyles";
 
 interface DropdownProps {
   anchorEl: null | HTMLElement;
@@ -28,27 +29,37 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
       anchorEl={anchorEl}
       open={open}
       onClose={handleClose}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "left",
+      }}
+      sx={{ marginTop: "5px" }}
       MenuListProps={{
         "aria-labelledby": "basic-button",
       }}
     >
-      <MenuItem sx={{ fontSize: "13px" }} onClick={() => to("")}>
+      <MenuItem sx={menuBtn} onClick={() => to("")}>
         Profile
       </MenuItem>
-      <MenuItem sx={{ fontSize: "13px" }} onClick={() => to("/experience")}>
-        Experience
-      </MenuItem>
-      <MenuItem sx={{ fontSize: "13px" }} onClick={() => to("/preferences")}>
-        Preferences
-      </MenuItem>
-      <MenuItem
-        sx={{ fontSize: "13px" }}
-        onClick={() => to("/account-settings")}
-      >
+      {userSession.role === "student" && (
+        <MenuItem sx={menuBtn} onClick={() => to("/experience")}>
+          Experience
+        </MenuItem>
+      )}
+      {userSession.role === "student" && (
+        <MenuItem sx={menuBtn} onClick={() => to("/preferences")}>
+          Preferences
+        </MenuItem>
+      )}
+      <MenuItem sx={menuBtn} onClick={() => to("/account-settings")}>
         Account settings
       </MenuItem>
       <Divider />
-      <MenuItem sx={{ fontSize: "13px" }} onClick={handleLogout}>
+      <MenuItem sx={menuBtn} onClick={handleLogout}>
         Logout
       </MenuItem>
     </Menu>

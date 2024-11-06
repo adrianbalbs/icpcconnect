@@ -23,7 +23,7 @@ const Menu: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const storeInfo = async () => {
+  const storeInfo = () => {
     const capitalisedRole =
       role === "site_coordinator" ? "Site Coordinator" : capitalise(role);
     setInfo({ role: capitalisedRole, name: `${givenName} ${familyName}` });

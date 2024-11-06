@@ -1,5 +1,6 @@
 import profileStyles from "@/styles/Profile.module.css";
 import pageStyles from "@/styles/Page.module.css";
+import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 const sizes = [
   "Select T-Shirt Size",
@@ -21,25 +22,27 @@ const sizes = [
 
 interface TshirtProps {
   tshirtSize: string | null;
-  setTshirtSize: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  setTshirtSize: (e: SelectChangeEvent<string>) => void;
 }
 
 export const TshirtSize = ({ tshirtSize, setTshirtSize }: TshirtProps) => {
   return (
     <>
-      <div className={profileStyles.content}>
+      <div className={profileStyles["edit-content"]}>
         <p className={pageStyles.bold}>T-Shirt Size</p>
-        <select
-          className={profileStyles["select-box"]}
+        <Select
+          id="consent"
+          placeholder="Yes or No"
+          sx={{ height: "34px", width: "262px", fontSize: "13.3px" }}
           value={tshirtSize ?? "Select T-Shirt Size"}
           onChange={setTshirtSize}
         >
           {sizes.map((s) => (
-            <option key={s} value={s}>
+            <MenuItem key={s} value={s} sx={{ fontSize: "13.3px" }}>
               {s}
-            </option>
+            </MenuItem>
           ))}
-        </select>
+        </Select>
       </div>
       <hr className={pageStyles.divider} />
     </>

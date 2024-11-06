@@ -1,0 +1,55 @@
+.modal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.language {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(96, 96, 96);
+}
+
+.question {
+  margin: 20px 0 10px 35px;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(96, 96, 96);
+}
+
+.checkbox-label {
+  font-size: 14px;
+}
+
+.divider {
+  margin: 40px 0;
+  height: 1px;
+  width: 100%;
+  border: none;
+  background-color: #E0E0E0;
+}
+
+.heading {
+  margin: 0 0 25px;
+}
+
+.contest-numbers {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.numbers {
+  position: absolute;
+  right: 0;
+  margin: 0px 10px;
+  padding: 0 7px;
+  height: 19px;
+  text-align: center;
+  color: rgb(111, 111, 163);
+  font-weight: bold;
+  /* border-top: 3px double white; */
+  /* border-bottom: 3px double rgb(111, 111, 163); */
+}

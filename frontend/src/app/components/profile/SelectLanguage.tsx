@@ -46,7 +46,7 @@ export const SelectLanguage = ({ languages, setLanguages }: LanguageProps) => {
 
   return (
     <>
-      <div className={profileStyles.content}>
+      <div className={profileStyles["edit-content"]}>
         <p className={pageStyles.bold}>Languages Spoken</p>
         <FormControl>
           <Select

@@ -99,7 +99,7 @@ export function AuthContextProvider({
         { withCredentials: true },
       );
       setUserSession(data);
-      router.push("/teams");
+      router.push(data.role === "student" ? "/team" : "/teams");
     } catch (err) {
       alert(err);
     } finally {

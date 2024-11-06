@@ -14,6 +14,7 @@ export interface EditInfo {
 interface Info {
   id: string;
   university: string;
+  studentId: string;
   info: [string, string | number][];
   sideInfo: { name: string; role: string; pronouns: string };
   editInfo: EditInfo;
@@ -22,6 +23,7 @@ interface Info {
 const current: Info = {
   id: "",
   university: "",
+  studentId: "",
   info: [],
   sideInfo: {
     name: "",
@@ -65,7 +67,8 @@ export const getInfo = async (id: string | null) => {
       ["T-Shirt Size", data.tshirtSize ?? "(Not added yet)"],
     ];
     current.id = data.id;
-    current.id = data.university;
+    current.university = data.university;
+    current.studentId = data.studentId;
     current.info = infoArr;
     current.sideInfo = {
       name: `${data.givenName} ${data.familyName}`,
