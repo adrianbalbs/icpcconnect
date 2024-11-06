@@ -22,10 +22,12 @@ import {
   GridToolbar,
 } from "@mui/x-data-grid";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { CreateContestSchema } from "@/types/contests";
 import ContestDialog from "@/components/contests/ContestDialog";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/constants";
 
 export type ContestResponse = {
   id: string;
@@ -37,64 +39,17 @@ export type ContestResponse = {
   site: string;
 };
 
-const testDate = new Date().toISOString().split("T")[0];
-const rows: ContestResponse[] = [
-  {
-    id: "1",
-    name: "Funny Contest",
-    earlyBirdDate: testDate,
-    cutoffDate: testDate,
-    contestDate: testDate,
-    siteId: 1,
-    site: "University of New South Wales",
-  },
-  {
-    id: "2",
-    name: "ICPC Regional UNSW",
-    earlyBirdDate: testDate,
-    cutoffDate: testDate,
-    contestDate: testDate,
-    siteId: 1,
-    site: "University of New South Wales",
-  },
-  {
-    id: "3",
-    name: "SPAR Practice Round",
-    earlyBirdDate: testDate,
-    cutoffDate: testDate,
-    contestDate: testDate,
-    siteId: 1,
-    site: "University of New South Wales",
-  },
+export type RawContestResponse = {
+  id: string;
+  name: string;
+  earlyBirdDate: Date;
+  cutoffDate: Date;
+  contestDate: Date;
+  siteId: number;
+  site: string;
+};
 
-  {
-    id: "4",
-    name: "SPAR Practice Round",
-    earlyBirdDate: testDate,
-    cutoffDate: testDate,
-    contestDate: testDate,
-    siteId: 1,
-    site: "University of New South Wales",
-  },
-  {
-    id: "5",
-    name: "SPAR Practice Round",
-    earlyBirdDate: testDate,
-    cutoffDate: testDate,
-    contestDate: testDate,
-    siteId: 1,
-    site: "University of New South Wales",
-  },
-  {
-    id: "6",
-    name: "SPAR Practice Round",
-    earlyBirdDate: testDate,
-    cutoffDate: testDate,
-    contestDate: testDate,
-    siteId: 1,
-    site: "University of New South Wales",
-  },
-];
+// const testDate = new Date().toISOString().split("T")[0];
 
 const universities = [
   { id: 1, label: "University of New South Wales" },
@@ -106,11 +61,13 @@ const universities = [
 type DeleteContestDialogProps = {
   open: boolean;
   onClose: () => void;
+  handleDelete: () => void;
 };
 
 const DeleteContestDialog: React.FC<DeleteContestDialogProps> = ({
   open,
   onClose,
+  handleDelete,
 }) => {
   return (
     <>
@@ -129,7 +86,7 @@ const DeleteContestDialog: React.FC<DeleteContestDialogProps> = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={onClose} autoFocus>
+          <Button onClick={handleDelete} autoFocus>
             Delete
           </Button>
         </DialogActions>
@@ -139,11 +96,11 @@ const DeleteContestDialog: React.FC<DeleteContestDialogProps> = ({
 };
 
 type FormData = {
-  contestName: string;
-  earlyBirdDate: Date | undefined;
-  cutoffDate: Date | undefined;
-  contestDate: Date | undefined;
-  university: number | undefined;
+  name: string;
+  earlyBirdDate: string | undefined;
+  cutoffDate: string | undefined;
+  contestDate: string | undefined;
+  site: number | undefined;
 };
 
 export default function Contests() {
@@ -153,7 +110,7 @@ export default function Contests() {
   const [selectedContest, setSelectedContest] =
     useState<ContestResponse | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
-  const [contests, setContests] = useState<ContestResponse[]>(rows);
+  const [contests, setContests] = useState<ContestResponse[]>([]);
 
   const [errors, setErrors] = useState<
     z.inferFlattenedErrors<typeof CreateContestSchema>
@@ -162,6 +119,22 @@ export default function Contests() {
   const {
     userSession: { role },
   } = useAuth();
+
+  const fetchContests = async () => {
+    try {
+      const res = await axios.get(`${SERVER_URL}/api/contests`, {
+        withCredentials: true,
+      });
+      console.log(res.data);
+      setContests(res.data.allContests);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchContests();
+  }, []);
 
   const handleCreate = () => {
     setDialogMode("create");
@@ -181,6 +154,19 @@ export default function Contests() {
     setErrors({ formErrors: [], fieldErrors: {} });
   };
 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`${SERVER_URL}/api/contests/${deleteId}`, {
+        withCredentials: true,
+      });
+      setDeleteId(null);
+      setDeleteDialogOpen(false);
+      fetchContests();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleSubmit = async (formData: FormData) => {
     const result = CreateContestSchema.safeParse(formData);
     if (!result.success) {
@@ -190,10 +176,23 @@ export default function Contests() {
     }
     try {
       setErrors({ formErrors: [], fieldErrors: {} });
-      console.log(formData);
+      if (dialogMode === "create") {
+        await axios.post(`${SERVER_URL}/api/contests`, formData, {
+          withCredentials: true,
+        });
+      } else {
+        await axios.put(
+          `${SERVER_URL}/api/contests/${selectedContest?.id}`,
+          formData,
+          {
+            withCredentials: true,
+          },
+        );
+      }
+      fetchContests();
       handleDialogClose();
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (err) {
+      console.error("Error:", err);
     }
   };
 
@@ -281,6 +280,7 @@ export default function Contests() {
           setDeleteId(null);
           setDeleteDialogOpen(false);
         }}
+        handleDelete={handleDelete}
       />
     </Container>
   );

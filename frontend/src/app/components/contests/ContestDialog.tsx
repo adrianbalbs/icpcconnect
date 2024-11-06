@@ -13,6 +13,8 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import { z } from "zod";
 import dayjs, { Dayjs } from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import { useEffect, useState } from "react";
 import { CreateContestSchema } from "@/types/contests";
 import { ContestResponse } from "@/contests/page";
@@ -21,17 +23,20 @@ interface ContestDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (formData: {
-    contestName: string;
-    earlyBirdDate: Date | undefined;
-    cutoffDate: Date | undefined;
-    contestDate: Date | undefined;
-    university: number | undefined;
+    name: string;
+    earlyBirdDate: string | undefined;
+    cutoffDate: string | undefined;
+    contestDate: string | undefined;
+    site: number | undefined;
   }) => void;
   universities: { id: number; label: string }[];
   errors: z.inferFlattenedErrors<typeof CreateContestSchema>;
   mode: "create" | "edit";
   contestData?: ContestResponse | null;
 }
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const ContestDialog: React.FC<ContestDialogProps> = ({
   open,
@@ -54,11 +59,10 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
   useEffect(() => {
     if (mode === "edit" && contestData && open) {
       setContestName(contestData.name);
-      setEarlyBirdDate(dayjs(contestData.earlyBirdDate));
-      setCutoffDate(dayjs(contestData.cutoffDate));
-      setContestDate(dayjs(contestData.contestDate));
+      setEarlyBirdDate(dayjs(contestData.earlyBirdDate).local());
+      setCutoffDate(dayjs(contestData.cutoffDate).local());
+      setContestDate(dayjs(contestData.contestDate).local());
 
-      // This is probably really bad time complexity wise lol, probs change this
       const university = universities.find(
         (uni) => uni.id === contestData.siteId,
       );
@@ -66,7 +70,7 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
     } else if (!open) {
       resetForm();
     }
-  }, [open]);
+  }, [open, contestData, mode, universities]);
 
   const resetForm = () => {
     setContestName("");
@@ -75,15 +79,21 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
     setContestDate(null);
     setSelectedUniversity(null);
   };
+
+  const formatDateForSubmission = (date: Dayjs | null) => {
+    if (!date) return undefined;
+    return date.set("hour", 12).toISOString();
+  };
+
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = {
-      contestName,
-      earlyBirdDate: earlyBirdDate?.toDate(),
-      cutoffDate: cutoffDate?.toDate(),
-      contestDate: contestDate?.toDate(),
-      university: selectedUniversity?.id,
+      name: contestName,
+      earlyBirdDate: formatDateForSubmission(earlyBirdDate),
+      cutoffDate: formatDateForSubmission(cutoffDate),
+      contestDate: formatDateForSubmission(contestDate),
+      site: selectedUniversity?.id,
     };
 
     onSubmit(formData);
@@ -116,8 +126,8 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
               variant="outlined"
               value={contestName}
               onChange={(e) => setContestName(e.target.value)}
-              error={!!errors.fieldErrors.contestName}
-              helperText={errors.fieldErrors.contestName?.[0]}
+              error={!!errors.fieldErrors.name}
+              helperText={errors.fieldErrors.name?.[0]}
             />
             <DialogContentText sx={{ mt: 2 }}>
               Early Bird Date
@@ -170,8 +180,8 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
                 <TextField
                   {...params}
                   label="Select University"
-                  error={!!errors.fieldErrors.university}
-                  helperText={errors.fieldErrors.university?.[0]}
+                  error={!!errors.fieldErrors.site}
+                  helperText={errors.fieldErrors.site?.[0]}
                 />
               )}
             />
