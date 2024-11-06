@@ -57,6 +57,8 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
       setEarlyBirdDate(dayjs(contestData.earlyBirdDate));
       setCutoffDate(dayjs(contestData.cutoffDate));
       setContestDate(dayjs(contestData.contestDate));
+
+      // This is probably really bad time complexity wise lol, probs change this
       const university = universities.find(
         (uni) => uni.id === contestData.siteId,
       );

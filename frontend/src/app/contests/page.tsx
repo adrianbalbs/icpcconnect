@@ -120,12 +120,11 @@ const DeleteContestDialog: React.FC<DeleteContestDialogProps> = ({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Delete this contest?"}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Deleting this contest is an irreversible step.
+            Deleting this contest is irreversible, and will delete all formed
+            teams for this contest.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -154,6 +153,7 @@ export default function Contests() {
   const [selectedContest, setSelectedContest] =
     useState<ContestResponse | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
+  const [contests, setContests] = useState<ContestResponse[]>(rows);
 
   const [errors, setErrors] = useState<
     z.inferFlattenedErrors<typeof CreateContestSchema>
@@ -259,7 +259,7 @@ export default function Contests() {
           </Box>
         )}
         <DataGrid
-          rows={rows}
+          rows={contests}
           columns={columns}
           slots={{ toolbar: GridToolbar }}
           disableRowSelectionOnClick
