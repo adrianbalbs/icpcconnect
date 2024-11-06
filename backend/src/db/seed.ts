@@ -193,14 +193,18 @@ export const seed = async (db: DatabaseConnection) => {
   logger.info("Seeding contests");
   const allContests = data.default.contests;
   for (const contest of allContests) {
-    const { name, site } = contest;
-    await db.insert(contests).values({
-      name,
-      site,
-      earlyBirdDate: new Date(),
-      cutoffDate: new Date(),
-      contestDate: new Date(),
-    });
+    const { name, site, id } = contest;
+    await db
+      .insert(contests)
+      .values({
+        id,
+        name,
+        site,
+        earlyBirdDate: new Date(),
+        cutoffDate: new Date(),
+        contestDate: new Date(),
+      })
+      .onConflictDoNothing();
   }
 
   logger.info("Adding default admin");

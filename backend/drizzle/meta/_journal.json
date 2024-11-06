@@ -15,6 +15,13 @@
       "when": 1730874402005,
       "tag": "0001_loose_stephen_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1730880418011,
+      "tag": "0002_hard_marvel_boy",
+      "breakpoints": true
     }
   ]
 }
