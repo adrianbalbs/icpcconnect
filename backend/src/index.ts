@@ -7,6 +7,7 @@ import {
   TeamService,
   AuthService,
   AdminService,
+  ContestService,
   UserService,
   EmailService,
 } from "./services/index.js";
@@ -15,6 +16,7 @@ import {
   teamRouter,
   authRouter,
   adminRouter,
+  contestRouter,
   emailRouter,
 } from "./routers/index.js";
 import {
