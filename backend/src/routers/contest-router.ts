@@ -1,13 +1,14 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { createAuthenticationMiddleware } from "src/middleware/authenticate.js";
-import { authorise } from "src/middleware/authorise.js";
-import { validateData } from "src/middleware/validator-middleware.js";
-import { AuthService } from "src/services/auth-service.js";
+import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
+import { authorise } from "../middleware/authorise.js";
+import { validateData } from "../middleware/validator-middleware.js";
+import { AuthService } from "../services/auth-service.js";
 import {
   ContestService,
   CreateContest,
   CreateContestSchema,
-} from "src/services/contest-service.js";
+  UpdateContestSchema,
+} from "../services/contest-service.js";
 
 export function contestRouter(
   contestService: ContestService,
@@ -93,7 +94,7 @@ export function contestRouter(
       [
         authenticate,
         authorise(["admin"]),
-        validateData(CreateContestSchema, "body"),
+        validateData(UpdateContestSchema, "body"),
       ],
       async (
         req: Request<{ id: string }, unknown, CreateContest>,
