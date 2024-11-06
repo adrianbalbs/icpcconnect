@@ -26,8 +26,16 @@ try {
 
     Wait-ForPostgres
 
-    Write-Host "Checking test environment is set"
-    $env:TEST_DB = "postgres://testuser:testpassword@localhost:5556/testdb"
+    # Write-Host "Checking test environment is set"
+    $env:PG_TEST_USER = "testuser"
+    $env:PG_TEST_HOST = "localhost"
+    $env:PG_TEST_PW = "testpassword"
+    $env:PG_TEST_DB = "testdb"
+    $env:PG_TEST_PORT = "5556"
+
+    # Checking that necessary packages are installed
+    Write-Host "Checking that necessary packages are installed..."
+    npm install
 
     Write-Host "Running tests..."
 
@@ -35,7 +43,7 @@ try {
     if (-not $PATTERN) {
         $PATTERN = '.*'
     }
-    npx vitest run --config vitest.config.integration.ts -t "${PATTERN}"
+    npx vitest run --config vitest.config.integration.ts "${PATTERN}"
 }
 finally {
     Cleanup

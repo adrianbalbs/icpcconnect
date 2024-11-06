@@ -26,6 +26,7 @@ export const users = pgTable("users", {
   password: varchar("password", { length: 128 }).notNull(),
   email: text("email").notNull().unique(),
   role: roleEnum("role").notNull(),
+  refreshTokenVersion: integer("refresh_token_version").default(1).notNull(),
 });
 
 export const usersRelations = relations(users, ({ one }) => ({
@@ -66,11 +67,16 @@ export const students = pgTable("students", {
     .notNull(),
   studentId: text("student_id").notNull(),
   pronouns: text("pronouns"),
+  dietaryRequirements: text("dietary_requirements").default(""),
+  tshirtSize: text("tshirt_size"),
   team: uuid("team").references(() => teams.id),
-  university: integer("university").references(() => universities.id),
+  photoConsent: boolean("photo_consent").notNull(),
+  university: integer("university").references(() => universities.id).notNull(),
+  exclusions: text("exclusions").default("").notNull()
 });
 
-export const studentRelations = relations(students, ({ one }) => ({
+export const studentRelations = relations(students, ({ one, many }) => ({
+  languagesSpoken: many(languagesSpokenByStudent),
   user: one(users, { fields: [students.userId], references: [users.id] }),
   university: one(universities, {
     fields: [students.university],
@@ -101,8 +107,6 @@ export const registrationDetails = pgTable("registration_details", {
   contestExperience: integer("contest_experience").default(0).notNull(),
   leetcodeRating: integer("leetcode_rating").default(0).notNull(),
   codeforcesRating: integer("codeforces_rating").default(0).notNull(),
-  allergies: text("allergies").default("").notNull(),
-  photoConsent: boolean("photo_consent").notNull(),
   cppExperience: languageExperienceEnum("cpp_experience").notNull(),
   cExperience: languageExperienceEnum("c_experience").notNull(),
   javaExperience: languageExperienceEnum("java_experience").notNull(),
@@ -115,7 +119,6 @@ export type RegistrationDetails = InferSelectModel<typeof registrationDetails>;
 export const registrationDetailsRelations = relations(
   registrationDetails,
   ({ many, one }) => ({
-    languagesSpoken: many(languagesSpokenByStudent),
     coursesCompleted: many(coursesCompletedByStudent),
     registeredBy: one(students, {
       fields: [registrationDetails.student],
@@ -124,21 +127,21 @@ export const registrationDetailsRelations = relations(
   }),
 );
 
-export const spokenLanguages = pgTable("spoken_languages", {
+export const languagesSpoken = pgTable("spoken_languages", {
   code: text("code").primaryKey().notNull(),
   name: text("name").notNull(),
 });
 
-export type SpokenLanguage = InferSelectModel<typeof spokenLanguages>;
+export type SpokenLanguage = InferSelectModel<typeof languagesSpoken>;
 
 export const languagesSpokenByStudent = pgTable(
   "languages_spoken_by_student",
   {
     studentId: uuid("student_id")
-      .references(() => registrationDetails.student, { onDelete: "cascade" })
+      .references(() => students.userId, { onDelete: "cascade" })
       .notNull(),
     languageCode: text("language_code")
-      .references(() => spokenLanguages.code, { onDelete: "cascade" })
+      .references(() => languagesSpoken.code, { onDelete: "cascade" })
       .notNull(),
   },
   (table) => {
@@ -151,19 +154,19 @@ export const languagesSpokenByStudent = pgTable(
 export const languagesSpokenByStudentRelations = relations(
   languagesSpokenByStudent,
   ({ one }) => ({
-    student: one(registrationDetails, {
+    student: one(students, {
       fields: [languagesSpokenByStudent.studentId],
-      references: [registrationDetails.student],
+      references: [students.userId],
     }),
-    language: one(spokenLanguages, {
+    language: one(languagesSpoken, {
       fields: [languagesSpokenByStudent.languageCode],
-      references: [spokenLanguages.code],
+      references: [languagesSpoken.code],
     }),
   }),
 );
 
-export const spokenLanguagesRelations = relations(
-  spokenLanguages,
+export const languagesSpokenRelations = relations(
+  languagesSpoken,
   ({ many }) => ({
     spokenBy: many(languagesSpokenByStudent),
   }),
@@ -268,6 +271,7 @@ export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
+  flagged: boolean("flagged").default(false).notNull()
 });
 
 export const teamRelations = relations(teams, ({ many, one }) => ({
@@ -299,3 +303,10 @@ export const authCodes = pgTable("auth_codes", {
 });
 
 export type AuthCodes = InferSelectModel<typeof authCodes>;
+
+export const verifyEmail = pgTable("verify_emails", {
+  code: integer("code").notNull().unique(),
+  email: text("email").notNull(),
+});
+
+export type VerifyEmail = InferSelectModel<typeof verifyEmail>;

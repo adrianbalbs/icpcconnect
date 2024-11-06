@@ -1,8 +1,9 @@
 import request from "supertest";
 import express from "express";
 import { DatabaseConnection, users } from "../db/index.js";
-import { studentRouter } from "../routers/index.js";
+import { authRouter, studentRouter } from "../routers/index.js";
 import {
+  AuthService,
   ContestRegistrationService,
   GetRegistrationFormResponse,
   StudentService,
@@ -15,30 +16,59 @@ import {
   UpdateContestRegistrationForm,
 } from "../schemas/index.js";
 import { v4 as uuidv4 } from "uuid";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
-
-let dbName: string;
-let db: DatabaseConnection;
-let app: ReturnType<typeof express>;
-
-beforeAll(async () => {
-  const dbSetup = await setupTestDatabase();
-  dbName = dbSetup.testDbName;
-  db = dbSetup.db;
-  app = express()
-    .use(express.json())
-    .use("/api", studentRouter(new StudentService(db)))
-    .use("/api", contestRegistrationRouter(new ContestRegistrationService(db)));
-});
-
-afterAll(async () => {
-  await dropTestDatabase(dbName);
-});
+import cookieParser from "cookie-parser";
+import { not, eq } from "drizzle-orm";
 
 describe("contestRegistrationRouter tests", () => {
+  let db: DatabaseConnection;
+  let app: ReturnType<typeof express>;
+  let cookies: string;
+
+  beforeAll(async () => {
+    const dbSetup = await setupTestDatabase();
+    db = dbSetup.db;
+    const authService = new AuthService(db);
+    app = express()
+      .use(express.json())
+      .use(cookieParser())
+      .use("/api/auth", authRouter(authService))
+      .use("/api/students", studentRouter(new StudentService(db), authService))
+      .use(
+        "/api/contest-registration",
+        contestRegistrationRouter(
+          new ContestRegistrationService(db),
+          authService,
+        ),
+      );
+  });
+
+  beforeEach(async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({
+        email: "admin@comp3900.com",
+        password: "tomatofactory",
+      })
+      .expect(200);
+    cookies = loginRes.headers["set-cookie"];
+  });
+
   afterEach(async () => {
-    await db.delete(users);
+    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+  });
+
+  afterAll(async () => {
+    await dropTestDatabase();
   });
 
   it("should create a new form for student", async () => {
@@ -51,6 +81,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -59,22 +91,20 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     const regRes = await request(app)
       .post("/api/contest-registration")
+      .set("Cookie", cookies)
       .send(registration)
       .expect(200);
     expect(regRes.body).toHaveProperty("studentId");
@@ -90,6 +120,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -98,33 +130,35 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     await request(app)
       .post("/api/contest-registration")
+      .set("Cookie", cookies)
       .send(registration)
       .expect(200);
 
     const nextRes = await request(app)
       .get(`/api/contest-registration/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     expect(nextRes.body.student).toEqual(response.body.userId);
   });
 
   it("should throw if a student has not registered", async () => {
-    await request(app).get(`/api/contest-registration/${uuidv4()}`).expect(500);
+    await request(app)
+      .get(`/api/contest-registration/${uuidv4()}`)
+      .set("Cookie", cookies)
+      .expect(500);
   });
 
   it("should update a student's registration details", async () => {
@@ -137,6 +171,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -145,35 +181,33 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     await request(app)
       .post("/api/contest-registration")
+      .set("Cookie", cookies)
       .send(registration)
       .expect(200);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { student: _, ...registrationWithoutStudent } = registration;
     const newDetails: UpdateContestRegistrationForm = {
       ...registrationWithoutStudent,
-      coursesTaken: [1, 2],
+      coursesCompleted: [1, 2],
       level: "B",
     };
 
     const nextRes = await request(app)
       .put(`/api/contest-registration/${response.body.userId}`)
+      .set("Cookie", cookies)
       .send(newDetails)
       .expect(200);
 
@@ -182,6 +216,7 @@ describe("contestRegistrationRouter tests", () => {
 
     const getRes = await request(app)
       .get(`/api/contest-registration/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     const getBody: GetRegistrationFormResponse = getRes.body;
     expect(getBody.level).toEqual("B");
@@ -199,6 +234,8 @@ describe("contestRegistrationRouter tests", () => {
         password: "helloworld",
         university: 1,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -209,6 +246,8 @@ describe("contestRegistrationRouter tests", () => {
         password: "password123",
         university: 2,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
       {
         role: "student",
@@ -219,6 +258,8 @@ describe("contestRegistrationRouter tests", () => {
         password: "securepass",
         university: 3,
         verificationCode: "test",
+        languagesSpoken: ["en"],
+        photoConsent: true,
       },
     ];
 
@@ -234,28 +275,28 @@ describe("contestRegistrationRouter tests", () => {
 
       const registration: CreateContestRegistrationForm = {
         student: response.body.userId,
-        allergies: "none",
-        coursesTaken: [1, 2, 3],
+        coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
         cppExperience: "prof",
         javaExperience: "prof",
-        photoConsent: true,
         level: "A",
         leetcodeRating: 0,
         codeforcesRating: 0,
         contestExperience: 0,
-        spokenLanguages: ["en"],
       };
 
       await request(app)
         .post("/api/contest-registration")
+        .set("Cookie", cookies)
+        .send(registration)
         .send(registration)
         .expect(200);
     }
 
     const allRegistrationsResponse = await request(app)
       .get("/api/contest-registration")
+      .set("Cookie", cookies)
       .expect(200);
     expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
   });
@@ -270,6 +311,8 @@ describe("contestRegistrationRouter tests", () => {
       password: "helloworld",
       university: 1,
       verificationCode: "test",
+      languagesSpoken: ["en"],
+      photoConsent: true,
     };
     const response = await request(app)
       .post("/api/students")
@@ -278,39 +321,41 @@ describe("contestRegistrationRouter tests", () => {
 
     const registration: CreateContestRegistrationForm = {
       student: response.body.userId,
-      allergies: "none",
-      coursesTaken: [1, 2, 3],
+      coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
       cppExperience: "prof",
       javaExperience: "prof",
-      photoConsent: true,
       level: "A",
       leetcodeRating: 0,
       codeforcesRating: 0,
       contestExperience: 0,
-      spokenLanguages: ["en"],
     };
 
     await request(app)
       .post("/api/contest-registration")
+      .set("Cookie", cookies)
       .send(registration)
       .expect(200);
 
     await request(app)
       .get(`/api/contest-registration/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     await request(app)
       .delete(`/api/contest-registration/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     await request(app)
       .get(`/api/contest-registration/${response.body.userId}`)
+      .set("Cookie", cookies)
       .expect(500);
   });
 
   it("should return a 500 when deleting a registration that does not exist", async () => {
     await request(app)
       .delete(`/api/contest-registration/${uuidv4()}`)
+      .set("Cookie", cookies)
       .expect(500);
   });
 });

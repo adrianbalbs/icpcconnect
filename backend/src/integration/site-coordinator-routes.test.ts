@@ -1,9 +1,17 @@
-import { describe, afterEach, beforeAll, afterAll, it, expect } from "vitest";
+import {
+  describe,
+  afterEach,
+  beforeAll,
+  afterAll,
+  it,
+  expect,
+  beforeEach,
+} from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { SiteCoordinatorService } from "../services/index.js";
-import { siteCoordinatorRouter } from "../routers/index.js";
+import { AuthService, SiteCoordinatorService } from "../services/index.js";
+import { authRouter, siteCoordinatorRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
   CreateSiteCoordinatorRequest,
@@ -11,26 +19,46 @@ import {
 } from "../schemas/user-schema.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
-
-let db: DatabaseConnection;
-let app: ReturnType<typeof express>;
-
-beforeAll(async () => {
-  const dbSetup = await setupTestDatabase();
-  db = dbSetup.db;
-  app = express()
-    .use(express.json())
-    .use("/api", siteCoordinatorRouter(new SiteCoordinatorService(db)))
-    .use(errorHandlerMiddleware);
-});
-
-afterAll(async () => {
-  await dropTestDatabase();
-});
+import cookieParser from "cookie-parser";
+import { eq, not } from "drizzle-orm";
 
 describe("siteCoordinatorRouter tests", () => {
+  let db: DatabaseConnection;
+  let app: ReturnType<typeof express>;
+  let cookies: string;
+
+  beforeAll(async () => {
+    const dbSetup = await setupTestDatabase();
+    db = dbSetup.db;
+    const authService = new AuthService(db);
+    app = express()
+      .use(express.json())
+      .use(cookieParser())
+      .use("/api/auth", authRouter(authService))
+      .use(
+        "/api/site-coordinators",
+        siteCoordinatorRouter(new SiteCoordinatorService(db), authService),
+      )
+      .use(errorHandlerMiddleware);
+  });
+
+  beforeEach(async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({
+        email: "admin@comp3900.com",
+        password: "tomatofactory",
+      })
+      .expect(200);
+    cookies = loginRes.headers["set-cookie"];
+  });
+
   afterEach(async () => {
-    await db.delete(users);
+    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+  });
+
+  afterAll(async () => {
+    await dropTestDatabase();
   });
 
   it("should create a new site-coordinator", async () => {
@@ -91,6 +119,7 @@ describe("siteCoordinatorRouter tests", () => {
 
     const response = await request(app)
       .get("/api/site-coordinators")
+      .set("Cookie", cookies)
       .expect(200);
     expect(response.body.siteCoordinators.length).toEqual(
       siteCoordinators.length,
@@ -115,6 +144,7 @@ describe("siteCoordinatorRouter tests", () => {
 
     const response = await request(app)
       .get(`/api/site-coordinators/${userId}`)
+      .set("Cookie", cookies)
       .expect(200);
 
     expect(response.body.id).toEqual(userId);
@@ -122,7 +152,10 @@ describe("siteCoordinatorRouter tests", () => {
   });
 
   it("should throw if a site-coordinator cannot be found", async () => {
-    await request(app).get(`/api/site-coordinators/${uuidv4()}`).expect(404);
+    await request(app)
+      .get(`/api/site-coordinators/${uuidv4()}`)
+      .set("Cookie", cookies)
+      .expect(404);
   });
 
   it("should update the site-coordinator's details", async () => {
@@ -142,15 +175,16 @@ describe("siteCoordinatorRouter tests", () => {
 
     await request(app)
       .get(`/api/site-coordinators/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
 
     const req: UpdateSiteCoordinatorRequest = {
-      ...newSiteCoordinator,
       email: "newemail@comp3900.com",
     };
 
     const result = await request(app)
       .put(`/api/site-coordinators/${res.body.userId}`)
+      .set("Cookie", cookies)
       .send(req)
       .expect(200);
     expect(result.body.email).toEqual(req.email);
@@ -173,17 +207,23 @@ describe("siteCoordinatorRouter tests", () => {
 
     await request(app)
       .get(`/api/site-coordinators/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
     await request(app)
       .delete(`/api/site-coordinators/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(200);
 
     await request(app)
       .get(`/api/site-coordinators/${res.body.userId}`)
+      .set("Cookie", cookies)
       .expect(404);
   });
 
   it("should throw when trying to delete a site coordinator that does not exist", async () => {
-    await request(app).delete(`/api/site-coordinators/${uuidv4()}`).expect(400);
+    await request(app)
+      .delete(`/api/site-coordinators/${uuidv4()}`)
+      .set("Cookie", cookies)
+      .expect(400);
   });
 });

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { SERVER_URL } from '@/utils/constants';
-import pageStyles from '@/styles/Page.module.css';
-import memberStyles from '@/styles/Members.module.css';
-import Student, { StudentProps } from './Student';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { SERVER_URL } from "@/utils/constants";
+import pageStyles from "@/styles/Page.module.css";
+import memberStyles from "@/styles/Members.module.css";
+import Student, { StudentProps } from "./Student";
 
 export interface StudentInfo {
   id: string;
@@ -14,9 +14,13 @@ export interface StudentInfo {
   email: string;
   role: string;
   pronouns: string;
-  studentId: number;
+  studentId: string;
   university: string;
   team: string;
+  languagesSpoken?: { code: string; name: string }[];
+  dietaryRequirements: string;
+  photoConsent: boolean;
+  tshirtSize: string | null;
 }
 
 const Students: React.FC = () => {
@@ -26,12 +30,13 @@ const Students: React.FC = () => {
     try {
       const res = await axios.get<{ allStudents: StudentInfo[] }>(
         `${SERVER_URL}/api/students`,
+        { withCredentials: true },
       );
       const allStudents: StudentInfo[] = res.data.allStudents;
       const filteredInfo: StudentProps[] = allStudents.map((student) => ({
         id: student.id,
-        name: student.givenName + ' ' + student.familyName,
-        team: student.team ? student.team : '(not allocated)',
+        name: student.givenName + " " + student.familyName,
+        team: student.team ? student.team : "(not allocated)",
         institution: student.university,
         email: student.email,
       }));
@@ -54,7 +59,9 @@ const Students: React.FC = () => {
         <p>Email</p>
       </div>
       <hr className={pageStyles.divider} />
-      {students.map((student) => <Student key={student.id} {...student} />)}
+      {students.map((student) => (
+        <Student key={student.id} {...student} />
+      ))}
       {/* <div className={`${memberStyles.students} ${memberStyles.space}`}>
       <p>Rachel Chen</p>
       <p>Randos</p>
