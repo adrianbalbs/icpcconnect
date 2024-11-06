@@ -39,18 +39,6 @@ export type ContestResponse = {
   site: string;
 };
 
-export type RawContestResponse = {
-  id: string;
-  name: string;
-  earlyBirdDate: Date;
-  cutoffDate: Date;
-  contestDate: Date;
-  siteId: number;
-  site: string;
-};
-
-// const testDate = new Date().toISOString().split("T")[0];
-
 const universities = [
   { id: 1, label: "University of New South Wales" },
   { id: 2, label: "University of Sydney" },
@@ -111,6 +99,7 @@ export default function Contests() {
     useState<ContestResponse | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
   const [contests, setContests] = useState<ContestResponse[]>([]);
+  const [dataGridLoading, setDataGridLoading] = useState(true);
 
   const [errors, setErrors] = useState<
     z.inferFlattenedErrors<typeof CreateContestSchema>
@@ -122,18 +111,30 @@ export default function Contests() {
 
   const fetchContests = async () => {
     try {
-      const res = await axios.get(`${SERVER_URL}/api/contests`, {
-        withCredentials: true,
-      });
+      const res = await axios.get<{ allContests: ContestResponse[] }>(
+        `${SERVER_URL}/api/contests`,
+        {
+          withCredentials: true,
+        },
+      );
       console.log(res.data);
-      setContests(res.data.allContests);
+      setContests(
+        res.data.allContests.map((c) => ({
+          ...c,
+          earlyBirdDate: c.earlyBirdDate.split("T")[0],
+          cutoffDate: c.cutoffDate.split("T")[0],
+          contestDate: c.contestDate.split("T")[0],
+        })),
+      );
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
+    setDataGridLoading(true);
     fetchContests();
+    setDataGridLoading(false);
   }, []);
 
   const handleCreate = () => {
@@ -262,6 +263,13 @@ export default function Contests() {
           columns={columns}
           slots={{ toolbar: GridToolbar }}
           disableRowSelectionOnClick
+          loading={dataGridLoading}
+          slotProps={{
+            loadingOverlay: {
+              variant: "skeleton",
+              noRowsVariant: "skeleton",
+            },
+          }}
           sx={{ mt: 2 }}
         />
       </Stack>
