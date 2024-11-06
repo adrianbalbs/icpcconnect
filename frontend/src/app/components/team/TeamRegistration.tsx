@@ -49,7 +49,7 @@ const TeamRegistration = () => {
   useEffect(() => {
     checkProfile();
     checkExperience();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     setCompleted(Object.values(added).filter((a) => a).length);

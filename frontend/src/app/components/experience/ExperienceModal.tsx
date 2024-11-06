@@ -15,10 +15,10 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
-import LanguageSlider from "./LanguageSlider";
+import LanguageSlider from "./modalInput/LanguageSlider";
 import { Experiences, ExperienceType } from "@/profile/[id]/experience/page";
-import NumberInput from "./NumberInput";
-import CourseCheckbox from "./CourseCheckbox";
+import NumberInput from "./modalInput/NumberInput";
+import CourseCheckbox from "./modalInput/CourseCheckbox";
 
 interface ModalProps {
   id: string;

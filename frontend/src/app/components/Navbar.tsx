@@ -55,7 +55,6 @@ const StyledTab = styled((props: tabProps) => <Tab disableRipple {...props} />)(
 const Navbar: React.FC = () => {
   const [tab, setTab] = useState(2);
   const [tabAllowed, setTabAllowed] = useState("team");
-  // const [initialLoad, setInitialLoad] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
   const { userSession } = useAuth();
@@ -63,14 +62,6 @@ const Navbar: React.FC = () => {
     setTab(newTab);
     router.push(newTab === 1 ? "/members" : `/${tabAllowed}`);
   };
-
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setInitialLoad(false);
-  //   }, 100);
-
-  //   return () => clearTimeout(timeout);
-  // }, []);
 
   useEffect(() => {
     if (userSession.role !== "student") {
@@ -91,7 +82,6 @@ const Navbar: React.FC = () => {
   return (
     <div className={styles.navbar}>
       <h1 className={styles.website}>ICPCC</h1>
-
       <Box sx={{ width: "100%", gridColumn: "5" }}>
         <StyledTabs value={tab} onChange={handleChange} aria-label="tabs">
           <StyledTab sx={{ height: "60px" }} label={tabAllowed} />

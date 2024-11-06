@@ -97,9 +97,8 @@
   flex-wrap: nowrap;
   align-items: center;
   column-gap: 5px;
-  /* margin-left: auto; */
+  margin-left: auto;
   height: 100%;
-  width: 200px;
 }
 
 .pfp-label {
