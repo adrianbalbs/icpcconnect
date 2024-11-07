@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
@@ -15,6 +15,19 @@ interface ProfileLayoutProps {
   params: {
     id: string;
   };
+}
+
+type ProfileContextData = {
+  storeProfileInfo: () => Promise<void>;
+  info: { name: string; role: string; pronouns: string };
+};
+const ProfileContext = createContext<ProfileContextData>(
+  {} as ProfileContextData,
+);
+
+export function useProfile() {
+  const context = useContext(ProfileContext);
+  return context;
 }
 
 const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
@@ -33,21 +46,22 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
   }, [params.id]);
 
   return (
-    <div className={profileStyles.screen}>
-      <div className={profileStyles["side-screen"]}>
-        <Image src={image} alt="pfp" className={profileStyles.pfp} />
-        <h1 className={profileStyles.name}>{info.name}</h1>
-        <p
-          className={profileStyles.role}
-        >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
-        <Sidebar id={params.id} />
+    <ProfileContext.Provider value={{ info, storeProfileInfo: storeInfo }}>
+      <div className={profileStyles.screen}>
+        <div className={profileStyles["side-screen"]}>
+          <Image src={image} alt="pfp" className={profileStyles.pfp} />
+          <h1 className={profileStyles.name}>{info.name}</h1>
+          <p
+            className={profileStyles.role}
+          >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
+          <Sidebar id={params.id} />
+        </div>
+        <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
+          <ArrowBackIosIcon />
+        </IconButton>
+        {children}
       </div>
-      <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
-        <ArrowBackIosIcon />
-      </IconButton>
-      {children}
-    </div>
+    </ProfileContext.Provider>
   );
 };
-
 export default ProfileLayout;

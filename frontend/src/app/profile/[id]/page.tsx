@@ -10,6 +10,7 @@ import { getInfo, capitalise, EditInfo } from "@/utils/profileInfo";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { Edit } from "@/components/profile/Edit";
+import { useProfile } from "./layout";
 
 export interface ProfileProps {
   params: {
@@ -27,6 +28,8 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     dietaryRequirements: "",
     tshirtSize: "",
   });
+
+  const { storeProfileInfo } = useProfile();
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
@@ -60,6 +63,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
         },
       );
       storeInfo();
+      storeProfileInfo();
     } catch (error) {
       console.error("Failed to update:", error);
     }
