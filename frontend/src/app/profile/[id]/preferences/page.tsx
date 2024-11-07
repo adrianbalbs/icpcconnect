@@ -28,7 +28,6 @@ export interface PreferenceInput {
 }
 
 const Preferences: React.FC<ProfileProps> = ({ params }) => {
-  console.log(params);
   const [added, setAdded] = useState<PreferenceType>({
     team: false,
     pair: false,
@@ -44,8 +43,8 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
   });
 
   const deletePreference = (type: string) => {
+    setAdded({ ...added, [type]: false });
     if (type === "team") {
-      setAdded({ ...added, team: false });
       setPreferences({
         ...preferences,
         team: [
@@ -54,12 +53,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
         ],
       });
     } else if (type === "pair") {
-      setAdded({ ...added, pair: false });
       setPreferences({ ...preferences, pair: { studentId: "", name: null } });
-    } else {
-      const newList = preferences.exclusions.filter((e) => e !== type);
-      if (newList.length === 0) setAdded({ ...added, exclusions: false });
-      setPreferences({ ...preferences, exclusions: newList });
     }
   };
 
@@ -82,10 +76,9 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
             deletePreference={deletePreference}
           />
         )}
-        {added.exclusions && (
-          <ExclusionPreference students={preferences.exclusions} />
-        )}
+        <ExclusionPreference id={params.id} changed={added.exclusions} />
         <PreferenceModal
+          id={params.id}
           added={added}
           setAdded={setAdded}
           preferences={preferences}

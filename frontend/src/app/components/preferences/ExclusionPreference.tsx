@@ -1,29 +1,56 @@
-import pageStyles from '@/styles/Page.module.css';
-import experienceStyles from '@/styles/Experience.module.css';
-import { experienceHeading } from '@/styles/sxStyles';
-import { Box, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import pageStyles from "@/styles/Page.module.css";
+import experienceStyles from "@/styles/Experience.module.css";
+import { experienceHeading } from "@/styles/sxStyles";
+import { Box, Typography } from "@mui/material";
+import { getPreferences } from "@/utils/preferenceInfo";
 
-const ExclusionPreference = ({ students }: { students: string[] }) => {
-  const [studentString, setStudentString] = useState('');
+interface ExclusionProps {
+  id: string;
+  changed: boolean;
+}
+
+const ExclusionPreference = ({ id, changed }: ExclusionProps) => {
+  const [studentString, setStudentString] = useState("");
+
+  const getExclusions = async () => {
+    const data = await getPreferences(id, "exclusions");
+    console.log(data);
+    setStudentString(data[0].exclusions);
+  };
 
   useEffect(() => {
-    setStudentString(students.join(', '));
-  }, [students]);
+    getExclusions();
+  }, [changed]);
 
-  return (
-    <>
-      <h3 className={experienceStyles.heading}>Exclusion Preference</h3>
-      <Box sx={{ display: 'grid', gridTemplateColumns: '2fr 3fr', alignItems: 'center', m: '10px 40px 13px' }}>
-        <Typography sx={experienceHeading}>Student Names</Typography>
-      </Box>
-      <hr className={pageStyles.divider} />
-      <Box sx={{ display: 'grid', gridTemplateColumns: '2fr 3fr', alignItems: 'center', m: '20px 40px' }}>
-        <Typography sx={{ fontSize: '14px' }}>{studentString}</Typography>
-      </Box>
-      <hr className={experienceStyles.divider}/>
-    </>
-  );
-}
+  if (studentString !== "")
+    return (
+      <>
+        <h3 className={experienceStyles.heading}>Exclusion Preference</h3>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "2fr 3fr",
+            alignItems: "center",
+            m: "10px 40px 13px",
+          }}
+        >
+          <Typography sx={experienceHeading}>Student Names</Typography>
+        </Box>
+        <hr className={pageStyles.divider} />
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "2fr 3fr",
+            alignItems: "center",
+            m: "20px 40px",
+          }}
+        >
+          <Typography sx={{ fontSize: "14px" }}>{studentString}</Typography>
+        </Box>
+        <hr className={experienceStyles.divider} />
+      </>
+    );
+};
 
 export default ExclusionPreference;
