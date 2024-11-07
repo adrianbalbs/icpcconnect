@@ -28,7 +28,7 @@ export interface PreferenceInput {
 }
 
 const Preferences: React.FC<ProfileProps> = ({ params }) => {
-  const [added, setAdded] = useState<PreferenceType>({
+  const [changed, setChanged] = useState<PreferenceType>({
     team: false,
     pair: false,
     exclusions: false,
@@ -42,8 +42,12 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
     exclusions: [],
   });
 
+  const completeFetch = (type: string) => {
+    setChanged({ ...changed, [type]: false });
+  };
+
   const deletePreference = (type: string) => {
-    setAdded({ ...added, [type]: false });
+    setChanged({ ...changed, [type]: true });
     if (type === "team") {
       setPreferences({
         ...preferences,
@@ -64,23 +68,27 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider} />
       <Box sx={{ height: "calc(100% - 121px)", overflow: "scroll" }}>
-        {added.team && (
+        {changed.team && (
           <TeamPreference
             teammates={preferences.team}
             deletePreference={deletePreference}
           />
         )}
-        {added.pair && (
+        {changed.pair && (
           <PairPreference
             {...preferences.pair}
             deletePreference={deletePreference}
           />
         )}
-        <ExclusionPreference id={params.id} changed={added.exclusions} />
+        <ExclusionPreference
+          id={params.id}
+          changed={changed.exclusions}
+          complete={completeFetch}
+        />
         <PreferenceModal
           id={params.id}
-          added={added}
-          setAdded={setAdded}
+          added={changed}
+          setAdded={setChanged}
           preferences={preferences}
           setPreferences={setPreferences}
         />

@@ -8,15 +8,17 @@ import { getPreferences } from "@/utils/preferenceInfo";
 interface ExclusionProps {
   id: string;
   changed: boolean;
+  complete: (type: string) => void;
 }
 
-const ExclusionPreference = ({ id, changed }: ExclusionProps) => {
+const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
   const [studentString, setStudentString] = useState("");
 
   const getExclusions = async () => {
     const data = await getPreferences(id, "exclusions");
     console.log(data);
     setStudentString(data[0].exclusions);
+    complete("exclusions");
   };
 
   useEffect(() => {
@@ -38,14 +40,7 @@ const ExclusionPreference = ({ id, changed }: ExclusionProps) => {
           <Typography sx={experienceHeading}>Student Names</Typography>
         </Box>
         <hr className={pageStyles.divider} />
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "2fr 3fr",
-            alignItems: "center",
-            m: "20px 40px",
-          }}
-        >
+        <Box sx={{ alignItems: "center", m: "20px 40px" }}>
           <Typography sx={{ fontSize: "14px" }}>{studentString}</Typography>
         </Box>
         <hr className={experienceStyles.divider} />
