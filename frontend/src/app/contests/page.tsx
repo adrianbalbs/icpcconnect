@@ -117,7 +117,6 @@ export default function Contests() {
           withCredentials: true,
         },
       );
-      console.log(res.data);
       setContests(
         res.data.allContests.map((c) => ({
           ...c,
