@@ -45,12 +45,12 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
       <MenuItem sx={menuBtn} onClick={() => to("")}>
         Profile
       </MenuItem>
-      {userSession.role === "student" && (
+      {userSession.role === "Student" && (
         <MenuItem sx={menuBtn} onClick={() => to("/experience")}>
           Experience
         </MenuItem>
       )}
-      {userSession.role === "student" && (
+      {userSession.role === "Student" && (
         <MenuItem sx={menuBtn} onClick={() => to("/preferences")}>
           Preferences
         </MenuItem>
