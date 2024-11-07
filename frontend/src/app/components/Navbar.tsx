@@ -6,6 +6,7 @@ import styles from "@/styles/Page.module.css";
 import { styled } from "@mui/material/styles";
 import { Box, Tabs, Tab } from "@mui/material";
 import Menu from "./profile/Menu";
+import { useAuth } from "./AuthProvider/AuthProvider";
 
 interface tabsProps {
   children?: React.ReactNode;
@@ -57,7 +58,7 @@ const Navbar: React.FC = () => {
   // const [initialLoad, setInitialLoad] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-
+  const { userSession } = useAuth();
   const handleChange = (event: React.SyntheticEvent, newTab: number) => {
     setTab(newTab);
     router.push(newTab === 1 ? "/members" : `/${tabAllowed}`);
@@ -72,7 +73,7 @@ const Navbar: React.FC = () => {
   // }, []);
 
   useEffect(() => {
-    if (localStorage.getItem("role") !== "student") {
+    if (userSession.role !== "student") {
       setTabAllowed("teams");
     }
   }, []);

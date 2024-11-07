@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Dispatch, SetStateAction, useEffect } from 'react';
-import styled from '@emotion/styled';
-import Alert from '@mui/material/Alert';
+import { Dispatch, SetStateAction, useEffect } from "react";
+import styled from "@emotion/styled";
+import Alert from "@mui/material/Alert";
 
 export interface NotifType {
   type: string;
@@ -14,35 +14,37 @@ interface NotifProps {
   notif: {
     type: string;
     name: string;
-  },
+  };
   setNotif: Dispatch<SetStateAction<NotifType>>;
 }
 
 const LongAlert = styled(Alert)<{ visible: boolean }>`
-  display: ${(props) => (props.visible ? 'flex' : 'none')};
+  display: ${(props) => (props.visible ? "flex" : "none")};
   margin-top: 60px;
   margin-bottom: -60px;
 `;
 
 const Notif: React.FC<NotifProps> = ({ visible, notif, setNotif }) => {
   useEffect(() => {
-    if (notif !== undefined && notif.type !== '') {
+    if (notif !== undefined && notif.type !== "") {
       const timeout = setTimeout(() => {
-        setNotif({ type: '', name: '' });
+        setNotif({ type: "", name: "" });
       }, 2000);
-      
-    return () => clearTimeout(timeout);
+
+      return () => clearTimeout(timeout);
     }
   }, [visible]);
 
   return (
-    <LongAlert visible={visible} severity={notif.type === 'invite' ? "success" : "error"}>
-      {notif.type === 'invite'
+    <LongAlert
+      visible={visible}
+      severity={notif.type === "invite" ? "success" : "error"}
+    >
+      {notif.type === "invite"
         ? `New ${notif.name} invite code copied to clipboard successfully`
-        : `${notif.name}'s account deleted successfully`
-      }
+        : `${notif.name}'s account deleted successfully`}
     </LongAlert>
   );
-}
+};
 
 export default Notif;

@@ -3,16 +3,14 @@
 import Tile from "./Tile";
 import styles from "@/styles/Teams.module.css";
 import pageStyles from "@/styles/Page.module.css";
-import { useEffect, useState } from "react";
+import { useAuth } from "../AuthProvider/AuthProvider";
 
 const TeamRegistration: React.FC = () => {
-  const [id, setId] = useState<string | null>(null);
+  const {
+    userSession: { id },
+  } = useAuth();
   // const [completed, setCompleted] = useState(0);
   const completed = 0;
-  useEffect(() => {
-    const storedId = localStorage.getItem("id");
-    setId(storedId);
-  }, []);
   return (
     <>
       <h1 className={styles.todo}>Todo</h1>

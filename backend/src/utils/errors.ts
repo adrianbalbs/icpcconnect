@@ -15,6 +15,11 @@ export const unauthorizedError: IHttpError = {
   message: "Unauthorized error occured",
 };
 
+export const forbiddenError: IHttpError = {
+  errorCode: 403,
+  message: "Access to resource is forbidden",
+};
+
 export const badRequest: IHttpError = {
   errorCode: 400,
   message: "Bad request",

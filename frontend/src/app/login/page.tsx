@@ -1,41 +1,25 @@
 "use client";
 
-import Image from "next/image";
-import axios from "axios";
 import styles from "@/styles/Auth.module.css";
-import logo from "@/assets/logo.png";
+import Image from "next/image";
+import logo from "../assets/logo.png";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { SERVER_URL } from "@/utils/constants";
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault();
-
-      const payload = {
-        email,
-        password,
-      };
-      const res = await axios.post(`${SERVER_URL}/api/login`, payload);
-      const { token, id, role } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("id", id);
-      localStorage.setItem("role", role);
-      router.push(role === "student" ? "team" : "teams");
-    } catch (error) {
-      alert(`Login error: ${error}`);
-    }
+    e.preventDefault();
+    await login({ email, password });
   };
 
   return (
     <div className={styles.background}>
       <div className={styles.shadow}>
-        <div className={styles["login-polygon"]}></div>
+        <div className={styles["login-polygon"]} />
       </div>
       <div className={styles["info-container"]}>
         <Image

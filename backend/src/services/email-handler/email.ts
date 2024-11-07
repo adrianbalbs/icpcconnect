@@ -18,15 +18,15 @@ export async function sendEmail(
         .replace('<span id="verification-code"></span>', verificationCode)
         .replace('<span>USER_NAME</span>', userName);
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: 'zhouyuyundelph@gmail.com', // Your email address
-            pass: 'ehyl lkzx ypxj axah', // Your email password (consider using environment variables)
-        },
-    });
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: "zhouyuyundelph@gmail.com", // Your email address
+      pass: "ehyl lkzx ypxj axah", // Your email password (consider using environment variables)
+    },
+  });
 
     const mailOptions = {
         from: '"No Reply" <noreply@yourdomain.com>', // Sender address

@@ -36,6 +36,14 @@ export type StudentsResponse = {
 
 export type UpdateStudentResponse = Omit<UpdateStudentRequest, "password">;
 
+export type GetStudentExclusionsResponse = {
+  exclusions: string;
+}[]
+
+export type UpdateStudentExclusionsResponse = {
+  exclusions: string
+}
+
 export class StudentService {
   private readonly db: DatabaseConnection;
 
@@ -296,5 +304,24 @@ export class StudentService {
 
     await this.db.delete(users).where(eq(users.id, userId));
     return { status: "OK" };
+  }
+
+  async getStudentExclusions(userId: string): Promise<GetStudentExclusionsResponse> {
+    const exclusions = await this.db
+      .select({ exclusions: students.exclusions })
+      .from(users)
+      .innerJoin(students, eq(users.id, students.userId))
+      .where(eq(users.id, userId));
+
+      return exclusions;
+  }
+
+  async updateStudentExclusions(userId: string, newExclusions: string): Promise<boolean> {
+    await this.db
+      .update(students)
+      .set({ exclusions: newExclusions })
+      .where(eq(students.userId, userId))
+
+    return true;
   }
 }

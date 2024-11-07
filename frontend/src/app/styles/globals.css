@@ -3,35 +3,28 @@
   --foreground: #171717;
 }
 
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, sans-serif;
+  font-family: arial, helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
-
-/* h1 {
-  font-size: 35px;
-  text-align: center;
-}
-
-hr {
-  width: 230px;
-  color: lightgray;
-  margin: 10px;
-} */
 
 a {
+  color: inherit;
   text-decoration: none;
 }
-
-select {
-  background-color: white;
-}
-

@@ -1,17 +1,28 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { validateData } from "../middleware/index.js";
+import {
+  createAuthenticationMiddleware,
+  authorise,
+  validateData,
+} from "../middleware/index.js";
 import {
   CreateStudentRequest,
   CreateStudentRequestSchema,
+  UpdateStudentExclusionsRequest,
+  UpdateStudentExclusionsRequestSchema,
   UpdateStudentRequest,
   UpdateStudentRequestSchema,
 } from "../schemas/index.js";
-import { StudentService } from "../services/index.js";
+import { AuthService, StudentService } from "../services/index.js";
 
-export function studentRouter(studentService: StudentService) {
+export function studentRouter(
+  studentService: StudentService,
+  authService: AuthService,
+) {
+  const authenticate = createAuthenticationMiddleware(authService);
   return Router()
     .get(
-      "/students",
+      "/",
+      [authenticate, authorise(["admin", "coach", "site_coordinator"])],
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
           const students = await studentService.getAllStudents();
@@ -22,7 +33,11 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .get(
-      "/students/:id",
+      "/:id",
+      [
+        authenticate,
+        authorise(["admin", "student", "coach", "site_coordinator"]),
+      ],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -37,8 +52,25 @@ export function studentRouter(studentService: StudentService) {
         }
       },
     )
+    .get(
+      "/exclusions/:id",
+      async (
+        req: Request<{ id: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        try {
+          const exclusions = await studentService.getStudentExclusions(id);
+          res.status(200).json(exclusions);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
     .delete(
-      "/students/:id",
+      "/:id",
+      [authenticate, authorise(["admin", "student", "coach"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -54,7 +86,7 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .post(
-      "/students",
+      "/",
       validateData(CreateStudentRequestSchema, "body"),
       async (
         req: Request<Record<string, never>, unknown, CreateStudentRequest>,
@@ -71,7 +103,30 @@ export function studentRouter(studentService: StudentService) {
       },
     )
     .put(
-      "/students/:id",
+      "/exclusions/:id",
+      [authenticate, authorise(["admin", "student", "coach"])],
+      validateData(UpdateStudentExclusionsRequestSchema, "body"),
+      async (
+        req: Request<{ id: string }, unknown, UpdateStudentExclusionsRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        const { exclusions } = req.body;
+        try {
+          const result = await studentService.updateStudentExclusions(
+            id,
+            exclusions,
+          );
+          res.status(200).json(result);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .put(
+      "/:id",
+      [authenticate, authorise(["admin", "student", "coach"])],
       validateData(UpdateStudentRequestSchema, "body"),
       async (
         req: Request<{ id: string }, unknown, UpdateStudentRequest>,

@@ -5,14 +5,8 @@ export default defineConfig({
   test: {
     include: ["src/integration/**/*.test.ts"],
     globals: true,
-    sequence: {
-      concurrent: false,
-      hooks: "list",
-    },
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
+    coverage: {
+      enabled: true,
     },
   },
 });

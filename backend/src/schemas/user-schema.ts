@@ -205,7 +205,12 @@ export const PassVerificationSchema = z.object({
 
 export type PassVerificationRequest = z.infer<typeof PassVerificationSchema>;
 
-const UserRoleEnum = z.enum(["student", "coach", "site_coordinator", "admin"]);
+export const UserRoleEnum = z.enum([
+  "student",
+  "coach",
+  "site_coordinator",
+  "admin",
+]);
 export type UserRole = z.infer<typeof UserRoleEnum>;
 
 export const CreateAdminRequestSchema = z.object({
@@ -249,6 +254,12 @@ export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
 }).partial();
 
 export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
+
+export const UpdateStudentExclusionsRequestSchema = z.object({
+  exclusions: z.string(),
+})
+
+export type UpdateStudentExclusionsRequest = z.infer<typeof UpdateStudentExclusionsRequestSchema>;
 
 export const CreateCoachRequestSchema = z.object({
   givenName: z.string().min(1).max(35),
