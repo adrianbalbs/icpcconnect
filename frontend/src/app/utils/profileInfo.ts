@@ -14,6 +14,7 @@ export interface EditInfo {
 interface Info {
   id: string;
   university: string;
+  studentId: string;
   info: [string, string | number][];
   sideInfo: { name: string; role: string; pronouns: string };
   editInfo: EditInfo;
@@ -22,6 +23,7 @@ interface Info {
 const current: Info = {
   id: "",
   university: "",
+  studentId: "",
   info: [],
   sideInfo: {
     name: "",
@@ -42,11 +44,16 @@ export const getInfo = async (id: string | null) => {
   // if (id === current.id) return current;
 
   try {
-    const res = await axios.get(`${SERVER_URL}/api/admin/${id}`, {
+    const res = await axios.get(`${SERVER_URL}/api/users/${id}`, {
       withCredentials: true,
     });
     const data: StudentInfo = res.data;
+<<<<<<< HEAD
     const languages = data.languagesSpoken?.map((i) => i.name).join(", ");
+=======
+    const languages = data.languagesSpoken.map((i) => i.name).join(", ");
+    console.log(data);
+>>>>>>> main
     const infoArr: [string, string | number][] = [
       ["Name", `${data.givenName} ${data.familyName}`],
       ["Team", data.team ?? "(Unallocated)"],
@@ -64,7 +71,8 @@ export const getInfo = async (id: string | null) => {
       ["T-Shirt Size", data.tshirtSize ?? "(Not added yet)"],
     ];
     current.id = data.id;
-    current.id = data.university;
+    current.university = data.university;
+    current.studentId = data.studentId;
     current.info = infoArr;
     current.sideInfo = {
       name: `${data.givenName} ${data.familyName}`,

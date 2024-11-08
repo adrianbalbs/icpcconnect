@@ -39,12 +39,11 @@
 .sidebar {
   height: 199px;
   width: 220px;
-  font-size: 14px;
-  color: #4e5c88;
 }
 
 .sidebar-btn {
   padding-left: 25px;
+  color: #4e5c88;
   height: 51px;
   width: 220px;
   text-align: left;
@@ -68,12 +67,14 @@
 
 .inner-screen {
   margin-top: 40px;
+  height: calc(100vh - 140px);
   width: 61.5vw;
 }
 
 .title {
   display: flex;
   flex-direction: row;
+  margin-bottom: 25px;
   align-items: center;
   column-gap: 10px;
   height: 40px;
@@ -85,7 +86,16 @@
   grid-template-columns: repeat(2, 1fr);
   align-items: center;
   padding: 0 50px;
-  height: 60px;
+  height: 55px;
+  width: 100%;
+}
+
+.edit-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  padding: 0 50px;
+  height: 65px;
   width: 100%;
 }
 
@@ -96,9 +106,8 @@
   flex-wrap: nowrap;
   align-items: center;
   column-gap: 5px;
-  /* margin-left: auto; */
+  margin-left: auto;
   height: 100%;
-  width: 200px;
 }
 
 .pfp-label {
@@ -123,11 +132,11 @@
 }
 
 .edit-box {
-  width: 250px;
-  height: 22px;
-  padding: 5px;
+  width: 262px;
+  height: 34px;
+  padding: 5px 14px;
   border-radius: 5px;
-  border: 1px solid #BBBBBB;
+  border: 1px solid #bbbbbb;
 }
 
 .select-box {
@@ -135,7 +144,7 @@
   height: 35px;
   padding: 5px;
   border-radius: 5px;
-  border: 1px solid #BBBBBB;
+  border: 1px solid #bbbbbb;
 }
 
 .profile-button {
@@ -149,7 +158,6 @@
   position: absolute;
   right: 120px;
 }
-
 
 .profile-button:hover {
   opacity: 90%;

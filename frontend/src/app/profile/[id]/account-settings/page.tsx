@@ -11,7 +11,7 @@ const AccountSettings: React.FC = () => {
   return (
     <div className={profileStyles["inner-screen"]}>
       <div className={profileStyles.title}>
-        <h1>Account Settings</h1>
+        <h3>Account Settings</h3>
         <IconButton>
           <EditTwoToneIcon />
         </IconButton>

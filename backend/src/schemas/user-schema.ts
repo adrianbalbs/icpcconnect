@@ -191,113 +191,56 @@ const SpokenLanguageEnum = z.enum([
 ]);
 
 export type SpokenLanguage = z.infer<typeof SpokenLanguageEnum>;
-export const SendEmailCodeRequestSchema = z.object({
+
+export const SendEmailVerificationCodeRequestSchema = z.object({
   email: z.string().email(),
   isNormalVerificationEmail: z.boolean(),
 });
 
-export type SendEmailCodeRequest = z.infer<typeof SendEmailCodeRequestSchema>;
+export type SendEmailVerificationCodeRequest = z.infer<typeof SendEmailVerificationCodeRequestSchema>;
 
-export const PassVerificationSchema = z.object({
+export const SendEmailForgotPasswordCodeRequestSchema = z.object({
+  email: z.string().email(),
+});
+
+export type SendEmailForgotPasswordCodeRequest = z.infer<typeof SendEmailForgotPasswordCodeRequestSchema>;
+
+
+export const PassRegisterEmailVerificationSchema = z.object({
   email: z.string().email(),
   userProvidedCode: z.string(),
 });
 
-export type PassVerificationRequest = z.infer<typeof PassVerificationSchema>;
+export type PassRegisterEmailVerificationRequest = z.infer<typeof PassRegisterEmailVerificationSchema>;
+
+export const PassForgotPasswordVerificationSchema = z.object({
+  id: z.string(),
+  authenticationCode: z.string(),
+});
+
+export type PassForgotPasswordVerificationRequest = z.infer<typeof PassForgotPasswordVerificationSchema>;
+
+export const ForgotPasswordResetPasswordSchema = z.object({
+  id: z.string(),
+  newPassword: z.string(),
+});
+
+export type ForgotPasswordResetPasswordRequest = z.infer<typeof ForgotPasswordResetPasswordSchema>;
 
 export const UserRoleEnum = z.enum([
-  "student",
-  "coach",
-  "site_coordinator",
-  "admin",
+  "Student",
+  "Coach",
+  "Site Coordinator",
+  "Admin",
 ]);
 export type UserRole = z.infer<typeof UserRoleEnum>;
 
-export const CreateAdminRequestSchema = z.object({
-  givenName: z.string().min(1).max(35),
-  familyName: z.string().min(1).max(35),
-  password: z.string().min(1).max(128),
-  email: z.string().email(),
-  role: UserRoleEnum.refine((val) => val === "admin", {
-    message: "Role must be admin",
-  }),
-});
-
-export type CreateAdminRequest = z.infer<typeof CreateAdminRequestSchema>;
-
-export type UpdateAdminRequest = z.infer<typeof CreateAdminRequestSchema>;
-
-export const CreateStudentRequestSchema = z.object({
-  givenName: z.string().min(1).max(35),
-  familyName: z.string().min(1).max(35),
-  password: z.string().min(1).max(128),
-  email: z.string().email(),
-  role: UserRoleEnum,
-  studentId: z.string().min(1),
-  university: z.number(),
-  verificationCode: z.string(),
-  photoConsent: z.boolean(),
-  languagesSpoken: z.array(SpokenLanguageEnum),
-});
-
-export type CreateStudentRequest = z.infer<typeof CreateStudentRequestSchema>;
-
-export const UpdateStudentRequestSchema = CreateStudentRequestSchema.omit({
-  verificationCode: true,
-}).extend({
-  university: z.number(),
-  pronouns: z.string(),
-  team: z.string().nullable(),
-  dietaryRequirements: z.string().nullable(),
-  tshirtSize: z.string(), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
-  photoConsent: z.boolean(),
-}).partial();
-
-export type UpdateStudentRequest = z.infer<typeof UpdateStudentRequestSchema>;
-
 export const UpdateStudentExclusionsRequestSchema = z.object({
   exclusions: z.string(),
-})
-
-export type UpdateStudentExclusionsRequest = z.infer<typeof UpdateStudentExclusionsRequestSchema>;
-
-export const CreateCoachRequestSchema = z.object({
-  givenName: z.string().min(1).max(35),
-  familyName: z.string().min(1).max(35),
-  password: z.string().min(1).max(128),
-  email: z.string().email(),
-  role: UserRoleEnum,
-  university: z.number(),
-  verificationCode: z.string(),
 });
 
-export type CreateCoachRequest = z.infer<typeof CreateCoachRequestSchema>;
-
-export const UpdateCoachRequestSchema = CreateCoachRequestSchema.omit({
-  verificationCode: true,
-}).partial();
-
-export type UpdateCoachRequest = z.infer<typeof UpdateCoachRequestSchema>;
-
-export const CreateSiteCoordinatorRequestSchema = z.object({
-  givenName: z.string().min(1).max(35),
-  familyName: z.string().min(1).max(35),
-  password: z.string().min(1).max(128),
-  email: z.string().email(),
-  role: UserRoleEnum,
-  university: z.number(),
-  verificationCode: z.string(),
-});
-
-export type CreateSiteCoordinatorRequest = z.infer<
-  typeof CreateSiteCoordinatorRequestSchema
->;
-
-export const UpdateSiteCoordinatorRequestSchema =
-  CreateSiteCoordinatorRequestSchema.omit({ verificationCode: true }).partial();
-
-export type UpdateSiteCoordinatorRequest = z.infer<
-  typeof UpdateSiteCoordinatorRequestSchema
+export type UpdateStudentExclusionsRequest = z.infer<
+  typeof UpdateStudentExclusionsRequestSchema
 >;
 
 export const LoginRequestSchema = z.object({
@@ -306,3 +249,69 @@ export const LoginRequestSchema = z.object({
 });
 
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
+
+export const LanguagesSchema = z.strictObject({
+  code: z.string(),
+  name: z.string(),
+});
+
+export const StudentDetailsScehma = z.strictObject({
+  studentId: z.string().min(1),
+  pronouns: z.string().default(""),
+  team: z.string().nullable(),
+  dietaryRequirements: z.string().default(""),
+  tshirtSize: z.string().default(""), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
+  photoConsent: z.boolean().default(false),
+  exclusions: z.string().default(""),
+  languagesSpoken: z.array(LanguagesSchema).default([]),
+});
+export type StudentDetailsDTO = z.infer<typeof StudentDetailsScehma>;
+
+export const UpdateStudentDetailsSchema = StudentDetailsScehma.extend({
+  languagesSpoken: z.array(SpokenLanguageEnum), // Array of language IDs for updating
+}).partial();
+export type UpdateStudentDetails = z.infer<typeof UpdateStudentDetailsSchema>;
+
+export const BaseUserSchema = z.strictObject({
+  id: z.string().uuid(),
+  givenName: z.string().min(1).max(35),
+  familyName: z.string().min(1).max(35),
+  email: z.string().email(),
+  password: z.string().min(1).max(255),
+  role: UserRoleEnum,
+  university: z.number(),
+});
+export type BaseUser = z.infer<typeof BaseUserSchema>;
+export type BaseUserDTO = Omit<BaseUser, "password" | "university"> & {
+  university: string;
+};
+
+export const UpdateUserSchema = BaseUserSchema.omit({
+  id: true,
+  password: true,
+}).partial();
+
+export type UpdateUser = z.infer<typeof UpdateUserSchema>;
+
+export const UpdatePasswordSchema = z.strictObject({
+  password: z.string().min(1).max(255),
+});
+
+export const CreateUserSchema = BaseUserSchema.extend({
+  studentId: z.string().min(1).optional(),
+  inviteCode: z.string().min(1).optional(),
+  verificationCode: z.string().min(1).optional(),
+}).omit({ id: true });
+
+export type CreateUser = z.infer<typeof CreateUserSchema>;
+
+export const UserSchema = BaseUserSchema.merge(StudentDetailsScehma);
+
+export type UserDTO = Omit<
+  z.infer<typeof UserSchema>,
+  "password" | "university"
+> & { university: string };
+
+export const GetAllUsersQuerySchema = z.strictObject({
+  role: UserRoleEnum.optional(),
+});

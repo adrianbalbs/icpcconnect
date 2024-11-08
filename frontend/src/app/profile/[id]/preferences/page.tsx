@@ -11,7 +11,7 @@ const Preferences: React.FC = () => {
   return (
     <div className={profileStyles["inner-screen"]}>
       <div className={profileStyles.title}>
-        <h1>Preferences</h1>
+        <h3>Preferences</h3>
         <IconButton>
           <EditTwoToneIcon />
         </IconButton>

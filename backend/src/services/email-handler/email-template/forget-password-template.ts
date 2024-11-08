@@ -10,8 +10,10 @@ export const forget_password_email_content =
 <body>
     <!-- Please don't change line below -->
     <h1> Hi, user! To update your password, we have to first verify your identity.</h1>
-    <p>Please enter the verification code in the website to verify your email account.</p>
+    <p>Please click the link below to verify your email account.</p>
     <p>You will then be able to set a new password for your account.</p>
+
+    <p> Your link is: <span> SWITCH_LINK <span>
 
     <!-- Please don't change this line below, since the rust will replace part of the code content in the line below. -->
     <p>Your verification code is: <span id="verification-code"></span></p>

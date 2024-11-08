@@ -24,64 +24,27 @@ export default function Register() {
   const [eligibility, setEligibility] = useState(false);
   // const [verified, isVerified] = useState(false);
 
-  const convertRole: { [key: string]: string } = {
-    Student: "student",
-    "Site Coordinator": "site_coordinator",
-    Coach: "coach",
-  };
-
   const handleRoleName = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRoleName(e.target.value);
   };
 
   const submitForm = async () => {
     try {
-      const languagesSpoken: string[] = [];
-      const photoConsent: boolean = false;
       if (password === confirmPassword && checked) {
-        let role = convertRole[roleName];
-        if (roleName === "Site Coordinator") {
-          role = "site_coordinator";
-          const payload = {
-            givenName,
-            familyName,
-            role,
-            university,
-            email,
-            password,
-            verificationCode,
-            inviteCode,
-          };
-          await axios.post(`${SERVER_URL}/api/site-coordinators`, payload);
-        } else if (roleName === "Coach") {
-          role = "coach";
-          const payload = {
-            givenName,
-            familyName,
-            role,
-            university,
-            email,
-            password,
-            verificationCode,
-            inviteCode,
-          };
-          await axios.post(`${SERVER_URL}/api/coaches`, payload);
-        } else {
-          role = "student";
-          const payload = {
-            givenName,
-            familyName,
-            password,
-            email,
-            role,
-            studentId,
-            university,
-            verificationCode,
-            photoConsent,
-            languagesSpoken,
-          };
-          await axios.post(`${SERVER_URL}/api/students`, payload);
-        }
+        const payload = {
+          givenName,
+          familyName,
+          role: roleName,
+          university,
+          email,
+          password,
+          verificationCode,
+          ...(roleName === "Site Coordinator" || roleName === "Coach"
+            ? { inviteCode }
+            : {}),
+          ...(roleName === "Student" ? { studentId } : {}),
+        };
+        await axios.post(`${SERVER_URL}/api/users`, payload);
         router.push("/login");
       } else if (password !== confirmPassword) {
         console.log("Passwords do not match");

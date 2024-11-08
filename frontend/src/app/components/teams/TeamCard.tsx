@@ -1,5 +1,5 @@
-import pageStyles from "../../styles/Page.module.css";
-import teamStyles from "../../styles/Teams.module.css";
+import pageStyles from "@/styles/Page.module.css";
+import teamStyles from "@/styles/Teams.module.css";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 
 interface TeamCardProps {

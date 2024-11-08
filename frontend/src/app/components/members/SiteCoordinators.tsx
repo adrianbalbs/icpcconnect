@@ -28,11 +28,11 @@ const SiteCoordinators: React.FC = () => {
 
   const getSiteCoords = async () => {
     try {
-      const res = await axios.get<{ siteCoordinators: SiteCoordInfo[] }>(
-        `${SERVER_URL}/api/site-coordinators`,
-        { withCredentials: true },
+      const res = await axios.get<{ allUsers: SiteCoordInfo[] }>(
+        `${SERVER_URL}/api/users`,
+        { withCredentials: true, params: { role: "Site Coordinator" } },
       );
-      const allSC: SiteCoordInfo[] = res.data.siteCoordinators;
+      const allSC: SiteCoordInfo[] = res.data.allUsers;
       const filteredInfo: StaffProps[] = allSC.map((sc) => ({
         id: sc.id,
         name: sc.givenName + " " + sc.familyName,

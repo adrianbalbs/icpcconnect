@@ -14,7 +14,7 @@ export const EditInput: React.FC<EditProps> = ({ name, value, onChange }) => {
   };
   return (
     <>
-      <div className={profileStyles.content}>
+      <div className={profileStyles["edit-content"]}>
         <p className={pageStyles.bold}>{name}</p>
         <input
           className={profileStyles["edit-box"]}

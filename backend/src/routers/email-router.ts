@@ -1,20 +1,16 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { validateData } from "../middleware/validator-middleware.js";
 import { EmailService } from "../services/email-service.js";
-import {
-  PassVerificationRequest,
-  PassVerificationSchema,
-  SendEmailCodeRequest,
-  SendEmailCodeRequestSchema,
-} from "../schemas/user-schema.js";
+import { ForgotPasswordResetPasswordRequest, ForgotPasswordResetPasswordSchema, PassForgotPasswordVerificationRequest, PassForgotPasswordVerificationSchema, PassRegisterEmailVerificationRequest, PassRegisterEmailVerificationSchema, SendEmailForgotPasswordCodeRequest, SendEmailForgotPasswordCodeRequestSchema, SendEmailVerificationCodeRequest, SendEmailVerificationCodeRequestSchema } from "../schemas/index.js";
+
 
 export function emailRouter(Service: EmailService) {
   return Router()
     .post(
-      "/send",
-      validateData(SendEmailCodeRequestSchema, "body"),
+      "/registVerificationSend",
+      validateData(SendEmailVerificationCodeRequestSchema, "body"),
       async (
-        req: Request<Record<string, never>, unknown, SendEmailCodeRequest>,
+        req: Request<Record<string, never>, unknown, SendEmailVerificationCodeRequest>,
         res: Response,
         next: NextFunction,
       ) => {
@@ -28,17 +24,68 @@ export function emailRouter(Service: EmailService) {
       },
     )
     .post(
-      "/verify",
-      validateData(PassVerificationSchema, "body"),
+      "/registVerificationVerify",
+      validateData(PassRegisterEmailVerificationSchema, "body"),
       async (
-        req: Request<Record<string, never>, unknown, PassVerificationRequest>,
+        req: Request<Record<string, never>, unknown, PassRegisterEmailVerificationRequest>,
         res: Response,
         next: NextFunction,
       ) => {
         const verifyUserRequest = req.body;
         try {
-          const result = await Service.passVerification(verifyUserRequest);
+          const result = await Service.passRegisterEmailVerification(verifyUserRequest);
           res.status(200).json({ result: result });
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .post(
+      "/forgotPasswordSend",
+      validateData(SendEmailForgotPasswordCodeRequestSchema, "body"),
+      async (
+        req: Request<Record<string, never>, unknown, SendEmailForgotPasswordCodeRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const sendEmail = req.body;
+        try {
+          const result = await Service.sendEmailForgotPasswordCode(sendEmail);
+          res.status(200).json({ codes: result });
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .post(
+      "/verifyForgotPassword",
+      validateData(PassForgotPasswordVerificationSchema, "body"),
+      async (
+        req: Request<Record<string, never>, unknown, PassForgotPasswordVerificationRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const passVerification = req.body;
+        try {
+          const result = await Service.passForgotPasswordVerification(passVerification);
+          res.status(200).json({ codes: result });
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .post(
+      "/resetForgotPassword",
+      validateData(ForgotPasswordResetPasswordSchema, "body"),
+      async (
+        req: Request<Record<string, never>, unknown, ForgotPasswordResetPasswordRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const resetPassword = req.body;
+        try {
+          const result = await Service.forgotPasswordChangePassword(resetPassword);
+          res.status(200).json({ codes: result });
         } catch (err) {
           next(err);
         }

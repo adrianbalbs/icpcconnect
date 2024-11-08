@@ -14,7 +14,7 @@ export type UserSession = {
   givenName: string;
   familyName: string;
   email: string;
-  role: "student" | "site_coordinator" | "coach" | "admin";
+  role: "Student" | "Site Coordinator" | "Coach" | "Admin";
 };
 
 export type LoginCredentials = {
@@ -35,7 +35,7 @@ const defaultSession: UserSession = {
   givenName: "",
   familyName: "",
   email: "",
-  role: "student",
+  role: "Student",
 };
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 const publicRoutes = ["/login", "/register"];
@@ -99,7 +99,7 @@ export function AuthContextProvider({
         { withCredentials: true },
       );
       setUserSession(data);
-      router.push("/teams");
+      router.push(data.role === "Student" ? "/team" : "/teams");
     } catch (err) {
       alert(err);
     } finally {

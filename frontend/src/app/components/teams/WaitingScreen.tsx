@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import pageStyles from "@/styles/Page.module.css";
 import { Button } from "@mui/material";
-import { purpleBtn } from "@/styles/Overriding";
+import { purpleBtn } from "@/styles/sxStyles";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface WaitingProps {
-  setStatus: Dispatch<SetStateAction<number>>;
+  setStatus?: Dispatch<SetStateAction<number>>;
 }
 
 const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
@@ -13,11 +13,13 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
   const { userSession } = useAuth();
 
   const nextStatus = () => {
-    setStatus(1);
+    if (setStatus) {
+      setStatus(1);
+    }
   };
 
   useEffect(() => {
-    if (userSession.role === "admin") {
+    if (userSession.role === "Admin") {
       setAccess(true);
     }
   }, []);
@@ -28,7 +30,7 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
         Enrolment for team allocation closes at
         <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
       </p>
-      {userSession.role !== "student" && (
+      {userSession.role !== "Student" && (
         <p className={pageStyles.timeline}>
           Coach review opens for 3 days starting from
           <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
@@ -39,7 +41,7 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
         <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
       </p>
       {access && (
-        <Button sx={{ ...purpleBtn, marginTop: "15px" }} onClick={nextStatus}>
+        <Button sx={{ ...purpleBtn, mt: "15px" }} onClick={nextStatus}>
           Allocate Teams
         </Button>
       )}

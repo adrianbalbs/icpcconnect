@@ -25,4 +25,4 @@ COPY --from=builder /app/seed-data ./dist/seed-data
 
 EXPOSE 3030
 
-CMD ["sh", "-c", "npm run db:migrate && npm run start"]
+CMD ["npm", "run", "start"]

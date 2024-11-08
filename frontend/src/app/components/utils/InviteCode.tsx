@@ -5,7 +5,7 @@ import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { SERVER_URL } from "@/utils/constants";
 import Button from "@mui/material/Button";
 import pageStyles from "@/styles/Page.module.css";
-import { purpleBtn } from "@/styles/Overriding";
+import { purpleBtn } from "@/styles/sxStyles";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Dialog, DialogContent, DialogContentText } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
@@ -100,9 +100,9 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
         >
           <CloseBtn handleClose={handleClose} />
           <DialogContent
-            sx={{ width: "450px", height: "180px", padding: "40px 40px" }}
+            sx={{ width: "450px", height: "110px", p: "40px 40px" }}
           >
-            <FormControl sx={{ margin: "10px 0", fontSize: "12px" }} fullWidth>
+            <FormControl sx={{ m: "10px 0", fontSize: "12px" }} fullWidth>
               <InputLabel
                 id="new-invite-code-label"
                 sx={{ lineHeight: "15px", fontSize: "14px" }}
@@ -140,7 +140,7 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
           </DialogContent>
           <Button
             variant="contained"
-            sx={{ ...purpleBtn, margin: "0 auto 20px", width: "170px" }}
+            sx={{ ...purpleBtn, margin: "0 auto 30px", width: "170px" }}
             onClick={handleButton}
             disabled={type === ""}
           >
