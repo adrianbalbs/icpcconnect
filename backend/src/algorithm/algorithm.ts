@@ -289,7 +289,7 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
     } // Case of it already being considered within a pair
 
     // Split the preferences into an array
-    let paired_with = getPreferences(s.preferences)
+    const paired_with = getPreferences(s.preferences)
 
     if (paired_with.length == 1) {
       const p: StudentInfo | undefined = students.find(

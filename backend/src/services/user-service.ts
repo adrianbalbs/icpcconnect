@@ -197,7 +197,7 @@ export class UserService {
       .from(studentDetails)
       .where(eq(studentDetails.userId, id))
     
-    let preferencesReturn: PreferencesResponse[] = []
+    const preferencesReturn: PreferencesResponse[] = []
 
     if (p.preferences.length == 0) {
       return preferencesReturn;
