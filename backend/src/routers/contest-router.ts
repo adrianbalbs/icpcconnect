@@ -20,7 +20,7 @@ export function contestRouter(
       "/",
       [
         authenticate,
-        authorise(["admin", "site_coordinator", "student", "coach"]),
+        authorise(["Admin", "Site Coordinator", "Student", "Coach"]),
       ],
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
@@ -35,7 +35,7 @@ export function contestRouter(
       "/:id",
       [
         authenticate,
-        authorise(["admin", "site_coordinator", "student", "coach"]),
+        authorise(["Admin", "Site Coordinator", "Student", "Coach"]),
       ],
       async (
         req: Request<{ id: string }, unknown>,
@@ -53,7 +53,7 @@ export function contestRouter(
     )
     .delete(
       "/:id",
-      [authenticate, authorise(["admin"])],
+      [authenticate, authorise(["Admin"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -72,7 +72,7 @@ export function contestRouter(
       "/",
       [
         authenticate,
-        authorise(["admin"]),
+        authorise(["Admin"]),
         validateData(CreateContestSchema, "body"),
       ],
       async (
@@ -93,7 +93,7 @@ export function contestRouter(
       "/:id",
       [
         authenticate,
-        authorise(["admin"]),
+        authorise(["Admin"]),
         validateData(UpdateContestSchema, "body"),
       ],
       async (
