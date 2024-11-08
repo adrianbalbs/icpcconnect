@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { capitalise } from "@/utils/profileInfo";
-// import { getPreferences } from "@/utils/preferenceInfo";
+import { getPreferences } from "@/utils/preferenceInfo";
 import pageStyles from "@/styles/Page.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { experienceHeading } from "@/styles/sxStyles";
@@ -20,19 +20,18 @@ const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
   const [inclusion, setInclusion] = useState<Teammate[]>([]);
 
   const getStudents = async () => {
-    // const preference = await getPreferences(id, "preferences");
-    // if (preference && preference.length > 0) {
-    //   setInclusion(preference);
-    //   setType(preference.length > 1 ? "team" : "pair");
-    // }
-    console.log(id);
+    const preference = await getPreferences(id, "preferences");
+    if (preference && preference.length > 0) {
+      setInclusion(preference);
+      setType(preference.length > 1 ? "team" : "pair");
+    }
   };
 
   const deletePreference = async () => {
+    setAdded({ ...added, [type]: false });
     setType("");
     setInclusion([]);
-    setAdded({ ...added, [type]: false });
-    updatePreferences(id, "preferences", "");
+    await updatePreferences(id, "preferences", "none");
   };
 
   useEffect(() => {

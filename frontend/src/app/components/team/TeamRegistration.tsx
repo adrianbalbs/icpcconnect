@@ -7,6 +7,7 @@ import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
 import WaitingScreen from "../teams/WaitingScreen";
 import { useAuth } from "../AuthProvider/AuthProvider";
+import { getPreferences } from "@/utils/preferenceInfo";
 
 const TeamRegistration = () => {
   const [completed, setCompleted] = useState(0);
@@ -42,13 +43,21 @@ const TeamRegistration = () => {
     }
   };
 
-  // const checkPreference = () => {
-  //   setAdded({ ...added, preference: true });
-  // }
+  const checkPreference = async () => {
+    try {
+      const preference = await getPreferences(id, "preferences");
+      if (preference !== "") {
+        setAdded((prev) => ({ ...prev, preference: true }));
+      }
+    } catch (err) {
+      console.log(`Check preference error: ${err}`);
+    }
+  };
 
   useEffect(() => {
     checkProfile();
     checkExperience();
+    checkPreference();
   }, [id]);
 
   useEffect(() => {

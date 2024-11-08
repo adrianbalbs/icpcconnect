@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { ProfileProps } from "../page";
@@ -8,6 +8,7 @@ import { Box } from "@mui/material";
 import PreferenceModal from "@/components/preferences/PreferenceModal";
 import ExclusionPreference from "@/components/preferences/ExclusionPreference";
 import InclusionPreference from "@/components/preferences/InclusionPreference";
+import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
 
 export interface PreferenceType {
   team: boolean;
@@ -32,6 +33,17 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
     pair: false,
     exclusions: false,
   });
+
+  const setDefault = async () => {
+    const preference = await getPreferences(params.id, "preferences");
+    if (preference === "") {
+      await updatePreferences(params.id, "preferences", "none");
+    }
+  };
+
+  useEffect(() => {
+    setDefault();
+  }, []);
 
   return (
     <div className={profileStyles["inner-screen"]}>
