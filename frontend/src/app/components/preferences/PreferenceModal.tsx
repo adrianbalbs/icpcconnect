@@ -13,7 +13,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
-import { PreferenceType, Teammate } from "@/profile/[id]/preferences/page";
+import { PreferenceType } from "@/profile/[id]/preferences/page";
 import TeamInput from "./modalInput/TeamInput";
 import PairInput from "./modalInput/PairInput";
 import ExclusionInput from "./modalInput/ExclusionInput";
@@ -32,20 +32,12 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   const [type, setType] = useState("");
   const [disable, setDisable] = useState(false);
   const [alert, setAlert] = useState({ old: "", curr: "" });
-  const [team, setTeam] = useState<Teammate[]>([
-    { studentId: "", name: null },
-    { studentId: "", name: null },
-  ]);
-  const [pair, setPair] = useState<Teammate>({ studentId: "", name: null });
+  const [include, setInclude] = useState("");
   const [exclude, setExclude] = useState("");
 
   const reset = () => {
     setAlert({ old: "", curr: "" });
-    setTeam([
-      { studentId: "", name: null },
-      { studentId: "", name: null },
-    ]);
-    setPair({ studentId: "", name: null });
+    setInclude("");
     setExclude("");
   };
 
@@ -76,20 +68,18 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   };
 
   const addPreference = async () => {
-    if (type === "team") {
-      await updatePreferences(id, type, { team });
-    } else if (type === "pair") {
-      await updatePreferences(id, type, { pair });
+    if (type === "team" || type === "pair") {
+      await updatePreferences(id, "preferences", include);
     } else if (type === "exclusions") {
       // Capitalise first and last names
       const names = exclude.split(" ").map((n) => capitalise(n));
-      const exclusionsData = await getPreferences(id, "exclusions");
+      const exclusionsData = await getPreferences(id, type);
       let exclusions = names.join(" ");
       // Append new exclusion to old string
       if (exclusionsData !== "") {
         exclusions = `${exclusionsData}, ${names.join(" ")}`;
       }
-      await updatePreferences(id, type, { exclusions });
+      await updatePreferences(id, type, exclusions);
     }
     setAdded({ ...added, [type]: true });
     handleClose();
@@ -157,14 +147,14 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
             <TeamInput
               setDisable={setDisable}
               alert={alert.curr !== ""}
-              setPref={setTeam}
+              setPref={setInclude}
             />
           )}
           {type === "pair" && (
             <PairInput
               setDisable={setDisable}
               alert={alert.curr !== ""}
-              setPref={setPair}
+              setPref={setInclude}
             />
           )}
           {type === "exclusions" && (
