@@ -229,7 +229,7 @@ function getLanguages(l: AllLanguagesSpoken): string[] {
 }
 
 function getPreferences(s: string): string[] {
-  if (s == "") {
+  if (s == "" || s == "none") {
     return []
   } else {
     return (s).split(", ")
