@@ -1,18 +1,17 @@
 import request from "supertest";
 import express from "express";
 import { DatabaseConnection, users } from "../db/index.js";
-import { authRouter, studentRouter } from "../routers/index.js";
+import { authRouter, userRouter } from "../routers/index.js";
 import {
   AuthService,
   ContestRegistrationService,
   GetRegistrationFormResponse,
-  StudentService,
   UpdateContestRegistrationFormResponse,
+  UserService,
 } from "../services/index.js";
 import { contestRegistrationRouter } from "../routers/index.js";
 import {
   CreateContestRegistrationForm,
-  CreateStudentRequest,
   UpdateContestRegistrationForm,
 } from "../schemas/index.js";
 import { v4 as uuidv4 } from "uuid";
@@ -28,6 +27,7 @@ import {
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers.js";
 import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
+import { generateCreateUserFixture } from "./fixtures.js";
 
 describe("contestRegistrationRouter tests", () => {
   let db: DatabaseConnection;
@@ -42,7 +42,7 @@ describe("contestRegistrationRouter tests", () => {
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/students", studentRouter(new StudentService(db), authService))
+      .use("/api/users", userRouter(new UserService(db), authService))
       .use(
         "/api/contest-registration",
         contestRegistrationRouter(
@@ -72,25 +72,22 @@ describe("contestRegistrationRouter tests", () => {
   });
 
   it("should create a new form for student", async () => {
-    const req: CreateStudentRequest = {
-      role: "student",
+    const req = generateCreateUserFixture({
+      role: "Student",
       givenName: "Adrian",
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
-      verificationCode: "test",
-      languagesSpoken: ["en"],
-      photoConsent: true,
-    };
+    });
     const response = await request(app)
-      .post("/api/students")
+      .post("/api/users")
       .send(req)
       .expect(200);
 
     const registration: CreateContestRegistrationForm = {
-      student: response.body.userId,
+      student: response.body.id,
       coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
@@ -111,25 +108,22 @@ describe("contestRegistrationRouter tests", () => {
   });
 
   it("should get registration details by id", async () => {
-    const req: CreateStudentRequest = {
-      role: "student",
+    const req = generateCreateUserFixture({
+      role: "Student",
       givenName: "Adrian",
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
-      verificationCode: "test",
-      languagesSpoken: ["en"],
-      photoConsent: true,
-    };
+    });
     const response = await request(app)
-      .post("/api/students")
+      .post("/api/users")
       .send(req)
       .expect(200);
 
     const registration: CreateContestRegistrationForm = {
-      student: response.body.userId,
+      student: response.body.id,
       coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
@@ -148,10 +142,10 @@ describe("contestRegistrationRouter tests", () => {
       .expect(200);
 
     const nextRes = await request(app)
-      .get(`/api/contest-registration/${response.body.userId}`)
+      .get(`/api/contest-registration/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
-    expect(nextRes.body.student).toEqual(response.body.userId);
+    expect(nextRes.body.student).toEqual(response.body.id);
   });
 
   it("should throw if a student has not registered", async () => {
@@ -162,25 +156,23 @@ describe("contestRegistrationRouter tests", () => {
   });
 
   it("should update a student's registration details", async () => {
-    const req: CreateStudentRequest = {
-      role: "student",
+    const req = generateCreateUserFixture({
+      role: "Student",
       givenName: "Adrian",
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
-      verificationCode: "test",
-      languagesSpoken: ["en"],
-      photoConsent: true,
-    };
+    });
+
     const response = await request(app)
-      .post("/api/students")
+      .post("/api/users")
       .send(req)
       .expect(200);
 
     const registration: CreateContestRegistrationForm = {
-      student: response.body.userId,
+      student: response.body.id,
       coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
@@ -206,7 +198,7 @@ describe("contestRegistrationRouter tests", () => {
     };
 
     const nextRes = await request(app)
-      .put(`/api/contest-registration/${response.body.userId}`)
+      .put(`/api/contest-registration/${response.body.id}`)
       .set("Cookie", cookies)
       .send(newDetails)
       .expect(200);
@@ -215,7 +207,7 @@ describe("contestRegistrationRouter tests", () => {
     expect(body).toEqual(newDetails);
 
     const getRes = await request(app)
-      .get(`/api/contest-registration/${response.body.userId}`)
+      .get(`/api/contest-registration/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
     const getBody: GetRegistrationFormResponse = getRes.body;
@@ -224,57 +216,48 @@ describe("contestRegistrationRouter tests", () => {
   });
 
   it("should get all student registrations", async () => {
-    const students: CreateStudentRequest[] = [
-      {
-        role: "student",
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Adrian",
         familyName: "Balbalosa",
         email: "adrianbalbs@comp3900.com",
         studentId: "z5397730",
         password: "helloworld",
         university: 1,
-        verificationCode: "test",
-        languagesSpoken: ["en"],
-        photoConsent: true,
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "Jane",
         familyName: "Doe",
         email: "janedoe@comp3900.com",
         studentId: "z5397731",
         password: "password123",
         university: 2,
-        verificationCode: "test",
-        languagesSpoken: ["en"],
-        photoConsent: true,
-      },
-      {
-        role: "student",
+      }),
+      generateCreateUserFixture({
+        role: "Student",
         givenName: "John",
         familyName: "Smith",
         email: "johnsmith@comp3900.com",
         studentId: "z5397732",
         password: "securepass",
         university: 3,
-        verificationCode: "test",
-        languagesSpoken: ["en"],
-        photoConsent: true,
-      },
+      }),
     ];
 
     const studentIds: string[] = [];
 
     for (const student of students) {
       const response = await request(app)
-        .post("/api/students")
+        .post("/api/users")
         .send(student)
         .expect(200);
 
-      studentIds.push(response.body.userId as string);
+      studentIds.push(response.body.id as string);
 
       const registration: CreateContestRegistrationForm = {
-        student: response.body.userId,
+        student: response.body.id,
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -302,25 +285,22 @@ describe("contestRegistrationRouter tests", () => {
   });
 
   it("should delete a student's registration", async () => {
-    const req: CreateStudentRequest = {
-      role: "student",
+    const req = generateCreateUserFixture({
+      role: "Student",
       givenName: "Adrian",
       familyName: "Balbalosa",
       email: "adrianbalbs@comp3900.com",
       studentId: "z5397730",
       password: "helloworld",
       university: 1,
-      verificationCode: "test",
-      languagesSpoken: ["en"],
-      photoConsent: true,
-    };
+    });
     const response = await request(app)
-      .post("/api/students")
+      .post("/api/users")
       .send(req)
       .expect(200);
 
     const registration: CreateContestRegistrationForm = {
-      student: response.body.userId,
+      student: response.body.id,
       coursesCompleted: [1, 2, 3],
       pythonExperience: "prof",
       cExperience: "prof",
@@ -339,15 +319,15 @@ describe("contestRegistrationRouter tests", () => {
       .expect(200);
 
     await request(app)
-      .get(`/api/contest-registration/${response.body.userId}`)
+      .get(`/api/contest-registration/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
     await request(app)
-      .delete(`/api/contest-registration/${response.body.userId}`)
+      .delete(`/api/contest-registration/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(200);
     await request(app)
-      .get(`/api/contest-registration/${response.body.userId}`)
+      .get(`/api/contest-registration/${response.body.id}`)
       .set("Cookie", cookies)
       .expect(500);
   });

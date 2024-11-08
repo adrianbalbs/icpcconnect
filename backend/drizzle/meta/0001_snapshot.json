@@ -1,6 +1,6 @@
 {
-  "id": "fcbce779-13df-4df4-8371-778e2beb7e43",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "26305245-258d-4dc3-884c-4f23ce0e3454",
+  "prevId": "fcbce779-13df-4df4-8371-778e2beb7e43",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -297,10 +297,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "registration_details_id_student_details_id_fk": {
-          "name": "registration_details_id_student_details_id_fk",
+        "registration_details_id_users_id_fk": {
+          "name": "registration_details_id_users_id_fk",
           "tableFrom": "registration_details",
-          "tableTo": "student_details",
+          "tableTo": "users",
           "columnsFrom": [
             "id"
           ],

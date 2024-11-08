@@ -19,7 +19,7 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
   };
 
   useEffect(() => {
-    if (userSession.role === "admin") {
+    if (userSession.role === "Admin") {
       setAccess(true);
     }
   }, []);
@@ -30,7 +30,7 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus }) => {
         Enrolment for team allocation closes at
         <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>
       </p>
-      {userSession.role !== "student" && (
+      {userSession.role !== "Student" && (
         <p className={pageStyles.timeline}>
           Coach review opens for 3 days starting from
           <span className={pageStyles.bold}> 12.00pm xx.xx.xxxx</span>

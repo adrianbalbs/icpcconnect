@@ -1,21 +1,16 @@
 import express from "express";
 import cors from "cors";
-import { DevDatabase, seed } from "./db/index.js";
+import { DevDatabase, runMigrations, seed } from "./db/index.js";
 import {
-  CoachService,
   CodesService,
   ContestRegistrationService,
-  SiteCoordinatorService,
-  StudentService,
   TeamService,
   AuthService,
   AdminService,
+  UserService,
 } from "./services/index.js";
 import {
-  coachRouter,
   codesRouter,
-  siteCoordinatorRouter,
-  studentRouter,
   teamRouter,
   authRouter,
   adminRouter,
@@ -28,6 +23,7 @@ import { getLogger } from "./utils/logger.js";
 import { contestRegistrationRouter } from "./routers/contest-registration-router.js";
 import cookieParser from "cookie-parser";
 import { AlgorithmService } from "./services/algorithm-service.js";
+import { userRouter } from "./routers/user-router.js";
 
 const logger = getLogger();
 
@@ -37,12 +33,12 @@ const port = process.env.PORT || "3000";
 
 const db = new DevDatabase();
 const dbConn = db.getConnection();
+
+await runMigrations(dbConn);
 await seed(dbConn);
 
-const studentService = new StudentService(dbConn);
+const userService = new UserService(dbConn);
 const teamService = new TeamService(dbConn);
-const coachService = new CoachService(dbConn);
-const siteCoordinatorService = new SiteCoordinatorService(dbConn);
 const contestRegistrationService = new ContestRegistrationService(dbConn);
 const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
@@ -62,29 +58,14 @@ app
   .use(cookieParser())
   .use(loggingMiddlware)
   .use("/api/auth", authRouter(authService))
+  .use("/api/users", userRouter(userService, authService))
   .use("/api/teams", teamRouter(teamService, authService))
-  .use("/api/students", studentRouter(studentService, authService))
-  .use("/api/coaches", coachRouter(coachService, authService))
-  .use(
-    "/api/site-coordinators",
-    siteCoordinatorRouter(siteCoordinatorService, authService),
-  )
   .use(
     "/api/contest-registration",
     contestRegistrationRouter(contestRegistrationService, authService),
   )
   .use("/api", codesRouter(codesService, authService))
-  .use(
-    "/api",
-    adminRouter(
-      adminService,
-      coachService,
-      studentService,
-      siteCoordinatorService,
-      authService,
-      algorithmService,
-    ),
-  )
+  .use("/api", adminRouter(adminService, authService, algorithmService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {
