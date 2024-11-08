@@ -15,6 +15,13 @@
       "when": 1730697405959,
       "tag": "0001_rare_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1731049082879,
+      "tag": "0002_pink_peter_quill",
+      "breakpoints": true
     }
   ]
 }

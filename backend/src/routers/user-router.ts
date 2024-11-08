@@ -15,7 +15,7 @@ import {
   UpdateUserSchema,
   UserRole,
 } from "../schemas/user-schema.js";
-import { PutStudentTeamSchema } from "src/schemas/team-schema.js";
+import { PutStudentTeamSchema } from "../schemas/team-schema.js";
 
 export function userRouter(userService: UserService, authService: AuthService) {
   const authenticate = createAuthenticationMiddleware(authService);
