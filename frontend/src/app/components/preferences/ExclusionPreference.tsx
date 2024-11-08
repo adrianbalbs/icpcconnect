@@ -15,9 +15,8 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
   const [studentString, setStudentString] = useState("");
 
   const getExclusions = async () => {
-    const data = await getPreferences(id, "exclusions");
-    console.log(data);
-    setStudentString(data[0].exclusions);
+    const exclusions = await getPreferences(id, "exclusions");
+    if (exclusions) setStudentString(exclusions);
     complete("exclusions");
   };
 
@@ -25,7 +24,7 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
     getExclusions();
   }, [changed]);
 
-  if (studentString !== "")
+  if (studentString !== "") {
     return (
       <>
         <h3 className={experienceStyles.heading}>Exclusion Preference</h3>
@@ -46,6 +45,7 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
         <hr className={experienceStyles.divider} />
       </>
     );
+  }
 };
 
 export default ExclusionPreference;

@@ -28,37 +28,14 @@ export interface PreferenceInput {
 }
 
 const Preferences: React.FC<ProfileProps> = ({ params }) => {
-  const [changed, setChanged] = useState<PreferenceType>({
+  const [added, setAdded] = useState<PreferenceType>({
     team: false,
     pair: false,
     exclusions: false,
   });
-  const [preferences, setPreferences] = useState<PreferenceInput>({
-    team: [
-      { studentId: "", name: null },
-      { studentId: "", name: null },
-    ],
-    pair: { studentId: "", name: null },
-    exclusions: [],
-  });
 
-  const completeFetch = (type: string) => {
-    setChanged({ ...changed, [type]: false });
-  };
-
-  const deletePreference = (type: string) => {
-    setChanged({ ...changed, [type]: true });
-    if (type === "team") {
-      setPreferences({
-        ...preferences,
-        team: [
-          { studentId: "", name: null },
-          { studentId: "", name: null },
-        ],
-      });
-    } else if (type === "pair") {
-      setPreferences({ ...preferences, pair: { studentId: "", name: null } });
-    }
+  const setAddedFalse = (type: string) => {
+    setAdded({ ...added, [type]: false });
   };
 
   return (
@@ -68,30 +45,22 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider} />
       <Box sx={{ height: "calc(100% - 121px)", overflow: "scroll" }}>
-        {changed.team && (
-          <TeamPreference
-            teammates={preferences.team}
-            deletePreference={deletePreference}
-          />
-        )}
-        {changed.pair && (
-          <PairPreference
-            {...preferences.pair}
-            deletePreference={deletePreference}
-          />
-        )}
+        <TeamPreference
+          id={params.id}
+          added={added.pair}
+          deletePref={setAddedFalse}
+        />
+        <PairPreference
+          id={params.id}
+          added={added.pair}
+          deletePref={setAddedFalse}
+        />
         <ExclusionPreference
           id={params.id}
-          changed={changed.exclusions}
-          complete={completeFetch}
+          changed={added.exclusions}
+          complete={setAddedFalse}
         />
-        <PreferenceModal
-          id={params.id}
-          added={changed}
-          setAdded={setChanged}
-          preferences={preferences}
-          setPreferences={setPreferences}
-        />
+        <PreferenceModal id={params.id} added={added} setAdded={setAdded} />
       </Box>
     </div>
   );

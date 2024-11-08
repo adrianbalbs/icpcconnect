@@ -13,10 +13,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
-import {
-  PreferenceInput,
-  PreferenceType,
-} from "@/profile/[id]/preferences/page";
+import { PreferenceType, Teammate } from "@/profile/[id]/preferences/page";
 import TeamInput from "./modalInput/TeamInput";
 import PairInput from "./modalInput/PairInput";
 import ExclusionInput from "./modalInput/ExclusionInput";
@@ -27,30 +24,28 @@ interface ModalProps {
   id: string;
   added: PreferenceType;
   setAdded: Dispatch<SetStateAction<PreferenceType>>;
-  preferences: PreferenceInput;
-  setPreferences: Dispatch<SetStateAction<PreferenceInput>>;
 }
 
-const PreferenceModal: React.FC<ModalProps> = ({
-  id,
-  added,
-  setAdded,
-  preferences,
-  setPreferences,
-}) => {
+const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
   const [disable, setDisable] = useState(false);
   const [alert, setAlert] = useState({ old: "", curr: "" });
-  const [team, setTeam] = useState(preferences.team);
-  const [pair, setPair] = useState(preferences.pair);
+  const [team, setTeam] = useState<Teammate[]>([
+    { studentId: "", name: null },
+    { studentId: "", name: null },
+  ]);
+  const [pair, setPair] = useState<Teammate>({ studentId: "", name: null });
   const [exclude, setExclude] = useState("");
 
   const reset = () => {
     setAlert({ old: "", curr: "" });
-    setTeam(preferences.team);
-    setPair(preferences.pair);
+    setTeam([
+      { studentId: "", name: null },
+      { studentId: "", name: null },
+    ]);
+    setPair({ studentId: "", name: null });
     setExclude("");
   };
 
@@ -80,31 +75,25 @@ const PreferenceModal: React.FC<ModalProps> = ({
     checkExclusivity(newType);
   };
 
-  const getPreference = async () => {
-    // const team = await getPreferences(id, "team");
-    // const pair = await getPreferences(id, "pair");
-  };
-
   const addPreference = async () => {
     if (type === "team") {
       await updatePreferences(id, type, { team });
     } else if (type === "pair") {
       await updatePreferences(id, type, { pair });
     } else if (type === "exclusions") {
+      // Capitalise first and last names
       const names = exclude.split(" ").map((n) => capitalise(n));
-      const data = await getPreferences(id, "exclusions");
-      const exclusions = `${data[0].exclusions}, ${names}`;
+      const exclusionsData = await getPreferences(id, "exclusions");
+      let exclusions = names.join(" ");
+      // Append new exclusion to old string
+      if (exclusionsData !== "") {
+        exclusions = `${exclusionsData}, ${names.join(" ")}`;
+      }
       await updatePreferences(id, type, { exclusions });
     }
-
     setAdded({ ...added, [type]: true });
-    setPreferences({ ...preferences, team, pair });
     handleClose();
   };
-
-  useEffect(() => {
-    getPreference();
-  }, []);
 
   useEffect(() => {
     if (buttonRef.current) {

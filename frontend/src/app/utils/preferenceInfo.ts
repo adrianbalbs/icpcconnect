@@ -7,7 +7,7 @@ export const getPreferences = async (id: string, type: string) => {
     const res = await axios.get(`${SERVER_URL}/api/students/${type}/${id}`, {
       withCredentials: true,
     });
-    return res.data;
+    return type === "exclusions" ? res.data[0].exclusions : res.data[type];
   } catch (error) {
     console.log(`Get ${type} preferences error: ${error}`);
   }
