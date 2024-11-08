@@ -70,6 +70,7 @@ app
     "/api/contest-registration",
     contestRegistrationRouter(contestRegistrationService, authService),
   )
+  .use("/api/contests", contestRouter(contestService, authService))
   .use("/api", codesRouter(codesService, authService))
   .use("/api", adminRouter(adminService, authService, algorithmService))
   .use(errorHandlerMiddleware);
