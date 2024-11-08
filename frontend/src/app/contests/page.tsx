@@ -1,6 +1,6 @@
 "use client";
 
-import { purpleBtn, deleteBtn, editBtn } from "@/styles/Overriding";
+import { purpleBtn, deleteBtn, editBtn } from "@/styles/sxStyles";
 import {
   Box,
   Button,
@@ -212,7 +212,7 @@ export default function Contests() {
           <Button variant="contained" sx={purpleBtn}>
             Info
           </Button>
-          {role === "admin" && (
+          {role === "Admin" && (
             <>
               <Button
                 variant="contained"
@@ -245,7 +245,7 @@ export default function Contests() {
           Contests
         </Typography>
         <Divider sx={{ mt: 1 }} />
-        {role === "admin" && (
+        {role === "Admin" && (
           <Box display="flex" sx={{ justifyContent: "right", mt: 2 }}>
             <Button
               sx={purpleBtn}
