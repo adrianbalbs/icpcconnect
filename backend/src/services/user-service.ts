@@ -9,6 +9,8 @@ import {
 } from "../db/schema.js";
 import {
   CreateUser,
+  ExclusionsResponse,
+  PreferencesResponse,
   UpdateStudentDetails,
   UpdateUser,
   UserDTO,
@@ -103,7 +105,7 @@ export class UserService {
 
     const user = await this.db.transaction(async (tx) => {
       if (Object.keys(rest).length > 0) {
-        await tx.update(studentDetails).set(rest);
+        await tx.update(studentDetails).set(rest).where(eq(studentDetails.userId, id));
       }
       if (languagesSpoken) {
         await tx
@@ -178,5 +180,50 @@ export class UserService {
 
     await this.db.delete(users).where(eq(users.id, id));
     return { status: "OK" };
+  }
+  
+  async getStudentExclusions(id: string): Promise<ExclusionsResponse> {
+    const [exclusions] = await this.db
+      .select({ exclusions: studentDetails.exclusions })
+      .from(studentDetails)
+      .where(eq(studentDetails.userId, id))
+
+    return exclusions
+  }
+
+  async getStudentPreferences(id: string): Promise<PreferencesResponse[]> {
+    const [p] = await this.db
+      .select({ preferences: studentDetails.preferences })
+      .from(studentDetails)
+      .where(eq(studentDetails.userId, id))
+    
+    let preferencesReturn: PreferencesResponse[] = []
+
+    if (p.preferences.length == 0) {
+      return preferencesReturn;
+    }
+
+    const prefArr = p.preferences.split(", ")
+    
+    for (const stuId of prefArr) {
+      const [per] = await this.db
+        .select({ 
+          studentId: studentDetails.studentId,
+          given: users.givenName,
+          family: users.familyName
+        })
+        .from(studentDetails)
+        .innerJoin(users, eq(users.id, studentDetails.userId))
+        .where(eq(studentDetails.studentId, stuId))
+        
+      const preference: PreferencesResponse = {
+        studentId: per.studentId,
+        name: per.given + " " + per.family
+      }
+
+      preferencesReturn.push(preference)
+    }
+
+    return preferencesReturn
   }
 }

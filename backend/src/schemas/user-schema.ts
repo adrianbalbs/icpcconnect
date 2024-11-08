@@ -246,6 +246,7 @@ export type StudentDetailsDTO = z.infer<typeof StudentDetailsScehma>;
 
 export const UpdateStudentDetailsSchema = StudentDetailsScehma.extend({
   languagesSpoken: z.array(SpokenLanguageEnum), // Array of language IDs for updating
+  preferences: z.string().default(""),
 }).partial();
 export type UpdateStudentDetails = z.infer<typeof UpdateStudentDetailsSchema>;
 
@@ -292,3 +293,16 @@ export type UserDTO = Omit<
 export const GetAllUsersQuerySchema = z.strictObject({
   role: UserRoleEnum.optional(),
 });
+
+export const ExclusionsResponseSchema = z.object({
+  exclusions: z.string()
+})
+
+export type ExclusionsResponse = z.infer<typeof ExclusionsResponseSchema>
+
+export const PreferencesResponseSchema = z.object({
+  studentId: z.string(),
+  name: z.string()
+})
+
+export type PreferencesResponse = z.infer<typeof PreferencesResponseSchema>

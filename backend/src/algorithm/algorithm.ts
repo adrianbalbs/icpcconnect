@@ -54,7 +54,7 @@ export interface StudentInfo {
   javaExperience: Experience;
   pythonExperience: Experience;
   exclusions: string;
-  paired_with: string | null;
+  preferences: string;
   markdone: boolean;
 }
 
@@ -153,6 +153,7 @@ async function convertToStudentInfo(
       await algorithmService.getCoursesFromStudent(s.id);
     const languages: AllLanguagesSpoken =
       await algorithmService.getLanguagesFromStudent(s.id);
+
     formattedInfo.push({
       id: s.id,
       stuGiven: s.stuGiven,
@@ -168,7 +169,7 @@ async function convertToStudentInfo(
       javaExperience: convertToEnum(s.javaExperience),
       pythonExperience: convertToEnum(s.pythonExperience),
       exclusions: s.exclusions,
-      paired_with: null,
+      preferences: s.preferences,
       markdone: false,
     });
   }
@@ -227,6 +228,10 @@ function getLanguages(l: AllLanguagesSpoken): string[] {
   return languages;
 }
 
+function getPreferences(s: string): string[] {
+  return (s).split(", ")
+}
+
 /**
  * GetStudentScore
  *
@@ -283,9 +288,12 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
       continue;
     } // Case of it already being considered within a pair
 
-    if (s.paired_with != null) {
+    // Split the preferences into an array
+    let paired_with = getPreferences(s.preferences)
+
+    if (paired_with.length == 1) {
       const p: StudentInfo | undefined = students.find(
-        (student) => student.id == s.paired_with,
+        (student) => student.id == paired_with.pop(),
       );
       if (p == undefined) {
         return [score];
@@ -308,10 +316,43 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
           .split(", ")
           .map(String),
 
-        // Add their name
+        // Add their names
         names: [s.stuGiven + " " + s.stuLast, p.stuGiven + " " + p.stuLast],
       };
       p.markdone = true;
+    } else if (paired_with.length == 2) {
+      const p1: StudentInfo | undefined = students.find(
+        (student) => student.id == paired_with.pop(),
+      );
+
+      const p2: StudentInfo | undefined = students.find(
+        (student) => student.id == paired_with.pop(),
+      );
+
+      if (p1 == undefined || p2 == undefined) {
+        return [score];
+      } // Should never happen
+      score = {
+        ids: [s.id, p1.id, p2.id],
+        studentScore: (calculateScore(s) + calculateScore(p1) + calculateScore(p2)) / 3,
+
+        // We combine them together, we do a set operation later anyways
+        languagesSpoken: s.languagesSpoken.concat(p1.languagesSpoken).concat(p2.languagesSpoken),
+
+        // For pairs we consider the highest experience between the two
+        cppExperience: Math.max(s.cppExperience, p1.cppExperience, p2.cppExperience),
+        cExpericence: Math.max(s.cExpericence, p1.cExpericence, p2.cExpericence),
+        javaExperience: Math.max(s.javaExperience, p1.javaExperience, p2.javaExperience),
+        pythonExperience: Math.max(s.pythonExperience, p1.pythonExperience, p2.pythonExperience),
+
+        // We don't need the exlcusions
+        exclusions: [],
+
+        // Add their names
+        names: [s.stuGiven + " " + s.stuLast, p1.stuGiven + " " + p1.stuLast, p2.stuGiven + " " + p2.stuLast],
+      };
+      p1.markdone = true;
+      p2.markdone = true;
     } else {
       score = {
         ids: [s.id],
@@ -359,6 +400,15 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
     // No more students
     if (stu1 === undefined) {
       return groups;
+    }
+
+    // A full team has been found
+    if (stu1.ids.length == 3) {
+      group.ids = stu1.ids;
+      group.totalScore = stu1.studentScore * 3;
+      group.flagged = false; // We assume that a full made team should not have any exclusions
+      groups.push(group);
+      continue;
     }
 
     // Stu1 = Pair

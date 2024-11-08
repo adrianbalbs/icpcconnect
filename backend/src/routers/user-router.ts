@@ -15,6 +15,7 @@ import {
   UpdateUserSchema,
   UserRole,
 } from "../schemas/user-schema.js";
+import { PutStudentTeamSchema } from "src/schemas/team-schema.js";
 
 export function userRouter(userService: UserService, authService: AuthService) {
   const authenticate = createAuthenticationMiddleware(authService);
@@ -88,6 +89,42 @@ export function userRouter(userService: UserService, authService: AuthService) {
           const { id } = req.params;
           const { body } = req;
           const result = await userService.updateStudentDetails(id, body);
+          res.status(200).send(result);
+        },
+      ),
+    )
+    .get(
+      "/:id/student-details/preferences",
+      [
+        authenticate,
+        authorise(["Admin", "Student"]),
+        validateData(PutStudentTeamSchema, "body"),
+      ],
+      handle(
+        async (
+          req: Request<{ id: string }, unknown>,
+          res,
+        ) => {
+          const { id } = req.params;
+          const result = await userService.getStudentPreferences(id);
+          res.status(200).send(result);
+        },
+      ),
+    )
+    .get(
+      "/:id/student-details/exclusions",
+      [
+        authenticate,
+        authorise(["Admin", "Student"]),
+        validateData(PutStudentTeamSchema, "body"),
+      ],
+      handle(
+        async (
+          req: Request<{ id: string }, unknown>,
+          res,
+        ) => {
+          const { id } = req.params;
+          const result = await userService.getStudentExclusions(id);
           res.status(200).send(result);
         },
       ),

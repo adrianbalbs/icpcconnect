@@ -13,3 +13,9 @@ export type CreateTeamRequest = z.infer<typeof CreateTeamRequestSchema>;
 export const UpdateTeamRequestSchema = CreateTeamRequestSchema.partial();
 
 export type UpdateTeamRequest = z.infer<typeof UpdateTeamRequestSchema>;
+
+export const PutStudentTeamSchema = z.object({
+  studentIds: z.string(),
+})
+
+export type PutStudentTeamRequest = z.infer<typeof PutStudentTeamSchema>;

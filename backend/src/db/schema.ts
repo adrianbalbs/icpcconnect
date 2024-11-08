@@ -76,6 +76,7 @@ export const studentDetails = pgTable("student_details", {
   team: uuid("team").references(() => teams.id),
   photoConsent: boolean("photo_consent").notNull().default(false),
   exclusions: text("exclusions").default("").notNull(),
+  preferences: text("preferences").default("").notNull(),
 });
 
 export const studentDetailsRelations = relations(
