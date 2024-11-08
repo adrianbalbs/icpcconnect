@@ -191,18 +191,40 @@ const SpokenLanguageEnum = z.enum([
 ]);
 
 export type SpokenLanguage = z.infer<typeof SpokenLanguageEnum>;
-export const SendEmailCodeRequestSchema = z.object({
+
+export const SendEmailVerificationCodeRequestSchema = z.object({
   email: z.string().email(),
 });
 
-export type SendEmailCodeRequest = z.infer<typeof SendEmailCodeRequestSchema>;
+export type SendEmailVerificationCodeRequest = z.infer<typeof SendEmailVerificationCodeRequestSchema>;
 
-export const PassVerificationSchema = z.object({
+export const SendEmailForgotPasswordCodeRequestSchema = z.object({
+  email: z.string().email(),
+});
+
+export type SendEmailForgotPasswordCodeRequest = z.infer<typeof SendEmailForgotPasswordCodeRequestSchema>;
+
+
+export const PassRegisterEmailVerificationSchema = z.object({
   email: z.string().email(),
   userProvidedCode: z.string(),
 });
 
-export type PassVerificationRequest = z.infer<typeof PassVerificationSchema>;
+export type PassRegisterEmailVerificationRequest = z.infer<typeof PassRegisterEmailVerificationSchema>;
+
+export const PassForgotPasswordVerificationSchema = z.object({
+  id: z.string(),
+  authenticationCode: z.string(),
+});
+
+export type PassForgotPasswordVerificationRequest = z.infer<typeof PassForgotPasswordVerificationSchema>;
+
+export const ForgotPasswordResetPasswordSchema = z.object({
+  id: z.string(),
+  newPassword: z.string(),
+});
+
+export type ForgotPasswordResetPasswordRequest = z.infer<typeof ForgotPasswordResetPasswordSchema>;
 
 export const UserRoleEnum = z.enum([
   "Student",
