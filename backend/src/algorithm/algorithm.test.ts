@@ -39,7 +39,7 @@ beforeEach(() => {
     pythonExperience: Experience.prof,
     exclusions: "",
 
-    paired_with: null,
+    preferences: "",
     markdone: false,
   };
 
@@ -64,7 +64,7 @@ beforeEach(() => {
     pythonExperience: Experience.prof,
     exclusions: "",
 
-    paired_with: null,
+    preferences: "",
     markdone: false,
   };
 
@@ -134,8 +134,8 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   });
 
   it("getStudentScores: Should return an array of one StudentScore object (a pair)", () => {
-    s1.paired_with = s2.id;
-    s2.paired_with = s1.id;
+    s1.preferences = s2.id;
+    s2.preferences = s1.id;
 
     const calcscores = getStudentScores(test_studentInfo);
 
@@ -178,13 +178,13 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       pythonExperience: Experience.prof,
       exclusions: "",
 
-      paired_with: s1.id,
+      preferences: s1.id,
       markdone: false,
     };
 
     test_studentInfo.push(s3);
 
-    s1.paired_with = s3.id;
+    s1.preferences = s3.id;
 
     const calcscores = getStudentScores(test_studentInfo);
 
@@ -239,7 +239,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       pythonExperience: Experience.none,
       exclusions: "",
 
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -265,7 +265,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       pythonExperience: Experience.none,
       exclusions: "",
 
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -290,7 +290,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.some,
       pythonExperience: Experience.none,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -306,8 +306,8 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   });
 
   it("isCompatible: Should test pair students compatabilities", async () => {
-    s1.paired_with = s2.id;
-    s2.paired_with = s1.id;
+    s1.preferences = s2.id;
+    s2.preferences = s1.id;
 
     const noCompat: StudentInfo = {
       id: "3",
@@ -328,7 +328,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.none,
       pythonExperience: Experience.none,
       exclusions: "",
-      paired_with: "4",
+      preferences: "4",
       markdone: false,
     };
 
@@ -353,7 +353,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.none,
       pythonExperience: Experience.none,
       exclusions: "",
-      paired_with: "3",
+      preferences: "3",
       markdone: false,
     };
 
@@ -384,7 +384,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -409,7 +409,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -443,7 +443,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.none,
       pythonExperience: Experience.none,
       exclusions: "",
-      paired_with: "4",
+      preferences: "4",
       markdone: false,
     };
 
@@ -468,7 +468,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.none,
       pythonExperience: Experience.none,
       exclusions: "",
-      paired_with: "3",
+      preferences: "3",
       markdone: false,
     };
 
@@ -499,7 +499,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -524,7 +524,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -558,7 +558,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: "4",
+      preferences: "4",
       markdone: false,
     };
 
@@ -583,7 +583,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.none,
       pythonExperience: Experience.none,
       exclusions: "",
-      paired_with: "3",
+      preferences: "3",
       markdone: false,
     };
 
@@ -615,7 +615,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       pythonExperience: Experience.prof,
       exclusions: "",
 
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -640,7 +640,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -674,13 +674,13 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: s1.id,
+      preferences: s1.id,
       markdone: false,
     };
 
     test_studentInfo.push(s3);
 
-    s1.paired_with = s3.id;
+    s1.preferences = s3.id;
 
     const calcscores = getStudentScores(test_studentInfo);
 
@@ -744,7 +744,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -823,7 +823,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -842,7 +842,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
@@ -934,7 +934,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: "4",
+      preferences: "4",
       markdone: false,
     };
 
@@ -953,15 +953,15 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "",
-      paired_with: "3",
+      preferences: "3",
       markdone: false,
     };
 
     test_studentInfo.push(s3);
     test_studentInfo.push(s4);
 
-    s1.paired_with = "2";
-    s2.paired_with = "1";
+    s1.preferences = "2";
+    s2.preferences = "1";
 
     const calcscores = getStudentScores(test_studentInfo);
 
@@ -1022,14 +1022,14 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
       exclusions: "1first",
-      paired_with: null,
+      preferences: "",
       markdone: false,
     };
 
     test_studentInfo.push(s3);
 
-    s1.paired_with = "2";
-    s2.paired_with = "1";
+    s1.preferences = "2";
+    s2.preferences = "1";
 
     const calcscores = getStudentScores(test_studentInfo);
 

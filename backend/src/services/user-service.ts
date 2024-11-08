@@ -191,7 +191,7 @@ export class UserService {
     return exclusions
   }
 
-  async getStudentPreferences(id: string): Promise<PreferencesResponse[]> {
+  async getStudentPreferences(id: string): Promise<{ preferences: PreferencesResponse[] }> {
     const [p] = await this.db
       .select({ preferences: studentDetails.preferences })
       .from(studentDetails)
@@ -200,7 +200,7 @@ export class UserService {
     const preferencesReturn: PreferencesResponse[] = []
 
     if (p.preferences.length == 0) {
-      return preferencesReturn;
+      return { preferences: preferencesReturn };
     }
 
     const prefArr = p.preferences.split(", ")
@@ -224,6 +224,6 @@ export class UserService {
       preferencesReturn.push(preference)
     }
 
-    return preferencesReturn
+    return { preferences: preferencesReturn }
   }
 }
