@@ -229,7 +229,11 @@ function getLanguages(l: AllLanguagesSpoken): string[] {
 }
 
 function getPreferences(s: string): string[] {
-  return (s).split(", ")
+  if (s == "") {
+    return []
+  } else {
+    return (s).split(", ")
+  }
 }
 
 /**
@@ -292,8 +296,9 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
     const paired_with = getPreferences(s.preferences)
 
     if (paired_with.length == 1) {
+      const pair = paired_with.pop()
       const p: StudentInfo | undefined = students.find(
-        (student) => student.id == paired_with.pop(),
+        (student) => student.id == pair,
       );
       if (p == undefined) {
         return [score];
@@ -321,12 +326,14 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
       };
       p.markdone = true;
     } else if (paired_with.length == 2) {
+      const pair1 = paired_with.pop()
       const p1: StudentInfo | undefined = students.find(
-        (student) => student.id == paired_with.pop(),
+        (student) => student.id == pair1,
       );
 
+      const pair2 = paired_with.pop()
       const p2: StudentInfo | undefined = students.find(
-        (student) => student.id == paired_with.pop(),
+        (student) => student.id == pair2,
       );
 
       if (p1 == undefined || p2 == undefined) {

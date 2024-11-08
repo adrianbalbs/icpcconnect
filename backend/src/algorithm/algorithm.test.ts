@@ -63,7 +63,6 @@ beforeEach(() => {
     javaExperience: Experience.prof,
     pythonExperience: Experience.prof,
     exclusions: "",
-
     preferences: "",
     markdone: false,
   };
@@ -155,6 +154,57 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     expect(s1.markdone).toBe(true);
     expect(s2.markdone).toBe(true);
+  });
+
+  it("getStudentScores: Should return an array of one StudentScore object (a full team)", () => {
+    const s3: StudentInfo = {
+      id: "3",
+      stuGiven: "3first",
+      stuLast: "3last",
+      uniName: "1",
+      contestExperience: 6,
+      leetcodeRating: 3000,
+      codeforcesRating: 3000,
+      completedCourses: [
+        Courses.intro_computing,
+        Courses.data_struct_and_algos,
+        Courses.algorithm_design,
+      ],
+      languagesSpoken: ["ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      exclusions: "",
+
+      preferences: s1.id + ", " + s2.id,
+      markdone: false,
+    };
+
+    test_studentInfo.push(s3)
+    
+    s1.preferences = s2.id + ", " + s3.id;
+    s2.preferences = s1.id + ", " + s3.id;
+
+    const calcscores = getStudentScores(test_studentInfo);
+
+    expect(calcscores.length == 1);
+
+    expect(calcscores[0]).toEqual({
+      ids: [s1.id, s3.id, s2.id],
+      studentScore: (calculateScore(s1) + calculateScore(s2) + calculateScore(s3)) / 3,
+      languagesSpoken: ["ab", "ab", "ab"],
+      cppExperience: Experience.prof,
+      cExpericence: Experience.prof,
+      javaExperience: Experience.prof,
+      pythonExperience: Experience.prof,
+      names: ["1first 1last", "3first 3last", "2first 2last", ],
+      exclusions: [],
+    });
+
+    expect(s1.markdone).toBe(true);
+    expect(s2.markdone).toBe(true);
+    expect(s3.markdone).toBe(true);
   });
 
   it("getStudentScores: Should return an array of two StudentScore object (a pair and a single)", () => {
