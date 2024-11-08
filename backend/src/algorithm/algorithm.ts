@@ -228,6 +228,14 @@ function getLanguages(l: AllLanguagesSpoken): string[] {
   return languages;
 }
 
+/**
+ * getPreferences
+ * 
+ * Converts the raw string from the DB return into an array of individual student IDs
+ * 
+ * @param s: string
+ * @returns string[]
+ */
 function getPreferences(s: string): string[] {
   if (s == "" || s == "none") {
     return []
