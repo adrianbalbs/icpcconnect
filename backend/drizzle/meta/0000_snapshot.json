@@ -33,6 +33,67 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.contests": {
+      "name": "contests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "early_bird_date": {
+          "name": "early_bird_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cutoff_date": {
+          "name": "cutoff_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contest_date": {
+          "name": "contest_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "university": {
+          "name": "university",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "contests_university_universities_id_fk": {
+          "name": "contests_university_universities_id_fk",
+          "tableFrom": "contests",
+          "tableTo": "universities",
+          "columnsFrom": [
+            "university"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.courses": {
       "name": "courses",
       "schema": "",
@@ -79,8 +140,12 @@
           "name": "courses_completed_by_student_student_id_registration_details_id_fk",
           "tableFrom": "courses_completed_by_student",
           "tableTo": "registration_details",
-          "columnsFrom": ["student_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -88,8 +153,12 @@
           "name": "courses_completed_by_student_course_id_courses_id_fk",
           "tableFrom": "courses_completed_by_student",
           "tableTo": "courses",
-          "columnsFrom": ["course_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "course_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -97,7 +166,10 @@
       "compositePrimaryKeys": {
         "courses_completed_by_student_student_id_course_id_pk": {
           "name": "courses_completed_by_student_student_id_course_id_pk",
-          "columns": ["student_id", "course_id"]
+          "columns": [
+            "student_id",
+            "course_id"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -176,8 +248,12 @@
           "name": "languages_spoken_by_student_student_id_student_details_id_fk",
           "tableFrom": "languages_spoken_by_student",
           "tableTo": "student_details",
-          "columnsFrom": ["student_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -185,8 +261,12 @@
           "name": "languages_spoken_by_student_language_code_languages_code_fk",
           "tableFrom": "languages_spoken_by_student",
           "tableTo": "languages",
-          "columnsFrom": ["language_code"],
-          "columnsTo": ["code"],
+          "columnsFrom": [
+            "language_code"
+          ],
+          "columnsTo": [
+            "code"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -194,7 +274,10 @@
       "compositePrimaryKeys": {
         "languages_spoken_by_student_student_id_language_code_pk": {
           "name": "languages_spoken_by_student_student_id_language_code_pk",
-          "columns": ["student_id", "language_code"]
+          "columns": [
+            "student_id",
+            "language_code"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -357,8 +440,12 @@
           "name": "student_details_id_users_id_fk",
           "tableFrom": "student_details",
           "tableTo": "users",
-          "columnsFrom": ["id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -366,8 +453,12 @@
           "name": "student_details_team_teams_id_fk",
           "tableFrom": "student_details",
           "tableTo": "teams",
-          "columnsFrom": ["team"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -412,8 +503,12 @@
           "name": "teams_university_universities_id_fk",
           "tableFrom": "teams",
           "tableTo": "universities",
-          "columnsFrom": ["university"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "university"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -511,8 +606,12 @@
           "name": "users_university_universities_id_fk",
           "tableFrom": "users",
           "tableTo": "universities",
-          "columnsFrom": ["university"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "university"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -522,7 +621,9 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         }
       }
     },
@@ -569,7 +670,9 @@
         "verify_emails_code_unique": {
           "name": "verify_emails_code_unique",
           "nullsNotDistinct": false,
-          "columns": ["code"]
+          "columns": [
+            "code"
+          ]
         }
       }
     }
@@ -588,17 +691,29 @@
     "public.language_experience": {
       "name": "language_experience",
       "schema": "public",
-      "values": ["none", "some", "prof"]
+      "values": [
+        "none",
+        "some",
+        "prof"
+      ]
     },
     "public.level": {
       "name": "level",
       "schema": "public",
-      "values": ["A", "B"]
+      "values": [
+        "A",
+        "B"
+      ]
     },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": ["Student", "Coach", "Site Coordinator", "Admin"]
+      "values": [
+        "Student",
+        "Coach",
+        "Site Coordinator",
+        "Admin"
+      ]
     }
   },
   "schemas": {},
