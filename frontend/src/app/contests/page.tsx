@@ -28,6 +28,7 @@ import { CreateContestSchema } from "@/types/contests";
 import ContestDialog from "@/components/contests/ContestDialog";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
+import { useRouter } from "next/navigation";
 
 export type ContestResponse = {
   id: string;
@@ -109,6 +110,7 @@ export default function Contests() {
     userSession: { role },
   } = useAuth();
 
+  const router = useRouter();
   const fetchContests = async () => {
     try {
       const res = await axios.get<{ allContests: ContestResponse[] }>(
@@ -209,7 +211,13 @@ export default function Contests() {
       sortable: false,
       renderCell: (params: GridRenderCellParams<ContestResponse>) => (
         <>
-          <Button variant="contained" sx={purpleBtn}>
+          <Button
+            variant="contained"
+            sx={purpleBtn}
+            onClick={() => {
+              router.push(`/contests/${params.row.id}/teams`);
+            }}
+          >
             Info
           </Button>
           {role === "Admin" && (
