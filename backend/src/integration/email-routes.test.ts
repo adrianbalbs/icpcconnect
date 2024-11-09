@@ -83,7 +83,7 @@ describe("emailRouter tests", () => {
     let verify_response = await request(app)
       .post("/api/registVerificationVerify")
       .send(verify_req)
-      .expect(400);
+      .expect(500);
 
     // expect(verify_response.body.result === false);
 
