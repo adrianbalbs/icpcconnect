@@ -4,10 +4,8 @@ import { SERVER_URL } from "@/utils/constants";
 import axios from "axios";
 import { useState } from "react";
 import authStyles from "@/styles/Auth.module.css";
-import { useRouter } from "next/navigation";
 
 const ForgotPassword = () => {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const sendEmail = async () => {
@@ -15,14 +13,13 @@ const ForgotPassword = () => {
       try {
         const obj = {
           email,
-          isNormalVerificationEmail: false,
         };
         setLoading(true);
-        await axios.post(`${SERVER_URL}/api/send`, obj);
+        await axios.post(`${SERVER_URL}/api/email/forgotPasswordSend`, obj);
         alert(
           "An email with instructions to reset your password has been sent.",
         );
-        router.push("/reset-password");
+        setEmail("");
       } catch (error) {
         console.error(error);
         alert(
@@ -40,6 +37,7 @@ const ForgotPassword = () => {
       </div>
       <div className={authStyles["info-container"]}>
         <h1 className={authStyles.h1}>Forgot your password?</h1>
+        <br />
         <p>
           Please enter the email address linked to your account and we&apos;ll
           send you a link to reset your password.
@@ -52,9 +50,6 @@ const ForgotPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         ></input>
-        <a href="/reset-password" className={authStyles.link}>
-          Already have a code?
-        </a>
         <button
           className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["long"]}`}
           onClick={sendEmail}

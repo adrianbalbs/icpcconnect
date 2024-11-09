@@ -12,7 +12,6 @@ import {
 } from "../schemas/index.js";
 import { beforeAll, afterAll, describe, afterEach, it, expect } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
-import { generateCreateUserFixture } from "./fixtures.js";
 
 let db: DatabaseConnection;
 let app: ReturnType<typeof express>;
@@ -84,9 +83,9 @@ describe("emailRouter tests", () => {
     let verify_response = await request(app)
       .post("/api/registVerificationVerify")
       .send(verify_req)
-      .expect(200);
+      .expect(400);
 
-    expect(verify_response.body.result === false);
+    // expect(verify_response.body.result === false);
 
     // Given a correct key from user will verify successfully.
 

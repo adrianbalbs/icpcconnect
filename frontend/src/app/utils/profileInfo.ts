@@ -48,12 +48,7 @@ export const getInfo = async (id: string | null) => {
       withCredentials: true,
     });
     const data: StudentInfo = res.data;
-<<<<<<< HEAD
     const languages = data.languagesSpoken?.map((i) => i.name).join(", ");
-=======
-    const languages = data.languagesSpoken.map((i) => i.name).join(", ");
-    console.log(data);
->>>>>>> main
     const infoArr: [string, string | number][] = [
       ["Name", `${data.givenName} ${data.familyName}`],
       ["Team", data.team ?? "(Unallocated)"],

@@ -154,7 +154,7 @@ export class EmailService {
         } else if (!await this.isNewRegisteredEmail(email)) {
             throw new HTTPError({
                 errorCode: badRequest.errorCode,
-                message: "Email Address provided has been used by others before.",
+                message: "Email Address not found in database.",
             });
         }
         const code = (await this.generateUniqueCode(email)).code.toString();
@@ -175,9 +175,10 @@ export class EmailService {
     } else if (await this.isNewRegisteredEmail(email)) {
         throw new HTTPError({
             errorCode: badRequest.errorCode,
-            message: "Email Address provided has been used by others before.",
+            message: "You have to provide an email address that is successfully registered before.",
         });
     }
+    await this.finishVerification(email);
     const generateCodeResult = await this.generateUniqueCode(email);
     await sendEmail(generateCodeResult.userName, email, "ICPC Forgot Password Link",
                         generateCodeResult.code.toString(), generateCodeResult.id);
@@ -200,6 +201,11 @@ export class EmailService {
 
         if (result) {
             await this.finishVerification(email);
+        } else {
+            throw new HTTPError({
+                errorCode: badRequest.errorCode,
+                message: "You should give a correct verification code!",
+            });
         }
 
         return result;

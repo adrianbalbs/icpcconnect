@@ -63,13 +63,13 @@ app
   .use("/api/auth", authRouter(authService))
   .use("/api/users", userRouter(userService, authService))
   .use("/api/teams", teamRouter(teamService, authService))
+  .use("/api/email", emailRouter(emailService))
   .use(
     "/api/contest-registration",
     contestRegistrationRouter(contestRegistrationService, authService),
   )
   .use("/api", codesRouter(codesService, authService))
   .use("/api", adminRouter(adminService, authService, algorithmService))
-  .use("/api", emailRouter(emailService))
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {

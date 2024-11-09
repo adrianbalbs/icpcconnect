@@ -3,15 +3,17 @@
 import axios from "axios";
 import { useState } from "react";
 import { SERVER_URL } from "@/utils/constants";
-import registerPage from "@/styles/Auth.module.css";
+import authStyles from "@/styles/Auth.module.css";
 import { useRouter } from "next/navigation";
+import { StepOne } from "@/components/register/StepOne";
+import { StepTwo } from "@/components/register/StepTwo";
 
 export default function Register() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [roleName, setRoleName] = useState("");
-  const [givenName, setgivenName] = useState("");
-  const [familyName, setfamilyName] = useState("");
+  const [givenName, setGivenName] = useState("");
+  const [familyName, setFamilyName] = useState("");
   const [university, setUniversity] = useState(0);
   const [studentId, setStudentId] = useState("");
   const [email, setEmail] = useState("");
@@ -23,10 +25,6 @@ export default function Register() {
   const [checked, setChecked] = useState(false);
   const [eligibility, setEligibility] = useState(false);
   // const [verified, isVerified] = useState(false);
-
-  const handleRoleName = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRoleName(e.target.value);
-  };
 
   const submitForm = async () => {
     try {
@@ -66,7 +64,10 @@ export default function Register() {
           email,
           userProvidedCode: verificationCode,
         };
-        await axios.post(`${SERVER_URL}/api/verify`, obj);
+        await axios.post(
+          `${SERVER_URL}/api/email/registVerificationVerify`,
+          obj,
+        );
         setStep((curStep) => curStep + 1);
       } catch (error) {
         alert("Invalid or incorrect verification code!");
@@ -92,7 +93,7 @@ export default function Register() {
           email,
           isNormalVerificationEmail: true,
         };
-        await axios.post(`${SERVER_URL}/api/send`, obj);
+        await axios.post(`${SERVER_URL}/api/email/registVerificationSend`, obj);
         alert(
           "A verification code has been sent to the email address you entered.",
         );
@@ -109,6 +110,15 @@ export default function Register() {
   };
 
   const handleNext = async () => {
+    console.log({
+      givenName,
+      familyName,
+      role: roleName,
+      university,
+      email,
+      password,
+      verificationCode,
+    });
     if (step === 5 && (password === "" || confirmPassword === "")) {
       alert("Please enter a password.");
     } else if (step === 5 && !checked) {
@@ -146,128 +156,32 @@ export default function Register() {
   };
 
   return (
-    <div className={registerPage.background}>
-      <div className={registerPage["register-polygon"]}></div>
-      <div className={registerPage["info-container"]}>
+    <div className={authStyles.background}>
+      <div className={authStyles["register-polygon"]}></div>
+      <div className={authStyles["info-container"]}>
         {step === 1 && (
-          <>
-            <h1 className={registerPage.h1}>Create an account</h1>
-            <div className={registerPage["horizontal-container"]}>
-              <input
-                placeholder="First Name"
-                className={registerPage["input-field-short"]}
-                value={givenName}
-                onChange={(e) => setgivenName(e.target.value)}
-              />
-              <input
-                placeholder="Last Name"
-                className={registerPage["input-field-short"]}
-                value={familyName}
-                onChange={(e) => setfamilyName(e.target.value)}
-              />
-            </div>
-            <select
-              value={roleName}
-              onChange={handleRoleName}
-              id="select-role"
-              name="Select Role"
-              className={registerPage["input-field"]}
-            >
-              <option value="" disabled selected>
-                Select Role
-              </option>
-              <option value="Student">Student</option>
-              <option value="Coach">Coach</option>
-              <option value="Site Coordinator">Site Coordinator</option>
-            </select>
-            <div className={registerPage["horizontal-container"]}>
-              <a
-                href={"/login"}
-                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
-              >
-                Back to Login
-              </a>
-              <button
-                onClick={handleNext}
-                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
-              >
-                Next
-              </button>
-            </div>
-          </>
+          <StepOne
+            {...{
+              givenName,
+              setGivenName,
+              familyName,
+              setFamilyName,
+              roleName,
+              setRoleName,
+              handleNext,
+            }}
+          />
         )}
         {step === 2 && (
           <>
             {roleName === "Student" ? (
-              <>
-                <h1 className={registerPage.h1}>
-                  Do you meet the ICPC eligibility rules?
-                </h1>
-                <p>
-                  The full eligbility rules can be found at &nbsp;
-                  <a href="https://icpc.global/regionals/rules/">
-                    https://icpc.global/regionals/rules/
-                  </a>
-                  , but the most notable criteria are:
-                  <ul>
-                    <li>
-                      enrolled in a degree program at the team&apos;s
-                      institution
-                    </li>
-                    <li>
-                      taking at least 1/2 load, or co-op, exchange or intern
-                      student
-                    </li>
-                    <li>have not competed in two ICPC World Finals</li>
-                    <li>
-                      have not competed in ICPC regional contests in five
-                      different years
-                    </li>
-                    <li>
-                      commenced post secondary studies in 2020 or later OR born
-                      in 2001 or later.
-                    </li>
-                  </ul>
-                  You must meet the enrolment criteria in the term(s) that the
-                  contest is running. If any team members are not ICPC eligible,
-                  then the team will not be considered for qualification to
-                  Regional Finals.
-                </p>
-                <div className={registerPage["vertical-container"]}>
-                  <label>
-                    <input
-                      type="radio"
-                      name="eligbility"
-                      value="true"
-                      onChange={() => setEligibility(true)}
-                    />
-                    Yes
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="eligbility"
-                      value="false"
-                      onChange={() => setEligibility(false)}
-                    />
-                    No
-                  </label>
-                </div>
-                <div className={registerPage["horizontal-container"]}>
-                  <button
-                    onClick={handleBack}
-                    className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={handleNext}
-                    className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
+              <StepTwo
+                {...{
+                  setEligibility,
+                  handleBack,
+                  handleNext,
+                }}
+              />
             ) : (
               handleNext()
             )}
@@ -275,12 +189,16 @@ export default function Register() {
         )}
         {step === 3 && (
           <>
-            <h1 className={registerPage.h1}>Enter your details</h1>
-            <h1 className={registerPage.h1}>{roleName}</h1>
+            <h1 className={authStyles.h1}>Enter your details</h1>
+            <br />
+            <h1 className={authStyles.h1} style={{ color: "#9298DA" }}>
+              {roleName}
+            </h1>
+            <br />
             <select
               id="select-university"
               name="Select University"
-              className={registerPage["input-field"]}
+              className={authStyles["input-field"]}
               value={university}
               onChange={(e) => setUniversity(Number(e.target.value))}
             >
@@ -293,10 +211,10 @@ export default function Register() {
               <option value={4}>Macquarie University</option>
             </select>
             {roleName === "Student" ? (
-              <form className={registerPage["form-container"]}>
+              <form className={authStyles["form-container"]}>
                 <input
                   placeholder="Student ID"
-                  className={registerPage["input-field"]}
+                  className={authStyles["input-field"]}
                   value={studentId}
                   onChange={(e) => setStudentId(e.target.value)}
                 />
@@ -304,16 +222,16 @@ export default function Register() {
                   type="Email"
                   id="email"
                   placeholder="Email"
-                  className={registerPage["input-field"]}
+                  className={authStyles["input-field"]}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </form>
             ) : (
-              <form className={registerPage["form-container"]}>
+              <form className={authStyles["form-container"]}>
                 <input
                   placeholder="Invite Code"
-                  className={registerPage["input-field"]}
+                  className={authStyles["input-field"]}
                   value={inviteCode}
                   onChange={(e) => setInviteCode(e.target.value)}
                 />
@@ -321,22 +239,22 @@ export default function Register() {
                   type="Email"
                   id="email"
                   placeholder="Email"
-                  className={registerPage["input-field"]}
+                  className={authStyles["input-field"]}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </form>
             )}
-            <div className={registerPage["horizontal-container"]}>
+            <div className={authStyles["horizontal-container"]}>
               <button
                 onClick={handleBack}
-                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+                className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["short"]}`}
               >
                 Back
               </button>
               <button
                 onClick={handleNext}
-                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+                className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["short"]}`}
               >
                 Next
               </button>
@@ -345,24 +263,28 @@ export default function Register() {
         )}
         {step === 4 && (
           <>
-            <h1 className={registerPage.h1}>Verify email address</h1>
-            <h1 className={registerPage.h1}>{roleName}</h1>
+            <h1 className={authStyles.h1}>Verify email address</h1>
+            <br />
+            <h1 className={authStyles.h1} style={{ color: "#9298DA" }}>
+              {roleName}
+            </h1>
+            <br />
             <input
               placeholder="Enter Verification Code"
-              className={registerPage["input-field"]}
+              className={authStyles["input-field"]}
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
             />
-            <div className={registerPage["horizontal-container"]}>
+            <div className={authStyles["horizontal-container"]}>
               <button
                 onClick={handleBack}
-                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+                className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["short"]}`}
               >
                 Back
               </button>
               <button
                 onClick={handleNext}
-                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+                className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["short"]}`}
               >
                 Next
               </button>
@@ -371,24 +293,39 @@ export default function Register() {
         )}
         {step === 5 && (
           <>
-            <h1 className={registerPage.h1}>Create a password</h1>
-            <h1 className={registerPage.h1}>{roleName}</h1>
+            <h1 className={authStyles.h1}>Create a password</h1>
+            <br />
+            <h1 className={authStyles.h1} style={{ color: "#9298DA" }}>
+              {roleName}
+            </h1>
+            <br />
             <input
               type="password"
               placeholder="Password"
-              className={registerPage["input-field"]}
+              className={authStyles["input-field"]}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <input
               type="password"
               placeholder="Confirm Password"
-              className={registerPage["input-field"]}
+              className={authStyles["input-field"]}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
+            {!checked && (
+              <>
+                <p style={{ color: "red" }}>
+                  Please agree to the terms and conditions.
+                </p>
+                <br />
+              </>
+            )}
             {password !== confirmPassword && (
-              <p style={{ color: "red" }}>Passwords do not match.</p>
+              <>
+                <p style={{ color: "red" }}>Passwords do not match.</p>
+                <br />
+              </>
             )}
             <label htmlFor="tnc">
               <input
@@ -400,21 +337,16 @@ export default function Register() {
               &nbsp;Yes, I agree to the{" "}
               <a className="link">Terms and Conditions of Use</a>
             </label>
-            {!checked && (
-              <p style={{ color: "red" }}>
-                Please agree to the terms and conditions.
-              </p>
-            )}
-            <div className={registerPage["horizontal-container"]}>
+            <div className={authStyles["horizontal-container"]}>
               <button
                 onClick={handleBack}
-                className={`${registerPage["auth-button"]} ${registerPage["white"]} ${registerPage["short"]}`}
+                className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["short"]}`}
               >
                 Back
               </button>
               <button
                 onClick={handleNext}
-                className={`${registerPage["auth-button"]} ${registerPage["dark"]} ${registerPage["short"]}`}
+                className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["short"]}`}
               >
                 Register
               </button>
@@ -422,7 +354,7 @@ export default function Register() {
           </>
         )}
         {/* Unimplemented Progress Bar */}
-        <div className={registerPage["progress-bar"]}></div>
+        <div className={authStyles["progress-bar"]}></div>
       </div>
     </div>
   );

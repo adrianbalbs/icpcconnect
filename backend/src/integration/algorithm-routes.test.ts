@@ -15,7 +15,7 @@ import {
   UserService,
 } from "../services/index.js";
 import { contestRegistrationRouter } from "../routers/index.js";
-import { CreateContestRegistrationForm, CreateUser } from "../schemas/index.js";
+import { CreateContestRegistrationForm } from "../schemas/index.js";
 import {
   afterAll,
   afterEach,
@@ -590,13 +590,13 @@ describe("Algorithm Tests", () => {
   // }, 60000);
 });
 
-function gen(length: number): string {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    result += characters[randomIndex];
-  }
-  return result;
-}
+// function gen(length: number): string {
+//   const characters =
+//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//   let result = "";
+//   for (let i = 0; i < length; i++) {
+//     const randomIndex = Math.floor(Math.random() * characters.length);
+//     result += characters[randomIndex];
+//   }
+//   return result;
+// }
