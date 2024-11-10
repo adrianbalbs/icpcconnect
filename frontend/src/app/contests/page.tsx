@@ -2,7 +2,7 @@
 
 import { purpleBtn, deleteBtn, editBtn } from "@/styles/sxStyles";
 import {
-  Box,
+  Alert,
   Button,
   Container,
   Dialog,
@@ -11,6 +11,7 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
@@ -29,6 +30,7 @@ import ContestDialog from "@/components/contests/ContestDialog";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
+import InviteCode from "@/components/utils/InviteCode";
 
 export type ContestResponse = {
   id: string;
@@ -101,6 +103,7 @@ export default function Contests() {
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
   const [contests, setContests] = useState<ContestResponse[]>([]);
   const [dataGridLoading, setDataGridLoading] = useState(true);
+  const [notif, setNotif] = useState({ type: "", name: "" });
 
   const [errors, setErrors] = useState<
     z.inferFlattenedErrors<typeof CreateContestSchema>
@@ -254,16 +257,22 @@ export default function Contests() {
         </Typography>
         <Divider sx={{ mt: 1 }} />
         {role === "Admin" && (
-          <Box display="flex" sx={{ justifyContent: "right", mt: 2 }}>
+          <Stack
+            display="flex"
+            direction="row"
+            spacing={1}
+            sx={{ justifyContent: "right", mt: 2 }}
+          >
+            <InviteCode setNotif={setNotif} />
             <Button
               sx={purpleBtn}
               variant="contained"
-              endIcon={<AddIcon />}
+              startIcon={<AddIcon />}
               onClick={handleCreate}
             >
               Create Contest
             </Button>
-          </Box>
+          </Stack>
         )}
         <DataGrid
           rows={contests}
@@ -297,6 +306,24 @@ export default function Contests() {
         }}
         handleDelete={handleDelete}
       />
+      <Snackbar
+        open={notif.type !== ""}
+        autoHideDuration={2000}
+        onClose={() => {
+          setNotif({ type: "", name: "" });
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setNotif({ type: "", name: "" });
+          }}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Invite Code Copied!
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

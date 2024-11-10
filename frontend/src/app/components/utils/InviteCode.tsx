@@ -87,7 +87,7 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
         <Button
           sx={purpleBtn}
           variant="contained"
-          endIcon={<PersonAddIcon />}
+          startIcon={<PersonAddIcon />}
           onClick={handleOpen}
         >
           New Invite Code
@@ -148,7 +148,6 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
           </Button>
         </Dialog>
       </Fragment>
-      <hr className={pageStyles.divider} />
     </>
   );
 };
