@@ -68,7 +68,11 @@ const ContestsLayout: React.FC<ContestsLayoutProps> = ({
         <List>
           {role === "Student" ? (
             <ListItem key={"My Team"} disablePadding>
-              <ListItemButton>
+              <ListItemButton
+                onClick={() => {
+                  router.push(`/contests/${params.id}/team`);
+                }}
+              >
                 <ListItemIcon>
                   <GroupIcon />
                 </ListItemIcon>

@@ -218,7 +218,9 @@ export default function Contests() {
             variant="contained"
             sx={purpleBtn}
             onClick={() => {
-              router.push(`/contests/${params.row.id}/teams`);
+              router.push(
+                `/contests/${params.row.id}/${role === "Student" ? "team" : "teams"}`,
+              );
             }}
           >
             Info
