@@ -80,31 +80,33 @@ const ContestsLayout: React.FC<ContestsLayoutProps> = ({
               </ListItemButton>
             </ListItem>
           ) : (
-            <ListItem key={"Teams"} disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  router.push(`/contests/${params.id}/teams`);
-                }}
-              >
-                <ListItemIcon>
-                  <GroupsIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Teams"} />
-              </ListItemButton>
-            </ListItem>
+            <>
+              <ListItem key={"Teams"} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    router.push(`/contests/${params.id}/teams`);
+                  }}
+                >
+                  <ListItemIcon>
+                    <GroupsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Teams"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem key={"Members"} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    router.push(`/contests/${params.id}/members`);
+                  }}
+                >
+                  <ListItemIcon>
+                    <PersonIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Members"} />
+                </ListItemButton>
+              </ListItem>
+            </>
           )}
-          <ListItem key={"Members"} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                router.push(`/contests/${params.id}/members`);
-              }}
-            >
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Members"} />
-            </ListItemButton>
-          </ListItem>
         </List>
       </Drawer>
       {children}
