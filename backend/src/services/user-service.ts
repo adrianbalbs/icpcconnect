@@ -103,7 +103,10 @@ export class UserService {
 
     const user = await this.db.transaction(async (tx) => {
       if (Object.keys(rest).length > 0) {
-        await tx.update(studentDetails).set(rest);
+        await tx
+          .update(studentDetails)
+          .set(rest)
+          .where(eq(studentDetails.userId, id));
       }
       if (languagesSpoken) {
         await tx
