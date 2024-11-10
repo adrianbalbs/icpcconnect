@@ -1,5 +1,5 @@
 {
-  "id": "fcbce779-13df-4df4-8371-778e2beb7e43",
+  "id": "aafeb858-461c-462f-8531-836143e18902",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -297,10 +297,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "registration_details_id_student_details_id_fk": {
-          "name": "registration_details_id_student_details_id_fk",
+        "registration_details_id_users_id_fk": {
+          "name": "registration_details_id_users_id_fk",
           "tableFrom": "registration_details",
-          "tableTo": "student_details",
+          "tableTo": "users",
           "columnsFrom": [
             "id"
           ],
@@ -570,6 +570,12 @@
       "name": "verify_emails",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "code": {
           "name": "code",
           "type": "integer",
@@ -581,6 +587,19 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "userName": {
+          "name": "userName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},

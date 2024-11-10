@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+export const verification_email_content = 
+`<!DOCTYPE html>
 <!-- Feel free to modify style things of the email content in this file. -->
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
 </head>
 <body>
     <!-- Please don't change line below -->
-    <h1> Hi, <span>USER_NAME</span>! Welcome to ICPC!</h1>
+    <h1> Hi, <span>USER_NAME</span>! Welcome to ICPC Connect!</h1>
     <p>Please enter the verification code in the website to verify your email account.</p>
 
     <!-- Please don't change this line below, since the rust will replace part of the code content in the line below. -->
@@ -17,3 +18,4 @@
     <p>If you did not request the verification, please disregard this email.</p>
 </body>
 </html>
+`; // Provide as a html file content. Feel free to adjust it if you want a different style.

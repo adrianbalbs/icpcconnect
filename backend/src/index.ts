@@ -8,12 +8,14 @@ import {
   AuthService,
   AdminService,
   UserService,
+  EmailService,
 } from "./services/index.js";
 import {
   codesRouter,
   teamRouter,
   authRouter,
   adminRouter,
+  emailRouter,
 } from "./routers/index.js";
 import {
   errorHandlerMiddleware,
@@ -44,6 +46,7 @@ const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
 const algorithmService = new AlgorithmService(dbConn);
+const emailService = new EmailService(dbConn);
 
 logger.info("Setup HTTP Server");
 app
@@ -60,6 +63,7 @@ app
   .use("/api/auth", authRouter(authService))
   .use("/api/users", userRouter(userService, authService))
   .use("/api/teams", teamRouter(teamService, authService))
+  .use("/api/email", emailRouter(emailService))
   .use(
     "/api/contest-registration",
     contestRegistrationRouter(contestRegistrationService, authService),
