@@ -49,6 +49,7 @@ const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
 const algorithmService = new AlgorithmService(dbConn);
 const emailService = new EmailService(dbConn);
+const contestService = new ContestService(dbConn);
 
 logger.info("Setup HTTP Server");
 app
