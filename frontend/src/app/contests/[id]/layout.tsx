@@ -1,6 +1,7 @@
 "use client";
 import {
   Box,
+  Divider,
   Drawer,
   List,
   ListItem,
@@ -26,7 +27,10 @@ type ContestsLayoutProps = {
 
 const drawerWidth = 180;
 
-const ContestsLayout: React.FC<ContestsLayoutProps> = ({ children }) => {
+const ContestsLayout: React.FC<ContestsLayoutProps> = ({
+  children,
+  params,
+}) => {
   const {
     userSession: { role },
   } = useAuth();
@@ -60,6 +64,7 @@ const ContestsLayout: React.FC<ContestsLayoutProps> = ({ children }) => {
             <ListItemText primary={"Go Back"} />
           </ListItemButton>
         </ListItem>
+        <Divider />
         <List>
           {role === "Student" ? (
             <ListItem key={"My Team"} disablePadding>
@@ -72,7 +77,11 @@ const ContestsLayout: React.FC<ContestsLayoutProps> = ({ children }) => {
             </ListItem>
           ) : (
             <ListItem key={"Teams"} disablePadding>
-              <ListItemButton>
+              <ListItemButton
+                onClick={() => {
+                  router.push(`/contests/${params.id}/teams`);
+                }}
+              >
                 <ListItemIcon>
                   <GroupsIcon />
                 </ListItemIcon>
@@ -81,7 +90,11 @@ const ContestsLayout: React.FC<ContestsLayoutProps> = ({ children }) => {
             </ListItem>
           )}
           <ListItem key={"Members"} disablePadding>
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => {
+                router.push(`/contests/${params.id}/members`);
+              }}
+            >
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
