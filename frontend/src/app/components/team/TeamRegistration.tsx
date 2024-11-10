@@ -8,6 +8,9 @@ import { getInfo } from "@/utils/profileInfo";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 const TeamRegistration = () => {
+  // TODO: I think it might be better to lift the state of this into the team page,
+  // so that when completed == 3 we render the button to rego, then when a student is registered,
+  // render the waiting screen. Do this in the next ticket
   const [completed, setCompleted] = useState(0);
   const [added, setAdded] = useState({
     profile: false,
