@@ -5,7 +5,6 @@ import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
 import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
-import WaitingScreen from "../teams/WaitingScreen";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 const TeamRegistration = () => {
@@ -93,7 +92,8 @@ const TeamRegistration = () => {
       </>
     );
   } else {
-    return <WaitingScreen />;
+    // TODO: Probs fix this
+    return <></>;
   }
 };
 
