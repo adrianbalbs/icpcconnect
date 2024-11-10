@@ -3,7 +3,6 @@ import cors from "cors";
 import { DevDatabase, runMigrations, seed } from "./db/index.js";
 import {
   CodesService,
-  ContestRegistrationService,
   TeamService,
   AuthService,
   AdminService,
@@ -24,7 +23,6 @@ import {
   loggingMiddlware,
 } from "./middleware/index.js";
 import { getLogger } from "./utils/logger.js";
-import { contestRegistrationRouter } from "./routers/contest-registration-router.js";
 import cookieParser from "cookie-parser";
 import { AlgorithmService } from "./services/algorithm-service.js";
 import { userRouter } from "./routers/user-router.js";
@@ -43,7 +41,6 @@ await seed(dbConn);
 
 const userService = new UserService(dbConn);
 const teamService = new TeamService(dbConn);
-const contestRegistrationService = new ContestRegistrationService(dbConn);
 const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
@@ -67,10 +64,6 @@ app
   .use("/api/users", userRouter(userService, authService))
   .use("/api/teams", teamRouter(teamService, authService))
   .use("/api/email", emailRouter(emailService))
-  .use(
-    "/api/contest-registration",
-    contestRegistrationRouter(contestRegistrationService, authService),
-  )
   .use("/api/contests", contestRouter(contestService, authService))
   .use("/api", codesRouter(codesService, authService))
   .use("/api", adminRouter(adminService, authService, algorithmService))
