@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1731066192393,
-      "tag": "0000_abandoned_living_tribunal",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1730874402005,
-      "tag": "0001_loose_stephen_strange",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1730880418011,
-      "tag": "0002_hard_marvel_boy",
+      "when": 1731222351619,
+      "tag": "0000_glossy_sway",
       "breakpoints": true
     }
   ]
