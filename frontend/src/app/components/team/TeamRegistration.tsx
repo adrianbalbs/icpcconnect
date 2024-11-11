@@ -6,12 +6,14 @@ import teamStyles from "@/styles/Teams.module.css";
 import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
 import { useAuth } from "../AuthProvider/AuthProvider";
+import { Button, Stack } from "@mui/material";
 
 const TeamRegistration = () => {
   // TODO: I think it might be better to lift the state of this into the team page,
   // so that when completed == 3 we render the button to rego, then when a student is registered,
   // render the waiting screen. Do this in the next ticket
   const [completed, setCompleted] = useState(0);
+  const [enrolled, setEnrolled] = useState(false);
   const [added, setAdded] = useState({
     profile: false,
     experience: false,
@@ -89,9 +91,25 @@ const TeamRegistration = () => {
             added={added.preference}
           />
         </div>
-        {/* <Button disabled={completed < 3} onClick={() => setEnrolled(!enrolled)} sx={{ m: '0 auto' }}>
-        {enrolled ? 'Withdraw enrolment' : 'Enrol for team'}
-      </Button> */}
+        <Stack justifyContent="center">
+          <Button
+            disabled={false}
+            onClick={() => setEnrolled(!enrolled)}
+            sx={{
+              backgroundColor: "#555555",
+              color: "white",
+              alignSelf: "center",
+              mt: 4,
+              width: 320,
+              height: 50,
+              textTransform: "none",
+              fontWeight: "bold",
+              boxShadow: "none",
+            }}
+          >
+            {enrolled ? "Withdraw enrolment" : "Enrol for team"}
+          </Button>
+        </Stack>
       </>
     );
   } else {
