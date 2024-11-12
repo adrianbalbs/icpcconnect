@@ -28,6 +28,15 @@ CREATE TABLE IF NOT EXISTS "auth_codes" (
 	"created_at::timestamp without time zone" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "contests" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(256) NOT NULL,
+	"early_bird_date" date NOT NULL,
+	"cutoff_date" date NOT NULL,
+	"contest_date" date NOT NULL,
+	"university" integer NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "courses" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"type" "course_type" NOT NULL
@@ -113,6 +122,12 @@ CREATE TABLE IF NOT EXISTS "verify_emails" (
 	"verified" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "verify_emails_code_unique" UNIQUE("code")
 );
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "contests" ADD CONSTRAINT "contests_university_universities_id_fk" FOREIGN KEY ("university") REFERENCES "public"."universities"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "courses_completed_by_student" ADD CONSTRAINT "courses_completed_by_student_student_id_registration_details_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."registration_details"("id") ON DELETE cascade ON UPDATE no action;

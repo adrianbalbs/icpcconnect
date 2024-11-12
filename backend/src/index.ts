@@ -7,6 +7,7 @@ import {
   TeamService,
   AuthService,
   AdminService,
+  ContestService,
   UserService,
   EmailService,
 } from "./services/index.js";
@@ -15,6 +16,7 @@ import {
   teamRouter,
   authRouter,
   adminRouter,
+  contestRouter,
   emailRouter,
 } from "./routers/index.js";
 import {
@@ -47,6 +49,7 @@ const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
 const algorithmService = new AlgorithmService(dbConn);
 const emailService = new EmailService(dbConn);
+const contestService = new ContestService(dbConn);
 
 logger.info("Setup HTTP Server");
 app
@@ -68,6 +71,7 @@ app
     "/api/contest-registration",
     contestRegistrationRouter(contestRegistrationService, authService),
   )
+  .use("/api/contests", contestRouter(contestService, authService))
   .use("/api", codesRouter(codesService, authService))
   .use("/api", adminRouter(adminService, authService, algorithmService))
   .use(errorHandlerMiddleware);

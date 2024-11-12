@@ -1,4 +1,9 @@
 {
+  "contests": [
+    { "id": "40cfb102-6226-46f5-8e1b-a6b5d082989f", "name": "Epic Contest", "site": 1 },
+    { "id": "d62a328a-f1b4-4de1-a44f-15fc0301463a", "name": "ICPC Regionals", "site": 1 },
+    { "id": "5931d4e5-483f-4887-a0ee-2ef7377fa8db" , "name": "ICPC Preliminary Contest", "site": 1 }
+  ],
   "students": [
     {
       "id": "b6fd8dfb-5e30-49c9-97ec-7a9e349fabc1",

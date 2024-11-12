@@ -10,6 +10,7 @@ import {
   uuid,
   varchar,
   primaryKey,
+  date,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", [
@@ -60,6 +61,7 @@ export const universityRelations = relations(universities, ({ one, many }) => ({
   hostedUniversities: many(universities, {
     relationName: "hosted_universities",
   }),
+  contests: one(contests),
 }));
 
 export type University = InferSelectModel<typeof universities>;
@@ -268,3 +270,23 @@ export const verifyEmail = pgTable("verify_emails", {
 });
 
 export type VerifyEmail = InferSelectModel<typeof verifyEmail>;
+
+export const contests = pgTable("contests", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: varchar("name", { length: 256 }).notNull(),
+  earlyBirdDate: date("early_bird_date", { mode: "date" }).notNull(),
+  cutoffDate: date("cutoff_date", { mode: "date" }).notNull(),
+  contestDate: date("contest_date", { mode: "date" }).notNull(),
+  site: integer("university")
+    .references(() => universities.id)
+    .notNull(),
+});
+
+export const contestRelations = relations(contests, ({ one }) => ({
+  site: one(universities, {
+    fields: [contests.site],
+    references: [universities.id],
+  }),
+}));
+
+export type Contest = InferSelectModel<typeof contests>;

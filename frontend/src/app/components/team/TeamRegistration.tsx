@@ -5,10 +5,12 @@ import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
 import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
-import WaitingScreen from "../teams/WaitingScreen";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 const TeamRegistration = () => {
+  // TODO: I think it might be better to lift the state of this into the team page,
+  // so that when completed == 3 we render the button to rego, then when a student is registered,
+  // render the waiting screen. Do this in the next ticket
   const [completed, setCompleted] = useState(0);
   const [added, setAdded] = useState({
     profile: false,
@@ -54,6 +56,7 @@ const TeamRegistration = () => {
   useEffect(() => {
     setCompleted(Object.values(added).filter((a) => a).length);
   }, [added]);
+  const getProfileUrl = (path: string) => `/profile/${id}${path}`;
 
   if (completed < 3) {
     return (
@@ -68,21 +71,21 @@ const TeamRegistration = () => {
             title="Edit your Profile"
             description="Add your preferred pronouns, any allergies or dietary requirements and choose a photo to represent yourself"
             buttonText="Edit"
-            buttonTo={`profile/${id}`}
+            buttonTo={getProfileUrl("")}
             added={added.profile}
           />
           <Tile
             title="Add Experiences"
             description="Tell us what you’re good at, so we can match you with like-minded teammates!"
             buttonText="Fill In"
-            buttonTo={`profile/${id}/experience`}
+            buttonTo={getProfileUrl("/experience")}
             added={added.experience}
           />
           <Tile
             title="Complete Preferences"
             description="Let us know who you do or do not want to be matched with! Other students won’t see your preferences."
             buttonText="Complete"
-            buttonTo={`profile/${id}/preferences`}
+            buttonTo={getProfileUrl("/preferences")}
             added={added.preference}
           />
         </div>
@@ -92,7 +95,8 @@ const TeamRegistration = () => {
       </>
     );
   } else {
-    return <WaitingScreen />;
+    // TODO: Probs fix this
+    return <></>;
   }
 };
 
