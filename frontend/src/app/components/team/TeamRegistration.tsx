@@ -7,6 +7,7 @@ import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { Button, Stack } from "@mui/material";
+import { User } from "@/types/users";
 
 const TeamRegistration = () => {
   // TODO: I think it might be better to lift the state of this into the team page,
@@ -37,10 +38,24 @@ const TeamRegistration = () => {
 
   const checkExperience = async () => {
     try {
-      await axios.get(`${SERVER_URL}/api/contest-registration/${id}`, {
+      const { data } = await axios.get<User>(`${SERVER_URL}/api/users/${id}`, {
         withCredentials: true,
       });
-      setAdded((prev) => ({ ...prev, experience: true }));
+
+      const hasAnyExperience =
+        data.codeforcesRating > 0 ||
+        data.leetcodeRating > 0 ||
+        data.coursesCompleted.length > 0 ||
+        [
+          data.cppExperience,
+          data.cExperience,
+          data.javaExperience,
+          data.pythonExperience,
+        ].some((experience: string) => experience !== "none");
+
+      if (hasAnyExperience) {
+        setAdded((prev) => ({ ...prev, experience: true }));
+      }
     } catch (err) {
       console.log(`Check experience error: ${err}`);
     }

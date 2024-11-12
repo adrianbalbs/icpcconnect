@@ -67,8 +67,8 @@ const ExperienceModal: React.FC<ModalProps> = ({
 
   const addExperience = async () => {
     try {
-      await axios.put(
-        `${SERVER_URL}/api/contest-registration/${id}`,
+      await axios.patch(
+        `${SERVER_URL}/api/users/${id}/student-details`,
         newExperience,
         { withCredentials: true },
       );

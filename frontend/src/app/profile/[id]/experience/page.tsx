@@ -11,6 +11,7 @@ import LanguageExperience from "@/components/experience/LanguageExperience";
 import CoursesExperience from "@/components/experience/CoursesExperience";
 import { ProfileProps } from "../page";
 import ContestExperience from "@/components/experience/ContestExperience";
+import { User } from "@/types/users";
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -21,24 +22,18 @@ export interface ExperienceType {
 }
 
 export interface Experiences {
-  level: string;
+  level: "A" | "B";
   contestExperience: number;
   leetcodeRating: number;
   codeforcesRating: number;
-  cppExperience: string;
-  cExperience: string;
-  javaExperience: string;
-  pythonExperience: string;
+  cppExperience: "none" | "some" | "prof";
+  cExperience: "none" | "some" | "prof";
+  javaExperience: "none" | "some" | "prof";
+  pythonExperience: "none" | "some" | "prof";
   coursesCompleted: number[];
 }
 
 const Experience: React.FC<ProfileProps> = ({ params }) => {
-  // State keys
-  // 0: db does not have record of user registration
-  // 1: user registration record is in db
-  // 2: page is rendered
-  const [state, setState] = useState(0);
-
   // Object containing types of experiences added to page
   const [added, setAdded] = useState<ExperienceType>({
     codeforcesRating: false,
@@ -60,81 +55,59 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     coursesCompleted: [],
   });
 
-  // Used to create registration when one does not already exist in db for student
-  const createRegistration = async () => {
-    try {
-      await axios.post(
-        `${SERVER_URL}/api/contest-registration`,
-        {
-          student: params.id,
-          ...experience,
-        },
-        { withCredentials: true },
-      );
-    } catch (err) {
-      console.log(`Create registration error: ${err}`);
-    }
-  };
-
-  // Renders all experiences that have been added by student already
-  const renderPage = () => {
-    setAdded({
-      codeforcesRating: experience.codeforcesRating > 0,
-      contestExperience: experience.contestExperience > 0,
-      coursesCompleted: experience.coursesCompleted.length > 0,
-      language:
-        experience.cExperience !== "none" ||
-        experience.cppExperience !== "none" ||
-        experience.pythonExperience !== "none" ||
-        experience.javaExperience !== "none",
-      leetcodeRating: experience.leetcodeRating > 0,
-    });
-  };
-
   // Fetch experience data from backend
   const getExperience = async () => {
     try {
-      const res = await axios.get(
-        `${SERVER_URL}/api/contest-registration/${params.id}`,
+      const res = await axios.get<User>(
+        `${SERVER_URL}/api/users/${params.id}`,
         { withCredentials: true },
       );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { student, timeSubmitted, coursesCompleted, ...newExperience } =
-        res.data;
-      console.log(res.data);
+      const {
+        level,
+        contestExperience,
+        codeforcesRating,
+        leetcodeRating,
+        cExperience,
+        cppExperience,
+        javaExperience,
+        pythonExperience,
+        coursesCompleted,
+      } = res.data;
+
       setExperience({
-        ...newExperience,
+        level,
+        contestExperience,
+        codeforcesRating,
+        leetcodeRating,
+        cExperience,
+        cppExperience,
+        javaExperience,
+        pythonExperience,
         coursesCompleted: coursesCompleted.map(
           (c: { id: number; type: string }) => c.id,
         ),
       });
+
+      setAdded({
+        codeforcesRating: codeforcesRating > 0,
+        contestExperience: contestExperience > 0,
+        coursesCompleted: coursesCompleted.length > 0,
+        language:
+          cExperience !== "none" ||
+          cppExperience !== "none" ||
+          pythonExperience !== "none" ||
+          javaExperience !== "none",
+        leetcodeRating: leetcodeRating > 0,
+      });
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        if (err.response.status === 404) {
-          createRegistration();
-          setState(2);
-        } else {
-          console.log(`Get experience error: ${err}`);
-        }
-      } else {
-        console.log(`Unexpected get experience error: ${err}`);
-      }
+      console.log(`Get experience error: ${err}`);
     }
-    if (state === 0) setState(1);
   };
 
   // Used to do initial render of page when it first loads
   useEffect(() => {
-    if (state === 1) {
-      renderPage();
-      setState(2);
-    }
-  }, [state]);
-
-  // Every time an experience is added, fetch it again from backend
-  useEffect(() => {
     getExperience();
-  }, [added]);
+  }, []);
 
   return (
     <div className={profileStyles["inner-screen"]}>
