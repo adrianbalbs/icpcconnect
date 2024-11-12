@@ -49,6 +49,34 @@ const Team: React.FC = () => {
     }
   };
 
+  const fetchEnrollment = async () => {
+    try {
+      await axios.get(
+        `${SERVER_URL}/api/users/${id}/contest-registration/${params.id}`,
+        { withCredentials: true },
+      );
+      setStatus(1);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setStatus(0);
+      } else {
+        console.error(err);
+      }
+    }
+  };
+
+  const handleWithdrawEnrollment = async () => {
+    try {
+      await axios.delete(
+        `${SERVER_URL}/api/users/${id}/contest-registration/${params.id}`,
+        { withCredentials: true },
+      );
+      setStatus(0);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const getTeam = async () => {
     try {
       const studentData = await getInfo(id);
@@ -73,6 +101,7 @@ const Team: React.FC = () => {
   useEffect(() => {
     getTeam();
     fetchContest();
+    fetchEnrollment();
   }, []);
 
   return (
@@ -86,9 +115,18 @@ const Team: React.FC = () => {
       </h1>
       <p className={teamStyles.university}>{uni}</p>
       {status !== 2 && <hr className={pageStyles.divider} />}
-      {status === 0 && <TeamRegistration />}
+      {status === 0 && (
+        <TeamRegistration
+          contestId={params.id}
+          fetchEnrollment={fetchEnrollment}
+        />
+      )}
       {status === 1 && (
-        <WaitingScreen setStatus={setStatus} contest={contest} />
+        <WaitingScreen
+          setStatus={setStatus}
+          contest={contest}
+          handleWithdrawEnrollment={handleWithdrawEnrollment}
+        />
       )}
       {status === 2 && <Assigned members={team.members} />}
     </>
