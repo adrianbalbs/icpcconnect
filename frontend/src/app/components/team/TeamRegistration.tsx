@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SERVER_URL } from "@/utils/constants";
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
@@ -30,7 +30,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
     userSession: { id },
   } = useAuth();
 
-  const checkProfile = async () => {
+  const checkProfile = useCallback(async () => {
     try {
       const profile = await getInfo(id);
       if (profile && profile.editInfo.pronouns) {
@@ -39,9 +39,9 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
     } catch (err) {
       console.log(`Check profile error: ${err}`);
     }
-  };
+  }, [id]);
 
-  const checkExperience = async () => {
+  const checkExperience = useCallback(async () => {
     try {
       const { data } = await axios.get<User>(`${SERVER_URL}/api/users/${id}`, {
         withCredentials: true,
@@ -64,7 +64,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
     } catch (err) {
       console.log(`Check experience error: ${err}`);
     }
-  };
+  }, [id]);
 
   const handleContestRegistration = async () => {
     try {
@@ -87,9 +87,12 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   // }
 
   useEffect(() => {
-    checkProfile();
-    checkExperience();
-  }, [id]);
+    const fetchInitialData = async () => {
+      await Promise.all([checkProfile(), checkExperience()]);
+    };
+
+    fetchInitialData();
+  }, [checkProfile, checkExperience]);
 
   useEffect(() => {
     setCompleted(Object.values(added).filter((a) => a).length);
