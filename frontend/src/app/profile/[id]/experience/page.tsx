@@ -130,6 +130,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
           added={added}
           setAdded={setAdded}
           experience={experience}
+          getExperience={getExperience}
         />
       </Box>
     </div>

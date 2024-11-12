@@ -25,6 +25,7 @@ interface ModalProps {
   added: ExperienceType;
   setAdded: Dispatch<SetStateAction<ExperienceType>>;
   experience: Experiences;
+  getExperience: () => void;
 }
 
 const ExperienceModal: React.FC<ModalProps> = ({
@@ -32,6 +33,7 @@ const ExperienceModal: React.FC<ModalProps> = ({
   added,
   setAdded,
   experience,
+  getExperience,
 }) => {
   const hrRef = useRef<HTMLHRElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -72,6 +74,7 @@ const ExperienceModal: React.FC<ModalProps> = ({
         newExperience,
         { withCredentials: true },
       );
+      getExperience();
       setAdded({ ...added, [type]: true });
     } catch (error) {
       console.log(`Update experience error: ${error}`);
