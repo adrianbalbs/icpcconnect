@@ -70,22 +70,6 @@
       "team": null
     },
     {
-      "id": "3ab05c7d-b98b-4fe1-8288-d4d7b03b4852",
-      "givenName": "Jerry",
-      "familyName": "Yang",
-      "password": "test5",
-      "email": "student_5@ad.com",
-      "role": "Student",
-      "university": 1,
-      "studentId": "z5421983",
-      "pronouns": "he/him",
-      "photoConsent": true,
-      "languagesSpoken": [
-        "en"
-      ],
-      "team": null
-    },
-    {
       "id": "2f3579df-7b29-47b5-96cb-8e0f79853fd7",
       "givenName": "Delph",
       "familyName": "Zhou",

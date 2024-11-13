@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { AdminService, AuthService, UserService } from "../services/index.js";
+import { AdminService, AuthService, CodesService, UserService } from "../services/index.js";
 import { adminRouter, authRouter, userRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
@@ -26,11 +26,12 @@ beforeAll(async () => {
   const dbSetup = await setupTestDatabase();
   db = dbSetup.db;
   const authService = new AuthService(db);
+  const codesService = new CodesService(db);
   adminApp = express()
     .use(express.json())
     .use(cookieParser())
     .use("/api/auth", authRouter(authService))
-    .use("/api/users", userRouter(new UserService(db), authService))
+    .use("/api/users", userRouter(new UserService(db), authService, codesService))
     .use(
       "/api",
       adminRouter(new AdminService(db), authService, new AlgorithmService(db)),

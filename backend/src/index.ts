@@ -61,7 +61,7 @@ app
   .use(cookieParser())
   .use(loggingMiddlware)
   .use("/api/auth", authRouter(authService))
-  .use("/api/users", userRouter(userService, authService))
+  .use("/api/users", userRouter(userService, authService, codesService))
   .use("/api/teams", teamRouter(teamService, authService))
   .use("/api/email", emailRouter(emailService))
   .use("/api/contests", contestRouter(contestService, authService))

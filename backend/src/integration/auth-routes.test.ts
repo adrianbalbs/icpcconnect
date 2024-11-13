@@ -1,7 +1,7 @@
 import request from "supertest";
 import express from "express";
 import cookieParser from "cookie-parser";
-import { AuthService, UserService } from "../services/index.js";
+import { AuthService, CodesService, UserService } from "../services/index.js";
 import { authRouter, userRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import { LoginRequest } from "../schemas/index.js";
@@ -16,11 +16,12 @@ beforeAll(async () => {
   const dbSetup = await setupTestDatabase();
   db = dbSetup.db;
   const authService = new AuthService(db);
+  const codesService = new CodesService(db);
   app = express()
     .use(express.json())
     .use(cookieParser())
     .use("/api/auth", authRouter(authService))
-    .use("/api/users", userRouter(new UserService(db), authService));
+    .use("/api/users", userRouter(new UserService(db), authService, codesService));
 });
 
 afterAll(async () => {
