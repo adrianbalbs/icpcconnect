@@ -78,3 +78,28 @@ export const menuBtn = {
   width: "10vw",
   fontSize: "13px",
 };
+
+export const deleteBtn = {
+  backgroundColor: "#ea6968",
+  color: "white",
+  textTransform: "none",
+  boxShadow: "none",
+};
+
+export const editBtn = {
+  backgroundColor: "#f592b3",
+  color: "white",
+  textTransform: "none",
+  boxShadow: "none",
+};
+
+export const enrolBtn = {
+  backgroundColor: "#555555",
+  color: "white",
+  alignSelf: "center",
+  mt: 4,
+  width: 320,
+  height: 50,
+  textTransform: "none",
+  fontWeight: "bold",
+};

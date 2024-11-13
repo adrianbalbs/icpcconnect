@@ -18,6 +18,8 @@
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "format:check": "prettier . --check",
     "format": "prettier . --write",
+    "db:studio": "drizzle-kit studio",
+    "db:drop": "drizzle-kit drop",
     "lint": "eslint ./src/",
     "dev": "node --loader=ts-node/esm --env-file=.env --watch src/index.ts",
     "start": "node dist/src/index.js",
