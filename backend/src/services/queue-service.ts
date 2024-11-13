@@ -7,16 +7,17 @@ dotenv.config();
 
 export class JobQueue {
   private readonly logger = getLogger();
-  private readonly queue = new Queue("algorithm-scheduler", {
+  readonly queue = new Queue("algorithm-scheduler", {
     connection: {
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT) || 6739,
     },
   });
   private readonly worker = new Worker(
-    "run-algorithm",
+    "algorithm-scheduler",
     async (job) => {
       await this.algorithmService.callAlgorithm(job.data.contestId);
+      this.logger.info(`Algorithm finished running`);
     },
     {
       connection: {
@@ -36,17 +37,32 @@ export class JobQueue {
     });
   }
 
-  async addJob(contestId: string, cutoffDate?: Date) {
-    const delay = cutoffDate
+  async addJob(contestId: string, earlyBirdDate?: Date, cutoffDate?: Date) {
+    const earlyBirdDelay = earlyBirdDate
+      ? Number(earlyBirdDate) - Number(new Date())
+      : undefined;
+    await this.queue.add(
+      "Early Bird Team Formation",
+      { contestId },
+      { delay: earlyBirdDelay, jobId: contestId + ":early" },
+    );
+
+    const cutoffDelay = cutoffDate
       ? Number(cutoffDate) - Number(new Date())
       : undefined;
-    await this.queue.add(contestId, { contestId }, { delay, jobId: contestId });
+    await this.queue.add(
+      "Final Team Formation",
+      { contestId },
+      { delay: cutoffDelay, jobId: contestId + ":cutoff" },
+    );
     this.logger.info(`Job ${contestId} added to queue`);
   }
 
   async removeJob(contestId: string) {
-    const job = await this.queue.getJob(contestId);
-    await job?.remove();
+    const earlyBirdJob = await this.queue.getJob(contestId + ":early");
+    await earlyBirdJob?.remove();
+    const cutoffJob = await this.queue.getJob(contestId + ":cutoff");
+    await cutoffJob?.remove();
     this.logger.info(`Job ${contestId} removed from queue`);
   }
 }
