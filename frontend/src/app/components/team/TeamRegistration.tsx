@@ -72,7 +72,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   const checkPreference = useCallback(async () => {
     try {
       const preference = await getPreferences(id, "preferences");
-      if (preference !== "") {
+      if (preference && preference.length !== 0) {
         setAdded((prev) => ({ ...prev, preference: true }));
       }
     } catch (err) {
@@ -100,18 +100,19 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
     return cutoffDate ? new Date() > new Date(cutoffDate) : false;
   };
 
+  const getProfileUrl = (path: string) => `/profile/${id}${path}`;
+
   useEffect(() => {
     const fetchInitialData = async () => {
       await Promise.all([checkProfile(), checkExperience(), checkPreference()]);
     };
 
-    fetchInitialData();
+    if (id) fetchInitialData();
   }, [checkProfile, checkExperience, checkPreference]);
 
   useEffect(() => {
     setCompleted(Object.values(added).filter((a) => a).length);
   }, [added]);
-  const getProfileUrl = (path: string) => `/profile/${id}${path}`;
 
   return (
     <>

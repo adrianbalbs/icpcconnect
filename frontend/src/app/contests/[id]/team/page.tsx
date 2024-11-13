@@ -58,6 +58,7 @@ const Team: React.FC = () => {
       setStatus(1);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) {
+        console.log("Not enrolled yet!");
         setStatus(0);
       } else {
         console.error(err);
@@ -102,7 +103,7 @@ const Team: React.FC = () => {
       await Promise.all([getTeam(), fetchContest(), fetchEnrollment()]);
     };
 
-    initializeData();
+    if (id) initializeData();
   }, [getTeam, fetchContest, fetchEnrollment]);
 
   return (

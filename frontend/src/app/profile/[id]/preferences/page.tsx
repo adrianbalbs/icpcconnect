@@ -36,7 +36,9 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
 
   const setDefault = async () => {
     const preference = await getPreferences(params.id, "preferences");
-    if (preference === "") {
+    console.log("Set default");
+    if (preference && preference.length === 0) {
+      console.log("Update default");
       await updatePreferences(params.id, "preferences", "none");
     }
   };
