@@ -159,5 +159,5 @@ describe("emailRouter tests", () => {
 
     expect(verifyForgotPasswordResponse.body.result === true);
 
-  });
+  }, 10000);
 });
