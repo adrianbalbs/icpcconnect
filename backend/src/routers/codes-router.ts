@@ -18,7 +18,6 @@ export function codesRouter(
   const authenticate = createAuthenticationMiddleware(authService);
   return (
     Router()
-      /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/
       .get(
         "/allRoleCodes",
         [authenticate, authorise(["Admin"])],
@@ -32,7 +31,6 @@ export function codesRouter(
         },
       )
 
-      /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/
       .get(
         "/allAuthCodes",
         [authenticate, authorise(["Admin"])],
