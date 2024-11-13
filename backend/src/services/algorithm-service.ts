@@ -1,8 +1,9 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import {
   coursesCompletedByStudent,
   DatabaseConnection,
   languagesSpokenByStudent,
+  registrationDetails,
   studentDetails,
   teams,
   universities,
@@ -54,8 +55,8 @@ export class AlgorithmService {
     this.db = db;
   }
 
-  async callAlgorithm(): Promise<RunAlgoResponse> {
-    const succesful = await runFullAlgorithm(this);
+  async callAlgorithm(contestId: string): Promise<RunAlgoResponse> {
+    const succesful = await runFullAlgorithm(this, contestId);
     return { success: succesful };
   }
 
@@ -71,6 +72,7 @@ export class AlgorithmService {
 
   async getAllStudentsFromUniversity(
     universityId: number,
+    contestId: string,
   ): Promise<AlgorithmStudentResponse> {
     const allStudents = await this.db
       .select({
@@ -91,7 +93,13 @@ export class AlgorithmService {
       .from(users)
       .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
       .innerJoin(universities, eq(universities.id, users.university))
-      .where(eq(universities.id, universityId));
+      .innerJoin(registrationDetails, eq(registrationDetails.student, users.id))
+      .where(
+        and(
+          eq(universities.id, universityId),
+          eq(registrationDetails.contest, contestId),
+        ),
+      );
 
     return { allStudents };
   }

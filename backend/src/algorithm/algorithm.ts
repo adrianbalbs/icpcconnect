@@ -89,12 +89,13 @@ export interface Group {
 
 export async function runFullAlgorithm(
   algorithmService: AlgorithmService,
+  contestId: string,
 ): Promise<boolean> {
   const uniIds: AllUniIDResponse = await algorithmService.getAllUniversityIds();
 
   for (const uni of uniIds.allUniversityIds) {
     const studentsOfUni: AlgorithmStudentResponse =
-      await algorithmService.getAllStudentsFromUniversity(uni.id);
+      await algorithmService.getAllStudentsFromUniversity(uni.id, contestId);
 
     if (studentsOfUni.allStudents.length === 0) {
       continue;
