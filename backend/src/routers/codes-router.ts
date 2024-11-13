@@ -2,7 +2,6 @@ import { NextFunction, Request, Response, Router } from "express";
 // import { getLogger } from "../utils/logger.js";
 import { AuthService, CodesService } from "../services/index.js";
 import {
-  checkCoachCode,
   pushCodeAuth,
   pushCodeCoach,
   pushCodeSiteCoord,

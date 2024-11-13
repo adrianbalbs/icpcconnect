@@ -10,7 +10,6 @@ import { authRouter, contestRouter, codesRouter, userRouter } from "../routers/i
 import { eq, not } from "drizzle-orm";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { generateCreateUserFixture } from "./fixtures.js";
-import { checkCoachCode } from "../utils/createcode.js";
 
 describe("userRoutes tests", () => {
   let db: DatabaseConnection;

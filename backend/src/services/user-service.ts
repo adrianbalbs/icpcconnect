@@ -42,7 +42,7 @@ export class UserService {
       }
 
       if (!inviteExists) {
-        let id = "INVALID"
+        const id = "INVALID"
         return { id }
       }
     }
