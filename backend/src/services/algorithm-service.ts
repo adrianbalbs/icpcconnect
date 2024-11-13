@@ -10,6 +10,8 @@ import {
 } from "../db/index.js";
 import { runFullAlgorithm } from "../algorithm/algorithm.js";
 import { CreateTeamRequest } from "../schemas/team-schema.js";
+import { EmailService } from "./email-service.js"
+import { sendTeamAllocationEmails } from "./email-handler/email.js";
 
 export type AllUniIDResponse = {
   allUniversityIds: { id: number }[];
@@ -134,13 +136,22 @@ export class AlgorithmService {
     const members = await this.db.query.users.findMany({
       where: inArray(users.id, memberIds),
     });
-
+    const memberNames = [];
+    const memberEmails = [];
     for (const member of members) {
+      memberNames.push(member.givenName + " " + member.familyName);
+      memberEmails.push(member.email);
       await this.db
         .update(studentDetails)
         .set({ team: id.teamId })
         .where(eq(studentDetails.userId, member.id));
     }
+
+    sendTeamAllocationEmails({
+      name: name,
+      memberNames: memberNames,
+      memberEmails: memberEmails,
+    });
 
     return id;
   }
