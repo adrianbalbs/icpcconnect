@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SERVER_URL } from "@/utils/constants";
 import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
@@ -56,7 +56,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
   });
 
   // Fetch experience data from backend
-  const getExperience = async () => {
+  const getExperience = useCallback(async () => {
     try {
       const res = await axios.get<User>(
         `${SERVER_URL}/api/users/${params.id}`,
@@ -102,12 +102,15 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     } catch (err) {
       console.log(`Get experience error: ${err}`);
     }
-  };
+  }, [params.id]);
 
   // Used to do initial render of page when it first loads
   useEffect(() => {
-    getExperience();
-  }, []);
+    const initialisePage = async () => {
+      await getExperience();
+    };
+    initialisePage();
+  }, [getExperience]);
 
   return (
     <div className={profileStyles["inner-screen"]}>
