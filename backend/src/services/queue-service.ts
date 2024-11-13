@@ -37,19 +37,15 @@ export class JobQueue {
     });
   }
 
-  async addJob(contestId: string, earlyBirdDate?: Date, cutoffDate?: Date) {
-    const earlyBirdDelay = earlyBirdDate
-      ? Number(earlyBirdDate) - Number(new Date())
-      : undefined;
+  async addJob(contestId: string, earlyBirdDate: Date, cutoffDate: Date) {
+    const earlyBirdDelay = Number(earlyBirdDate) - Number(new Date());
     await this.queue.add(
       "Early Bird Team Formation",
       { contestId },
       { delay: earlyBirdDelay, jobId: contestId + ":early" },
     );
 
-    const cutoffDelay = cutoffDate
-      ? Number(cutoffDate) - Number(new Date())
-      : undefined;
+    const cutoffDelay = Number(cutoffDate) - Number(new Date());
     await this.queue.add(
       "Final Team Formation",
       { contestId },

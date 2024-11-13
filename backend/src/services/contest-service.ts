@@ -68,9 +68,13 @@ export class ContestService {
         cutoffDate: new Date(req.cutoffDate),
         contestDate: new Date(req.contestDate),
       })
-      .returning({ id: contests.id, cutoffDate: contests.cutoffDate });
+      .returning({
+        id: contests.id,
+        cutoffDate: contests.cutoffDate,
+        earlyBirdDate: contests.earlyBirdDate,
+      });
 
-    await this.jobQueue.addJob(res.id, res.cutoffDate);
+    await this.jobQueue.addJob(res.id, res.earlyBirdDate, res.cutoffDate);
     return { id: res.id };
   }
 
@@ -143,10 +147,14 @@ export class ContestService {
         contestDate: new Date(req.contestDate),
       })
       .where(eq(contests.id, contestId))
-      .returning({ id: contests.id, cutoffDate: contests.cutoffDate });
+      .returning({
+        id: contests.id,
+        cutoffDate: contests.cutoffDate,
+        earlyBirdDate: contests.earlyBirdDate,
+      });
 
     await this.jobQueue.removeJob(res.id);
-    await this.jobQueue.addJob(res.id, res.cutoffDate);
+    await this.jobQueue.addJob(res.id, res.earlyBirdDate, res.cutoffDate);
     return req;
   }
 }
