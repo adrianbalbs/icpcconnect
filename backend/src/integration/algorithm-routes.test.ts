@@ -18,6 +18,7 @@ import {
   AdminService,
   AuthService,
   ContestService,
+  JobQueue,
   EmailService,
   CodesService,
   TeamService,
@@ -49,6 +50,7 @@ describe("Algorithm Tests", () => {
     const dbSetup = await setupTestDatabase();
     db = dbSetup.db;
     const authService = new AuthService(db);
+    const algorithmService = new AlgorithmService(db);
     const codesService = new CodesService(db);
     app = express()
       .use(express.json())
@@ -60,14 +62,16 @@ describe("Algorithm Tests", () => {
         userRouter(new UserService(db), authService, codesService),
       )
       .use("/api/teams", teamRouter(new TeamService(db), authService))
-      .use("/api/contests", contestRouter(new ContestService(db), authService))
+      .use(
+        "/api/contests",
+        contestRouter(
+          new ContestService(db, new JobQueue(algorithmService)),
+          authService,
+        ),
+      )
       .use(
         "/api",
-        adminRouter(
-          new AdminService(db),
-          authService,
-          new AlgorithmService(db),
-        ),
+        adminRouter(new AdminService(db), authService, algorithmService),
       );
   });
 

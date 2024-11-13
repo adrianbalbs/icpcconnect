@@ -37,15 +37,20 @@ export class JobQueue {
     });
   }
 
+  private calculateDelay(targetDate: Date) {
+    return Number(targetDate) - Date.now();
+  }
+
   async addJob(contestId: string, earlyBirdDate: Date, cutoffDate: Date) {
-    const earlyBirdDelay = Number(earlyBirdDate) - Number(new Date());
+    const earlyBirdDelay = this.calculateDelay(earlyBirdDate);
     await this.queue.add(
       "Early Bird Team Formation",
       { contestId },
       { delay: earlyBirdDelay, jobId: contestId + ":early" },
     );
 
-    const cutoffDelay = Number(cutoffDate) - Number(new Date());
+    const cutoffDelay = this.calculateDelay(cutoffDate);
+
     await this.queue.add(
       "Final Team Formation",
       { contestId },
