@@ -149,7 +149,9 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
             },
           }}
         >
-          Enrol for team
+          {isAfterCutoffDate(cutoffDate)
+            ? "Registration is now closed"
+            : "Enrol for team"}
         </Button>
       </Stack>
     </>
