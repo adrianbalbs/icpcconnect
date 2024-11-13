@@ -41,10 +41,12 @@ export class JobQueue {
       ? Number(cutoffDate) - Number(new Date())
       : undefined;
     await this.queue.add(contestId, { contestId }, { delay, jobId: contestId });
+    this.logger.info(`Job ${contestId} added to queue`);
   }
 
   async removeJob(contestId: string) {
     const job = await this.queue.getJob(contestId);
     await job?.remove();
+    this.logger.info(`Job ${contestId} removed from queue`);
   }
 }

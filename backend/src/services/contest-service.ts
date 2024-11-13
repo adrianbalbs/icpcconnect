@@ -4,6 +4,7 @@ import { contests, universities } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { DeleteResponse } from "../types/api-res.js";
+import { JobQueue } from "./queue-service.js";
 
 export const CreateContestSchema = z
   .strictObject({
@@ -53,7 +54,10 @@ export type GetContestResponse = {
 };
 
 export class ContestService {
-  constructor(private readonly db: DatabaseConnection) {}
+  constructor(
+    private readonly db: DatabaseConnection,
+    private readonly jobQueue: JobQueue,
+  ) {}
 
   async create(req: CreateContest): Promise<{ id: string }> {
     const [res] = await this.db
@@ -64,8 +68,10 @@ export class ContestService {
         cutoffDate: new Date(req.cutoffDate),
         contestDate: new Date(req.contestDate),
       })
-      .returning({ id: contests.id });
-    return res;
+      .returning({ id: contests.id, cutoffDate: contests.cutoffDate });
+
+    await this.jobQueue.addJob(res.id, res.cutoffDate);
+    return { id: res.id };
   }
 
   async get(contestId: string): Promise<GetContestResponse> {
@@ -120,6 +126,7 @@ export class ContestService {
     }
 
     await this.db.delete(contests).where(eq(contests.id, contestId));
+    await this.jobQueue.removeJob(contestId);
     return { status: "OK" };
   }
 
@@ -127,7 +134,7 @@ export class ContestService {
     contestId: string,
     req: UpdateContest,
   ): Promise<UpdateContestResponse> {
-    await this.db
+    const [res] = await this.db
       .update(contests)
       .set({
         ...req,
@@ -135,7 +142,11 @@ export class ContestService {
         cutoffDate: new Date(req.cutoffDate),
         contestDate: new Date(req.contestDate),
       })
-      .where(eq(contests.id, contestId));
+      .where(eq(contests.id, contestId))
+      .returning({ id: contests.id, cutoffDate: contests.cutoffDate });
+
+    await this.jobQueue.removeJob(res.id);
+    await this.jobQueue.addJob(res.id, res.cutoffDate);
     return req;
   }
 }
