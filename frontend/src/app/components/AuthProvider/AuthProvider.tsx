@@ -74,7 +74,7 @@ export function AuthContextProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, [router, pathname]);
 
   const logout = async () => {
     try {
