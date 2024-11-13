@@ -40,11 +40,16 @@ export function userRouter(userService: UserService, authService: AuthService) {
       ],
       handle(
         async (
-          req: Request<unknown, unknown, unknown, { role?: UserRole }>,
+          req: Request<
+            unknown,
+            unknown,
+            unknown,
+            { role?: UserRole; contest?: string }
+          >,
           res,
         ) => {
-          const { role } = req.query;
-          const users = await userService.getAllUsers(role);
+          const { role, contest } = req.query;
+          const users = await userService.getAllUsers(role, contest);
           res.status(200).send(users);
         },
       ),

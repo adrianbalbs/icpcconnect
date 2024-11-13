@@ -354,6 +354,7 @@ export type UserDTO = Omit<
 
 export const GetAllUsersQuerySchema = z.strictObject({
   role: UserRoleEnum.optional(),
+  contest: z.string().optional(),
 });
 
 export const CreateContestRegistrationSchema = z.strictObject({

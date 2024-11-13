@@ -23,14 +23,17 @@ export interface StudentInfo {
   tshirtSize: string | null;
 }
 
-const Students: React.FC = () => {
+type StudentsProps = {
+  contest?: string;
+};
+const Students: React.FC<StudentsProps> = ({ contest }) => {
   const [students, setStudents] = useState<StudentProps[]>([]);
 
   const getStudents = async () => {
     try {
       const res = await axios.get<{ allUsers: StudentInfo[] }>(
         `${SERVER_URL}/api/users`,
-        { withCredentials: true, params: { role: "Student" } },
+        { withCredentials: true, params: { role: "Student", contest } },
       );
       const allStudents: StudentInfo[] = res.data.allUsers;
       const filteredInfo: StudentProps[] = allStudents.map((student) => ({

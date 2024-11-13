@@ -143,7 +143,10 @@ export class UserService {
     return user;
   }
 
-  async getAllUsers(role?: UserRole): Promise<{ allUsers: UserDTO[] }> {
+  async getAllUsers(
+    role?: UserRole,
+    contest?: string,
+  ): Promise<{ allUsers: UserDTO[] }> {
     const { password, refreshTokenVersion, ...usersRest } =
       getTableColumns(users);
 
@@ -163,6 +166,15 @@ export class UserService {
 
     if (role) {
       query.where(eq(users.role, role));
+    }
+
+    if (contest) {
+      query
+        .innerJoin(
+          registrationDetails,
+          eq(users.id, registrationDetails.student),
+        )
+        .where(eq(registrationDetails.contest, contest));
     }
 
     const rawUsers = await query;
