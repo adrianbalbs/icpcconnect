@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter.js";
 import { DevDatabase, runMigrations, seed } from "./db/index.js";
 import {
   CodesService,
@@ -27,6 +28,8 @@ import { getLogger } from "./utils/logger.js";
 import cookieParser from "cookie-parser";
 import { AlgorithmService } from "./services/algorithm-service.js";
 import { userRouter } from "./routers/user-router.js";
+import { ExpressAdapter } from "@bull-board/express";
+import { createBullBoard } from "@bull-board/api";
 
 const logger = getLogger();
 
@@ -50,6 +53,13 @@ const emailService = new EmailService(dbConn);
 const jobQueue = new JobQueue(algorithmService);
 const contestService = new ContestService(dbConn, jobQueue);
 
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath("/api/admin/queues");
+createBullBoard({
+  queues: [new BullMQAdapter(jobQueue.queue)],
+  serverAdapter,
+});
+
 logger.info("Setup HTTP Server");
 app
   .use(
@@ -68,9 +78,13 @@ app
   .use("/api/email", emailRouter(emailService))
   .use("/api/contests", contestRouter(contestService, authService))
   .use("/api", codesRouter(codesService, authService))
-  .use("/api", adminRouter(adminService, authService, algorithmService))
+  .use("/api/admin", adminRouter(adminService, authService, algorithmService))
+  .use("/api/admin/queues", serverAdapter.getRouter())
   .use(errorHandlerMiddleware);
 
 app.listen(port, () => {
   logger.info(`Started up HTTP Server on ${port}`);
+  logger.info(
+    `Bull Board is available at http://localhost:${port}/api/admin/queues`,
+  );
 });

@@ -34,7 +34,7 @@ export function adminRouter(
       },
     )
     .delete(
-      "/admin/:id",
+      "/:id",
       authorise(["Admin"]),
       async (
         req: Request<{ id: string }, unknown>,
