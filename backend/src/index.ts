@@ -9,6 +9,7 @@ import {
   ContestService,
   UserService,
   EmailService,
+  JobQueue,
 } from "./services/index.js";
 import {
   codesRouter,
@@ -47,6 +48,7 @@ const adminService = new AdminService(dbConn);
 const algorithmService = new AlgorithmService(dbConn);
 const emailService = new EmailService(dbConn);
 const contestService = new ContestService(dbConn);
+const queueService = new JobQueue(algorithmService);
 
 logger.info("Setup HTTP Server");
 app
