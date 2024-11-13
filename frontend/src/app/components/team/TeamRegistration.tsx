@@ -12,11 +12,13 @@ import { enrolBtn } from "@/styles/sxStyles";
 
 type TeamRegistrationProps = {
   contestId: string;
+  cutoffDate?: string;
   fetchEnrollment: () => void;
 };
 
 const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   contestId,
+  cutoffDate,
   fetchEnrollment,
 }) => {
   const [completed, setCompleted] = useState(0);
@@ -82,6 +84,10 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
     }
   };
 
+  const isAfterCutoffDate = (cutoffDate: string | undefined) => {
+    return cutoffDate ? new Date() > new Date(cutoffDate) : false;
+  };
+
   // const checkPreference = () => {
   //   setAdded({ ...added, preference: true });
   // }
@@ -132,7 +138,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
       {/* TODO: Once preferences is merged, have disabled state linked to completed tasks */}
       <Stack justifyContent="center">
         <Button
-          disabled={false}
+          disabled={isAfterCutoffDate(cutoffDate)}
           onClick={handleContestRegistration}
           sx={{
             ...enrolBtn,

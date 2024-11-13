@@ -119,6 +119,7 @@ const Team: React.FC = () => {
       {status === 0 && (
         <TeamRegistration
           contestId={params.id}
+          cutoffDate={contest?.cutoffDate}
           fetchEnrollment={fetchEnrollment}
         />
       )}
