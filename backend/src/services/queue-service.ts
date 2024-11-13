@@ -9,8 +9,8 @@ export class JobQueue {
   private readonly logger = getLogger();
   readonly queue = new Queue("algorithm-scheduler", {
     connection: {
-      host: process.env.REDIS_HOST,
-      port: Number(process.env.REDIS_PORT) || 6739,
+      host: process.env.REDIS_HOST || "localhost",
+      port: Number(process.env.REDIS_PORT) || 6379,
     },
   });
   private readonly worker = new Worker(

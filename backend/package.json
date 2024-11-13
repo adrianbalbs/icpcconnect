@@ -11,7 +11,7 @@
     "pretest": "docker compose down && docker compose --profile test up -d test-db redis",
     "test": "sleep 3 && vitest --run",
     "posttest": "docker compose --profile test down -v test-db redis",
-    "test:ci": "npm run test:unit && npx vitest run --config vitest.config.integration.ts",
+    "test:ci": "sleep 3 && vitest --run",
     "test:integration_windows": "powershell -ExecutionPolicy Bypass -File ./integretion-test.ps1",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
