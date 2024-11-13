@@ -197,35 +197,44 @@ export const SendEmailVerificationCodeRequestSchema = z.object({
   isNormalVerificationEmail: z.boolean(),
 });
 
-export type SendEmailVerificationCodeRequest = z.infer<typeof SendEmailVerificationCodeRequestSchema>;
+export type SendEmailVerificationCodeRequest = z.infer<
+  typeof SendEmailVerificationCodeRequestSchema
+>;
 
 export const SendEmailForgotPasswordCodeRequestSchema = z.object({
   email: z.string().email(),
 });
 
-export type SendEmailForgotPasswordCodeRequest = z.infer<typeof SendEmailForgotPasswordCodeRequestSchema>;
-
+export type SendEmailForgotPasswordCodeRequest = z.infer<
+  typeof SendEmailForgotPasswordCodeRequestSchema
+>;
 
 export const PassRegisterEmailVerificationSchema = z.object({
   email: z.string().email(),
   userProvidedCode: z.string(),
 });
 
-export type PassRegisterEmailVerificationRequest = z.infer<typeof PassRegisterEmailVerificationSchema>;
+export type PassRegisterEmailVerificationRequest = z.infer<
+  typeof PassRegisterEmailVerificationSchema
+>;
 
 export const PassForgotPasswordVerificationSchema = z.object({
   id: z.string(),
   authenticationCode: z.string(),
 });
 
-export type PassForgotPasswordVerificationRequest = z.infer<typeof PassForgotPasswordVerificationSchema>;
+export type PassForgotPasswordVerificationRequest = z.infer<
+  typeof PassForgotPasswordVerificationSchema
+>;
 
 export const ForgotPasswordResetPasswordSchema = z.object({
   id: z.string(),
   newPassword: z.string(),
 });
 
-export type ForgotPasswordResetPasswordRequest = z.infer<typeof ForgotPasswordResetPasswordSchema>;
+export type ForgotPasswordResetPasswordRequest = z.infer<
+  typeof ForgotPasswordResetPasswordSchema
+>;
 
 export const UserRoleEnum = z.enum([
   "Student",
@@ -255,6 +264,26 @@ export const LanguagesSchema = z.strictObject({
   name: z.string(),
 });
 
+const LevelEnum = z.enum(["A", "B"]);
+export type Level = z.infer<typeof LevelEnum>;
+
+const LanguageExperienceEnum = z.enum(["none", "some", "prof"]);
+export type LanguageExperience = z.infer<typeof LanguageExperienceEnum>;
+
+const CourseNamesEnum = z.enum([
+  "Programming Fundamentals",
+  "Data Structures and Algorithms",
+  "Algorithm Design",
+  "Programming Challenges",
+]);
+
+const CourseSchema = z.strictObject({
+  id: z.number(),
+  type: CourseNamesEnum,
+});
+
+export type Course = z.infer<typeof CourseSchema>;
+
 export const StudentDetailsScehma = z.strictObject({
   studentId: z.string().min(1),
   pronouns: z.string().default(""),
@@ -262,13 +291,24 @@ export const StudentDetailsScehma = z.strictObject({
   dietaryRequirements: z.string().default(""),
   tshirtSize: z.string().default(""), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
   photoConsent: z.boolean().default(false),
-  exclusions: z.string().default(""),
   languagesSpoken: z.array(LanguagesSchema).default([]),
+  level: LevelEnum,
+  contestExperience: z.number(),
+  codeforcesRating: z.number(),
+  leetcodeRating: z.number(),
+  cppExperience: LanguageExperienceEnum,
+  cExperience: LanguageExperienceEnum,
+  javaExperience: LanguageExperienceEnum,
+  pythonExperience: LanguageExperienceEnum,
+  coursesCompleted: z.array(CourseSchema),
+  exclusions: z.string().default(""),
 });
+
 export type StudentDetailsDTO = z.infer<typeof StudentDetailsScehma>;
 
 export const UpdateStudentDetailsSchema = StudentDetailsScehma.extend({
   languagesSpoken: z.array(SpokenLanguageEnum), // Array of language IDs for updating
+  coursesCompleted: z.array(z.number()),
 }).partial();
 export type UpdateStudentDetails = z.infer<typeof UpdateStudentDetailsSchema>;
 
@@ -314,4 +354,14 @@ export type UserDTO = Omit<
 
 export const GetAllUsersQuerySchema = z.strictObject({
   role: UserRoleEnum.optional(),
+  contest: z.string().optional(),
 });
+
+export const CreateContestRegistrationSchema = z.strictObject({
+  student: z.string(),
+  contest: z.string(),
+});
+
+export type CreateContestRegistration = z.infer<
+  typeof CreateContestRegistrationSchema
+>;

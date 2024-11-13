@@ -92,3 +92,14 @@ export const editBtn = {
   textTransform: "none",
   boxShadow: "none",
 };
+
+export const enrolBtn = {
+  backgroundColor: "#555555",
+  color: "white",
+  alignSelf: "center",
+  mt: 4,
+  width: 320,
+  height: 50,
+  textTransform: "none",
+  fontWeight: "bold",
+};

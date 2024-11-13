@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
 import TeamsList from "@/components/teams/TeamsList";
@@ -20,8 +20,7 @@ const Teams: React.FC = () => {
   const [status, setStatus] = useState(0);
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const { id } = useParams<{ id: string }>();
-
-  const fetchContest = async () => {
+  const fetchContest = useCallback(async () => {
     try {
       const contest = await axios.get<ContestResponse>(
         `${SERVER_URL}/api/contests/${id}`,
@@ -31,7 +30,8 @@ const Teams: React.FC = () => {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [id]);
+
   useEffect(() => {
     if (status === 1) {
       const timeout = setTimeout(() => {
@@ -40,8 +40,12 @@ const Teams: React.FC = () => {
 
       return () => clearTimeout(timeout);
     }
-    fetchContest();
-  }, [status]);
+
+    const initialisePage = async () => {
+      await fetchContest();
+    };
+    initialisePage();
+  }, [status, fetchContest]);
 
   return (
     <>

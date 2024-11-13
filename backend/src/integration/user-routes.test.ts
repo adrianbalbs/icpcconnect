@@ -4,9 +4,9 @@ import express from "express";
 import { v4 } from "uuid";
 import { DatabaseConnection, users } from "../db/index.js";
 import { setupTestDatabase } from "./db-test-helpers.js";
-import { AuthService, UserService } from "../services/index.js";
+import { AuthService, ContestService, UserService } from "../services/index.js";
 import cookieParser from "cookie-parser";
-import { authRouter, userRouter } from "../routers/index.js";
+import { authRouter, contestRouter, userRouter } from "../routers/index.js";
 import { eq, not } from "drizzle-orm";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { generateCreateUserFixture } from "./fixtures.js";
@@ -25,6 +25,7 @@ describe("userRoutes tests", () => {
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
       .use("/api/users", userRouter(new UserService(db), authService))
+      .use("/api/contests", contestRouter(new ContestService(db), authService))
       .use(errorHandlerMiddleware);
   });
 
@@ -239,5 +240,150 @@ describe("userRoutes tests", () => {
       .delete(`/api/users/${v4()}`)
       .set("Cookie", cookies)
       .expect(400);
+  });
+
+  it("should register a user for a contest", async () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+    const contestDate = new Date();
+    contestDate.setDate(contestDate.getDate() + 3);
+
+    const contest = await request(app)
+      .post("/api/contests")
+      .set("Cookie", cookies)
+      .send({
+        name: "Test Contest",
+        earlyBirdDate: tomorrow,
+        cutoffDate: dayAfterTomorrow,
+        contestDate: contestDate,
+        site: 1,
+      })
+      .expect(200);
+
+    const user = generateCreateUserFixture({
+      studentId: "z5397730",
+      role: "Student",
+    });
+
+    const student = await request(app)
+      .post("/api/users")
+      .send(user)
+      .expect(200);
+
+    await request(app)
+      .post("/api/users/contest-registration")
+      .set("Cookie", cookies)
+      .send({ student: student.body.id, contest: contest.body.id })
+      .expect(200);
+  });
+
+  it("should get a user's registration for a contest", async () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+    const contestDate = new Date();
+    contestDate.setDate(contestDate.getDate() + 3);
+
+    const contest = await request(app)
+      .post("/api/contests")
+      .set("Cookie", cookies)
+      .send({
+        name: "Test Contest",
+        earlyBirdDate: tomorrow,
+        cutoffDate: dayAfterTomorrow,
+        contestDate: contestDate,
+        site: 1,
+      })
+      .expect(200);
+
+    const user = generateCreateUserFixture({
+      studentId: "z5397730",
+      role: "Student",
+    });
+
+    const student = await request(app)
+      .post("/api/users")
+      .send(user)
+      .expect(200);
+
+    await request(app)
+      .post("/api/users/contest-registration")
+      .set("Cookie", cookies)
+      .send({ student: student.body.id, contest: contest.body.id })
+      .expect(200);
+
+    await request(app)
+      .get(
+        `/api/users/${student.body.id}/contest-registration/${contest.body.id}`,
+      )
+      .set("Cookie", cookies)
+      .expect(200);
+  });
+
+  it("should delete a user's contest registration", async () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+    const contestDate = new Date();
+    contestDate.setDate(contestDate.getDate() + 3);
+
+    const contest = await request(app)
+      .post("/api/contests")
+      .set("Cookie", cookies)
+      .send({
+        name: "Test Contest",
+        earlyBirdDate: tomorrow,
+        cutoffDate: dayAfterTomorrow,
+        contestDate: contestDate,
+        site: 1,
+      })
+      .expect(200);
+
+    const user = generateCreateUserFixture({
+      studentId: "z5397730",
+      role: "Student",
+    });
+
+    const student = await request(app)
+      .post("/api/users")
+      .send(user)
+      .expect(200);
+
+    await request(app)
+      .post("/api/users/contest-registration")
+      .set("Cookie", cookies)
+      .send({ student: student.body.id, contest: contest.body.id })
+      .expect(200);
+
+    await request(app)
+      .get(
+        `/api/users/${student.body.id}/contest-registration/${contest.body.id}`,
+      )
+      .set("Cookie", cookies)
+      .expect(200);
+
+    await request(app)
+      .delete(
+        `/api/users/${student.body.id}/contest-registration/${contest.body.id}`,
+      )
+      .set("Cookie", cookies)
+      .expect(200);
+
+    await request(app)
+      .get(
+        `/api/users/${student.body.id}/contest-registration/${contest.body.id}`,
+      )
+      .set("Cookie", cookies)
+      .expect(404);
   });
 });

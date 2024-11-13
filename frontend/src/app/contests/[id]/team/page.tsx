@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { getInfo } from "@/utils/profileInfo";
@@ -37,7 +37,7 @@ const Team: React.FC = () => {
 
   const params = useParams<{ id: string }>();
 
-  const fetchContest = async () => {
+  const fetchContest = useCallback(async () => {
     try {
       const contest = await axios.get<ContestResponse>(
         `${SERVER_URL}/api/contests/${params.id}`,
@@ -47,15 +47,42 @@ const Team: React.FC = () => {
     } catch (err) {
       console.log(err);
     }
+  }, [params.id]);
+
+  const fetchEnrollment = useCallback(async () => {
+    try {
+      await axios.get(
+        `${SERVER_URL}/api/users/${id}/contest-registration/${params.id}`,
+        { withCredentials: true },
+      );
+      setStatus(1);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setStatus(0);
+      } else {
+        console.error(err);
+      }
+    }
+  }, [id, params.id]);
+
+  const handleWithdrawEnrollment = async () => {
+    try {
+      await axios.delete(
+        `${SERVER_URL}/api/users/${id}/contest-registration/${params.id}`,
+        { withCredentials: true },
+      );
+      setStatus(0);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const getTeam = async () => {
+  const getTeam = useCallback(async () => {
     try {
       const studentData = await getInfo(id);
       if (studentData) {
         setUni(studentData.university);
       }
-
       // const res = await axios.get(`${SERVER_URL}/api/teams/student/${id}`, {
       //   withCredentials: true,
       // });
@@ -68,12 +95,15 @@ const Team: React.FC = () => {
     } catch (error) {
       console.log(`Student get team error: ${error}`);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
-    getTeam();
-    fetchContest();
-  }, []);
+    const initializeData = async () => {
+      await Promise.all([getTeam(), fetchContest(), fetchEnrollment()]);
+    };
+
+    initializeData();
+  }, [getTeam, fetchContest, fetchEnrollment]);
 
   return (
     <>
@@ -86,9 +116,19 @@ const Team: React.FC = () => {
       </h1>
       <p className={teamStyles.university}>{uni}</p>
       {status !== 2 && <hr className={pageStyles.divider} />}
-      {status === 0 && <TeamRegistration />}
+      {status === 0 && (
+        <TeamRegistration
+          contestId={params.id}
+          cutoffDate={contest?.cutoffDate}
+          fetchEnrollment={fetchEnrollment}
+        />
+      )}
       {status === 1 && (
-        <WaitingScreen setStatus={setStatus} contest={contest} />
+        <WaitingScreen
+          setStatus={setStatus}
+          contest={contest}
+          handleWithdrawEnrollment={handleWithdrawEnrollment}
+        />
       )}
       {status === 2 && <Assigned members={team.members} />}
     </>

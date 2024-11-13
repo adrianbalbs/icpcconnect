@@ -10,12 +10,10 @@ import {
 import {
   AdminService,
   AuthService,
-  ContestRegistrationService,
   TeamService,
   UserService,
 } from "../services/index.js";
-import { contestRegistrationRouter } from "../routers/index.js";
-import { CreateContestRegistrationForm } from "../schemas/index.js";
+import { UpdateStudentDetails } from "../schemas/index.js";
 import {
   afterAll,
   afterEach,
@@ -44,13 +42,6 @@ describe("Algorithm Tests", () => {
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
       .use("/api/users", userRouter(new UserService(db), authService))
-      .use(
-        "/api/contest-registration",
-        contestRegistrationRouter(
-          new ContestRegistrationService(db),
-          authService,
-        ),
-      )
       .use("/api/teams", teamRouter(new TeamService(db), authService))
       .use(
         "/api",
@@ -119,8 +110,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -133,17 +123,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(1);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -190,8 +174,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -204,17 +187,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(2);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -270,8 +247,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -284,17 +260,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -350,8 +320,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -364,17 +333,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -457,8 +420,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -471,17 +433,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(6);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")

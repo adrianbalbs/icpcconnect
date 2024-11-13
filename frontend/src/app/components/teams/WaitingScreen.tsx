@@ -1,16 +1,21 @@
 import { Dispatch, SetStateAction } from "react";
 import pageStyles from "@/styles/Page.module.css";
 import { Button } from "@mui/material";
-import { purpleBtn } from "@/styles/sxStyles";
+import { enrolBtn, purpleBtn } from "@/styles/sxStyles";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { ContestResponse } from "@/contests/page";
 
 interface WaitingProps {
   setStatus?: Dispatch<SetStateAction<number>>;
+  handleWithdrawEnrollment?: () => void;
   contest: ContestResponse | null;
 }
 
-const WaitingScreen: React.FC<WaitingProps> = ({ setStatus, contest }) => {
+const WaitingScreen: React.FC<WaitingProps> = ({
+  setStatus,
+  contest,
+  handleWithdrawEnrollment,
+}) => {
   const { userSession } = useAuth();
 
   const nextStatus = () => {
@@ -35,6 +40,7 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus, contest }) => {
     }
     return undefined;
   };
+
   return (
     <div className={pageStyles["waiting-screen"]}>
       <p className={pageStyles.timeline}>
@@ -65,6 +71,11 @@ const WaitingScreen: React.FC<WaitingProps> = ({ setStatus, contest }) => {
       {userSession.role === "Admin" && (
         <Button sx={{ ...purpleBtn, mt: "15px" }} onClick={nextStatus}>
           Allocate Teams
+        </Button>
+      )}
+      {userSession.role === "Student" && handleWithdrawEnrollment && (
+        <Button sx={enrolBtn} onClick={handleWithdrawEnrollment}>
+          Withdraw Enrollment
         </Button>
       )}
     </div>
