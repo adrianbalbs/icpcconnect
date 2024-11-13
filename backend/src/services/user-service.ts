@@ -1,3 +1,4 @@
+import { checkCoachCode, checkSiteCoordCode } from "../utils/createcode.js";
 import { DatabaseConnection } from "../db/database.js";
 import {
   contests,
@@ -24,19 +25,34 @@ import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { and, eq, getTableColumns } from "drizzle-orm";
+import { CodesService } from "./codes-service.js";
 
 export class UserService {
   constructor(private readonly db: DatabaseConnection) {}
 
-  // TODO: Handle invite codes for refactor
-  async createUser(req: CreateUser): Promise<{ id: string }> {
-    const { studentId, password, ...rest } = req;
+  async createUser(req: CreateUser, codesService: CodesService): Promise<{ id: string }> {
+    const { studentId, password, role, inviteCode, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
+
+    if (studentId == undefined && role != "Admin") {
+      let inviteExists: boolean = false
+
+      if (role == "Site Coordinator") {
+        inviteExists = await checkSiteCoordCode(codesService, inviteCode)
+      } else if (role == "Coach") {
+        inviteExists = await checkCoachCode(codesService, inviteCode)
+      }
+
+      if (!inviteExists) {
+        const id = "INVALID"
+        return { id }
+      }
+    }
 
     return this.db.transaction(async (trx) => {
       const [{ id }] = await trx
         .insert(users)
-        .values({ password: hashedPassword, ...rest })
+        .values({ password: hashedPassword, role, ...rest })
         .returning({ id: users.id });
       await trx.insert(studentDetails).values({ userId: id, studentId });
       return { id };

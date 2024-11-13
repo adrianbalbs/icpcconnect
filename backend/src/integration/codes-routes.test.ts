@@ -72,6 +72,29 @@ describe("contestRegistrationRouter tests", () => {
     expect(res2.body[0].code).toEqual(res.body.code);
   });
 
+  it("should create a new coach code, return that code, and have it be in the db, check that it is verified", async () => {
+    const res = await request(app)
+      .get("/api/newCoachCode")
+      .set("Cookie", cookies)
+      .expect(200);
+
+    expect(res.body.code).not.toBeNull();
+    expect(res.body.code > 1000000);
+    expect(res.body.code < 9999999);
+
+    const res2 = await request(app)
+      .get("/api/allRoleCodes")
+      .set("Cookie", cookies)
+      .expect(200);
+
+    expect(res2.body).not.toBeNull();
+    expect(res2.body[0].role).toEqual(role.coach);
+    expect(res2.body[0].code).toEqual(res.body.code);
+
+    
+  });
+
+
   it("should create a new site-coord code, return that code, and have it be in the db", async () => {
     const res = await request(app)
       .get("/api/newSiteCoordCode")
