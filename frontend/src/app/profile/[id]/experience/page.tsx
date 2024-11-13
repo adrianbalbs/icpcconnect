@@ -131,7 +131,6 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
         <ExperienceModal
           id={params.id}
           added={added}
-          setAdded={setAdded}
           experience={experience}
           getExperience={getExperience}
         />

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SERVER_URL } from "@/utils/constants";
 import { addBtn, addExperienceBtn, addModal } from "@/styles/sxStyles";
 import pageStyles from "@/styles/Page.module.css";
@@ -23,7 +23,6 @@ import CourseCheckbox from "./modalInput/CourseCheckbox";
 interface ModalProps {
   id: string;
   added: ExperienceType;
-  setAdded: Dispatch<SetStateAction<ExperienceType>>;
   experience: Experiences;
   getExperience: () => void;
 }
@@ -31,7 +30,6 @@ interface ModalProps {
 const ExperienceModal: React.FC<ModalProps> = ({
   id,
   added,
-  setAdded,
   experience,
   getExperience,
 }) => {
@@ -75,7 +73,6 @@ const ExperienceModal: React.FC<ModalProps> = ({
         { withCredentials: true },
       );
       getExperience();
-      setAdded({ ...added, [type]: true });
     } catch (error) {
       console.log(`Update experience error: ${error}`);
     }
