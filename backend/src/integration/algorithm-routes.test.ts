@@ -11,7 +11,6 @@ import {
   AdminService,
   AuthService,
   CodesService,
-  CodesService,
   TeamService,
   UserService,
 } from "../services/index.js";
@@ -44,7 +43,7 @@ describe("Algorithm Tests", () => {
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/users", userRouter(new UserService(db), authService, codesService, codesService))
+      .use("/api/users", userRouter(new UserService(db), authService, codesService))
       .use("/api/teams", teamRouter(new TeamService(db), authService))
       .use(
         "/api",

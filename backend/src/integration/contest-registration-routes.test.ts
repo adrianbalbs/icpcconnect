@@ -5,16 +5,8 @@ import { authRouter, userRouter } from "../routers/index.js";
 import {
   AuthService,
   CodesService,
-  ContestRegistrationService,
-  GetRegistrationFormResponse,
-  UpdateContestRegistrationFormResponse,
   UserService,
 } from "../services/index.js";
-import { contestRegistrationRouter } from "../routers/index.js";
-import {
-  CreateContestRegistrationForm,
-  UpdateContestRegistrationForm,
-} from "../schemas/index.js";
 import { v4 as uuidv4 } from "uuid";
 import {
   afterAll,
