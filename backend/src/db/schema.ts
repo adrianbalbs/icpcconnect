@@ -98,7 +98,6 @@ export const studentDetails = pgTable("student_details", {
   pythonExperience: languageExperienceEnum("python_experience")
     .default("none")
     .notNull(),
-  timeSubmitted: timestamp("time_submitted").notNull().defaultNow(),
   exclusions: text("exclusions").default("").notNull(),
 });
 
@@ -129,6 +128,7 @@ export const registrationDetails = pgTable(
     contest: uuid("contest")
       .references(() => contests.id, { onDelete: "cascade" })
       .notNull(),
+    timeSubmitted: timestamp("time_submitted").notNull().defaultNow(),
   },
   (table) => {
     return {

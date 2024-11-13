@@ -211,13 +211,14 @@ export class UserService {
   async registerForContest(
     student: string,
     contest: string,
-  ): Promise<{ student: string; contest: string }> {
+  ): Promise<{ student: string; contest: string; timeSubmitted: Date }> {
     const [res] = await this.db
       .insert(registrationDetails)
       .values({ student, contest })
       .returning({
         student: registrationDetails.student,
         contest: registrationDetails.contest,
+        timeSubmitted: registrationDetails.timeSubmitted,
       });
     return res;
   }
@@ -225,7 +226,7 @@ export class UserService {
   async getContestRegistrationDetails(
     student: string,
     contest: string,
-  ): Promise<{ student: string; contest: string }> {
+  ): Promise<{ student: string; contest: string; timeSubmitted: Date }> {
     const [res] = await this.db
       .select()
       .from(registrationDetails)
