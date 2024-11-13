@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import pageStyles from "@/styles/Page.module.css";
 import { Button } from "@mui/material";
-import { purpleBtn } from "@/styles/sxStyles";
+import { enrolBtn, purpleBtn } from "@/styles/sxStyles";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { ContestResponse } from "@/contests/page";
 
@@ -74,10 +74,7 @@ const WaitingScreen: React.FC<WaitingProps> = ({
         </Button>
       )}
       {userSession.role === "Student" && handleWithdrawEnrollment && (
-        <Button
-          sx={{ ...purpleBtn, mt: "15px" }}
-          onClick={handleWithdrawEnrollment}
-        >
+        <Button sx={enrolBtn} onClick={handleWithdrawEnrollment}>
           Withdraw Enrollment
         </Button>
       )}

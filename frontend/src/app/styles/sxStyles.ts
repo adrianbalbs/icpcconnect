@@ -93,7 +93,7 @@ export const editBtn = {
   boxShadow: "none",
 };
 
-export const enrollBtn = {
+export const enrolBtn = {
   backgroundColor: "#555555",
   color: "white",
   alignSelf: "center",
@@ -102,5 +102,4 @@ export const enrollBtn = {
   height: 50,
   textTransform: "none",
   fontWeight: "bold",
-  boxShadow: "none",
 };

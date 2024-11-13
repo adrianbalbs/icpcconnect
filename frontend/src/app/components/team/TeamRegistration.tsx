@@ -8,7 +8,7 @@ import { getInfo } from "@/utils/profileInfo";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { Button, Stack } from "@mui/material";
 import { User } from "@/types/users";
-import { enrollBtn } from "@/styles/sxStyles";
+import { enrolBtn } from "@/styles/sxStyles";
 
 type TeamRegistrationProps = {
   contestId: string;
@@ -135,7 +135,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
           disabled={false}
           onClick={handleContestRegistration}
           sx={{
-            ...enrollBtn,
+            ...enrolBtn,
             "&:disabled": {
               backgroundColor: "#cccccc",
               color: "#888888",
