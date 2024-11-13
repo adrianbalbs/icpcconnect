@@ -129,7 +129,7 @@ export class AlgorithmService {
   }
 
   async createTeam(req: CreateTeamRequest) {
-    const { name, university, memberIds, flagged } = req;
+    const { name, university, memberIds, flagged, contest } = req;
 
     const [id] = await this.db
       .insert(teams)
@@ -137,6 +137,7 @@ export class AlgorithmService {
         name,
         university,
         flagged,
+        contest,
       })
       .returning({ teamId: teams.id });
 

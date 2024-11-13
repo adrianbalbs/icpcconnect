@@ -16,13 +16,15 @@ export class TeamService {
   }
 
   async createTeam(req: CreateTeamRequest) {
-    const { name, university, memberIds } = req;
+    const { name, university, memberIds, contest, flagged } = req;
 
     const [id] = await this.db
       .insert(teams)
       .values({
         name,
         university,
+        contest,
+        flagged,
       })
       .returning({ teamId: teams.id });
     const members = await this.db.query.users.findMany({

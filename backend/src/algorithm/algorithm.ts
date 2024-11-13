@@ -117,6 +117,7 @@ export async function runFullAlgorithm(
         university: uni.id,
         memberIds: g.ids.map(String),
         flagged: g.flagged,
+        contest: contestId,
       };
 
       teamNum++;

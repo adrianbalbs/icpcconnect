@@ -4,8 +4,9 @@ import { z } from "zod";
 export const CreateTeamRequestSchema = z.object({
   name: z.string(),
   university: z.number(),
-  memberIds: z.array(z.string()), 
-  flagged: z.boolean()
+  memberIds: z.array(z.string()),
+  flagged: z.boolean(),
+  contest: z.string(),
 });
 
 export type CreateTeamRequest = z.infer<typeof CreateTeamRequestSchema>;
