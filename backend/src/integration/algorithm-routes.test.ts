@@ -10,6 +10,7 @@ import {
 import {
   AdminService,
   AuthService,
+  CodesService,
   ContestRegistrationService,
   TeamService,
   UserService,
@@ -39,11 +40,12 @@ describe("Algorithm Tests", () => {
     const dbSetup = await setupTestDatabase();
     db = dbSetup.db;
     const authService = new AuthService(db);
+    const codesService = new CodesService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/users", userRouter(new UserService(db), authService))
+      .use("/api/users", userRouter(new UserService(db), authService, codesService))
       .use(
         "/api/contest-registration",
         contestRegistrationRouter(

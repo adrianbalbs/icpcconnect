@@ -4,12 +4,13 @@ import express from "express";
 import { v4 } from "uuid";
 import { DatabaseConnection, users } from "../db/index.js";
 import { setupTestDatabase } from "./db-test-helpers.js";
-import { AuthService, UserService } from "../services/index.js";
+import { AuthService, CodesService, UserService } from "../services/index.js";
 import cookieParser from "cookie-parser";
-import { authRouter, userRouter } from "../routers/index.js";
+import { authRouter, codesRouter, userRouter } from "../routers/index.js";
 import { eq, not } from "drizzle-orm";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { generateCreateUserFixture } from "./fixtures.js";
+import { checkCoachCode } from "../utils/createcode.js";
 
 describe("userRoutes tests", () => {
   let db: DatabaseConnection;
@@ -20,11 +21,13 @@ describe("userRoutes tests", () => {
     const dbSetup = await setupTestDatabase();
     db = dbSetup.db;
     const authService = new AuthService(db);
+    const codesService = new CodesService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/users", userRouter(new UserService(db), authService))
+      .use("/api/users", userRouter(new UserService(db), authService, codesService))
+      .use("/api/codes", codesRouter(codesService, authService))
       .use(errorHandlerMiddleware);
   });
 
@@ -54,14 +57,40 @@ describe("userRoutes tests", () => {
   });
 
   it("should register a user that is not a student", async () => {
+    const res1 = await request(app).get("/api/codes/newCoachCode").set("Cookie", cookies).expect(200)
+    expect(res1.body.code).not.toBeNull();
+    expect(res1.body.code > 1000000);
+    expect(res1.body.code < 9999999);
+
+    const res2 = await request(app)
+      .get("/api/codes/allRoleCodes")
+      .set("Cookie", cookies)
+      .expect(200);
+
+    expect(res2.body).not.toBeNull();
+    expect(res2.body[0].role).toEqual(1);
+    expect(res2.body[0].code).toEqual(res1.body.code);
+    
     const user = generateCreateUserFixture({
       role: "Coach",
+      inviteCode: res1.body.code.toString()
     });
+
     const res = await request(app).post("/api/users").send(user).expect(200);
     expect(res.body).toHaveProperty("id");
   });
 
   it("should get all users", async () => {
+    const res1 = await request(app).get("/api/codes/newCoachCode").set("Cookie", cookies).expect(200)
+    expect(res1.body.code).not.toBeNull();
+    expect(res1.body.code > 1000000);
+    expect(res1.body.code < 9999999);
+
+    const res2 = await request(app).get("/api/codes/newSiteCoordCode").set("Cookie", cookies).expect(200)
+    expect(res2.body.code).not.toBeNull();
+    expect(res2.body.code > 1000000);
+    expect(res2.body.code < 9999999);
+
     const users = [
       generateCreateUserFixture({
         givenName: "Adrian",
@@ -75,12 +104,14 @@ describe("userRoutes tests", () => {
         familyName: "Balbalosa",
         email: "hi2@comp3900.com",
         role: "Coach",
+        inviteCode: res1.body.code.toString()
       }),
       generateCreateUserFixture({
         givenName: "Adrian",
         familyName: "Balbalosa",
         email: "hi3@comp3900.com",
         role: "Site Coordinator",
+        inviteCode: res2.body.code.toString()
       }),
     ];
 
@@ -98,6 +129,16 @@ describe("userRoutes tests", () => {
   });
 
   it("should get all based on role", async () => {
+    const res1 = await request(app).get("/api/codes/newCoachCode").set("Cookie", cookies).expect(200)
+    expect(res1.body.code).not.toBeNull();
+    expect(res1.body.code > 1000000);
+    expect(res1.body.code < 9999999);
+
+    const res2 = await request(app).get("/api/codes/newSiteCoordCode").set("Cookie", cookies).expect(200)
+    expect(res2.body.code).not.toBeNull();
+    expect(res2.body.code > 1000000);
+    expect(res2.body.code < 9999999);
+
     const users = [
       generateCreateUserFixture({
         givenName: "Adrian",
@@ -111,12 +152,14 @@ describe("userRoutes tests", () => {
         familyName: "Balbalosa",
         email: "hi2@comp3900.com",
         role: "Coach",
+        inviteCode: res1.body.code.toString()
       }),
       generateCreateUserFixture({
         givenName: "Adrian",
         familyName: "Balbalosa",
         email: "hi3@comp3900.com",
         role: "Site Coordinator",
+        inviteCode: res2.body.code.toString()
       }),
     ];
 
@@ -133,8 +176,14 @@ describe("userRoutes tests", () => {
   });
 
   it("should get a user based on id", async () => {
+    const res1 = await request(app).get("/api/codes/newCoachCode").set("Cookie", cookies).expect(200)
+    expect(res1.body.code).not.toBeNull();
+    expect(res1.body.code > 1000000);
+    expect(res1.body.code < 9999999);
+
     const user = generateCreateUserFixture({
       role: "Coach",
+      inviteCode: res1.body.code.toString()
     });
     const idRes = await request(app).post("/api/users").send(user).expect(200);
     const req = await request(app)
@@ -152,9 +201,15 @@ describe("userRoutes tests", () => {
   });
 
   it("should update a user's details", async () => {
+    const res1 = await request(app).get("/api/codes/newCoachCode").set("Cookie", cookies).expect(200)
+    expect(res1.body.code).not.toBeNull();
+    expect(res1.body.code > 1000000);
+    expect(res1.body.code < 9999999);
+
     const user = generateCreateUserFixture({
       givenName: "Bob",
       role: "Coach",
+      inviteCode: res1.body.code.toString()
     });
     const idRes = await request(app).post("/api/users").send(user).expect(200);
     await request(app)
@@ -170,9 +225,15 @@ describe("userRoutes tests", () => {
   });
 
   it("should update a user's password", async () => {
+    const res1 = await request(app).get("/api/codes/newCoachCode").set("Cookie", cookies).expect(200)
+    expect(res1.body.code).not.toBeNull();
+    expect(res1.body.code > 1000000);
+    expect(res1.body.code < 9999999);
+
     const user = generateCreateUserFixture({
       givenName: "Bob",
       role: "Coach",
+      inviteCode: res1.body.code.toString()
     });
     const idRes = await request(app).post("/api/users").send(user).expect(200);
     await request(app)

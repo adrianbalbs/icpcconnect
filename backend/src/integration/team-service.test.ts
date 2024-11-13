@@ -3,7 +3,7 @@ import request from "supertest";
 import express from "express";
 import { DatabaseConnection, users } from "../db/index.js";
 import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
-import { TeamService, AuthService, UserService } from "../services/index.js";
+import { TeamService, AuthService, UserService, CodesService } from "../services/index.js";
 import {
   beforeAll,
   afterAll,
@@ -29,11 +29,12 @@ describe("TeamService tests", () => {
     const dbSetup = await setupTestDatabase();
     db = dbSetup.db;
     const authService = new AuthService(db);
+    const codesService = new CodesService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/users", userRouter(new UserService(db), authService))
+      .use("/api/users", userRouter(new UserService(db), authService, codesService))
       .use("/api/teams", teamRouter(new TeamService(db), authService))
       .use(errorHandlerMiddleware);
   });

@@ -1066,10 +1066,6 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     expect(groups.length).toEqual(1);
 
-    console.log(calculateScore(s1));
-    console.log(calculateScore(s2));
-    console.log(calculateScore(s3));
-
     expect(groups[0].ids.sort()).toEqual([s1.id, s2.id, s3.id].sort());
     expect(groups[0].totalScore).toEqual(
       calculateScore(s1) + calculateScore(s2) + calculateScore(s3),

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 // import { getLogger } from "../utils/logger.js";
 import { AuthService, CodesService } from "../services/index.js";
 import {
+  checkCoachCode,
   pushCodeAuth,
   pushCodeCoach,
   pushCodeSiteCoord,
@@ -18,7 +19,6 @@ export function codesRouter(
   const authenticate = createAuthenticationMiddleware(authService);
   return (
     Router()
-      /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/
       .get(
         "/allRoleCodes",
         [authenticate, authorise(["Admin"])],
@@ -32,7 +32,6 @@ export function codesRouter(
         },
       )
 
-      /** THESE ARE UNSAFE IN PROD (WE SHOULD REMOVE THESE) **/
       .get(
         "/allAuthCodes",
         [authenticate, authorise(["Admin"])],
