@@ -29,6 +29,13 @@
       "when": 1731495204110,
       "tag": "0002_exotic_darwin",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1731539741737,
+      "tag": "0003_goofy_moonstone",
+      "breakpoints": true
     }
   ]
 }
