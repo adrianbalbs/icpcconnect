@@ -249,6 +249,7 @@ export const teams = pgTable("teams", {
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
   flagged: boolean("flagged").default(false).notNull(),
+  //potentialReplacements:  
 });
 
 export const teamRelations = relations(teams, ({ many, one }) => ({

@@ -158,4 +158,8 @@ export class TeamService {
     await this.db.delete(teams).where(eq(teams.id, teamId));
     return { status: "OK" };
   }
+
+  async pulloutMember(studentId: string, replacementId: string) {
+    return { status: "OK" };
+  }
 }

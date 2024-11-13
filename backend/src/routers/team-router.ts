@@ -119,5 +119,27 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
           next(err);
         }
       },
+    )
+    .put(
+      "/pullout/:studentId/:replacementId",
+      [
+        authorise(["Student"]),
+      ],
+      async (
+        req: Request<{ studentId: string, replacementId: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        //studentId is the *internal* id of the student pulling out (so that no student can pull out another)
+        //replacementId is the *student* id of the replacing student, such that only if they know the student closely
+        //that they can choose them as a replacmeent
+        const { studentId, replacementId } = req.params;
+        try {
+          const team = teamService.pulloutMember(studentId, replacementId);
+          res.status(200).json(team);
+        } catch (err) {
+          next(err);
+        }
+      },
     );
 }

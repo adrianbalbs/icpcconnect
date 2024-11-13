@@ -313,4 +313,8 @@ export class UserService {
     await this.db.delete(users).where(eq(users.id, id));
     return { status: "OK" };
   }
+
+  async acceptReplacement(teamId: string, studentId: string) {
+    return { status: "OK" };
+  }
 }
