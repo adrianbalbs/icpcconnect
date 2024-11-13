@@ -6,7 +6,7 @@ import {
   authorise,
 } from "../middleware/index.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
-import { AlgorithmRequest, AlgorithmRequestSchema } from "src/schemas/index.js";
+import { AlgorithmRequest, AlgorithmRequestSchema } from "../schemas/index.js";
 
 export function adminRouter(
   adminService: AdminService,
