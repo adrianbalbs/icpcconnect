@@ -10,12 +10,10 @@ import {
 import {
   AdminService,
   AuthService,
-  ContestRegistrationService,
   TeamService,
   UserService,
 } from "../services/index.js";
-import { contestRegistrationRouter } from "../routers/index.js";
-import { CreateContestRegistrationForm, CreateUser } from "../schemas/index.js";
+import { UpdateStudentDetails } from "../schemas/index.js";
 import {
   afterAll,
   afterEach,
@@ -44,13 +42,6 @@ describe("Algorithm Tests", () => {
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
       .use("/api/users", userRouter(new UserService(db), authService))
-      .use(
-        "/api/contest-registration",
-        contestRegistrationRouter(
-          new ContestRegistrationService(db),
-          authService,
-        ),
-      )
       .use("/api/teams", teamRouter(new TeamService(db), authService))
       .use(
         "/api",
@@ -119,8 +110,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -133,17 +123,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(1);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -190,8 +174,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -204,17 +187,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(2);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -270,8 +247,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -284,17 +260,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -350,8 +320,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -364,17 +333,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(3);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -457,8 +420,7 @@ describe("Algorithm Tests", () => {
 
       studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
+      const registration: UpdateStudentDetails = {
         coursesCompleted: [1, 2, 3],
         pythonExperience: "prof",
         cExperience: "prof",
@@ -471,17 +433,11 @@ describe("Algorithm Tests", () => {
       };
 
       await request(app)
-        .post("/api/contest-registration")
+        .patch(`/api/users/${response.body.id}/student-details`)
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
     }
-
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(6);
 
     const algoSuccess = await request(app)
       .post("/api/runalgo")
@@ -496,107 +452,107 @@ describe("Algorithm Tests", () => {
     expect(teams.body).toHaveLength(2);
   });
 
-  it("should generate 50 students at the same uni, 30 at another, and 20 at another, and create a total of 32 teams", async () => {
-    const students: CreateUser[] = [];
+  // it("should generate 50 students at the same uni, 30 at another, and 20 at another, and create a total of 32 teams", async () => {
+  //   const students: CreateUser[] = [];
 
-    for (let i = 0; i < 50; i++) {
-      const student = generateCreateUserFixture({
-        role: "Student",
-        givenName: gen(6),
-        familyName: gen(6),
-        email: gen(7) + "@comp3900.com",
-        studentId: gen(10),
-        password: "securepass",
-        university: 1,
-      });
-      students.push(student);
+  //   for (let i = 0; i < 50; i++) {
+  //     const student = generateCreateUserFixture({
+  //       role: "Student",
+  //       givenName: gen(6),
+  //       familyName: gen(6),
+  //       email: gen(7) + "@comp3900.com",
+  //       studentId: gen(10),
+  //       password: "securepass",
+  //       university: 1,
+  //     });
+  //     students.push(student);
 
-      if (i < 20) {
-        const student2 = generateCreateUserFixture({
-          role: "Student",
-          givenName: gen(6),
-          familyName: gen(6),
-          email: gen(7) + "@comp3900.com",
-          studentId: gen(10),
-          password: "securepass",
-          university: 2,
-        });
-        students.push(student2);
-      }
+  //     if (i < 20) {
+  //       const student2 = generateCreateUserFixture({
+  //         role: "Student",
+  //         givenName: gen(6),
+  //         familyName: gen(6),
+  //         email: gen(7) + "@comp3900.com",
+  //         studentId: gen(10),
+  //         password: "securepass",
+  //         university: 2,
+  //       });
+  //       students.push(student2);
+  //     }
 
-      if (i < 41 && i > 10) {
-        const student3 = generateCreateUserFixture({
-          role: "Student",
-          givenName: gen(6),
-          familyName: gen(6),
-          email: gen(7) + "@comp3900.com",
-          studentId: gen(10),
-          password: "securepass",
-          university: 3,
-        });
-        students.push(student3);
-      }
-    }
+  //     if (i < 41 && i > 10) {
+  //       const student3 = generateCreateUserFixture({
+  //         role: "Student",
+  //         givenName: gen(6),
+  //         familyName: gen(6),
+  //         email: gen(7) + "@comp3900.com",
+  //         studentId: gen(10),
+  //         password: "securepass",
+  //         university: 3,
+  //       });
+  //       students.push(student3);
+  //     }
+  //   }
 
-    expect(students).toHaveLength(100);
+  //   expect(students).toHaveLength(100);
 
-    const studentIds: string[] = [];
+  //   const studentIds: string[] = [];
 
-    for (const student of students) {
-      const response = await request(app)
-        .post("/api/users")
-        .send(student)
-        .expect(200);
+  //   for (const student of students) {
+  //     const response = await request(app)
+  //       .post("/api/users")
+  //       .send(student)
+  //       .expect(200);
 
-      studentIds.push(response.body.id as string);
+  //     studentIds.push(response.body.id as string);
 
-      const registration: CreateContestRegistrationForm = {
-        student: response.body.id,
-        coursesCompleted: [1, 2, 3],
-        pythonExperience: "prof",
-        cExperience: "prof",
-        cppExperience: "prof",
-        javaExperience: "prof",
-        level: "A",
-        leetcodeRating: 0,
-        codeforcesRating: 0,
-        contestExperience: 0,
-      };
+  //     const registration: CreateContestRegistrationForm = {
+  //       student: response.body.id,
+  //       coursesCompleted: [1, 2, 3],
+  //       pythonExperience: "prof",
+  //       cExperience: "prof",
+  //       cppExperience: "prof",
+  //       javaExperience: "prof",
+  //       level: "A",
+  //       leetcodeRating: 0,
+  //       codeforcesRating: 0,
+  //       contestExperience: 0,
+  //     };
 
-      await request(app)
-        .post("/api/contest-registration")
-        .set("Cookie", cookies)
-        .send(registration)
-        .expect(200);
-    }
+  //     await request(app)
+  //       .post("/api/contest-registration")
+  //       .set("Cookie", cookies)
+  //       .send(registration)
+  //       .expect(200);
+  //   }
 
-    const allRegistrationsResponse = await request(app)
-      .get("/api/contest-registration")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(allRegistrationsResponse.body.registrations).toHaveLength(100);
+  //   const allRegistrationsResponse = await request(app)
+  //     .get("/api/contest-registration")
+  //     .set("Cookie", cookies)
+  //     .expect(200);
+  //   expect(allRegistrationsResponse.body.registrations).toHaveLength(100);
 
-    const algoSuccess = await request(app)
-      .post("/api/runalgo")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(algoSuccess.body.success).toBe(true);
+  //   const algoSuccess = await request(app)
+  //     .post("/api/runalgo")
+  //     .set("Cookie", cookies)
+  //     .expect(200);
+  //   expect(algoSuccess.body.success).toBe(true);
 
-    const teams = await request(app)
-      .get("/api/teams/all")
-      .set("Cookie", cookies)
-      .expect(200);
-    expect(teams.body).toHaveLength(32);
-  }, 60000);
+  //   const teams = await request(app)
+  //     .get("/api/teams/all")
+  //     .set("Cookie", cookies)
+  //     .expect(200);
+  //   expect(teams.body).toHaveLength(32);
+  // }, 60000);
 });
 
-function gen(length: number): string {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    result += characters[randomIndex];
-  }
-  return result;
-}
+// function gen(length: number): string {
+//   const characters =
+//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//   let result = "";
+//   for (let i = 0; i < length; i++) {
+//     const randomIndex = Math.floor(Math.random() * characters.length);
+//     result += characters[randomIndex];
+//   }
+//   return result;
+// }

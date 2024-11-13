@@ -1,7 +1,11 @@
 import { DatabaseConnection } from "../db/database.js";
 import {
+  contests,
+  courses,
+  coursesCompletedByStudent,
   languages,
   languagesSpokenByStudent,
+  registrationDetails,
   studentDetails,
   teams,
   universities,
@@ -19,7 +23,7 @@ import {
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
-import { eq, getTableColumns } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 
 export class UserService {
   constructor(private readonly db: DatabaseConnection) {}
@@ -72,7 +76,12 @@ export class UserService {
       )
       .where(eq(languagesSpokenByStudent.studentId, id));
 
-    return { ...user, languagesSpoken };
+    const coursesCompleted = await this.db
+      .select({ id: coursesCompletedByStudent.courseId, type: courses.type })
+      .from(coursesCompletedByStudent)
+      .innerJoin(courses, eq(courses.id, coursesCompletedByStudent.courseId))
+      .where(eq(coursesCompletedByStudent.studentId, id));
+    return { ...user, languagesSpoken, coursesCompleted };
   }
 
   async updateUser(id: string, req: UpdateUser): Promise<{ id: string }> {
@@ -101,11 +110,14 @@ export class UserService {
     id: string,
     req: UpdateStudentDetails,
   ): Promise<{ id: string }> {
-    const { languagesSpoken, ...rest } = req;
+    const { languagesSpoken, coursesCompleted, ...rest } = req;
 
     const user = await this.db.transaction(async (tx) => {
       if (Object.keys(rest).length > 0) {
-        await tx.update(studentDetails).set(rest).where(eq(studentDetails.userId, id));
+        await tx
+          .update(studentDetails)
+          .set(rest)
+          .where(eq(studentDetails.userId, id));
       }
       if (languagesSpoken) {
         await tx
@@ -118,13 +130,26 @@ export class UserService {
         }
       }
 
+      if (coursesCompleted) {
+        await tx
+          .delete(coursesCompletedByStudent)
+          .where(eq(coursesCompletedByStudent.studentId, id));
+        for (const course of coursesCompleted) {
+          await tx
+            .insert(coursesCompletedByStudent)
+            .values({ courseId: course, studentId: id });
+        }
+      }
       return { id };
     });
 
     return user;
   }
 
-  async getAllUsers(role?: UserRole): Promise<{ allUsers: UserDTO[] }> {
+  async getAllUsers(
+    role?: UserRole,
+    contest?: string,
+  ): Promise<{ allUsers: UserDTO[] }> {
     const { password, refreshTokenVersion, ...usersRest } =
       getTableColumns(users);
 
@@ -146,6 +171,15 @@ export class UserService {
       query.where(eq(users.role, role));
     }
 
+    if (contest) {
+      query
+        .innerJoin(
+          registrationDetails,
+          eq(users.id, registrationDetails.student),
+        )
+        .where(eq(registrationDetails.contest, contest));
+    }
+
     const rawUsers = await query;
     const allUsers = await Promise.all(
       rawUsers.map(async (user) => {
@@ -158,11 +192,95 @@ export class UserService {
           )
           .where(eq(languagesSpokenByStudent.studentId, user.id));
 
-        return { ...user, languagesSpoken };
+        const coursesCompleted = await this.db
+          .select({
+            id: coursesCompletedByStudent.courseId,
+            type: courses.type,
+          })
+          .from(coursesCompletedByStudent)
+          .innerJoin(
+            courses,
+            eq(courses.id, coursesCompletedByStudent.courseId),
+          )
+          .where(eq(coursesCompletedByStudent.studentId, user.id));
+
+        return { ...user, languagesSpoken, coursesCompleted };
       }),
     );
 
     return { allUsers };
+  }
+
+  async registerForContest(
+    student: string,
+    contest: string,
+  ): Promise<{ student: string; contest: string; timeSubmitted: Date }> {
+    const [selectedContest] = await this.db
+      .select({ cutoffDate: contests.cutoffDate })
+      .from(contests)
+      .where(eq(contests.id, contest));
+
+    if (!selectedContest) {
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Contest ${contest} does not exist`,
+      });
+    }
+
+    if (new Date() > selectedContest.cutoffDate) {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Registration past the cutoff date.`,
+      });
+    }
+
+    const [res] = await this.db
+      .insert(registrationDetails)
+      .values({ student, contest })
+      .returning({
+        student: registrationDetails.student,
+        contest: registrationDetails.contest,
+        timeSubmitted: registrationDetails.timeSubmitted,
+      });
+    return res;
+  }
+
+  async getContestRegistrationDetails(
+    student: string,
+    contest: string,
+  ): Promise<{ student: string; contest: string; timeSubmitted: Date }> {
+    const [res] = await this.db
+      .select()
+      .from(registrationDetails)
+      .where(
+        and(
+          eq(registrationDetails.student, student),
+          eq(registrationDetails.contest, contest),
+        ),
+      );
+    if (!res) {
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Registration wih student id ${student} and contest id ${contest} not found`,
+      });
+    }
+    return res;
+  }
+
+  async deleteContestRegistration(
+    student: string,
+    contest: string,
+  ): Promise<DeleteResponse> {
+    await this.db
+      .delete(registrationDetails)
+
+      .where(
+        and(
+          eq(registrationDetails.contest, contest),
+          eq(registrationDetails.student, student),
+        ),
+      );
+    return { status: "OK" };
   }
 
   async deleteUser(id: string): Promise<DeleteResponse> {

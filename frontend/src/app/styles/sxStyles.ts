@@ -45,6 +45,7 @@ export const addBtn = {
 };
 
 export const experienceHeading = {
+  // fontSize: '14px',
   fontSize: "15px",
   fontWeight: 600,
 };
@@ -73,8 +74,41 @@ export const sidebarBtn = {
   },
 };
 
+export const preferenceInput = {
+  "& .MuiInputBase-input": {
+    padding: "7px 14px",
+    fontSize: "14px",
+    color: "#666666",
+  },
+};
+
 export const menuBtn = {
   paddingLeft: "20px",
   width: "10vw",
   fontSize: "13px",
+};
+
+export const deleteBtn = {
+  backgroundColor: "#ea6968",
+  color: "white",
+  textTransform: "none",
+  boxShadow: "none",
+};
+
+export const editBtn = {
+  backgroundColor: "#f592b3",
+  color: "white",
+  textTransform: "none",
+  boxShadow: "none",
+};
+
+export const enrolBtn = {
+  backgroundColor: "#555555",
+  color: "white",
+  alignSelf: "center",
+  mt: 4,
+  width: 320,
+  height: 50,
+  textTransform: "none",
+  fontWeight: "bold",
 };

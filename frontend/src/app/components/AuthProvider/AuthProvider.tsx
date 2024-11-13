@@ -38,7 +38,7 @@ const defaultSession: UserSession = {
   role: "Student",
 };
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-const publicRoutes = ["/login", "/register"];
+const publicRoutes = ["/login", "/register", "/forgot-password"];
 
 export function AuthContextProvider({
   children,
@@ -63,7 +63,10 @@ export function AuthContextProvider({
       setUserSession(defaultSession);
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {
-          if (!publicRoutes.includes(pathname)) {
+          if (
+            !publicRoutes.includes(pathname) &&
+            !pathname.includes("/reset-password")
+          ) {
             router.push("/login");
           }
         }
@@ -71,7 +74,7 @@ export function AuthContextProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, [router, pathname]);
 
   const logout = async () => {
     try {
@@ -99,7 +102,7 @@ export function AuthContextProvider({
         { withCredentials: true },
       );
       setUserSession(data);
-      router.push(data.role === "Student" ? "/team" : "/teams");
+      router.push("/contests");
     } catch (err) {
       alert(err);
     } finally {

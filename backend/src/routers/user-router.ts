@@ -5,6 +5,8 @@ import { AuthService, UserService } from "../services/index.js";
 import { handle } from "./handler.js";
 import { validateData } from "../middleware/validator-middleware.js";
 import {
+  CreateContestRegistration,
+  CreateContestRegistrationSchema,
   CreateUser,
   CreateUserSchema,
   GetAllUsersQuerySchema,
@@ -39,11 +41,16 @@ export function userRouter(userService: UserService, authService: AuthService) {
       ],
       handle(
         async (
-          req: Request<unknown, unknown, unknown, { role?: UserRole }>,
+          req: Request<
+            unknown,
+            unknown,
+            unknown,
+            { role?: UserRole; contest?: string }
+          >,
           res,
         ) => {
-          const { role } = req.query;
-          const users = await userService.getAllUsers(role);
+          const { role, contest } = req.query;
+          const users = await userService.getAllUsers(role, contest);
           res.status(200).send(users);
         },
       ),
@@ -59,6 +66,64 @@ export function userRouter(userService: UserService, authService: AuthService) {
         const user = await userService.getUserById(id);
         res.status(200).send(user);
       }),
+    )
+    .post(
+      "/contest-registration",
+      [
+        authenticate,
+        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
+        validateData(CreateContestRegistrationSchema, "body"),
+      ],
+      handle(
+        async (
+          req: Request<unknown, unknown, CreateContestRegistration>,
+          res,
+        ) => {
+          const { student, contest } = req.body;
+          const result = await userService.registerForContest(student, contest);
+          res.status(200).send(result);
+        },
+      ),
+    )
+    .get(
+      "/:student/contest-registration/:contest",
+      [
+        authenticate,
+        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
+      ],
+      handle(
+        async (
+          req: Request<{ student: string; contest: string }, unknown>,
+          res,
+        ) => {
+          const { student, contest } = req.params;
+          const result = await userService.getContestRegistrationDetails(
+            student,
+            contest,
+          );
+          res.status(200).send(result);
+        },
+      ),
+    )
+    .delete(
+      "/:student/contest-registration/:contest",
+      [
+        authenticate,
+        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
+      ],
+      handle(
+        async (
+          req: Request<{ student: string; contest: string }, unknown>,
+          res,
+        ) => {
+          const { student, contest } = req.params;
+          const result = await userService.deleteContestRegistration(
+            student,
+            contest,
+          );
+          res.status(200).send(result);
+        },
+      ),
     )
     .patch(
       "/:id",

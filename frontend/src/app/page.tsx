@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/teams");
+    router.replace("/contests");
   }, [router]);
 
   return null;

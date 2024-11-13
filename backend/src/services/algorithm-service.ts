@@ -3,7 +3,6 @@ import {
   coursesCompletedByStudent,
   DatabaseConnection,
   languagesSpokenByStudent,
-  registrationDetails,
   studentDetails,
   teams,
   universities,
@@ -79,23 +78,19 @@ export class AlgorithmService {
         stuGiven: users.givenName,
         stuLast: users.familyName,
         uniName: universities.name,
-        contestExperience: registrationDetails.contestExperience,
-        leetcodeRating: registrationDetails.leetcodeRating,
-        codeforcesRating: registrationDetails.codeforcesRating,
-        cppExperience: registrationDetails.cppExperience,
-        cExpericence: registrationDetails.cExperience,
-        javaExperience: registrationDetails.javaExperience,
-        pythonExperience: registrationDetails.pythonExperience,
+        contestExperience: studentDetails.contestExperience,
+        leetcodeRating: studentDetails.leetcodeRating,
+        codeforcesRating: studentDetails.codeforcesRating,
+        cppExperience: studentDetails.cppExperience,
+        cExpericence: studentDetails.cExperience,
+        javaExperience: studentDetails.javaExperience,
+        pythonExperience: studentDetails.pythonExperience,
         exclusions: studentDetails.exclusions,
         preferences: studentDetails.preferences,
       })
       .from(users)
       .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
       .innerJoin(universities, eq(universities.id, users.university))
-      .innerJoin(
-        registrationDetails,
-        eq(registrationDetails.student, studentDetails.userId),
-      )
       .where(eq(universities.id, universityId));
 
     return { allStudents };

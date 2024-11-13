@@ -6,6 +6,8 @@ import {
   AuthContextProvider,
   useAuth,
 } from "@/components/AuthProvider/AuthProvider";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function RootLayout({
   children,
@@ -13,9 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthContextProvider>
-      <Root>{children}</Root>
-    </AuthContextProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <AuthContextProvider>
+        <Root>{children}</Root>
+      </AuthContextProvider>
+    </LocalizationProvider>
   );
 }
 
