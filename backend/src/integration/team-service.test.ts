@@ -22,6 +22,7 @@ import { generateCreateUserFixture } from "./fixtures.js";
 
 describe("TeamService tests", () => {
   let db: DatabaseConnection;
+  let userService: UserService;
   let app: ReturnType<typeof express>;
   let cookies: string;
 
@@ -30,12 +31,13 @@ describe("TeamService tests", () => {
     db = dbSetup.db;
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
+    userService = new UserService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
       .use("/api/users", userRouter(new UserService(db), authService, codesService))
-      .use("/api/teams", teamRouter(new TeamService(db), authService))
+      .use("/api/teams", teamRouter(new TeamService(db, userService), authService))
       .use(errorHandlerMiddleware);
   });
 
@@ -303,4 +305,72 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(400);
   });
+
+  /*
+  it("Should register a new team", async () => {
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User3",
+        email: "testuser3@comp3900.com",
+        studentId: "z1234569",
+        password: "helloworld",
+        university: 1,
+      }),
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/users")
+        .send(student)
+        .expect(200);
+      const { id } = res.body;
+      userIds.push(id);
+    }
+
+    const req: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds,
+      flagged: false,
+    };
+
+    const result = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(req)
+      .expect(200);
+
+    expect(result.body.teamId).not.toBeNull();
+  });
+  */
 });

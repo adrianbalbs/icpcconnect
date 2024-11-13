@@ -249,10 +249,23 @@ export const teams = pgTable("teams", {
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
   flagged: boolean("flagged").default(false).notNull(),
-  //potentialReplacements:  
 });
 
+export const replacements = pgTable("replacements", {
+  associated_team: uuid("team_id").references(() => teams.id),
+  leavingInternalId: text("leaving_id").notNull().default(""),
+  replacementStudentId: text("student_id").notNull().default(""),
+})
+
+export const replacementRelations = relations(replacements, ({one}) => ({
+  associated_team: one(teams, {
+    fields: [replacements.associated_team],
+    references: [teams.id],
+  })
+}));
+
 export const teamRelations = relations(teams, ({ many, one }) => ({
+  replacements: many(replacements),
   members: many(studentDetails),
   university: one(universities, {
     fields: [teams.university],

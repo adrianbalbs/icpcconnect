@@ -190,23 +190,5 @@ export function userRouter(
         const user = await userService.deleteUser(id);
         res.status(200).send(user);
       }),
-    )
-    .put(
-      "/pullout/:teamId/:studentId",
-      [
-        authenticate,
-        authorise(["Admin", "Coach"]),
-      ],
-      handle(
-        async (
-          req: Request<{ teamId: string, studentId: string }, unknown>,
-          res,
-        ) => {
-          //The *internal* id of the student we wish to remove from the team
-          const { teamId, studentId } = req.params;
-          const result = await userService.acceptReplacement(teamId, studentId);
-          res.status(200).send(result);
-        },
-      ),
     );
 }

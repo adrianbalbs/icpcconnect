@@ -11,6 +11,7 @@ import {
   teams,
   universities,
   users,
+  replacements,
 } from "../db/schema.js";
 import {
   CreateUser,
@@ -22,11 +23,15 @@ import {
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
+import { CodesService } from "./index.js";
 import { and, eq, getTableColumns } from "drizzle-orm";
-import { CodesService } from "./codes-service.js";
 
 export class UserService {
-  constructor(private readonly db: DatabaseConnection) {}
+  private readonly db: DatabaseConnection;
+
+  constructor(db: DatabaseConnection) {
+    this.db = db;
+  }
 
   async createUser(req: CreateUser, codesService: CodesService): Promise<{ id: string }> {
     const { studentId, password, role, inviteCode, ...rest } = req;
@@ -314,7 +319,4 @@ export class UserService {
     return { status: "OK" };
   }
 
-  async acceptReplacement(teamId: string, studentId: string) {
-    return { status: "OK" };
-  }
 }

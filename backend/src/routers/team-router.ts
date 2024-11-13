@@ -120,8 +120,8 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         }
       },
     )
-    .put(
-      "/pullout/:studentId/:replacementId",
+    .post(
+      "/createPullout/:studentId/:replacementId",
       [
         authorise(["Student"]),
       ],
@@ -141,5 +141,24 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
           next(err);
         }
       },
+    )
+    .put(
+      "/acceptPullout/:studentId",
+      [
+        authenticate,
+        authorise(["Admin", "Coach"]),
+      ],
+        async (
+          req: Request<{ studentId: string}, unknown, {accepting: boolean}>,
+          res: Response,
+        ) => {
+          //The *internal* id of the student we wish to remove from the team
+          const { studentId } = req.params;
+          const {
+            body: { accepting },
+          } = req;
+          const result = await teamService.handleReplacement(studentId, accepting);
+          res.status(200).send(result);
+        },
     );
 }
