@@ -8,7 +8,6 @@ export const getPreferences = async (id: string, type: string) => {
       `${SERVER_URL}/api/users/${id}/student-details/${type}`,
       { withCredentials: true },
     );
-    console.log(res);
     return res.data[type];
   } catch (error) {
     console.log(`Get ${type} error: ${error}`);
@@ -22,7 +21,6 @@ export const updatePreferences = async (
 ) => {
   if (!id) return;
   try {
-    console.log(type, updated);
     await axios.patch(
       `${SERVER_URL}/api/users/${id}/student-details`,
       { [type]: updated },

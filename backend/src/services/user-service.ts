@@ -317,7 +317,7 @@ export class UserService {
     
     const preferencesReturn: PreferencesResponse[] = []
 
-    if (p.preferences.length == 0) {
+    if (p.preferences.length == 0 || p.preferences === "none") {
       return { preferences: preferencesReturn };
     }
 
@@ -335,8 +335,8 @@ export class UserService {
         .where(eq(studentDetails.studentId, stuId))
         
       const preference: PreferencesResponse = {
-        studentId: per.studentId,
-        name: per.given + " " + per.family
+        studentId: stuId,
+        name: per ? `${per.given} ${per.family}` : ""
       }
 
       preferencesReturn.push(preference)

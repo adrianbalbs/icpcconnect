@@ -163,7 +163,6 @@ export function userRouter(userService: UserService, authService: AuthService) {
       [
         authenticate,
         authorise(["Admin", "Student"]),
-        validateData(PutStudentTeamSchema, "body"),
       ],
       handle(
         async (
@@ -171,7 +170,9 @@ export function userRouter(userService: UserService, authService: AuthService) {
           res,
         ) => {
           const { id } = req.params;
+          console.log(id);
           const result = await userService.getStudentPreferences(id);
+          console.log(result);
           res.status(200).send(result);
         },
       ),
@@ -181,7 +182,6 @@ export function userRouter(userService: UserService, authService: AuthService) {
       [
         authenticate,
         authorise(["Admin", "Student"]),
-        validateData(PutStudentTeamSchema, "body"),
       ],
       handle(
         async (

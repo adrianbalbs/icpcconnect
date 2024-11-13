@@ -28,10 +28,10 @@ const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
   };
 
   const deletePreference = async () => {
-    setAdded({ ...added, [type]: false });
+    await updatePreferences(id, "preferences", "none");
     setType("");
     setInclusion([]);
-    await updatePreferences(id, "preferences", "none");
+    setAdded({ ...added, [type]: false });
   };
 
   useEffect(() => {
