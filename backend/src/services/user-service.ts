@@ -1,5 +1,6 @@
 import { DatabaseConnection } from "../db/database.js";
 import {
+  contests,
   courses,
   coursesCompletedByStudent,
   languages,
@@ -212,6 +213,25 @@ export class UserService {
     student: string,
     contest: string,
   ): Promise<{ student: string; contest: string; timeSubmitted: Date }> {
+    const [selectedContest] = await this.db
+      .select({ cutoffDate: contests.cutoffDate })
+      .from(contests)
+      .where(eq(contests.id, contest));
+
+    if (!selectedContest) {
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Contest ${contest} does not exist`,
+      });
+    }
+
+    if (new Date() > selectedContest.cutoffDate) {
+      throw new HTTPError({
+        errorCode: badRequest.errorCode,
+        message: `Registration past the cutoff date.`,
+      });
+    }
+
     const [res] = await this.db
       .insert(registrationDetails)
       .values({ student, contest })
