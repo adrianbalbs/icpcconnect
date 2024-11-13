@@ -1,5 +1,6 @@
+"use client";
 import pageStyles from "@/styles/Page.module.css";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Props {
   title: string;
@@ -16,6 +17,13 @@ const Tile: React.FC<Props> = ({
   buttonTo,
   added,
 }) => {
+  const router = useRouter();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push(buttonTo);
+  };
+
   return (
     <div className={pageStyles.tile}>
       <h2 className={pageStyles["tile-title"]}>{title}</h2>
@@ -23,12 +31,13 @@ const Tile: React.FC<Props> = ({
         <p>{description}</p>
       </div>
       <div className={pageStyles["tile-button-container"]}>
-        <Link
+        <a
           href={buttonTo}
+          onClick={handleClick}
           className={`${pageStyles["tile-button"]} ${added && pageStyles.added}`}
         >
           {buttonText}
-        </Link>
+        </a>
       </div>
     </div>
   );

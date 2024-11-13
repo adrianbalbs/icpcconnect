@@ -10,13 +10,14 @@ import {
   uuid,
   varchar,
   primaryKey,
+  date,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", [
-  "student",
-  "coach",
-  "site_coordinator",
-  "admin",
+  "Student",
+  "Coach",
+  "Site Coordinator",
+  "Admin",
 ]);
 
 export const users = pgTable("users", {
@@ -26,13 +27,19 @@ export const users = pgTable("users", {
   password: varchar("password", { length: 128 }).notNull(),
   email: text("email").notNull().unique(),
   role: roleEnum("role").notNull(),
+  university: integer("university")
+    .references(() => universities.id)
+    .notNull(),
   refreshTokenVersion: integer("refresh_token_version").default(1).notNull(),
 });
 
 export const usersRelations = relations(users, ({ one }) => ({
-  student: one(students),
-  coach: one(coaches),
-  siteCoordinator: one(siteCoordinators),
+  studentDetails: one(studentDetails),
+  registrationDetails: one(registrationDetails),
+  university: one(universities, {
+    fields: [users.university],
+    references: [universities.id],
+  }),
 }));
 
 export type User = InferSelectModel<typeof users>;
@@ -49,47 +56,15 @@ export const universityRelations = relations(universities, ({ one, many }) => ({
     references: [universities.id],
     relationName: "hosted_universities",
   }),
-  coaches: many(coaches),
-  students: many(students),
+  users: many(users),
   teams: many(teams),
   hostedUniversities: many(universities, {
     relationName: "hosted_universities",
   }),
-  siteCoordinator: one(siteCoordinators),
+  contests: one(contests),
 }));
 
 export type University = InferSelectModel<typeof universities>;
-
-export const students = pgTable("students", {
-  userId: uuid("id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  studentId: text("student_id").notNull(),
-  pronouns: text("pronouns"),
-  dietaryRequirements: text("dietary_requirements").default(""),
-  tshirtSize: text("tshirt_size"),
-  team: uuid("team").references(() => teams.id),
-  photoConsent: boolean("photo_consent").notNull(),
-  university: integer("university").references(() => universities.id).notNull(),
-  exclusions: text("exclusions").default("").notNull()
-});
-
-export const studentRelations = relations(students, ({ one, many }) => ({
-  languagesSpoken: many(languagesSpokenByStudent),
-  user: one(users, { fields: [students.userId], references: [users.id] }),
-  university: one(universities, {
-    fields: [students.university],
-    references: [universities.id],
-  }),
-  team: one(teams, {
-    fields: [students.team],
-    references: [teams.id],
-  }),
-  registrationDetails: one(registrationDetails),
-}));
-
-export type Student = InferSelectModel<typeof students>;
 
 export const levelEnum = pgEnum("level", ["A", "B"]);
 export const languageExperienceEnum = pgEnum("language_experience", [
@@ -98,50 +73,105 @@ export const languageExperienceEnum = pgEnum("language_experience", [
   "prof",
 ]);
 
-export const registrationDetails = pgTable("registration_details", {
-  student: uuid("id")
+export const studentDetails = pgTable("student_details", {
+  userId: uuid("id")
     .primaryKey()
-    .references(() => students.userId, { onDelete: "cascade" })
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  level: levelEnum("level").notNull(),
+  studentId: text("student_id").notNull().default(""),
+  pronouns: text("pronouns").notNull().default(""),
+  dietaryRequirements: text("dietary_requirements").notNull().default(""),
+  tshirtSize: text("tshirt_size").notNull().default(""),
+  team: uuid("team").references(() => teams.id),
+  photoConsent: boolean("photo_consent").notNull().default(false),
+  level: levelEnum("level").default("B").notNull(),
   contestExperience: integer("contest_experience").default(0).notNull(),
   leetcodeRating: integer("leetcode_rating").default(0).notNull(),
   codeforcesRating: integer("codeforces_rating").default(0).notNull(),
-  cppExperience: languageExperienceEnum("cpp_experience").notNull(),
-  cExperience: languageExperienceEnum("c_experience").notNull(),
-  javaExperience: languageExperienceEnum("java_experience").notNull(),
-  pythonExperience: languageExperienceEnum("python_experience").notNull(),
-  timeSubmitted: timestamp("time_submitted").notNull().defaultNow(),
+  cppExperience: languageExperienceEnum("cpp_experience")
+    .default("none")
+    .notNull(),
+  cExperience: languageExperienceEnum("c_experience").default("none").notNull(),
+  javaExperience: languageExperienceEnum("java_experience")
+    .default("none")
+    .notNull(),
+  pythonExperience: languageExperienceEnum("python_experience")
+    .default("none")
+    .notNull(),
+  exclusions: text("exclusions").default("").notNull(),
 });
+
+export const studentDetailsRelations = relations(
+  studentDetails,
+  ({ one, many }) => ({
+    coursesCompleted: many(coursesCompletedByStudent),
+    languagesSpoken: many(languagesSpokenByStudent),
+    user: one(users, {
+      fields: [studentDetails.userId],
+      references: [users.id],
+    }),
+    team: one(teams, {
+      fields: [studentDetails.team],
+      references: [teams.id],
+    }),
+  }),
+);
+
+export type StudentDetails = InferSelectModel<typeof studentDetails>;
+
+export const registrationDetails = pgTable(
+  "registration_details",
+  {
+    student: uuid("student")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    contest: uuid("contest")
+      .references(() => contests.id, { onDelete: "cascade" })
+      .notNull(),
+    timeSubmitted: timestamp("time_submitted").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.student, table.contest] }),
+    };
+  },
+);
 
 export type RegistrationDetails = InferSelectModel<typeof registrationDetails>;
 
 export const registrationDetailsRelations = relations(
   registrationDetails,
-  ({ many, one }) => ({
-    coursesCompleted: many(coursesCompletedByStudent),
-    registeredBy: one(students, {
+  ({ one }) => ({
+    registeredBy: one(users, {
       fields: [registrationDetails.student],
-      references: [students.userId],
+      references: [users.id],
+    }),
+    contest: one(contests, {
+      fields: [registrationDetails.contest],
+      references: [contests.id],
     }),
   }),
 );
 
-export const languagesSpoken = pgTable("spoken_languages", {
+export const languages = pgTable("languages", {
   code: text("code").primaryKey().notNull(),
   name: text("name").notNull(),
 });
 
-export type SpokenLanguage = InferSelectModel<typeof languagesSpoken>;
+export const languagesSpokenRelations = relations(languages, ({ many }) => ({
+  spokenBy: many(languagesSpokenByStudent),
+}));
+
+export type SpokenLanguage = InferSelectModel<typeof languages>;
 
 export const languagesSpokenByStudent = pgTable(
   "languages_spoken_by_student",
   {
     studentId: uuid("student_id")
-      .references(() => students.userId, { onDelete: "cascade" })
+      .references(() => studentDetails.userId, { onDelete: "cascade" })
       .notNull(),
     languageCode: text("language_code")
-      .references(() => languagesSpoken.code, { onDelete: "cascade" })
+      .references(() => languages.code, { onDelete: "cascade" })
       .notNull(),
   },
   (table) => {
@@ -154,21 +184,14 @@ export const languagesSpokenByStudent = pgTable(
 export const languagesSpokenByStudentRelations = relations(
   languagesSpokenByStudent,
   ({ one }) => ({
-    student: one(students, {
+    student: one(studentDetails, {
       fields: [languagesSpokenByStudent.studentId],
-      references: [students.userId],
+      references: [studentDetails.userId],
     }),
-    language: one(languagesSpoken, {
+    language: one(languages, {
       fields: [languagesSpokenByStudent.languageCode],
-      references: [languagesSpoken.code],
+      references: [languages.code],
     }),
-  }),
-);
-
-export const languagesSpokenRelations = relations(
-  languagesSpoken,
-  ({ many }) => ({
-    spokenBy: many(languagesSpokenByStudent),
   }),
 );
 
@@ -194,7 +217,7 @@ export const coursesCompletedByStudent = pgTable(
   "courses_completed_by_student",
   {
     studentId: uuid("student_id")
-      .references(() => registrationDetails.student, { onDelete: "cascade" })
+      .references(() => studentDetails.userId, { onDelete: "cascade" })
       .notNull(),
     courseId: integer("course_id")
       .references(() => courses.id, { onDelete: "cascade" })
@@ -210,9 +233,9 @@ export const coursesCompletedByStudent = pgTable(
 export const coursesCompletedByStudentRelations = relations(
   coursesCompletedByStudent,
   ({ one }) => ({
-    student: one(registrationDetails, {
+    student: one(studentDetails, {
       fields: [coursesCompletedByStudent.studentId],
-      references: [registrationDetails.student],
+      references: [studentDetails.userId],
     }),
     course: one(courses, {
       fields: [coursesCompletedByStudent.courseId],
@@ -221,61 +244,15 @@ export const coursesCompletedByStudentRelations = relations(
   }),
 );
 
-export const coaches = pgTable("coaches", {
-  userId: uuid("id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  university: integer("university")
-    .references(() => universities.id)
-    .notNull(),
-});
-
-export const coachesRelations = relations(coaches, ({ one }) => ({
-  user: one(users, { fields: [coaches.userId], references: [users.id] }),
-  university: one(universities, {
-    fields: [coaches.university],
-    references: [universities.id],
-  }),
-}));
-
-export type Coach = InferSelectModel<typeof coaches>;
-
-export const siteCoordinators = pgTable("site_coordinators", {
-  userId: uuid("id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  university: integer("university")
-    .references(() => universities.id)
-    .notNull(),
-});
-
-export const siteCoordinatorRelations = relations(
-  siteCoordinators,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [siteCoordinators.userId],
-      references: [users.id],
-    }),
-    site: one(universities, {
-      fields: [siteCoordinators.university],
-      references: [universities.id],
-    }),
-  }),
-);
-
-export type SiteCoordinator = InferSelectModel<typeof siteCoordinators>;
-
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }),
   university: integer("university").references(() => universities.id),
-  flagged: boolean("flagged").default(false).notNull()
+  flagged: boolean("flagged").default(false).notNull(),
 });
 
 export const teamRelations = relations(teams, ({ many, one }) => ({
-  members: many(students),
+  members: many(studentDetails),
   university: one(universities, {
     fields: [teams.university],
     references: [universities.id],
@@ -305,8 +282,32 @@ export const authCodes = pgTable("auth_codes", {
 export type AuthCodes = InferSelectModel<typeof authCodes>;
 
 export const verifyEmail = pgTable("verify_emails", {
+  id: text("id").notNull(),
   code: integer("code").notNull().unique(),
   email: text("email").notNull(),
+  userName: text("userName").notNull(),
+  isVerified: boolean("verified").default(false).notNull(),
 });
 
 export type VerifyEmail = InferSelectModel<typeof verifyEmail>;
+
+export const contests = pgTable("contests", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: varchar("name", { length: 256 }).notNull(),
+  earlyBirdDate: date("early_bird_date", { mode: "date" }).notNull(),
+  cutoffDate: date("cutoff_date", { mode: "date" }).notNull(),
+  contestDate: date("contest_date", { mode: "date" }).notNull(),
+  site: integer("university")
+    .references(() => universities.id)
+    .notNull(),
+});
+
+export const contestRelations = relations(contests, ({ one, many }) => ({
+  site: one(universities, {
+    fields: [contests.site],
+    references: [universities.id],
+  }),
+  registrations: many(registrationDetails),
+}));
+
+export type Contest = InferSelectModel<typeof contests>;

@@ -1,5 +1,10 @@
-import { eq, inArray } from "drizzle-orm";
-import { DatabaseConnection, teams, students, users } from "../db/index.js";
+import { and, eq, inArray } from "drizzle-orm";
+import {
+  DatabaseConnection,
+  teams,
+  studentDetails,
+  users,
+} from "../db/index.js";
 import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 
@@ -20,16 +25,15 @@ export class TeamService {
         university,
       })
       .returning({ teamId: teams.id });
-
-    const members = await this.db.query.students.findMany({
-      where: inArray(students.userId, memberIds),
+    const members = await this.db.query.users.findMany({
+      where: and(inArray(users.id, memberIds), eq(users.role, "Student")),
     });
 
     for (const member of members) {
       await this.db
-        .update(students)
+        .update(studentDetails)
         .set({ team: id.teamId })
-        .where(eq(students.userId, member.userId));
+        .where(eq(studentDetails.userId, member.id));
     }
 
     return id;
@@ -55,9 +59,9 @@ export class TeamService {
         id: teams.id,
         name: teams.name,
       })
-      .from(students)
-      .where(eq(students.userId, studentId))
-      .leftJoin(teams, eq(teams.id, students.team));
+      .from(studentDetails)
+      .where(eq(studentDetails.userId, studentId))
+      .leftJoin(teams, eq(teams.id, studentDetails.team));
 
     if (team == undefined) {
       throw new HTTPError(badRequest);
@@ -68,12 +72,12 @@ export class TeamService {
         id: users.id,
         givenName: users.givenName,
         familyName: users.familyName,
-        studentId: students.studentId,
+        studentId: studentDetails.studentId,
         email: users.email,
       })
-      .from(students)
-      .where(eq(students.team, String(team.id)))
-      .innerJoin(users, eq(users.id, students.userId));
+      .from(studentDetails)
+      .where(eq(studentDetails.team, String(team.id)))
+      .innerJoin(users, eq(users.id, studentDetails.userId));
 
     return { ...team, members };
   }
@@ -100,28 +104,28 @@ export class TeamService {
       if (memberIds) {
         //Unset old team-members
         {
-          const members = await tx.query.students.findMany({
-            where: eq(students.team, teamId),
+          const members = await tx.query.studentDetails.findMany({
+            where: eq(studentDetails.team, teamId),
           });
 
           for (const member of members) {
             await tx
-              .update(students)
+              .update(studentDetails)
               .set({ team: null })
-              .where(eq(students.userId, member.userId));
+              .where(eq(studentDetails.userId, member.userId));
           }
         }
 
         //Set team-id for new members
-        const members = await tx.query.students.findMany({
-          where: inArray(students.userId, memberIds),
+        const members = await tx.query.users.findMany({
+          where: inArray(users.id, memberIds),
         });
 
         for (const member of members) {
           await tx
-            .update(students)
+            .update(studentDetails)
             .set({ team: teamId })
-            .where(eq(students.userId, member.userId));
+            .where(eq(studentDetails.userId, member.id));
         }
       }
 

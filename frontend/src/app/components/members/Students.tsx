@@ -17,22 +17,25 @@ export interface StudentInfo {
   studentId: string;
   university: string;
   team: string;
-  languagesSpoken?: { code: string; name: string }[];
+  languagesSpoken: { code: string; name: string }[];
   dietaryRequirements: string;
   photoConsent: boolean;
   tshirtSize: string | null;
 }
 
-const Students: React.FC = () => {
+type StudentsProps = {
+  contest?: string;
+};
+const Students: React.FC<StudentsProps> = ({ contest }) => {
   const [students, setStudents] = useState<StudentProps[]>([]);
 
   const getStudents = async () => {
     try {
-      const res = await axios.get<{ allStudents: StudentInfo[] }>(
-        `${SERVER_URL}/api/students`,
-        { withCredentials: true },
+      const res = await axios.get<{ allUsers: StudentInfo[] }>(
+        `${SERVER_URL}/api/users`,
+        { withCredentials: true, params: { role: "Student", contest } },
       );
-      const allStudents: StudentInfo[] = res.data.allStudents;
+      const allStudents: StudentInfo[] = res.data.allUsers;
       const filteredInfo: StudentProps[] = allStudents.map((student) => ({
         id: student.id,
         name: student.givenName + " " + student.familyName,

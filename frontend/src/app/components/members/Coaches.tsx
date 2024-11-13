@@ -28,11 +28,11 @@ const Coaches: React.FC = () => {
 
   const getCoaches = async () => {
     try {
-      const res = await axios.get<{ coaches: CoachInfo[] }>(
-        `${SERVER_URL}/api/coaches`,
-        { withCredentials: true },
+      const res = await axios.get<{ allUsers: CoachInfo[] }>(
+        `${SERVER_URL}/api/users`,
+        { withCredentials: true, params: { role: "Coach" } },
       );
-      const allCoaches: CoachInfo[] = res.data.coaches;
+      const allCoaches: CoachInfo[] = res.data.allUsers;
       const filteredInfo: StaffProps[] = allCoaches.map((coach) => ({
         id: coach.id,
         name: coach.givenName + " " + coach.familyName,

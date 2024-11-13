@@ -16,7 +16,7 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
   const { logout, userSession } = useAuth();
 
   const to = (route: string) => {
-    router.push(`/profile/${userSession?.id}${route}`);
+    router.push(`/profile/${userSession.id}${route}`);
     handleClose();
   };
 
@@ -45,12 +45,12 @@ const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
       <MenuItem sx={menuBtn} onClick={() => to("")}>
         Profile
       </MenuItem>
-      {userSession.role === "student" && (
+      {userSession.role === "Student" && (
         <MenuItem sx={menuBtn} onClick={() => to("/experience")}>
           Experience
         </MenuItem>
       )}
-      {userSession.role === "student" && (
+      {userSession.role === "Student" && (
         <MenuItem sx={menuBtn} onClick={() => to("/preferences")}>
           Preferences
         </MenuItem>

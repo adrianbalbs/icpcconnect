@@ -1,28 +1,31 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { AuthService, CoachService } from "../services/index.js";
-import { validateData } from "../middleware/validator-middleware.js";
-import {
-  CreateCoachRequest,
-  CreateCoachRequestSchema,
-  UpdateCoachRequest,
-  UpdateCoachRequestSchema,
-} from "../schemas/user-schema.js";
 import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
 import { authorise } from "../middleware/authorise.js";
+import { validateData } from "../middleware/validator-middleware.js";
+import { AuthService } from "../services/auth-service.js";
+import {
+  ContestService,
+  CreateContest,
+  CreateContestSchema,
+  UpdateContestSchema,
+} from "../services/contest-service.js";
 
-export function coachRouter(
-  coachService: CoachService,
+export function contestRouter(
+  contestService: ContestService,
   authService: AuthService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
   return Router()
     .get(
       "/",
-      [authenticate, authorise(["admin", "site_coordinator"])],
+      [
+        authenticate,
+        authorise(["Admin", "Site Coordinator", "Student", "Coach"]),
+      ],
       async (_req: Request, res: Response, next: NextFunction) => {
         try {
-          const coaches = await coachService.getAllCoaches();
-          res.status(200).json(coaches);
+          const contests = await contestService.getAll();
+          res.status(200).json(contests);
         } catch (err) {
           next(err);
         }
@@ -30,7 +33,10 @@ export function coachRouter(
     )
     .get(
       "/:id",
-      [authenticate, authorise(["admin", "coach"])],
+      [
+        authenticate,
+        authorise(["Admin", "Site Coordinator", "Student", "Coach"]),
+      ],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -38,8 +44,8 @@ export function coachRouter(
       ) => {
         const { id } = req.params;
         try {
-          const coach = await coachService.getCoachById(id);
-          res.status(200).json(coach);
+          const contest = await contestService.get(id);
+          res.status(200).json(contest);
         } catch (err) {
           next(err);
         }
@@ -47,7 +53,7 @@ export function coachRouter(
     )
     .delete(
       "/:id",
-      [authenticate, authorise(["admin"])],
+      [authenticate, authorise(["Admin"])],
       async (
         req: Request<{ id: string }, unknown>,
         res: Response,
@@ -55,8 +61,8 @@ export function coachRouter(
       ) => {
         const { id } = req.params;
         try {
-          const result = await coachService.deleteCoach(id);
-          res.status(200).json(result);
+          const contest = await contestService.delete(id);
+          res.status(200).json(contest);
         } catch (err) {
           next(err);
         }
@@ -64,15 +70,19 @@ export function coachRouter(
     )
     .post(
       "/",
-      validateData(CreateCoachRequestSchema, "body"),
+      [
+        authenticate,
+        authorise(["Admin"]),
+        validateData(CreateContestSchema, "body"),
+      ],
       async (
-        req: Request<Record<string, never>, unknown, CreateCoachRequest>,
+        req: Request<unknown, unknown, CreateContest>,
         res: Response,
         next: NextFunction,
       ) => {
-        const coachDetails = req.body;
+        const payload = req.body;
         try {
-          const result = await coachService.createCoach(coachDetails);
+          const result = await contestService.create(payload);
           res.status(200).json(result);
         } catch (err) {
           next(err);
@@ -83,18 +93,18 @@ export function coachRouter(
       "/:id",
       [
         authenticate,
-        authorise(["admin", "coach"]),
-        validateData(UpdateCoachRequestSchema, "body"),
+        authorise(["Admin"]),
+        validateData(UpdateContestSchema, "body"),
       ],
       async (
-        req: Request<Record<string, never>, unknown, UpdateCoachRequest>,
+        req: Request<{ id: string }, unknown, CreateContest>,
         res: Response,
         next: NextFunction,
       ) => {
         const { id } = req.params;
-        const newCoachDetails = req.body;
+        const payload = req.body;
         try {
-          const result = await coachService.updateCoach(id, newCoachDetails);
+          const result = await contestService.update(id, payload);
           res.status(200).json(result);
         } catch (err) {
           next(err);

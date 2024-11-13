@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SERVER_URL } from "@/utils/constants";
 import { addBtn, addExperienceBtn, addModal } from "@/styles/sxStyles";
 import pageStyles from "@/styles/Page.module.css";
@@ -23,15 +23,15 @@ import CourseCheckbox from "./modalInput/CourseCheckbox";
 interface ModalProps {
   id: string;
   added: ExperienceType;
-  setAdded: Dispatch<SetStateAction<ExperienceType>>;
   experience: Experiences;
+  getExperience: () => void;
 }
 
 const ExperienceModal: React.FC<ModalProps> = ({
   id,
   added,
-  setAdded,
   experience,
+  getExperience,
 }) => {
   const hrRef = useRef<HTMLHRElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -67,12 +67,12 @@ const ExperienceModal: React.FC<ModalProps> = ({
 
   const addExperience = async () => {
     try {
-      await axios.put(
-        `${SERVER_URL}/api/contest-registration/${id}`,
+      await axios.patch(
+        `${SERVER_URL}/api/users/${id}/student-details`,
         newExperience,
         { withCredentials: true },
       );
-      setAdded({ ...added, [type]: true });
+      getExperience();
     } catch (error) {
       console.log(`Update experience error: ${error}`);
     }

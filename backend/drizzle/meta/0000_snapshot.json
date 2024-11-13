@@ -1,5 +1,5 @@
 {
-  "id": "7c5a1173-4cab-4671-9533-a6cbcac9d4da",
+  "id": "1bd45d00-ee2b-443d-af43-33ee6908ac04",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -33,14 +33,39 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.coaches": {
-      "name": "coaches",
+    "public.contests": {
+      "name": "contests",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "early_bird_date": {
+          "name": "early_bird_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cutoff_date": {
+          "name": "cutoff_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contest_date": {
+          "name": "contest_date",
+          "type": "date",
+          "primaryKey": false,
           "notNull": true
         },
         "university": {
@@ -52,22 +77,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "coaches_id_users_id_fk": {
-          "name": "coaches_id_users_id_fk",
-          "tableFrom": "coaches",
-          "tableTo": "users",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "coaches_university_universities_id_fk": {
-          "name": "coaches_university_universities_id_fk",
-          "tableFrom": "coaches",
+        "contests_university_universities_id_fk": {
+          "name": "contests_university_universities_id_fk",
+          "tableFrom": "contests",
           "tableTo": "universities",
           "columnsFrom": [
             "university"
@@ -124,10 +136,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "courses_completed_by_student_student_id_registration_details_id_fk": {
-          "name": "courses_completed_by_student_student_id_registration_details_id_fk",
+        "courses_completed_by_student_student_id_student_details_id_fk": {
+          "name": "courses_completed_by_student_student_id_student_details_id_fk",
           "tableFrom": "courses_completed_by_student",
-          "tableTo": "registration_details",
+          "tableTo": "student_details",
           "columnsFrom": [
             "student_id"
           ],
@@ -191,8 +203,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.spoken_languages": {
-      "name": "spoken_languages",
+    "public.languages": {
+      "name": "languages",
       "schema": "",
       "columns": {
         "code": {
@@ -232,10 +244,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "languages_spoken_by_student_student_id_students_id_fk": {
-          "name": "languages_spoken_by_student_student_id_students_id_fk",
+        "languages_spoken_by_student_student_id_student_details_id_fk": {
+          "name": "languages_spoken_by_student_student_id_student_details_id_fk",
           "tableFrom": "languages_spoken_by_student",
-          "tableTo": "students",
+          "tableTo": "student_details",
           "columnsFrom": [
             "student_id"
           ],
@@ -245,10 +257,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "languages_spoken_by_student_language_code_spoken_languages_code_fk": {
-          "name": "languages_spoken_by_student_language_code_spoken_languages_code_fk",
+        "languages_spoken_by_student_language_code_languages_code_fk": {
+          "name": "languages_spoken_by_student_language_code_languages_code_fk",
           "tableFrom": "languages_spoken_by_student",
-          "tableTo": "spoken_languages",
+          "tableTo": "languages",
           "columnsFrom": [
             "language_code"
           ],
@@ -274,18 +286,117 @@
       "name": "registration_details",
       "schema": "",
       "columns": {
+        "student": {
+          "name": "student",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contest": {
+          "name": "contest",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "registration_details_student_users_id_fk": {
+          "name": "registration_details_student_users_id_fk",
+          "tableFrom": "registration_details",
+          "tableTo": "users",
+          "columnsFrom": [
+            "student"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "registration_details_contest_contests_id_fk": {
+          "name": "registration_details_contest_contests_id_fk",
+          "tableFrom": "registration_details",
+          "tableTo": "contests",
+          "columnsFrom": [
+            "contest"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "registration_details_student_contest_pk": {
+          "name": "registration_details_student_contest_pk",
+          "columns": [
+            "student",
+            "contest"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.student_details": {
+      "name": "student_details",
+      "schema": "",
+      "columns": {
         "id": {
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
+        "student_id": {
+          "name": "student_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "pronouns": {
+          "name": "pronouns",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "dietary_requirements": {
+          "name": "dietary_requirements",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "tshirt_size": {
+          "name": "tshirt_size",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "team": {
+          "name": "team",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "photo_consent": {
+          "name": "photo_consent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "level": {
           "name": "level",
           "type": "level",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'B'"
         },
         "contest_experience": {
           "name": "contest_experience",
@@ -313,28 +424,32 @@
           "type": "language_experience",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'none'"
         },
         "c_experience": {
           "name": "c_experience",
           "type": "language_experience",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'none'"
         },
         "java_experience": {
           "name": "java_experience",
           "type": "language_experience",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'none'"
         },
         "python_experience": {
           "name": "python_experience",
           "type": "language_experience",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'none'"
         },
         "time_submitted": {
           "name": "time_submitted",
@@ -342,128 +457,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "registration_details_id_students_id_fk": {
-          "name": "registration_details_id_students_id_fk",
-          "tableFrom": "registration_details",
-          "tableTo": "students",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.site_coordinators": {
-      "name": "site_coordinators",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "university": {
-          "name": "university",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "site_coordinators_id_users_id_fk": {
-          "name": "site_coordinators_id_users_id_fk",
-          "tableFrom": "site_coordinators",
-          "tableTo": "users",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "site_coordinators_university_universities_id_fk": {
-          "name": "site_coordinators_university_universities_id_fk",
-          "tableFrom": "site_coordinators",
-          "tableTo": "universities",
-          "columnsFrom": [
-            "university"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.students": {
-      "name": "students",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "student_id": {
-          "name": "student_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "pronouns": {
-          "name": "pronouns",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dietary_requirements": {
-          "name": "dietary_requirements",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "''"
-        },
-        "tshirt_size": {
-          "name": "tshirt_size",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "team": {
-          "name": "team",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "photo_consent": {
-          "name": "photo_consent",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "university": {
-          "name": "university",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         },
         "exclusions": {
           "name": "exclusions",
@@ -475,9 +468,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "students_id_users_id_fk": {
-          "name": "students_id_users_id_fk",
-          "tableFrom": "students",
+        "student_details_id_users_id_fk": {
+          "name": "student_details_id_users_id_fk",
+          "tableFrom": "student_details",
           "tableTo": "users",
           "columnsFrom": [
             "id"
@@ -488,25 +481,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "students_team_teams_id_fk": {
-          "name": "students_team_teams_id_fk",
-          "tableFrom": "students",
+        "student_details_team_teams_id_fk": {
+          "name": "student_details_team_teams_id_fk",
+          "tableFrom": "student_details",
           "tableTo": "teams",
           "columnsFrom": [
             "team"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "students_university_universities_id_fk": {
-          "name": "students_university_universities_id_fk",
-          "tableFrom": "students",
-          "tableTo": "universities",
-          "columnsFrom": [
-            "university"
           ],
           "columnsTo": [
             "id"
@@ -638,6 +618,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "university": {
+          "name": "university",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "refresh_token_version": {
           "name": "refresh_token_version",
           "type": "integer",
@@ -647,7 +633,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "users_university_universities_id_fk": {
+          "name": "users_university_universities_id_fk",
+          "tableFrom": "users",
+          "tableTo": "universities",
+          "columnsFrom": [
+            "university"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_unique": {
@@ -663,6 +663,12 @@
       "name": "verify_emails",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "code": {
           "name": "code",
           "type": "integer",
@@ -674,6 +680,19 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "userName": {
+          "name": "userName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
@@ -722,10 +741,10 @@
       "name": "role",
       "schema": "public",
       "values": [
-        "student",
-        "coach",
-        "site_coordinator",
-        "admin"
+        "Student",
+        "Coach",
+        "Site Coordinator",
+        "Admin"
       ]
     }
   },

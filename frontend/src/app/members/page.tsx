@@ -19,9 +19,9 @@ const Members: React.FC = () => {
     <>
       <Notif visible={notif.type !== ""} notif={notif} setNotif={setNotif} />
       <div className={pageStyles.screen}>
-        {role === "admin" && <InviteCode setNotif={setNotif} />}
-        {role === "admin" && <SiteCoordinators />}
-        {(role === "admin" || role === "site_coordinator") && <Coaches />}
+        {role === "Admin" && <InviteCode setNotif={setNotif} />}
+        {role === "Admin" && <SiteCoordinators />}
+        {(role === "Admin" || role === "Site Coordinator") && <Coaches />}
         <Students />
       </div>
     </>
