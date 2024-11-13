@@ -112,3 +112,22 @@ export const enrolBtn = {
   textTransform: "none",
   fontWeight: "bold",
 };
+
+export const saveExclBtn = {
+  height: "22.5px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "white",
+  borderColor: "#444444",
+  bgcolor: "#444444",
+};
+
+export const cancelExclBtn = {
+  height: "22.5px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "#444444",
+  borderColor: "#444444",
+};

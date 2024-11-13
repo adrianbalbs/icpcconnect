@@ -79,7 +79,9 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
       if (exclusionsData !== "") {
         exclusions = `${exclusionsData}, ${names.join(" ")}`;
       }
-      await updatePreferences(id, type, exclusions);
+      // Sort exclusions alphabetically
+      const sorted = exclusions.split(", ").sort().join(", ");
+      await updatePreferences(id, type, sorted);
     }
     setAdded({ ...added, [type]: true });
     handleClose();

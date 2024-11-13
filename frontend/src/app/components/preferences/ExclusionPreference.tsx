@@ -1,9 +1,21 @@
 import { useEffect, useState } from "react";
+import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
+import {
+  experienceHeading,
+  saveExclBtn,
+  cancelExclBtn,
+} from "@/styles/sxStyles";
 import pageStyles from "@/styles/Page.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
-import { experienceHeading } from "@/styles/sxStyles";
-import { Box, Typography } from "@mui/material";
-import { getPreferences } from "@/utils/preferenceInfo";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import DeleteExclusion from "./modalInput/EditExclusion";
 
 interface ExclusionProps {
   id: string;
@@ -13,11 +25,28 @@ interface ExclusionProps {
 
 const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
   const [studentString, setStudentString] = useState("");
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
 
   const getExclusions = async () => {
     const exclusions = await getPreferences(id, "exclusions");
-    if (exclusions) setStudentString(exclusions);
+    if (exclusions) {
+      setStudentString(exclusions);
+      setSelected(exclusions.split(", "));
+    }
     complete("exclusions");
+  };
+
+  const saveEdit = async () => {
+    const newPref = selected.length > 0 ? selected.join(", ") : "";
+    await updatePreferences(id, "exclusions", newPref);
+    setStudentString(newPref);
+    setOpenEdit(false);
+  };
+
+  const cancelEdit = () => {
+    setSelected(studentString.split(", "));
+    setOpenEdit(false);
   };
 
   useEffect(() => {
@@ -31,16 +60,46 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "2fr 3fr",
+            gridTemplateColumns: "19fr 1fr",
             alignItems: "center",
-            m: "10px 40px 13px",
+            m: "10px 30px 13px 40px",
           }}
         >
           <Typography sx={experienceHeading}>Student Names</Typography>
+          {!openEdit ? (
+            <IconButton
+              sx={{
+                height: "21px",
+                width: "25px",
+                borderRadius: "5px",
+                justifySelf: "end",
+              }}
+              onClick={() => setOpenEdit(true)}
+            >
+              <EditNoteIcon sx={{ fontSize: "23px" }} />
+            </IconButton>
+          ) : (
+            <ButtonGroup>
+              <Button sx={saveExclBtn} onClick={saveEdit}>
+                Save
+              </Button>
+              <Button sx={cancelExclBtn} onClick={cancelEdit}>
+                Cancel
+              </Button>
+            </ButtonGroup>
+          )}
         </Box>
         <hr className={pageStyles.divider} />
         <Box sx={{ alignItems: "center", m: "20px 40px" }}>
-          <Typography sx={{ fontSize: "14px" }}>{studentString}</Typography>
+          {openEdit ? (
+            <DeleteExclusion
+              original={studentString.split(", ")}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          ) : (
+            <Typography sx={{ fontSize: "14px" }}>{studentString}</Typography>
+          )}
         </Box>
         <hr className={experienceStyles.divider} />
       </>
