@@ -17,7 +17,7 @@ export function adminRouter(
   return Router()
     .use(authenticate)
     .post(
-      "/runalgo",
+      "/algo",
       validateData(AlgorithmRequestSchema, "body"),
       async (
         req: Request<unknown, unknown, AlgorithmRequest>,

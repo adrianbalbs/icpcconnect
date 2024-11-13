@@ -119,7 +119,7 @@ describe("Algorithm Tests", () => {
 
   it("should just return success (no registrations)", async () => {
     const numTeam = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
       .send({ contestId: contest.body.id })
       .expect(200);
@@ -181,7 +181,7 @@ describe("Algorithm Tests", () => {
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
       .send({ contestId: contest.body.id })
       .expect(200);
@@ -252,7 +252,7 @@ describe("Algorithm Tests", () => {
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
       .send({ contestId: contest.body.id })
       .expect(200);
@@ -349,7 +349,7 @@ describe("Algorithm Tests", () => {
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
       .send({ contestId: contest.body.id })
       .expect(200);
@@ -432,7 +432,7 @@ describe("Algorithm Tests", () => {
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
       .send({ contestId: contest.body.id })
       .expect(200);
@@ -539,7 +539,7 @@ describe("Algorithm Tests", () => {
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
       .send({ contestId: contest.body.id })
       .expect(200);
