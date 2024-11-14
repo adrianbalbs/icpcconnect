@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import {
   coursesCompletedByStudent,
   DatabaseConnection,
@@ -96,8 +96,11 @@ export class AlgorithmService {
       .innerJoin(registrationDetails, eq(registrationDetails.student, users.id))
       .where(
         and(
-          eq(universities.id, universityId),
-          eq(registrationDetails.contest, contestId),
+          isNull(studentDetails.team),
+          and(
+            eq(universities.id, universityId),
+            eq(registrationDetails.contest, contestId),
+          ),
         ),
       );
 
