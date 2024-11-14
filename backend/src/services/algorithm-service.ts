@@ -47,6 +47,10 @@ export type RunAlgoResponse = {
   success: boolean;
 };
 
+export type TeamId {
+  teamId: string;
+}
+
 export class AlgorithmService {
   private readonly db: DatabaseConnection;
 
@@ -54,11 +58,21 @@ export class AlgorithmService {
     this.db = db;
   }
 
+  /*
+  * Calls the team-matching algorithm
+  *
+  * @returns RunAlgoResponse - with a boolean indicating success
+  */
   async callAlgorithm(): Promise<RunAlgoResponse> {
     const succesful = await runFullAlgorithm(this);
     return { success: succesful };
   }
 
+  /*
+  * Get an array of ids for all universities registered
+  *
+  * @returns AllUniIdResponse - an array of ids corresponding to a university
+  */
   async getAllUniversityIds(): Promise<AllUniIDResponse> {
     const allUniversityIds = await this.db
       .select({
@@ -69,6 +83,13 @@ export class AlgorithmService {
     return { allUniversityIds };
   }
 
+  /*
+  * Get all students of a given university
+  *
+  * @param universityId - the id of the given university
+  *
+  * @returns AlgorithmStudentResponse - an array of StudentResponse's
+  */
   async getAllStudentsFromUniversity(
     universityId: number,
   ): Promise<AlgorithmStudentResponse> {
@@ -96,6 +117,13 @@ export class AlgorithmService {
     return { allStudents };
   }
 
+  /*
+  * Get all students of a given university
+  *
+  * @param universityId - the id of the given university
+  *
+  * @returns AlgorithmStudentResponse - an array of StudentResponse's
+  */
   async getLanguagesFromStudent(
     studentId: string,
   ): Promise<AllLanguagesSpoken> {
@@ -109,6 +137,13 @@ export class AlgorithmService {
     return { languages };
   }
 
+  /*
+  * Get all courses a given student has completed
+  *
+  * @param studentId - the given student's studentId
+  *
+  * @returns AllCoursesCompleted - an array of course codes
+  */
   async getCoursesFromStudent(studentId: string): Promise<AllCoursesCompleted> {
     const courses = await this.db
       .select({
@@ -120,7 +155,19 @@ export class AlgorithmService {
     return { courses };
   }
 
-  async createTeam(req: CreateTeamRequest) {
+  /*
+  * Creates a new team of students
+  *
+  * @param req - 
+  *   req.name - Name of the team
+  *   req.university - Id of the university team belongs to
+  *   req.flagged - boolean indicating team might have conflicting members
+  *   req.memberIds - array of userIds, corresponding to students
+  * 
+  * 
+  * @returns the teamId of the newly created team
+  */
+  async createTeam(req: CreateTeamRequest): Promise<TeamId> {
     const { name, university, memberIds, flagged } = req;
 
     const [id] = await this.db
