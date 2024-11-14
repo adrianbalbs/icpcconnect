@@ -75,6 +75,7 @@ export const sidebarBtn = {
 };
 
 export const preferenceInput = {
+  justifySelf: "start",
   "& .MuiInputBase-input": {
     padding: "7px 14px",
     fontSize: "14px",
@@ -131,3 +132,5 @@ export const cancelExclBtn = {
   color: "#444444",
   borderColor: "#444444",
 };
+
+export const modalInputBox = { m: "30px 35px", width: "calc(100% - 70px)" };

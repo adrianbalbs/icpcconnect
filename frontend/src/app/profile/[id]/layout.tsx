@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
 import image from "@/assets/image.png";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/bar/Sidebar";
 import { getInfo } from "@/utils/profileInfo";
 import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
