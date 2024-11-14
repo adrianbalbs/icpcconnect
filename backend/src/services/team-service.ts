@@ -121,7 +121,6 @@ export class TeamService {
   }
 
   async getAllTeams(contest?: string): Promise<{ allTeams: TeamDTO[] }> {
-    console.log(contest);
     const query = this.db
       .select({
         id: teams.id,
