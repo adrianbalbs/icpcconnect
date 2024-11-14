@@ -13,6 +13,8 @@ import { ProfileProps } from "../page";
 import ContestExperience from "@/components/experience/ContestExperience";
 import { User } from "@/types/users";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { checkViewingPermissions } from "@/utils/profileInfo";
+import { useRouter } from "next/navigation";
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -57,6 +59,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
   });
 
   const { userSession } = useAuth();
+  const router = useRouter();
 
   // Fetch experience data from backend
   const getExperience = useCallback(async () => {
@@ -112,7 +115,13 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     const initialisePage = async () => {
       await getExperience();
     };
-    initialisePage();
+
+    if (checkViewingPermissions(params.id, userSession)) {
+      initialisePage();
+    } else {
+      // Redirect user to 404 page not found if they don't have permission to view route
+      router.replace("/404");
+    }
   }, [getExperience]);
 
   return (

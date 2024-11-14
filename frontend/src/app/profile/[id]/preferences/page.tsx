@@ -10,6 +10,8 @@ import ExclusionPreference from "@/components/preferences/ExclusionPreference";
 import InclusionPreference from "@/components/preferences/InclusionPreference";
 import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { checkViewingPermissions } from "@/utils/profileInfo";
+import { useRouter } from "next/navigation";
 
 export interface PreferenceType {
   team: boolean;
@@ -35,6 +37,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
     exclusions: false,
   });
   const { userSession } = useAuth();
+  const router = useRouter();
 
   const setDefault = async () => {
     const preference = await getPreferences(params.id, "preferences");
@@ -50,7 +53,12 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
   };
 
   useEffect(() => {
-    setDefault();
+    if (checkViewingPermissions(params.id, userSession)) {
+      if (userSession.id === params.id) setDefault();
+    } else {
+      // Redirect user to 404 page not found if they don't have permission to view route
+      router.replace("/404");
+    }
   }, []);
 
   return (

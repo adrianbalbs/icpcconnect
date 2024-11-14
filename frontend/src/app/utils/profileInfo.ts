@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SERVER_URL } from "./constants";
 import { StudentInfo } from "@/components/members/Students";
+import { UserSession } from "@/components/AuthProvider/AuthProvider";
 
 export interface EditInfo {
   givenName: string;
@@ -115,4 +116,11 @@ export const getInfo = async (id: string | null | undefined) => {
 export const capitalise = (name: string) => {
   if (!name) return name;
   return name.charAt(0).toUpperCase() + name.slice(1);
+};
+
+export const checkViewingPermissions = (
+  id: string,
+  userSession: UserSession,
+) => {
+  return "Admin Coach".includes(userSession.role) || userSession.id === id;
 };
