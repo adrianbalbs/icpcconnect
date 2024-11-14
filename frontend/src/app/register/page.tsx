@@ -36,7 +36,6 @@ export default function Register() {
           university,
           email,
           password,
-          verificationCode,
           ...(roleName === "Site Coordinator" || roleName === "Coach"
             ? { inviteCode }
             : {}),
@@ -47,7 +46,7 @@ export default function Register() {
           payload,
         );
         // Checking whether the invite code they entered was valid
-        if (valid.id === "INVALID" || valid.id === undefined) {
+        if (valid.id === "INVALID") {
           alert("Registration failed: Invalid Invite Code Entered");
         } else {
           router.push("/login");
@@ -99,7 +98,7 @@ export default function Register() {
         setLoading(true);
         const obj = {
           email,
-          isNormalVerificationEmail: true,
+          isNormalVerificationEmail: roleName === "Student",
         };
         await axios.post(`${SERVER_URL}/api/email/registVerificationSend`, obj);
         alert(
