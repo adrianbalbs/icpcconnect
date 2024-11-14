@@ -98,7 +98,7 @@ export class TeamService {
   async getAllTeams() {
     return await this.db.query.teams.findMany({
       columns: { university: false },
-      with: { members: true, university: true },
+      with: { members: true, university: true, replacements: true },
     });
   }
 
