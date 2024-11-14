@@ -83,16 +83,19 @@ export class TeamService {
     return { ...team, members };
   }
 
-  async getTeamByStudent(studentId: string) {
+  async getTeamByStudent(studentId: string): Promise<TeamDTO> {
     const [team] = await this.db
       .select({
         id: teams.id,
         name: teams.name,
         university: universities.name,
+        contest: contests.name,
+        flagged: teams.flagged,
       })
       .from(studentDetails)
       .where(eq(studentDetails.userId, studentId))
       .innerJoin(teams, eq(teams.id, studentDetails.team))
+      .innerJoin(contests, eq(contests.id, teams.contest))
       .innerJoin(universities, eq(universities.id, teams.university));
 
     if (!team) {
