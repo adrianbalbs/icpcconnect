@@ -11,6 +11,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { Edit } from "@/components/profile/Edit";
 import { useProfile } from "./layout";
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
 
 export interface ProfileProps {
   params: {
@@ -28,6 +29,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     dietaryRequirements: "",
     tshirtSize: "",
   });
+  const { userSession } = useAuth();
 
   const { storeProfileInfo } = useProfile();
 
@@ -77,18 +79,19 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     <div className={profileStyles["inner-screen"]}>
       <div className={profileStyles.title}>
         <h3>Profile</h3>
-        {isEditing ? (
-          <button
-            className={profileStyles["profile-button"]}
-            onClick={handleSaveClick}
-          >
-            Save
-          </button>
-        ) : (
-          <IconButton onClick={handleEditClick}>
-            <EditTwoToneIcon />
-          </IconButton>
-        )}
+        {(userSession.role === "Admin" || userSession.id === params.id) &&
+          (isEditing ? (
+            <button
+              className={profileStyles["profile-button"]}
+              onClick={handleSaveClick}
+            >
+              Save
+            </button>
+          ) : (
+            <IconButton onClick={handleEditClick}>
+              <EditTwoToneIcon />
+            </IconButton>
+          ))}
       </div>
       <hr className={pageStyles.divider} />
 

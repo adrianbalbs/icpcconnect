@@ -2,9 +2,11 @@ import { Router, Request, Response, NextFunction } from "express";
 import { AdminService, AuthService } from "../services/index.js";
 import {
   createAuthenticationMiddleware,
+  validateData,
   authorise,
 } from "../middleware/index.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
+import { AlgorithmRequest, AlgorithmRequestSchema } from "../schemas/index.js";
 
 export function adminRouter(
   adminService: AdminService,
@@ -15,10 +17,16 @@ export function adminRouter(
   return Router()
     .use(authenticate)
     .post(
-      "/runalgo",
-      async (_req: Request, res: Response, next: NextFunction) => {
+      "/algo",
+      validateData(AlgorithmRequestSchema, "body"),
+      async (
+        req: Request<unknown, unknown, AlgorithmRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
         try {
-          const success = await algorithmService.callAlgorithm();
+          const { contestId } = req.body;
+          const success = await algorithmService.callAlgorithm(contestId);
           res.status(200).json(success);
         } catch (err) {
           next(err);
@@ -26,7 +34,7 @@ export function adminRouter(
       },
     )
     .delete(
-      "/admin/:id",
+      "/:id",
       authorise(["Admin"]),
       async (
         req: Request<{ id: string }, unknown>,

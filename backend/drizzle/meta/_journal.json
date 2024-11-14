@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1731230827742,
-      "tag": "0000_puzzling_shiva",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1731465192510,
-      "tag": "0001_rich_stranger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1731049082879,
-      "tag": "0002_pink_peter_quill",
+      "when": 1731549506510,
+      "tag": "0000_bouncy_energizer",
       "breakpoints": true
     }
   ]

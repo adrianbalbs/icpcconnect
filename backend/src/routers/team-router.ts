@@ -7,6 +7,8 @@ import {
 import {
   CreateTeamRequest,
   CreateTeamRequestSchema,
+  GetAllTeamsQuery,
+  GetAllTeamsQuerySchema,
   UpdateTeamRequest,
   UpdateTeamRequestSchema,
 } from "../schemas/index.js";
@@ -18,10 +20,18 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     .use(authenticate)
     .get(
       "/all",
-      authorise(["Admin", "Coach", "Site Coordinator"]),
-      async (_req: Request, res: Response, next: NextFunction) => {
+      [
+        authorise(["Admin", "Coach", "Site Coordinator"]),
+        validateData(GetAllTeamsQuerySchema, "query"),
+      ],
+      async (
+        req: Request<unknown, unknown, unknown, GetAllTeamsQuery>,
+        res: Response,
+        next: NextFunction,
+      ) => {
         try {
-          const teams = await teamService.getAllTeams();
+          const { contest } = req.query;
+          const teams = await teamService.getAllTeams(contest);
           res.status(200).json(teams);
         } catch (err) {
           next(err);
@@ -46,16 +56,19 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .get(
-      "/student/:id",
+      "/student/:studentId/contest/:contestId",
       authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
       async (
-        req: Request<{ id: string }, unknown>,
+        req: Request<{ studentId: string; contestId: string }, unknown>,
         res: Response,
         next: NextFunction,
       ) => {
-        const { id } = req.params;
+        const { studentId, contestId } = req.params;
         try {
-          const team = await teamService.getTeamByStudent(id);
+          const team = await teamService.getTeamByStudentAndContest(
+            studentId,
+            contestId,
+          );
           res.status(200).json(team);
         } catch (err) {
           next(err);

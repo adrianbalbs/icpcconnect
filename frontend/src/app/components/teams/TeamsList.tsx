@@ -1,59 +1,33 @@
-import axios from "axios";
-import { useEffect } from "react";
-import { SERVER_URL } from "@/utils/constants";
+"use client";
+
+import { useEffect, useState } from "react";
 import teamStyles from "@/styles/Teams.module.css";
 import TeamCard from "./TeamCard";
+import { Team } from "@/types/teams";
+import { Role } from "@/types/users";
 
-// interface Team {
-//   id: string;
-//   name: string;
-//   university: string;
-//   members: Array<string>;
-// }
-
-const TeamsList: React.FC = () => {
-  // const [teams, setTeams] = useState<Array<Team>>([]);
-  // const [canEdit, setCanEdit] = useState(false);
-
-  const getTeams = async () => {
-    try {
-      const res = await axios.get(`${SERVER_URL}/api/teams/all`, {
-        withCredentials: true,
-      });
-      const data = res.data;
-      console.log(data);
-      // setTeams(data);
-    } catch (error) {
-      console.log(`Get teams error: ${error}`);
-    }
-  };
+type TeamsListProps = {
+  teams: Team[];
+  role: Role;
+};
+const TeamsList: React.FC<TeamsListProps> = ({ teams, role }) => {
+  const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
-    getTeams();
-    // setCanEdit(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'coach');
+    setCanEdit(role === "Admin" || role === "Coach");
   }, []);
 
   return (
     <div className={teamStyles.teams}>
-      <TeamCard
-        name="Tomato Factory 1"
-        university="UNSW"
-        members={["Adrian 1", "Kobe 1", "Jerry 1"]}
-        canEdit={false}
-      />
-      <TeamCard
-        name="Tomato Factory 2"
-        university="UNSW"
-        members={["Adrian 2", "Rachel Chen", "Jerry 2"]}
-        canEdit={false}
-      />
-      <TeamCard
-        name="Tomato Factory 3"
-        university="UNSW"
-        members={["Adrian 3", "Kobe 3", "Jerry 3"]}
-        canEdit={false}
-      />
-      {/* {teams.map((team) => <TeamCard key={team.id} {...team} canEdit={canEdit} />)} */}
+      {teams.map((team) => (
+        <TeamCard
+          key={team.id}
+          name={team.name}
+          university={team.university}
+          members={team.members.map((m) => `${m.givenName} ${m.familyName}`)}
+          canEdit={canEdit}
+        />
+      ))}
     </div>
   );
 };
