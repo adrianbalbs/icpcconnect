@@ -5,7 +5,12 @@ import {
   studentDetails,
   users,
 } from "../db/index.js";
-import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
+import { 
+  CreateTeamRequest, 
+  UpdateTeamRequest, 
+  CreateTeamResponse, 
+  TeamDetails
+} from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 
 export class TeamService {
@@ -15,7 +20,20 @@ export class TeamService {
     this.db = db;
   }
 
-  async createTeam(req: CreateTeamRequest) {
+  /*
+  * Create a team of students
+  *
+  * @param req - CreateTeamRequest
+  *   req.name - name of team
+  *   req.university - University-id that team is associated with
+  *   req.memberIds - Array of user-ids corresponding to the team-members
+  *   req.flagged - Team is flagged for potential student conflicts
+  * 
+  * @returns CreateTeamResponse
+  *   CreateTeamResponse.teamId - Id of team created
+  * 
+  */
+  async createTeam(req: CreateTeamRequest): Promise<CreateTeamResponse> {
     const { name, university, memberIds } = req;
 
     const [id] = await this.db
@@ -39,6 +57,17 @@ export class TeamService {
     return id;
   }
 
+  /*
+  * Get the details of a team, given it's id
+  *
+  * @param teamId - id of team specified
+  *  
+  * @returns
+  * 
+  * @throws BadRequest
+  *   - If team-id doesn't correspond to a team
+  */
+  //async getTeam(teamId: string): Promise<TeamDetails> {
   async getTeam(teamId: string) {
     const team = await this.db.query.teams.findFirst({
       where: eq(teams.id, teamId),

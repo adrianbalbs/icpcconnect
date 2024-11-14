@@ -1,5 +1,5 @@
 {
-  "id": "1bd45d00-ee2b-443d-af43-33ee6908ac04",
+  "id": "459f2b28-0f70-45e2-af7b-ba505c10fae0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -297,6 +297,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "time_submitted": {
+          "name": "time_submitted",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -451,15 +458,15 @@
           "notNull": true,
           "default": "'none'"
         },
-        "time_submitted": {
-          "name": "time_submitted",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
         "exclusions": {
           "name": "exclusions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "preferences": {
+          "name": "preferences",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -513,13 +520,13 @@
           "name": "name",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "university": {
           "name": "university",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "flagged": {
           "name": "flagged",
@@ -568,7 +575,7 @@
           "name": "hosted_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},

@@ -47,7 +47,7 @@ export type User = InferSelectModel<typeof users>;
 export const universities = pgTable("universities", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
-  hostedAt: integer("hosted_at"),
+  hostedAt: integer("hosted_at").notNull(),
 });
 
 export const universityRelations = relations(universities, ({ one, many }) => ({
@@ -247,8 +247,8 @@ export const coursesCompletedByStudentRelations = relations(
 
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 50 }),
-  university: integer("university").references(() => universities.id),
+  name: varchar("name", { length: 50 }).notNull(),
+  university: integer("university").references(() => universities.id).notNull(),
   flagged: boolean("flagged").default(false).notNull(),
 });
 

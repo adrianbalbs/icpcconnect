@@ -30,6 +30,25 @@ import { CodesService } from "./codes-service.js";
 export class UserService {
   constructor(private readonly db: DatabaseConnection) {}
 
+  /*
+  * Create a new user
+  *
+  * @remarks
+  *  Doesn't throw on invalid inviteCode, but returns "INVALID" as id
+  *
+  * @param req - CreateUser
+  *   req.givenName - users' given name
+  *   req.familyName - users' family name
+  *   req.email - users' email
+  *   req.password - account's password
+  *   req.role - users' role (e.g Student, Coach)
+  *   req.studentId - Optional, student-id of user
+  *   req.inviteCode - Optional, invite code (for privileged users)
+  *   req.verificationCode - Optional, verification code
+  * 
+  * @returns id - Internal id of the user
+  * 
+  */
   async createUser(req: CreateUser, codesService: CodesService): Promise<{ id: string }> {
     const { studentId, password, role, inviteCode, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
@@ -59,6 +78,17 @@ export class UserService {
     });
   }
 
+  /*
+  * Get a user, given their internal-id
+  *
+  * @param id - user's internal id
+  * 
+  * @returns UserDTO - All user details, omitting their password
+  *  
+  * @throws NotFoundError
+  *   If user-id doesn't correspond to a user
+  * 
+  */
   async getUserById(id: string): Promise<UserDTO> {
     const { password, refreshTokenVersion, ...usersRest } =
       getTableColumns(users);
@@ -100,6 +130,19 @@ export class UserService {
     return { ...user, languagesSpoken, coursesCompleted };
   }
 
+  /*
+  * Get a user, given their internal-id
+  *
+  * @param req - UpdateUser (All fields are optional)
+  *   req.givenName - User's new given name
+  *   req.familyName - User's new family name
+  *   req.email - User's new email
+  *   req.role  - User's new role
+  *   req.university - User's new university
+  * 
+  * @returns id - user's internal id
+  * 
+  */
   async updateUser(id: string, req: UpdateUser): Promise<{ id: string }> {
     if (Object.keys(req).length === 0) {
       return { id };
