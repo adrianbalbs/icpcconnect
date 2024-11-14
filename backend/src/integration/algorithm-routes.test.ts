@@ -13,6 +13,7 @@ import {
   AuthService,
   ContestRegistrationService,
   EmailService,
+  CodesService,
   TeamService,
   UserService,
 } from "../services/index.js";
@@ -40,12 +41,13 @@ describe("Algorithm Tests", () => {
     const dbSetup = await setupTestDatabase();
     db = dbSetup.db;
     const authService = new AuthService(db);
+    const codesService = new CodesService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api", emailRouter(new EmailService(db)))
       .use("/api/auth", authRouter(authService))
-      .use("/api/users", userRouter(new UserService(db), authService))
+      .use("/api/users", userRouter(new UserService(db), authService, codesService))
       .use("/api/teams", teamRouter(new TeamService(db), authService))
       .use(
         "/api",

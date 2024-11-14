@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import { AuthService, EmailService, UserService } from "../services/index.js";
+import { AuthService, CodesService, EmailService, UserService } from "../services/index.js";
 import { emailRouter, userRouter } from "../routers/index.js";
 import { DatabaseConnection, verifyEmail } from "../db/index.js";
 import {
@@ -20,10 +20,11 @@ beforeAll(async () => {
   const dbSetup = await setupTestDatabase();
   db = dbSetup.db;
   const authService = new AuthService(db);
+  const codesService = new CodesService(db);
   app = express()
     .use(express.json())
     .use("/api", emailRouter(new EmailService(db)))
-    .use("/api/users", userRouter(new UserService(db), authService))
+    .use("/api/users", userRouter(new UserService(db), authService, codesService))
 });
 
 afterAll(async () => {

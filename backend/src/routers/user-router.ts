@@ -1,7 +1,7 @@
 import { Request, Router } from "express";
 import { createAuthenticationMiddleware } from "../middleware/authenticate.js";
 import { authorise } from "../middleware/authorise.js";
-import { AuthService, UserService } from "../services/index.js";
+import { AuthService, CodesService, UserService } from "../services/index.js";
 import { handle } from "./handler.js";
 import { validateData } from "../middleware/validator-middleware.js";
 import {
@@ -18,7 +18,11 @@ import {
   UserRole,
 } from "../schemas/user-schema.js";
 
-export function userRouter(userService: UserService, authService: AuthService) {
+export function userRouter(
+    userService: UserService,
+    authService: AuthService,
+    codesService: CodesService
+  ) {
   const authenticate = createAuthenticationMiddleware(authService);
 
   return Router()
@@ -27,7 +31,7 @@ export function userRouter(userService: UserService, authService: AuthService) {
       validateData(CreateUserSchema, "body"),
       handle(async (req: Request<unknown, unknown, CreateUser>, res) => {
         const { body } = req;
-        const user = await userService.createUser(body);
+        const user = await userService.createUser(body, codesService);
         res.status(200).send(user);
       }),
     )
