@@ -1,5 +1,5 @@
 .screen {
-  margin: 100px 12.5vw 0;
+  margin: 100px calc(12.5vw - 90px) 0 calc(12.5vw + 90px);
   width: 75vw;
   flex-wrap: wrap;
   background-color: white;
