@@ -12,6 +12,7 @@ import {
   universities,
   users,
   languagesSpokenByStudent,
+  contests,
 } from "./schema.js";
 
 type UserTable = {
@@ -187,6 +188,23 @@ export const seed = async (db: DatabaseConnection) => {
   const siteCoordinators = data.default.siteCoordinators as UserTable[];
   for (const siteCoordinator of siteCoordinators) {
     await addSiteCoordinator(db, siteCoordinator);
+  }
+
+  logger.info("Seeding contests");
+  const allContests = data.default.contests;
+  for (const contest of allContests) {
+    const { name, site, id } = contest;
+    await db
+      .insert(contests)
+      .values({
+        id,
+        name,
+        site,
+        earlyBirdDate: new Date(),
+        cutoffDate: new Date(),
+        contestDate: new Date(),
+      })
+      .onConflictDoNothing();
   }
 
   logger.info("Adding default admin");

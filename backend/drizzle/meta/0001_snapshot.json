@@ -1,6 +1,6 @@
 {
-  "id": "1bd45d00-ee2b-443d-af43-33ee6908ac04",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "ec21ef56-9745-43fd-8453-8e18e9cdefad",
+  "prevId": "1bd45d00-ee2b-443d-af43-33ee6908ac04",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -297,6 +297,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "time_submitted": {
+          "name": "time_submitted",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -450,13 +457,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'none'"
-        },
-        "time_submitted": {
-          "name": "time_submitted",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
         },
         "exclusions": {
           "name": "exclusions",
