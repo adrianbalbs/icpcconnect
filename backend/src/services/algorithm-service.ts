@@ -135,7 +135,6 @@ export class AlgorithmService {
     const members = await this.db.query.users.findMany({
       where: inArray(users.id, memberIds),
     });
-
     for (const member of members) {
       await this.db
         .update(studentDetails)

@@ -19,3 +19,11 @@ export const PutStudentTeamSchema = z.object({
 })
 
 export type PutStudentTeamRequest = z.infer<typeof PutStudentTeamSchema>;
+
+export const SendTeamAllocatedEmailSchema = z.object({
+  name: z.string(),
+  memberNames: z.array(z.string()),
+  memberEmails: z.array(z.string().email())
+});
+
+export type SendTeamAllocationEmail = z.infer<typeof SendTeamAllocatedEmailSchema>;
