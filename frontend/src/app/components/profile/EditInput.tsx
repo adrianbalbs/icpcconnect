@@ -9,8 +9,13 @@ interface EditProps {
 
 export const EditInput: React.FC<EditProps> = ({ name, value, onChange }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const field = name === "Pronouns" ? "pronouns" : "dietaryRequirements";
-    onChange(e.target.value, field);
+    if (name.includes("Name")) {
+      const field = name.includes("First") ? "givenName" : "familyName";
+      onChange(e.target.value, field);
+    } else {
+      const field = name === "Pronouns" ? "pronouns" : "dietaryRequirements";
+      onChange(e.target.value, field);
+    }
   };
   return (
     <>

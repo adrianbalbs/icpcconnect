@@ -12,6 +12,7 @@ import CoursesExperience from "@/components/experience/CoursesExperience";
 import { ProfileProps } from "../page";
 import ContestExperience from "@/components/experience/ContestExperience";
 import { User } from "@/types/users";
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -54,6 +55,8 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
     pythonExperience: "none",
     coursesCompleted: [],
   });
+
+  const { userSession } = useAuth();
 
   // Fetch experience data from backend
   const getExperience = useCallback(async () => {
@@ -128,12 +131,14 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
           added.codeforcesRating) && (
           <ContestExperience added={added} experience={experience} />
         )}
-        <ExperienceModal
-          id={params.id}
-          added={added}
-          experience={experience}
-          getExperience={getExperience}
-        />
+        {userSession.id === params.id && (
+          <ExperienceModal
+            id={params.id}
+            added={added}
+            experience={experience}
+            getExperience={getExperience}
+          />
+        )}
       </Box>
     </div>
   );

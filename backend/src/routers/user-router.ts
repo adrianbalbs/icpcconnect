@@ -17,7 +17,6 @@ import {
   UpdateUserSchema,
   UserRole,
 } from "../schemas/user-schema.js";
-import { PutStudentTeamSchema } from "../schemas/team-schema.js";
 
 export function userRouter(
     userService: UserService,
@@ -202,7 +201,7 @@ export function userRouter(
       "/:id/password",
       [
         authenticate,
-        authorise(["Admin", "Coach", "Student"]),
+        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
         validateData(UpdatePasswordSchema, "body"),
       ],
       handle(

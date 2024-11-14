@@ -9,6 +9,7 @@ import PreferenceModal from "@/components/preferences/PreferenceModal";
 import ExclusionPreference from "@/components/preferences/ExclusionPreference";
 import InclusionPreference from "@/components/preferences/InclusionPreference";
 import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
 
 export interface PreferenceType {
   team: boolean;
@@ -33,6 +34,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
     pair: false,
     exclusions: false,
   });
+  const { userSession } = useAuth();
 
   const setDefault = async () => {
     const preference = await getPreferences(params.id, "preferences");
@@ -64,7 +66,9 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
           changed={added.exclusions}
           complete={() => setAdded({ ...added, exclusions: false })}
         />
-        <PreferenceModal id={params.id} added={added} setAdded={setAdded} />
+        {userSession.id === params.id && (
+          <PreferenceModal id={params.id} added={added} setAdded={setAdded} />
+        )}
       </Box>
     </div>
   );
