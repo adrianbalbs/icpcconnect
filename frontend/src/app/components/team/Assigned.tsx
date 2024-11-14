@@ -1,7 +1,7 @@
 import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Member, { MemberProps } from "./Member";
-import { Box, Modal, Typography } from "@mui/material";
+import { Box, Modal } from "@mui/material";
 import { useState } from "react";
 import CloseBtn from "../utils/CloseBtn";
 import axios from "axios";
@@ -21,9 +21,9 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
   } = useAuth();
   const handleSubmit = async () => {
     try {
-      await axios.post(`${SERVER_URL}/api/createPullout/${id}`, {
+      await axios.post(`${SERVER_URL}/api/teams/createPullout/${id}`, {
         studentId: id,
-        replacementId,
+        replacedWith: replacementId,
         reason,
       });
     } catch (err) {
@@ -31,6 +31,7 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
     }
     setOpen(false);
   };
+
   return (
     <>
       <div className={memberStyles.gap}>
