@@ -123,7 +123,7 @@ export class EmailService {
   public isValidUniversityEmail(email: string): boolean {
     // eslint-disable-next-line no-useless-escape
     const regex =
-      /^[\w!#$%&'*+\=?^`{|}~-]+(?:\.[\w!#$%&'*+\=?^`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(\.(edu|edu\.au|ac|ac\.uk|edu\.ca|edu\.cn|edu\.sg|edu\.nz|edu\.in|edu\.jp|ac\.nz|ac\.fj))$/;
+      /^[\w!#$%&'*+=?^`{|}~-]+(?:\.[\w!#$%&'*+=?^`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(\.(edu|edu\.au|ac|ac\.uk|edu\.ca|edu\.cn|edu\.sg|edu\.nz|edu\.in|edu\.jp|ac\.nz|ac\.fj))$/;
 
     return regex.test(email);
   }
