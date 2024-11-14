@@ -103,7 +103,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("getStudentScores: Should return an array of two StudentScore objects", () => {
     const calcscores: StudentScore[] = getStudentScores(test_studentInfo);
 
-    expect(calcscores.length == 2);
+    expect(calcscores.length === 2);
 
     expect(calcscores[0]).toEqual({
       ids: [s1.id],
@@ -138,7 +138,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const calcscores = getStudentScores(test_studentInfo);
 
-    expect(calcscores.length == 1);
+    expect(calcscores.length === 1);
 
     expect(calcscores[0]).toEqual({
       ids: [s1.id, s2.id],
@@ -188,7 +188,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const calcscores = getStudentScores(test_studentInfo);
 
-    expect(calcscores.length == 1);
+    expect(calcscores.length === 1);
 
     expect(calcscores[0]).toEqual({
       ids: [s1.id, s3.id, s2.id],
@@ -238,7 +238,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const calcscores = getStudentScores(test_studentInfo);
 
-    expect(calcscores.length == 1);
+    expect(calcscores.length === 1);
 
     expect(calcscores[0]).toEqual({
       ids: [s1.id, s3.id],

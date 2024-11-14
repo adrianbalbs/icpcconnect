@@ -46,7 +46,7 @@ export class TeamService {
       with: { members: true, university: true },
     });
 
-    if (team == undefined) {
+    if (team === undefined) {
       throw new HTTPError(badRequest);
     }
 
@@ -63,7 +63,7 @@ export class TeamService {
       .where(eq(studentDetails.userId, studentId))
       .leftJoin(teams, eq(teams.id, studentDetails.team));
 
-    if (team == undefined) {
+    if (team === undefined) {
       throw new HTTPError(badRequest);
     }
 

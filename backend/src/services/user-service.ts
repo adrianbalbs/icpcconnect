@@ -34,12 +34,12 @@ export class UserService {
     const { studentId, password, role, inviteCode, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
 
-    if (studentId == undefined && role != "Admin") {
+    if (studentId === undefined && role != "Admin") {
       let inviteExists: boolean = false
 
-      if (role == "Site Coordinator") {
+      if (role === "Site Coordinator") {
         inviteExists = await checkSiteCoordCode(codesService, inviteCode)
-      } else if (role == "Coach") {
+      } else if (role === "Coach") {
         inviteExists = await checkCoachCode(codesService, inviteCode)
       }
 
@@ -333,7 +333,7 @@ export class UserService {
     
     const preferencesReturn: PreferencesResponse[] = []
 
-    if (p.preferences.length == 0 || p.preferences === "none") {
+    if (p.preferences.length === 0 || p.preferences === "none") {
       return { preferences: preferencesReturn };
     }
 
