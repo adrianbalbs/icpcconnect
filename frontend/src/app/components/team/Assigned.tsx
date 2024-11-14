@@ -21,11 +21,15 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
   } = useAuth();
   const handleSubmit = async () => {
     try {
-      await axios.post(`${SERVER_URL}/api/teams/createPullout/${id}`, {
-        studentId: id,
-        replacedWith: replacementId,
-        reason,
-      });
+      await axios.post(
+        `${SERVER_URL}/api/teams/createPullout/${id}`,
+        {
+          studentId: id,
+          replacedWith: replacementId,
+          reason,
+        },
+        { withCredentials: true },
+      );
     } catch (err) {
       console.error(err);
     }
