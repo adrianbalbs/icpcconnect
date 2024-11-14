@@ -75,12 +75,14 @@ CREATE TABLE IF NOT EXISTS "registration_details" (
 CREATE TABLE IF NOT EXISTS "replacements" (
 	"team_id" uuid,
 	"leaving_id" text DEFAULT '' NOT NULL,
-	"student_id" text DEFAULT '' NOT NULL
+	"student_id" text DEFAULT '' NOT NULL,
+	"reason" text DEFAULT '' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "student_details" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"student_id" text DEFAULT '' NOT NULL,
+	"profile_picture" text DEFAULT '' NOT NULL,
 	"pronouns" text DEFAULT '' NOT NULL,
 	"dietary_requirements" text DEFAULT '' NOT NULL,
 	"tshirt_size" text DEFAULT '' NOT NULL,

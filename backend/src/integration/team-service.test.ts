@@ -376,9 +376,16 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(200);
 
+    const pulloutReq = {
+      studentId: userIds[0],
+      reason: "",
+      replacedWith: sId_req.body.studentId,
+    };
+
     await request(app)
-      .post(`/api/teams/createPullout/${userIds[0]}/${sId_req.body.studentId}`)
+      .post(`/api/teams/createPullout/${userIds[0]}`)
       .set("Cookie", cookies)
+      .send(pulloutReq)
       .expect(200);
 
     const info_res = await request(app)
@@ -459,9 +466,16 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(200);
 
+    const pulloutReq = {
+      studentId: userIds[0],
+      reason: "",
+      replacedWith: sId_req.body.studentId,
+    };
+
     await request(app)
-      .post(`/api/teams/createPullout/${userIds[0]}/${sId_req.body.studentId}`)
+      .post(`/api/teams/createPullout/${userIds[0]}`)
       .set("Cookie", cookies)
+      .send(pulloutReq)
       .expect(200);
 
     const info_res = await request(app)
@@ -570,9 +584,16 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(200);
 
+    const pulloutReq = {
+      studentId: userIds[0],
+      reason: "",
+      replacedWith: sId_req.body.studentId,
+    };
+
     await request(app)
-      .post(`/api/teams/createPullout/${userIds[0]}/${sId_req.body.studentId}`)
+      .post(`/api/teams/createPullout/${userIds[0]}`)
       .set("Cookie", cookies)
+      .send(pulloutReq)
       .expect(200);
 
     const info_res = await request(app)

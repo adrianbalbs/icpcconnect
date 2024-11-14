@@ -29,6 +29,7 @@ type StudentTable = UserTable & {
   team: string | null;
   pronouns: string;
   studentId: string;
+  profile_pic: string,
   photoConsent: boolean;
   languagesSpoken: SpokenLanguage[];
 };
@@ -45,6 +46,7 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
     team,
     pronouns,
     studentId,
+    profile_pic,
     photoConsent,
     languagesSpoken,
   } = student;
@@ -76,6 +78,7 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
         pronouns,
         studentId,
         photoConsent,
+        profile_pic,
       });
       for (const languageCode of languagesSpoken) {
         await tx

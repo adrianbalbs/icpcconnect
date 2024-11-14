@@ -1,1 +1,0 @@
-ALTER TABLE "student_details" ADD COLUMN "profile_picture" text DEFAULT '' NOT NULL;
