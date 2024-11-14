@@ -37,18 +37,14 @@ export class UserService {
     const { studentId, password, role, inviteCode, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
 
-    if (studentId === undefined && role != "Admin") {
-      let inviteExists: boolean = false;
+    if (role === "Site Coordinator" || role === "Coach") {
+      const isValid =
+        role === "Site Coordinator"
+          ? await checkSiteCoordCode(codesService, inviteCode)
+          : await checkCoachCode(codesService, inviteCode);
 
-      if (role === "Site Coordinator") {
-        inviteExists = await checkSiteCoordCode(codesService, inviteCode);
-      } else if (role === "Coach") {
-        inviteExists = await checkCoachCode(codesService, inviteCode);
-      }
-
-      if (!inviteExists) {
-        const id = "INVALID";
-        return { id };
+      if (!isValid) {
+        return { id: "INVALID" };
       }
     }
 

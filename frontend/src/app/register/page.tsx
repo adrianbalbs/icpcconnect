@@ -36,7 +36,6 @@ export default function Register() {
           university,
           email,
           password,
-          verificationCode,
           ...(roleName === "Site Coordinator" || roleName === "Coach"
             ? { inviteCode }
             : {}),
@@ -47,7 +46,7 @@ export default function Register() {
           payload,
         );
         // Checking whether the invite code they entered was valid
-        if (valid.id === "INVALID" || valid.id === undefined) {
+        if (valid.id === "INVALID") {
           alert("Registration failed: Invalid Invite Code Entered");
         } else {
           router.push("/login");
@@ -135,9 +134,9 @@ export default function Register() {
       submitForm();
     } else if (password !== confirmPassword) {
       alert("Passwords do not match!");
-    } else if (step === 4) {
+    } else if (step === 4 && roleName === "Student") {
       await verifyCode();
-    } else if (step === 3 && !loading) {
+    } else if (step === 3 && !loading && roleName === "Student") {
       await sendEmail();
     } else if (step === 2 && roleName === "Student" && !eligibility) {
       alert("You have not declared yourself eligible for the competition.");

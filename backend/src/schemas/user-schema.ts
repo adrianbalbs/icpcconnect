@@ -341,7 +341,6 @@ export const UpdatePasswordSchema = z.strictObject({
 export const CreateUserSchema = BaseUserSchema.extend({
   studentId: z.string().min(1).optional(),
   inviteCode: z.string().min(1).optional(),
-  verificationCode: z.string().min(1).optional(),
 }).omit({ id: true });
 
 export type CreateUser = z.infer<typeof CreateUserSchema>;
