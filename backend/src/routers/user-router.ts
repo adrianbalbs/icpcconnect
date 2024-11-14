@@ -133,7 +133,7 @@ export function userRouter(
       "/:id",
       [
         authenticate,
-        authorise(["Admin", "Coach", "Student"]),
+        authorise(["Admin", "Coach", "Site Coordinator"]),
         validateData(UpdateUserSchema, "body"),
       ],
       handle(async (req: Request<{ id: string }, unknown, UpdateUser>, res) => {
@@ -147,7 +147,7 @@ export function userRouter(
       "/:id/student-details",
       [
         authenticate,
-        authorise(["Admin", "Coach", "Student"]),
+        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
         validateData(UpdateStudentDetailsSchema, "body"),
       ],
       handle(

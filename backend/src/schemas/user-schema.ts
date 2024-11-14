@@ -330,6 +330,7 @@ export type BaseUserDTO = Omit<BaseUser, "password" | "university"> & {
 export const UpdateUserSchema = BaseUserSchema.omit({
   id: true,
   password: true,
+  role: true,
 }).partial();
 
 export type UpdateUser = z.infer<typeof UpdateUserSchema>;
