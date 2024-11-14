@@ -45,3 +45,9 @@ export const SendTeamAllocatedEmailSchema = z.object({
 export type SendTeamAllocationEmail = z.infer<
   typeof SendTeamAllocatedEmailSchema
 >;
+
+export const GetAllTeamsQuerySchema = z.strictObject({
+  contest: z.string().optional(),
+});
+
+export type GetAllTeamsQuery = z.infer<typeof GetAllTeamsQuerySchema>;

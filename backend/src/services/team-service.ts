@@ -95,8 +95,11 @@ export class TeamService {
       .innerJoin(teams, eq(teams.id, studentDetails.team))
       .innerJoin(universities, eq(universities.id, teams.university));
 
-    if (team === undefined) {
-      throw new HTTPError(badRequest);
+    if (!team) {
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Could not find team associated with student: ${studentId}`,
+      });
     }
 
     const members = await this.db
@@ -114,11 +117,43 @@ export class TeamService {
     return { ...team, members };
   }
 
-  async getAllTeams() {
-    return await this.db.query.teams.findMany({
-      columns: { university: false },
-      with: { members: true, university: true },
-    });
+  async getAllTeams(contest?: string): Promise<{ allTeams: TeamDTO[] }> {
+    const query = this.db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        university: universities.name,
+        contest: contests.name,
+        flagged: teams.flagged,
+      })
+      .from(teams)
+      .innerJoin(universities, eq(universities.id, teams.university))
+      .innerJoin(contests, eq(contests.id, teams.contest))
+      .$dynamic();
+
+    if (contest) {
+      query.where(eq(teams.contest, contest));
+    }
+
+    const rawTeams = await query;
+    const allTeams = await Promise.all(
+      rawTeams.map(async (team) => {
+        const members = await this.db
+          .select({
+            id: users.id,
+            givenName: users.givenName,
+            familyName: users.familyName,
+            studentId: studentDetails.studentId,
+            email: users.email,
+          })
+          .from(studentDetails)
+          .innerJoin(users, eq(users.id, studentDetails.userId))
+          .where(eq(studentDetails.team, team.id));
+
+        return { ...team, members };
+      }),
+    );
+    return { allTeams };
   }
 
   //Expects all team-members to be sent

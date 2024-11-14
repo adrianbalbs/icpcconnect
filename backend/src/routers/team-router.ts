@@ -7,6 +7,8 @@ import {
 import {
   CreateTeamRequest,
   CreateTeamRequestSchema,
+  GetAllTeamsQuery,
+  GetAllTeamsQuerySchema,
   UpdateTeamRequest,
   UpdateTeamRequestSchema,
 } from "../schemas/index.js";
@@ -18,10 +20,18 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     .use(authenticate)
     .get(
       "/all",
-      authorise(["Admin", "Coach", "Site Coordinator"]),
-      async (_req: Request, res: Response, next: NextFunction) => {
+      [
+        authorise(["Admin", "Coach", "Site Coordinator"]),
+        validateData(GetAllTeamsQuerySchema, "query"),
+      ],
+      async (
+        req: Request<unknown, unknown, unknown, GetAllTeamsQuery>,
+        res: Response,
+        next: NextFunction,
+      ) => {
         try {
-          const teams = await teamService.getAllTeams();
+          const { contest } = req.query;
+          const teams = await teamService.getAllTeams(contest);
           res.status(200).json(teams);
         } catch (err) {
           next(err);

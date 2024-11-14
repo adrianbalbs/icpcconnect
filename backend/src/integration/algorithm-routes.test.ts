@@ -129,7 +129,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should just return success (1 registrations)", async () => {
@@ -191,7 +191,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should just return success (2 registrations)", async () => {
@@ -262,7 +262,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should create three students at the same uni and create a team with them", async () => {
@@ -359,7 +359,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(1);
+    expect(teams.body.allTeams).toHaveLength(1);
 
     // Call send team created email stuff
     await request(app).post("/api/sendTeamCreatedEmail").expect(200);
@@ -442,7 +442,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should create three students for two unis and create a team for both of them", async () => {
@@ -549,7 +549,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(2);
+    expect(teams.body.allTeams).toHaveLength(2);
   });
 
   // it("should generate 50 students at the same uni, 30 at another, and 20 at another, and create a total of 32 teams", async () => {
@@ -642,7 +642,7 @@ describe("Algorithm Tests", () => {
   //     .get("/api/teams/all")
   //     .set("Cookie", cookies)
   //     .expect(200);
-  //   expect(teams.body).toHaveLength(32);
+  //   expect(teams.body.allTeams).toHaveLength(32);
   // }, 60000);
 });
 
