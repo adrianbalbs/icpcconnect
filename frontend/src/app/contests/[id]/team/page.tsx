@@ -13,6 +13,7 @@ import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { useParams } from "next/navigation";
 import { ContestResponse } from "@/contests/page";
 import StudentWaitingScreen from "@/components/waiting-screen/StudentWaitingScreen";
+import { Box, CircularProgress, Stack } from "@mui/material";
 
 type TeamInfo = {
   id: string;
@@ -26,9 +27,10 @@ const Team: React.FC = () => {
   >("unregistered");
   const [uni, setUni] = useState("");
   const [contest, setContest] = useState<ContestResponse | null>(null);
+  const [loading, setLoading] = useState(false);
   const [team, setTeam] = useState<TeamInfo>({
     id: "",
-    name: "Tomato Factory",
+    name: "",
     members: [],
   });
   const {
@@ -94,10 +96,14 @@ const Team: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await Promise.all([getTeam(), fetchContest(), fetchEnrollment()]);
+      setLoading(false);
+    };
+
     if (id) {
-      getTeam();
-      fetchContest();
-      fetchEnrollment();
+      fetchData();
     }
   }, [id, params.id]);
 
@@ -125,6 +131,21 @@ const Team: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <>
       <h1 className={teamStyles["team-heading"]}>
@@ -144,7 +165,8 @@ type StatusDisplayProps = {
 };
 
 const StatusDisplay: React.FC<StatusDisplayProps> = ({ status, teamName }) => {
-  if (status === "assigned") return <span> {teamName}</span>;
+  if (status === "assigned")
+    return <span className={teamStyles.status}> {teamName}</span>;
   const statusText =
     status === "awaiting" ? "(Awaiting allocation)" : "(Not allocated)";
   return <span className={teamStyles.status}> {statusText}</span>;
