@@ -14,16 +14,16 @@ import { useParams } from "next/navigation";
 import { ContestResponse } from "@/contests/page";
 import StudentWaitingScreen from "@/components/waiting-screen/StudentWaitingScreen";
 
-interface TeamInfo {
+type TeamInfo = {
   id: string;
   name: string;
   members: MemberProps[];
-}
-
-const statusStrings = ["(Not allocated)", "(Awaiting allocation)"];
+};
 
 const Team: React.FC = () => {
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState<
+    "unregistered" | "awaiting" | "assigned"
+  >("unregistered");
   const [uni, setUni] = useState("");
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [team, setTeam] = useState<TeamInfo>({
@@ -34,7 +34,6 @@ const Team: React.FC = () => {
   const {
     userSession: { id },
   } = useAuth();
-
   const params = useParams<{ id: string }>();
 
   const fetchContest = useCallback(async () => {
@@ -55,16 +54,16 @@ const Team: React.FC = () => {
         `${SERVER_URL}/api/users/${id}/contest-registration/${params.id}`,
         { withCredentials: true },
       );
-      setStatus(1);
+      if (status === "unregistered") setStatus("awaiting");
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         console.log("Not enrolled yet!");
-        setStatus(0);
+        setStatus("unregistered");
       } else {
         console.error(err);
       }
     }
-  }, [id, params.id]);
+  }, [id, params.id, status]);
 
   const handleWithdrawEnrollment = async () => {
     try {
@@ -72,7 +71,7 @@ const Team: React.FC = () => {
         `${SERVER_URL}/api/users/${id}/contest-registration/${params.id}`,
         { withCredentials: true },
       );
-      setStatus(0);
+      setStatus("unregistered");
     } catch (err) {
       console.error(err);
     }
@@ -84,55 +83,71 @@ const Team: React.FC = () => {
       if (studentData) {
         setUni(studentData.university);
       }
-      // const res = await axios.get(`${SERVER_URL}/api/teams/student/${id}`, {
-      //   withCredentials: true,
-      // });
-      // setTeam(res.data);
-      setTeam({
-        id: "",
-        name: "Tomato Factory",
-        members: [],
+      const res = await axios.get(`${SERVER_URL}/api/teams/student/${id}`, {
+        withCredentials: true,
       });
-    } catch (error) {
-      console.log(`Student get team error: ${error}`);
+      setTeam(res.data);
+      setStatus("assigned");
+    } catch (err) {
+      console.log(`Student get team error: ${err}`);
     }
   }, [id]);
 
   useEffect(() => {
-    const initializeData = async () => {
-      await Promise.all([getTeam(), fetchContest(), fetchEnrollment()]);
-    };
+    if (id) {
+      getTeam();
+      fetchContest();
+      fetchEnrollment();
+    }
+  }, [id, params.id]);
 
-    if (id) initializeData();
-  }, [getTeam, fetchContest, fetchEnrollment]);
+  const renderStatusContent = () => {
+    switch (status) {
+      case "unregistered":
+        return (
+          <TeamRegistration
+            contestId={params.id}
+            cutoffDate={contest?.cutoffDate}
+            fetchEnrollment={fetchEnrollment}
+          />
+        );
+      case "awaiting":
+        return (
+          <StudentWaitingScreen
+            contest={contest}
+            onWithdraw={handleWithdrawEnrollment}
+          />
+        );
+      case "assigned":
+        return <Assigned members={team.members} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
       <h1 className={teamStyles["team-heading"]}>
         Team:
-        {status === 2 && <span> {team.name}</span>}
-        {status !== 2 && (
-          <span className={teamStyles.status}> {statusStrings[status]}</span>
-        )}
+        <StatusDisplay status={status} teamName={team.name} />
       </h1>
       <p className={teamStyles.university}>{uni}</p>
-      {status !== 2 && <hr className={pageStyles.divider} />}
-      {status === 0 && (
-        <TeamRegistration
-          contestId={params.id}
-          cutoffDate={contest?.cutoffDate}
-          fetchEnrollment={fetchEnrollment}
-        />
-      )}
-      {status === 1 && (
-        <StudentWaitingScreen
-          contest={contest}
-          onWithdraw={handleWithdrawEnrollment}
-        />
-      )}
-      {status === 2 && <Assigned members={team.members} />}
+      {status !== "assigned" && <hr className={pageStyles.divider} />}
+      {renderStatusContent()}
     </>
   );
+};
+
+type StatusDisplayProps = {
+  status: "unregistered" | "awaiting" | "assigned";
+  teamName: string;
+};
+
+const StatusDisplay: React.FC<StatusDisplayProps> = ({ status, teamName }) => {
+  if (status === "assigned") return <span> {teamName}</span>;
+  const statusText =
+    status === "awaiting" ? "(Awaiting allocation)" : "(Not allocated)";
+  return <span className={teamStyles.status}> {statusText}</span>;
 };
 
 export default Team;
