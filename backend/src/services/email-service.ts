@@ -147,8 +147,8 @@ export class EmailService {
   public async sendEmailVerificationCode(
     req: SendEmailVerificationCodeRequest,
   ): Promise<string> {
-    const { email } = req;
-    if (!this.isValidUniversityEmail(email)) {
+    const { email, isNormalVerificationEmail } = req;
+    if (isNormalVerificationEmail && !this.isValidUniversityEmail(email)) {
       throw new HTTPError({
         errorCode: badRequest.errorCode,
         message: "Invalid University Email Address provided.",
