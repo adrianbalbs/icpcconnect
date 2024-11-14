@@ -171,12 +171,7 @@ export class EmailService {
     req: SendEmailForgotPasswordCodeRequest,
   ): Promise<string> {
     const { email } = req;
-    if (!this.isValidUniversityEmail(email)) {
-      throw new HTTPError({
-        errorCode: badRequest.errorCode,
-        message: "Invalid University Email Address provided.",
-      });
-    } else if (await this.isNewRegisteredEmail(email)) {
+    if (await this.isNewRegisteredEmail(email)) {
       throw new HTTPError({
         errorCode: badRequest.errorCode,
         message:
