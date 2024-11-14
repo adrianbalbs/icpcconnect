@@ -26,6 +26,7 @@ export type AllCoursesCompleted = {
 
 export type StudentResponse = {
   id: string;
+  studentId: string;
   stuGiven: string;
   stuLast: string;
   uniName: string;
@@ -77,6 +78,7 @@ export class AlgorithmService {
     const allStudents = await this.db
       .select({
         id: users.id,
+        studentId: studentDetails.studentId,
         stuGiven: users.givenName,
         stuLast: users.familyName,
         uniName: universities.name,

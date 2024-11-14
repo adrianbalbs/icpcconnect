@@ -2,7 +2,6 @@
  * Team building algorithmic design
  */
 
-import { group } from "console";
 import { CreateTeamRequest } from "../schemas/team-schema.js";
 import {
   AllUniIDResponse,
@@ -41,6 +40,7 @@ const COURSES_WEIGHT = 3;
 
 export interface StudentInfo {
   id: string;
+  studentId: string;
   uniName: string;
   stuGiven: string;
   stuLast: string;
@@ -105,7 +105,9 @@ export async function runFullAlgorithm(
       studentsOfUni.allStudents,
       algorithmService,
     );
+
     const studentScores: StudentScore[] = getStudentScores(studentInfo);
+
     const groups: Group[] = algorithm(studentScores);
 
     const pushedTeams: { teamId: string }[] = [];
@@ -129,7 +131,7 @@ export async function runFullAlgorithm(
     if (pushedTeams.length != groups.length) {
       console.log("Something went wrong here!");
       console.log("Teams pushed to DB: " + pushedTeams.length.toString);
-      console.log("Groups formed: " + group.length.toString());
+      console.log("Groups formed: " + groups.length.toString());
       return false;
     }
   }
@@ -158,6 +160,7 @@ async function convertToStudentInfo(
 
     formattedInfo.push({
       id: s.id,
+      studentId: s.studentId,
       stuGiven: s.stuGiven,
       stuLast: s.stuLast,
       uniName: s.uniName,
@@ -232,17 +235,17 @@ function getLanguages(l: AllLanguagesSpoken): string[] {
 
 /**
  * getPreferences
- * 
+ *
  * Converts the raw string from the DB return into an array of individual student IDs
- * 
+ *
  * @param s: string
  * @returns string[]
  */
 function getPreferences(s: string): string[] {
   if (s === "" || s === "none") {
-    return []
+    return [];
   } else {
-    return (s).split(", ")
+    return s.split(", ");
   }
 }
 
@@ -303,12 +306,11 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
     } // Case of it already being considered within a pair
 
     // Split the preferences into an array
-    const paired_with = getPreferences(s.preferences)
-
+    const paired_with = getPreferences(s.preferences);
     if (paired_with.length === 1) {
-      const pair = paired_with.pop()
+      const pair = paired_with.pop();
       const p: StudentInfo | undefined = students.find(
-        (student) => student.id === pair,
+        (student) => student.studentId === pair,
       );
       if (p === undefined) {
         return [score];
@@ -336,14 +338,14 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
       };
       p.markdone = true;
     } else if (paired_with.length === 2) {
-      const pair1 = paired_with.pop()
+      const pair1 = paired_with.pop();
       const p1: StudentInfo | undefined = students.find(
-        (student) => student.id === pair1,
+        (student) => student.studentId === pair1,
       );
 
-      const pair2 = paired_with.pop()
+      const pair2 = paired_with.pop();
       const p2: StudentInfo | undefined = students.find(
-        (student) => student.id === pair2,
+        (student) => student.studentId === pair2,
       );
 
       if (p1 === undefined || p2 === undefined) {
@@ -351,22 +353,45 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
       } // Should never happen
       score = {
         ids: [s.id, p1.id, p2.id],
-        studentScore: (calculateScore(s) + calculateScore(p1) + calculateScore(p2)) / 3,
+        studentScore:
+          (calculateScore(s) + calculateScore(p1) + calculateScore(p2)) / 3,
 
         // We combine them together, we do a set operation later anyways
-        languagesSpoken: s.languagesSpoken.concat(p1.languagesSpoken).concat(p2.languagesSpoken),
+        languagesSpoken: s.languagesSpoken
+          .concat(p1.languagesSpoken)
+          .concat(p2.languagesSpoken),
 
         // For pairs we consider the highest experience between the two
-        cppExperience: Math.max(s.cppExperience, p1.cppExperience, p2.cppExperience),
-        cExpericence: Math.max(s.cExpericence, p1.cExpericence, p2.cExpericence),
-        javaExperience: Math.max(s.javaExperience, p1.javaExperience, p2.javaExperience),
-        pythonExperience: Math.max(s.pythonExperience, p1.pythonExperience, p2.pythonExperience),
+        cppExperience: Math.max(
+          s.cppExperience,
+          p1.cppExperience,
+          p2.cppExperience,
+        ),
+        cExpericence: Math.max(
+          s.cExpericence,
+          p1.cExpericence,
+          p2.cExpericence,
+        ),
+        javaExperience: Math.max(
+          s.javaExperience,
+          p1.javaExperience,
+          p2.javaExperience,
+        ),
+        pythonExperience: Math.max(
+          s.pythonExperience,
+          p1.pythonExperience,
+          p2.pythonExperience,
+        ),
 
         // We don't need the exlcusions
         exclusions: [],
 
         // Add their names
-        names: [s.stuGiven + " " + s.stuLast, p1.stuGiven + " " + p1.stuLast, p2.stuGiven + " " + p2.stuLast],
+        names: [
+          s.stuGiven + " " + s.stuLast,
+          p1.stuGiven + " " + p1.stuLast,
+          p2.stuGiven + " " + p2.stuLast,
+        ],
       };
       p1.markdone = true;
       p2.markdone = true;
@@ -404,14 +429,12 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
 export function algorithm(studentsScores: StudentScore[]): Group[] {
   studentsScores.sort((a, b) => a.studentScore - b.studentScore);
   const groups: Group[] = [];
-
   while (true) {
     const group: Group = {
       ids: [],
       totalScore: 0,
       flagged: false,
     };
-
     const stu1: StudentScore | undefined = studentsScores.pop();
 
     // No more students
@@ -424,14 +447,12 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
       group.ids = stu1.ids;
       group.totalScore = stu1.studentScore * 3;
       group.flagged = false; // We assume that a full made team should not have any exclusions
-      groups.push(group);
       continue;
     }
 
     // Stu1 = Pair
     if (stu1.ids.length === 2) {
       const stu2 = getNext(studentsScores, stu1, null, true);
-
       // No singular person exists to join this pair meaning only pairs are left
       if (stu2 === undefined) {
         return groups;
@@ -452,7 +473,6 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
       null,
       false,
     );
-
     // Stu1 has no compatible teammates
     if (stu2 === undefined) {
       continue;
@@ -508,7 +528,6 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
         checkExclusions(stu3.exclusions, stu1.names);
       continue;
     }
-
     return groups;
   }
 }
@@ -546,7 +565,10 @@ function getNext(
       }
     } else {
       for (let i = studentsScores.length - 1; i >= 0; i--) {
-        if (isCompatible(studentsScores[i], s1)) {
+        if (
+          studentsScores[i].ids.length !== 3 &&
+          isCompatible(studentsScores[i], s1)
+        ) {
           const student: StudentScore = studentsScores[i];
           studentsScores.splice(i, 1);
           return student;
@@ -556,6 +578,7 @@ function getNext(
   } else {
     for (let i = studentsScores.length - 1; i >= 0; i--) {
       if (
+        studentsScores[i].ids.length !== 3 &&
         isCompatible(studentsScores[i], s1) &&
         isCompatible(studentsScores[i], s2)
       ) {
