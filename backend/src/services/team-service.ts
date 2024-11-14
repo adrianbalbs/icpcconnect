@@ -5,10 +5,18 @@ import {
   studentDetails,
   replacements,
   users,
+  universities,
+  contests,
 } from "../db/index.js";
-import { ReplacementRequest, CreateTeamRequest, UpdateTeamRequest, PulloutRequest } from "../schemas/index.js";
-import { badRequest, HTTPError } from "../utils/errors.js";
 import { UserService} from "./index.js"
+import {
+  CreateTeamRequest,
+  TeamDTO,
+  UpdateTeamRequest,
+  ReplacementRequest,
+  PulloutRequest,
+} from "../schemas/index.js";
+import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 
 export class TeamService {
   private readonly db: DatabaseConnection;
@@ -20,13 +28,15 @@ export class TeamService {
   }
 
   async createTeam(req: CreateTeamRequest) {
-    const { name, university, memberIds } = req;
+    const { name, university, memberIds, contest, flagged } = req;
 
     const [id] = await this.db
       .insert(teams)
       .values({
         name,
         university,
+        contest,
+        flagged,
       })
       .returning({ teamId: teams.id });
     const members = await this.db.query.users.findMany({
@@ -43,32 +53,25 @@ export class TeamService {
     return id;
   }
 
-  async getTeam(teamId: string) {
-    const team = await this.db.query.teams.findFirst({
-      where: eq(teams.id, teamId),
-      columns: { university: false },
-      with: { members: true, university: true, replacements: true},
-    });
-
-    if (team === undefined) {
-      throw new HTTPError(badRequest);
-    }
-
-    return team;
-  }
-
-  async getTeamByStudent(studentId: string) {
+  async getTeam(teamId: string): Promise<TeamDTO> {
     const [team] = await this.db
       .select({
         id: teams.id,
         name: teams.name,
+        university: universities.name,
+        contest: contests.name,
+        flagged: teams.flagged,
       })
-      .from(studentDetails)
-      .where(eq(studentDetails.userId, studentId))
-      .leftJoin(teams, eq(teams.id, studentDetails.team));
+      .from(teams)
+      .innerJoin(universities, eq(universities.id, teams.university))
+      .innerJoin(contests, eq(contests.id, teams.contest))
+      .where(eq(teams.id, teamId));
 
-    if (team == undefined || team.id === null) {
-      throw new HTTPError(badRequest);
+    if (!team) {
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Could not find team with id: ${teamId}`,
+      });
     }
 
     const members = await this.db
@@ -80,9 +83,10 @@ export class TeamService {
         email: users.email,
       })
       .from(studentDetails)
-      .where(eq(studentDetails.team, String(team.id)))
-      .innerJoin(users, eq(users.id, studentDetails.userId));
+      .innerJoin(users, eq(users.id, studentDetails.userId))
+      .where(eq(studentDetails.team, teamId));
 
+      /*
     const replacement_arr = await this.db
       .select({
           associated_team: replacements.associated_team,
@@ -91,15 +95,91 @@ export class TeamService {
       })
       .from(replacements)
       .where(eq(replacements.associated_team, team.id));
+      */
 
-    return { ...team, members, replacements: replacement_arr};
+    return { ...team, members };
   }
 
-  async getAllTeams() {
-    return await this.db.query.teams.findMany({
-      columns: { university: false },
-      with: { members: true, university: true, replacements: true },
-    });
+  async getTeamByStudentAndContest(
+    studentId: string,
+    contestId: string,
+  ): Promise<TeamDTO> {
+    const [team] = await this.db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        university: universities.name,
+        contest: contests.name,
+        flagged: teams.flagged,
+      })
+      .from(studentDetails)
+      .where(
+        and(eq(studentDetails.userId, studentId), eq(contests.id, contestId)),
+      )
+      .innerJoin(teams, eq(teams.id, studentDetails.team))
+      .innerJoin(contests, eq(contests.id, teams.contest))
+      .innerJoin(universities, eq(universities.id, teams.university));
+
+    if (!team) {
+      throw new HTTPError({
+        errorCode: notFoundError.errorCode,
+        message: `Could not find team associated with student: ${studentId}`,
+      });
+    }
+
+    const members = await this.db
+      .select({
+        id: users.id,
+        givenName: users.givenName,
+        familyName: users.familyName,
+        studentId: studentDetails.studentId,
+        email: users.email,
+      })
+      .from(studentDetails)
+      .where(eq(studentDetails.team, team.id))
+      .innerJoin(users, eq(users.id, studentDetails.userId));
+
+    return { ...team, members};
+  }
+
+  //TODO add in replacements
+  async getAllTeams(contest?: string): Promise<{ allTeams: TeamDTO[] }> {
+    const query = this.db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        university: universities.name,
+        contest: contests.name,
+        flagged: teams.flagged,
+      })
+      .from(teams)
+      .innerJoin(universities, eq(universities.id, teams.university))
+      .innerJoin(contests, eq(contests.id, teams.contest))
+      .$dynamic();
+
+    if (contest) {
+      query.where(eq(contests.id, contest));
+    }
+
+    const rawTeams = await query;
+    const allTeams = await Promise.all(
+      rawTeams.map(async (team) => {
+        const members = await this.db
+          .select({
+            id: users.id,
+            givenName: users.givenName,
+            familyName: users.familyName,
+            studentId: studentDetails.studentId,
+            email: users.email,
+          })
+          .from(studentDetails)
+          .innerJoin(users, eq(users.id, studentDetails.userId))
+          .where(eq(studentDetails.team, team.id));
+
+        return { ...team, members };
+      }),
+    );
+    return { allTeams };
   }
 
   //Expects all team-members to be sent

@@ -1,8 +1,11 @@
+export type Role = "Admin" | "Site Coordinator" | "Coach" | "Student";
+
 export type User = {
   id: string;
   givenName: string;
+  familyName: string;
   email: string;
-  role: "Admin" | "Site Coordinator" | "Coach" | "Student";
+  role: Role;
   university: string;
   studentId: string;
   pronouns: string;

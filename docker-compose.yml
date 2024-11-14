@@ -18,6 +18,7 @@ services:
       - 3000:3000
     depends_on:
       - backend
+
   backend:
     restart: unless-stopped
     build:
@@ -29,10 +30,14 @@ services:
       FRONTEND_URL: http://localhost:3000
       DATABASE_URL: postgres://postgres:password@dev-db:5432/mydb
       LOG_LEVEL: info
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - 3030:3030
     depends_on:
       - dev-db
+      - redis
+
   dev-db:
     image: postgres:alpine
     ports:
@@ -42,6 +47,13 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
   test-db:
     image: postgres:alpine
     ports:

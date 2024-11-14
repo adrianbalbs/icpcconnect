@@ -1,9 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
-import request from "supertest";
+import request, { Response } from "supertest";
 import express from "express";
 import { DatabaseConnection, users } from "../db/index.js";
 import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
-import { TeamService, AuthService, UserService, CodesService } from "../services/index.js";
+import {
+  TeamService,
+  AuthService,
+  UserService,
+  CodesService,
+  ContestService,
+  JobQueue,
+} from "../services/index.js";
 import {
   beforeAll,
   afterAll,
@@ -14,17 +21,24 @@ import {
   afterEach,
 } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
-import { teamRouter, authRouter, userRouter } from "../routers/index.js";
+import {
+  teamRouter,
+  authRouter,
+  userRouter,
+  contestRouter,
+} from "../routers/index.js";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
 import { generateCreateUserFixture } from "./fixtures.js";
+import { AlgorithmService } from "../services/algorithm-service.js";
 
 describe("TeamService tests", () => {
   let db: DatabaseConnection;
   let userService: UserService;
   let app: ReturnType<typeof express>;
   let cookies: string;
+  let contest: Response;
 
   beforeAll(async () => {
     const dbSetup = await setupTestDatabase();
@@ -32,12 +46,24 @@ describe("TeamService tests", () => {
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
     userService = new UserService(db);
+    const algorithmService = new AlgorithmService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/users", userRouter(new UserService(db), authService, codesService))
+      .use(
+        "/api/users",
+        userRouter(new UserService(db), authService, codesService),
+      )
       .use("/api/teams", teamRouter(new TeamService(db, userService), authService))
+
+      .use(
+        "/api/contests",
+        contestRouter(
+          new ContestService(db, new JobQueue(algorithmService)),
+          authService,
+        ),
+      )
       .use(errorHandlerMiddleware);
   });
 
@@ -50,6 +76,26 @@ describe("TeamService tests", () => {
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+    const contestDate = new Date();
+    contestDate.setDate(contestDate.getDate() + 3);
+
+    contest = await request(app)
+      .post("/api/contests")
+      .set("Cookie", cookies)
+      .send({
+        name: "Test Contest",
+        earlyBirdDate: tomorrow,
+        cutoffDate: dayAfterTomorrow,
+        contestDate: contestDate,
+        site: 1,
+      })
+      .expect(200);
   });
 
   afterEach(async () => {
@@ -106,6 +152,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds,
       flagged: false,
+      contest: contest.body.id,
     };
 
     const result = await request(app)
@@ -163,6 +210,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds,
       flagged: false,
+      contest: contest.body.id,
     };
 
     const res = await request(app)
@@ -184,7 +232,7 @@ describe("TeamService tests", () => {
     await request(app)
       .get(`/api/teams/${teamId}`)
       .set("Cookie", cookies)
-      .expect(400);
+      .expect(404);
   });
 
   it("Should update the teams details", async () => {
@@ -233,6 +281,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds.slice(1),
       flagged: false,
+      contest: contest.body.id,
     };
 
     const id_res = await request(app)
@@ -271,6 +320,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: [],
       flagged: false,
+      contest: contest.body.id,
     };
 
     const id_res = await request(app)
@@ -361,6 +411,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds.slice(0, -1), // dont take last member
       flagged: false,
+      contest: contest.body.id,
     };
 
     const team_res = await request(app)
@@ -451,6 +502,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds.slice(0, -1), // dont take last member
       flagged: false,
+      contest: contest.body.id,
     };
 
     const team_res = await request(app)
@@ -569,6 +621,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds.slice(0, -1), // dont take last member
       flagged: false,
+      contest: contest.body.id,
     };
 
     const team_res = await request(app)
@@ -693,6 +746,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds.slice(0, -1), // dont take last member
       flagged: false,
+      contest: contest.body.id,
     };
 
     const team_res = await request(app)
@@ -801,6 +855,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds.slice(0, -1), // dont take last member
       flagged: false,
+      contest: contest.body.id,
     };
 
     const team_res = await request(app)
@@ -814,6 +869,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds.slice(3), // only last member
       flagged: false,
+      contest: contest.body.id,
     };
 
     const alt_team_res = await request(app)
@@ -919,6 +975,7 @@ describe("TeamService tests", () => {
       university: 1,
       memberIds: userIds,
       flagged: false,
+      contest: contest.body.id,
     };
 
     const team_res = await request(app)

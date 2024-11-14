@@ -17,13 +17,12 @@ import {
   UpdateUserSchema,
   UserRole,
 } from "../schemas/user-schema.js";
-import { PutStudentTeamSchema } from "../schemas/team-schema.js";
 
 export function userRouter(
-    userService: UserService,
-    authService: AuthService,
-    codesService: CodesService
-  ) {
+  userService: UserService,
+  authService: AuthService,
+  codesService: CodesService,
+) {
   const authenticate = createAuthenticationMiddleware(authService);
 
   return Router()
@@ -164,39 +163,21 @@ export function userRouter(
     )
     .get(
       "/:id/student-details/preferences",
-      [
-        authenticate,
-        authorise(["Admin", "Student"]),
-      ],
-      handle(
-        async (
-          req: Request<{ id: string }, unknown>,
-          res,
-        ) => {
-          const { id } = req.params;
-          console.log(id);
-          const result = await userService.getStudentPreferences(id);
-          console.log(result);
-          res.status(200).send(result);
-        },
-      ),
+      [authenticate, authorise(["Admin", "Student"])],
+      handle(async (req: Request<{ id: string }, unknown>, res) => {
+        const { id } = req.params;
+        const result = await userService.getStudentPreferences(id);
+        res.status(200).send(result);
+      }),
     )
     .get(
       "/:id/student-details/exclusions",
-      [
-        authenticate,
-        authorise(["Admin", "Student"]),
-      ],
-      handle(
-        async (
-          req: Request<{ id: string }, unknown>,
-          res,
-        ) => {
-          const { id } = req.params;
-          const result = await userService.getStudentExclusions(id);
-          res.status(200).send(result);
-        },
-      ),
+      [authenticate, authorise(["Admin", "Student"])],
+      handle(async (req: Request<{ id: string }, unknown>, res) => {
+        const { id } = req.params;
+        const result = await userService.getStudentExclusions(id);
+        res.status(200).send(result);
+      }),
     )
     .put(
       "/:id/password",
