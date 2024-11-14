@@ -147,7 +147,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
       {/* TODO: Once preferences is merged, have disabled state linked to completed tasks */}
       <Stack justifyContent="center">
         <Button
-          disabled={isAfterCutoffDate(cutoffDate)}
+          disabled={isAfterCutoffDate(cutoffDate) || completed < 3}
           onClick={handleContestRegistration}
           sx={{
             ...enrolBtn,
