@@ -7,6 +7,7 @@ import {
   users,
   universities,
   contests,
+  replacementRelations,
 } from "../db/index.js";
 import { UserService} from "./index.js"
 import {
@@ -86,18 +87,17 @@ export class TeamService {
       .innerJoin(users, eq(users.id, studentDetails.userId))
       .where(eq(studentDetails.team, teamId));
 
-      /*
+
     const replacement_arr = await this.db
       .select({
-          associated_team: replacements.associated_team,
-          leavingInternalId: replacements.leavingInternalId,
-          replacingStudentId: replacements.replacementStudentId,
+          leavingUserId: replacements.leavingInternalId,
+          replacementStudentId: replacements.replacementStudentId,
+          reason: replacements.reason,
       })
       .from(replacements)
       .where(eq(replacements.associated_team, team.id));
-      */
 
-    return { ...team, members };
+    return { ...team, members, replacements: replacement_arr };
   }
 
   async getTeamByStudentAndContest(
@@ -139,7 +139,16 @@ export class TeamService {
       .where(eq(studentDetails.team, team.id))
       .innerJoin(users, eq(users.id, studentDetails.userId));
 
-    return { ...team, members};
+    const replacement_arr = await this.db
+      .select({
+          leavingUserId: replacements.leavingInternalId,
+          replacementStudentId: replacements.replacementStudentId,
+          reason: replacements.reason,
+      })
+      .from(replacements)
+      .where(eq(replacements.associated_team, team.id));
+
+    return { ...team, members, replacements: replacement_arr};
   }
 
   //TODO add in replacements
@@ -176,7 +185,16 @@ export class TeamService {
           .innerJoin(users, eq(users.id, studentDetails.userId))
           .where(eq(studentDetails.team, team.id));
 
-        return { ...team, members };
+        const replacement_arr = await this.db
+          .select({
+              leavingUserId: replacements.leavingInternalId,
+              replacementStudentId: replacements.replacementStudentId,
+              reason: replacements.reason,
+          })
+          .from(replacements)
+          .where(eq(replacements.associated_team, team.id));
+
+        return { ...team, members, replacements: replacement_arr };
       }),
     );
     return { allTeams };

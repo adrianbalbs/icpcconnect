@@ -21,6 +21,13 @@ export type Member = Pick<
   "id" | "studentId" | "givenName" | "familyName" | "email"
 >;
 
+export const ReplacementSchema = z.object({
+  reason: z.string(),
+  leavingUserId: z.string(),
+  replacementStudentId: z.string(),
+});
+export type Replacement = z.infer<typeof ReplacementSchema>;
+
 export type TeamDTO = {
   id: string;
   name: string;
@@ -28,6 +35,7 @@ export type TeamDTO = {
   contest: string;
   flagged: boolean;
   members: Member[];
+  replacements: Replacement[];
 };
 
 export const PutStudentTeamSchema = z.object({
