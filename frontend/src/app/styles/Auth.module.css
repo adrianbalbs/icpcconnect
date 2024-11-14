@@ -150,10 +150,3 @@
   width: 430px;
   justify-content: left;
 }
-
-.progress-bar {
-  width: 500px;
-  height: 2.5px;
-  opacity: 30%;
-  background-color: darkorchid;
-}
