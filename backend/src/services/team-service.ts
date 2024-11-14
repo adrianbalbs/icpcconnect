@@ -121,6 +121,7 @@ export class TeamService {
   }
 
   async getAllTeams(contest?: string): Promise<{ allTeams: TeamDTO[] }> {
+    console.log(contest);
     const query = this.db
       .select({
         id: teams.id,
@@ -135,7 +136,7 @@ export class TeamService {
       .$dynamic();
 
     if (contest) {
-      query.where(eq(teams.contest, contest));
+      query.where(eq(contests.id, contest));
     }
 
     const rawTeams = await query;
