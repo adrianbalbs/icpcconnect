@@ -131,8 +131,9 @@ export class UserService {
   }
 
   /*
-  * Get a user, given their internal-id
+  * Update a given user's general details
   *
+  * @param id - User's internal id
   * @param req - UpdateUser (All fields are optional)
   *   req.givenName - User's new given name
   *   req.familyName - User's new family name
@@ -155,6 +156,15 @@ export class UserService {
     return user;
   }
 
+  /*
+  * Update a given user's password
+  *
+  * @param id - User's internal id
+  * @param password - User's new password
+  * 
+  * @returns id - user's internal id
+  * 
+  */
   async updatePassword(id: string, password: string): Promise<{ id: string }> {
     password = await passwordUtils().hash(password);
     const [user] = await this.db
@@ -165,6 +175,15 @@ export class UserService {
     return user;
   }
 
+  /*
+  * Update a given user's student details
+  *
+  * @param id - User's internal id
+  * @param req - UpdateStudentDetails 
+  * 
+  * @returns id - user's internal id
+  * 
+  */
   async updateStudentDetails(
     id: string,
     req: UpdateStudentDetails,
@@ -205,6 +224,15 @@ export class UserService {
     return user;
   }
 
+  /*
+  * Get all user's details
+  *
+  * @param role - if specified, only query users of given role
+  * @param contest - if specified, only query users in a given contest
+  * 
+  * @returns UserDTO[] - All user details, omitting their password
+  * 
+  */
   async getAllUsers(
     role?: UserRole,
     contest?: string,
@@ -270,6 +298,22 @@ export class UserService {
     return { allUsers };
   }
 
+  /*
+  * Register a user for a given contest
+  *
+  * @param student - The user-id of the given student
+  * @param contest - The id of the contest we are registering for
+  * 
+  * @returns 
+  *   student - the user-id of the given contest
+  *   contest - the contest-id of the given contest
+  *   timeSubmitted - the date when registration occured
+  * 
+  * @throws NotFoundError
+  *   - If contest-id doesnt match a contest
+  * @throws BadRequest
+  *   - If contest's cutoffDate has already passed
+  */
   async registerForContest(
     student: string,
     contest: string,
@@ -304,6 +348,20 @@ export class UserService {
     return res;
   }
 
+  /*
+  * Get contest-registration details of a given user
+  *
+  * @param student - The user-id of the given student
+  * @param contest - The id of the contest we are registering for
+  * 
+  * @returns 
+  *   student - the user-id of the given contest
+  *   contest - the contest-id of the given contest
+  *   timeSubmitted - the date when registration occured
+  * 
+  * @throws NotFoundError
+  *   - If the contest-id doesn't match a given contest
+  */
   async getContestRegistrationDetails(
     student: string,
     contest: string,
@@ -326,6 +384,15 @@ export class UserService {
     return res;
   }
 
+  /*
+  * Delete a given user's registration for a contest
+  *
+  * @param student - The user-id of the given student
+  * @param contest - The id of the contest we are registering for
+  * 
+  * @returns DeleteResponse - a wrapper around {status: "OK"}
+  * 
+  */
   async deleteContestRegistration(
     student: string,
     contest: string,
@@ -342,6 +409,17 @@ export class UserService {
     return { status: "OK" };
   }
 
+  /*
+  * Delete a given user's registration for a contest
+  *
+  * @param id - The user-id of the given user
+  * 
+  * @returns DeleteResponse - a wrapper around {status: "OK"}
+  * 
+  * @throws BadRequest
+  *  - If specified user doesn't exist
+  * 
+  */
   async deleteUser(id: string): Promise<DeleteResponse> {
     const [user] = await this.db
       .select({ id: users.id })
@@ -359,6 +437,15 @@ export class UserService {
     return { status: "OK" };
   }
   
+  /*
+  * Get a given student's entered exclusions
+  *
+  * @param id - The user-id of the given student
+  * 
+  * @returns ExclusionsResponse
+  *   exclusions: comma-delimited list of excluded 'names'
+  * 
+  */
   async getStudentExclusions(id: string): Promise<ExclusionsResponse> {
     const [exclusions] = await this.db
       .select({ exclusions: studentDetails.exclusions })
@@ -368,6 +455,16 @@ export class UserService {
     return exclusions
   }
 
+  /*
+  * Get a given student's entered preferences
+  *
+  * @param id - The user-id of the given student
+  * 
+  * @returns PreferencesResponse[]
+  *   - name: Name of student
+  *   - studentId: Preferred students studentId
+  * 
+  */
   async getStudentPreferences(id: string): Promise<{ preferences: PreferencesResponse[] }> {
     const [p] = await this.db
       .select({ preferences: studentDetails.preferences })
