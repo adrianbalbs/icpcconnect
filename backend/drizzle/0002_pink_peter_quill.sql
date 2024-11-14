@@ -1,1 +1,0 @@
-ALTER TABLE "student_details" ADD COLUMN "preferences" text DEFAULT '' NOT NULL;

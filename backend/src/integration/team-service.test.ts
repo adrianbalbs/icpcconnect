@@ -230,7 +230,7 @@ describe("TeamService tests", () => {
     await request(app)
       .get(`/api/teams/${teamId}`)
       .set("Cookie", cookies)
-      .expect(400);
+      .expect(404);
   });
 
   it("Should update the teams details", async () => {
