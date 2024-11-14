@@ -15,6 +15,19 @@ import {
 export class ContestService {
   constructor(private readonly db: DatabaseConnection) {}
 
+  /*
+  * Create a new contest for students to participate in
+  *
+  * @param req -CreateContest 
+  *   req.name - name of contest
+  *   req.earlyBirdDate -
+  *   req.cutoffDate  - Cutoff for student applications
+  *   req.contestDate - When the contest is running
+  *   req.site - The university id corresponding to the site contest is held at
+  * 
+  * @returns id - Internal id of the contest
+  * 
+  */
   async create(req: CreateContest): Promise<{ id: string }> {
     const [res] = await this.db
       .insert(contests)
@@ -28,6 +41,24 @@ export class ContestService {
     return res;
   }
 
+  /*
+  * Get information about a given contest, given it's id
+  *
+  * @param contestId - id of the given contest
+  * 
+  * @returns GetContestResponse
+  *   response.id - Contest's Id
+  *   response.name - Name of contest
+  *   response.earlyBirdDate - EarlyBird date for team-matching
+  *   response.cutoffDate - Cutoff date for applications
+  *   response.contestDate - When contest is running 
+  *   response.siteId - Id of university contest is held at
+  *   response.site - Name of universtiy contest is held at
+  * 
+  * @throws NotFoundError
+  *   - If contest-id is invalid / doesn't correspond to a contest
+  * 
+  */
   async get(contestId: string): Promise<GetContestResponse> {
     const [contest] = await this.db
       .select({
@@ -50,6 +81,19 @@ export class ContestService {
     return contest;
   }
 
+  /*
+  * Get information about all currently registered contests
+  *
+  * @returns GetContestResponse[]
+  *   response.id - Contest's Id
+  *   response.name - Name of contest
+  *   response.earlyBirdDate - EarlyBird date for team-matching
+  *   response.cutoffDate - Cutoff date for applications
+  *   response.contestDate - When contest is running 
+  *   response.siteId - Id of university contest is held at
+  *   response.site - Name of universtiy contest is held at
+  * 
+  */
   async getAll(): Promise<{ allContests: GetContestResponse[] }> {
     const allContests = await this.db
       .select({
@@ -67,6 +111,17 @@ export class ContestService {
     return { allContests };
   }
 
+  /*
+  * Delete a contest, given it's associated id
+  *
+  * @param contestId - id of the given contest
+  * 
+  * @returns DeleteResponse - wrapper around {status: "OK"}
+  * 
+  * @throws BadRequest
+  *   - If contest-id is invalid / doesn't correspond to a contest
+  * 
+  */
   async delete(contestId: string): Promise<DeleteResponse> {
     const [contest] = await this.db
       .select()
