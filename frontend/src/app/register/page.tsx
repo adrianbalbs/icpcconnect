@@ -42,10 +42,13 @@ export default function Register() {
             : {}),
           ...(roleName === "Student" ? { studentId } : {}),
         };
-        const valid: { id: string } = await axios.post(`${SERVER_URL}/api/users`, payload);
+        const valid: { id: string } = await axios.post(
+          `${SERVER_URL}/api/users`,
+          payload,
+        );
         // Checking whether the invite code they entered was valid
-        if (valid.id == "INVALID" || valid.id == undefined) {
-          alert("Registration failed: Invalid Invite Code Entered")
+        if (valid.id === "INVALID" || valid.id === undefined) {
+          alert("Registration failed: Invalid Invite Code Entered");
         } else {
           router.push("/login");
         }

@@ -8,7 +8,6 @@ interface Props {
   buttonText: string;
   buttonTo: string;
   added: boolean;
-  setAdded?: () => void;
 }
 
 const Tile: React.FC<Props> = ({
@@ -17,13 +16,11 @@ const Tile: React.FC<Props> = ({
   buttonText,
   buttonTo,
   added,
-  setAdded,
 }) => {
   const router = useRouter();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (setAdded) setAdded();
     router.push(buttonTo);
   };
 

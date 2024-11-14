@@ -1,1 +1,0 @@
-ALTER TABLE "replacements" ADD COLUMN "a" boolean DEFAULT false;

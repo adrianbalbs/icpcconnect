@@ -289,6 +289,7 @@ export const StudentDetailsScehma = z.strictObject({
   pronouns: z.string().default(""),
   team: z.string().nullable(),
   dietaryRequirements: z.string().default(""),
+  profile_pic: z.string().default(""),
   tshirtSize: z.string().default(""), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
   photoConsent: z.boolean().default(false),
   languagesSpoken: z.array(LanguagesSchema).default([]),
@@ -308,6 +309,7 @@ export type StudentDetailsDTO = z.infer<typeof StudentDetailsScehma>;
 
 export const UpdateStudentDetailsSchema = StudentDetailsScehma.extend({
   languagesSpoken: z.array(SpokenLanguageEnum), // Array of language IDs for updating
+  preferences: z.string().default(""),
   coursesCompleted: z.array(z.number()),
 }).partial();
 export type UpdateStudentDetails = z.infer<typeof UpdateStudentDetailsSchema>;
@@ -357,6 +359,18 @@ export const GetAllUsersQuerySchema = z.strictObject({
   contest: z.string().optional(),
 });
 
+export const ExclusionsResponseSchema = z.object({
+  exclusions: z.string()
+})
+
+export type ExclusionsResponse = z.infer<typeof ExclusionsResponseSchema>
+
+export const PreferencesResponseSchema = z.object({
+  studentId: z.string(),
+  name: z.string()
+})
+
+export type PreferencesResponse = z.infer<typeof PreferencesResponseSchema>
 export const CreateContestRegistrationSchema = z.strictObject({
   student: z.string(),
   contest: z.string(),

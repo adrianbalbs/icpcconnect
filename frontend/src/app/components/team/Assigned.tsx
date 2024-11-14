@@ -4,6 +4,9 @@ import Member, { MemberProps } from "./Member";
 import { Box, Modal, Typography } from "@mui/material";
 import { useState } from "react";
 import CloseBtn from "../utils/CloseBtn";
+import axios from "axios";
+import { useAuth } from "../AuthProvider/AuthProvider";
+import { SERVER_URL } from "@/utils/constants";
 
 interface AssignedProps {
   members: MemberProps[];
@@ -11,7 +14,21 @@ interface AssignedProps {
 
 const Assigned: React.FC<AssignedProps> = ({ members }) => {
   const [open, setOpen] = useState(false);
-  const handleSubmit = () => {
+  const [reason, setReason] = useState("");
+  const [replacementId, setReplacementId] = useState("");
+  const {
+    userSession: { id },
+  } = useAuth();
+  const handleSubmit = async () => {
+    try {
+      await axios.post(`${SERVER_URL}/api/createPullout/${id}`, {
+        studentId: id,
+        replacementId,
+        reason,
+      });
+    } catch (err) {
+      console.error(err);
+    }
     setOpen(false);
   };
   return (
@@ -26,17 +43,16 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
         {members.map((member) => (
           <Member key={member.id} {...member} />
         ))}
-        <button
-          onClick={() => setOpen(true)}
-          className={memberStyles.pullout}
-          style={{
-            top: "120px",
-            right: "170px",
-            position: "absolute",
-          }}
+        <div
+          style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
         >
-          Request to pull out
-        </button>
+          <button
+            onClick={() => setOpen(true)}
+            className={memberStyles.pullout}
+          >
+            Request to pull out
+          </button>
+        </div>
 
         <Modal open={open} onClose={() => setOpen(false)}>
           <Box
@@ -65,6 +81,7 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
               style={{ width: "100%" }}
               placeholder="Your reason for pulling out..."
               className={memberStyles["pullout-reason"]}
+              onChange={(e) => setReason(e.target.value)}
             ></textarea>
             <div
               style={{
@@ -78,6 +95,7 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
               <input
                 placeholder="Leave blank if none"
                 className={memberStyles["pullout-substitution"]}
+                onChange={(e) => setReplacementId(e.target.value)}
               ></input>
             </div>
             <CloseBtn handleClose={() => setOpen(false)}></CloseBtn>

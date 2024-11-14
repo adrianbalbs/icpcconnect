@@ -6,7 +6,7 @@ import {
   replacements,
   users,
 } from "../db/index.js";
-import { CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
+import { ReplacementRequest, CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 import { UserService} from "./index.js"
 
@@ -50,7 +50,7 @@ export class TeamService {
       with: { members: true, university: true, replacements: true},
     });
 
-    if (team == undefined) {
+    if (team === undefined) {
       throw new HTTPError(badRequest);
     }
 
@@ -172,7 +172,7 @@ export class TeamService {
     return { status: "OK" };
   }
 
-  async pulloutMember(studentId: string, replacementId: string) {
+  async createPulloutReq(studentId: string, replacementId: string) {
     const [team] = await this.db
       .select({
         id: teams.id,
@@ -217,7 +217,7 @@ export class TeamService {
 
 
   //Handle replacement request
-  async handleReplacement(studentId: string, accepting: boolean) {
+  async handlePulloutReq(studentId: string, accepting: boolean) {
     const [replacement] = await this.db
       .select({
         team_id: replacements.associated_team,
@@ -233,16 +233,16 @@ export class TeamService {
 
     if (accepting ) {
       //Set students team to null
-      this.userService.updateStudentDetails(studentId, { team: null});
+      await this.userService.updateStudentDetails(studentId, { team: null});
 
       //Set replacements team to the current team
-      const replacementInternalId = await this.db
+      const [replacementInternalId] = await this.db
         .select({
           id: studentDetails.userId,
         }).from(studentDetails)
         .where(eq(studentDetails.studentId, replacement.replacing));
 
-      this.userService.updateStudentDetails(studentId, { team: replacement.team_id });
+      await this.userService.updateStudentDetails(replacementInternalId.id, { team: replacement.team_id });
 
       //Believe this is actually unnecessary
       /*
@@ -260,7 +260,50 @@ export class TeamService {
 
     //Delete replacement request from db
     await this.db.delete(replacements).where(eq(replacements.leavingInternalId, studentId));
-
+    
     return { status: "OK" };
+  }
+
+  async handleReplacement(replacementReq: ReplacementRequest) {
+    const studentInternalId = replacementReq.student;
+    const teamId = replacementReq.team;
+    const replacingStudentId = replacementReq.replacedWith;
+
+    //Info about student replacing
+    const [replacingInfo] = await this.db
+      .select({
+        team: teams.id,
+        internalId: users.id,
+      })
+      .from(users)
+      .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
+      .leftJoin(teams, eq(teams.id, studentDetails.team))
+      .where(eq(studentDetails.studentId, replacingStudentId));
+
+    //Info about student being replaced
+    const [replacedInfo] = await this.db
+      .select({
+        studentId: studentDetails.studentId,
+      })
+      .from(users)
+      .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
+      .leftJoin(teams, eq(teams.id, studentDetails.team))
+      .where(eq(studentDetails.studentId, replacingStudentId));
+
+    await this.userService.updateStudentDetails(studentInternalId, { team: replacingInfo.team });
+    await this.userService.updateStudentDetails(replacingInfo.internalId, { team: teamId });
+
+    return {
+      allocDetails: [{
+        sId: replacingStudentId,
+        team: teamId,
+
+      },
+      {
+        sId: replacedInfo.studentId,
+        team: replacingInfo.team,
+      }
+    ]}
+
   }
 }

@@ -9,6 +9,8 @@ import {
   CreateTeamRequestSchema,
   UpdateTeamRequest,
   UpdateTeamRequestSchema,
+  ReplacementRequest,
+  ReplacementRequestSchema,
 } from "../schemas/index.js";
 import { AuthService, TeamService } from "../services/index.js";
 
@@ -123,7 +125,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     .post(
       "/createPullout/:studentId/:replacementId",
       [
-        authorise(["Student"]),
+        authorise(["Student", "Admin"]),
       ],
       async (
         req: Request<{ studentId: string, replacementId: string }, unknown>,
@@ -135,7 +137,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         //that they can choose them as a replacmeent
         const { studentId, replacementId } = req.params;
         try {
-          const team = teamService.pulloutMember(studentId, replacementId);
+          const team = teamService.createPulloutReq(studentId, replacementId);
           res.status(200).json(team);
         } catch (err) {
           next(err);
@@ -143,7 +145,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .put(
-      "/acceptPullout/:studentId",
+      "/handlePullout/:studentId",
       [
         authenticate,
         authorise(["Admin", "Coach"]),
@@ -157,7 +159,22 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
           const {
             body: { accepting },
           } = req;
-          const result = await teamService.handleReplacement(studentId, accepting);
+          const result = await teamService.handlePulloutReq(studentId, accepting);
+          res.status(200).send(result);
+        },
+    )
+    .put(
+      "/handleReplacement",
+      [
+        authenticate,
+        authorise(["Admin", "Coach"]),
+        validateData(ReplacementRequestSchema, "body"),
+      ],
+        async (
+          req: Request<{ studentId: string}, unknown, ReplacementRequest>,
+          res: Response,
+        ) => {
+          const result = await teamService.handleReplacement(req.body);
           res.status(200).send(result);
         },
     );

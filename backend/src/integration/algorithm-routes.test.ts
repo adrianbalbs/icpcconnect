@@ -4,12 +4,14 @@ import { DatabaseConnection, teams, users } from "../db/index.js";
 import {
   adminRouter,
   authRouter,
+  emailRouter,
   teamRouter,
   userRouter,
 } from "../routers/index.js";
 import {
   AdminService,
   AuthService,
+  EmailService,
   CodesService,
   TeamService,
   UserService,
@@ -42,6 +44,7 @@ describe("Algorithm Tests", () => {
     app = express()
       .use(express.json())
       .use(cookieParser())
+      .use("/api", emailRouter(new EmailService(db)))
       .use("/api/auth", authRouter(authService))
       .use("/api/users", userRouter(new UserService(db), authService, codesService))
       .use("/api/teams", teamRouter(new TeamService(db), authService))
@@ -209,34 +212,52 @@ describe("Algorithm Tests", () => {
   });
 
   it("should create three students at the same uni and create a team with them", async () => {
+
+    const USE_TRUE_EMAIL = false;
+
+    const EMAILS = {
+      adrian: {
+        true: "z5397730@ad.unsw.edu.au",
+        fake: "adrianbalbs@comp3900.com"
+      },
+      zac: {
+        true: "z5419703@ad.unsw.edu.au",
+        fake: "zac@comp3900.com"
+      },
+      delph: {
+        true: "z5354052@ad.unsw.edu.au",
+        fake: "delph@comp3900.com"
+      }
+    };
+
     const students = [
       generateCreateUserFixture({
         role: "Student",
         givenName: "Adrian",
         familyName: "Balbalosa",
-        email: "adrianbalbs@comp3900.com",
+        email: USE_TRUE_EMAIL ? EMAILS.adrian.true : EMAILS.adrian.fake,
         studentId: "z5397730",
         password: "helloworld",
-        university: 1,
+        university: 1
       }),
       generateCreateUserFixture({
         role: "Student",
-        givenName: "Jane",
-        familyName: "Doe",
-        email: "janedoe@comp3900.com",
-        studentId: "z5397731",
+        givenName: "Delph",
+        familyName: "Zhou",
+        email: USE_TRUE_EMAIL ? EMAILS.delph.true : EMAILS.delph.fake,
+        studentId: "z5354052",
         password: "password123",
-        university: 1,
+        university: 1
       }),
       generateCreateUserFixture({
         role: "Student",
-        givenName: "John",
-        familyName: "Smith",
-        email: "johnsmith@comp3900.com",
-        studentId: "z5397732",
+        givenName: "Zac",
+        familyName: "Z",
+        email: USE_TRUE_EMAIL ? EMAILS.zac.true : EMAILS.zac.fake,
+        studentId: "z5419703",
         password: "securepass",
-        university: 1,
-      }),
+        university: 1
+      })
     ];
 
     const studentIds: string[] = [];
@@ -279,7 +300,13 @@ describe("Algorithm Tests", () => {
       .set("Cookie", cookies)
       .expect(200);
     expect(teams.body).toHaveLength(1);
-  });
+
+    // Call send team created email stuff
+    await request(app)
+      .post("/api/sendTeamCreatedEmail")
+      .expect(200);
+
+  }, 60000);
 
   it("should create three students, two same uni, one different, and not create a team with them", async () => {
     const students = [

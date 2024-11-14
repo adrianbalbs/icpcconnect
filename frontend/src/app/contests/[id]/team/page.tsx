@@ -104,7 +104,7 @@ const Team: React.FC = () => {
       await Promise.all([getTeam(), fetchContest(), fetchEnrollment()]);
     };
 
-    initializeData();
+    if (id) initializeData();
   }, [getTeam, fetchContest, fetchEnrollment]);
 
   return (
