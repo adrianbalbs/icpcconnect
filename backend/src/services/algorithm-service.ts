@@ -9,47 +9,16 @@ import {
   users,
 } from "../db/index.js";
 import { runFullAlgorithm } from "../algorithm/algorithm.js";
-import { CreateTeamRequest } from "../schemas/team-schema.js";
+import { 
+  CreateTeamRequest,
+  RunAlgoResponse,
+  AllUniIDResponse,
+  AlgorithmStudentResponse,
+  AllLanguagesSpoken,
+  AllCoursesCompleted,
+  TeamId,
+} from "../schemas/index.js";
 
-export type AllUniIDResponse = {
-  allUniversityIds: { id: number }[];
-};
-
-export type AllLanguagesSpoken = {
-  languages: { code: string }[];
-};
-
-export type AllCoursesCompleted = {
-  courses: { code: number }[];
-};
-
-export type StudentResponse = {
-  id: string;
-  stuGiven: string;
-  stuLast: string;
-  uniName: string;
-  contestExperience: number;
-  leetcodeRating: number;
-  codeforcesRating: number;
-  cppExperience: string;
-  cExpericence: string;
-  javaExperience: string;
-  pythonExperience: string;
-  exclusions: string;
-  preferences: string;
-};
-
-export type AlgorithmStudentResponse = {
-  allStudents: StudentResponse[];
-};
-
-export type RunAlgoResponse = {
-  success: boolean;
-};
-
-export type TeamId {
-  teamId: string;
-}
 
 export class AlgorithmService {
   private readonly db: DatabaseConnection;
