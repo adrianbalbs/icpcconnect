@@ -136,22 +136,12 @@ export class AlgorithmService {
     const members = await this.db.query.users.findMany({
       where: inArray(users.id, memberIds),
     });
-    const memberNames = [];
-    const memberEmails = [];
     for (const member of members) {
-      memberNames.push(member.givenName + " " + member.familyName);
-      memberEmails.push(member.email);
       await this.db
         .update(studentDetails)
         .set({ team: id.teamId })
         .where(eq(studentDetails.userId, member.id));
     }
-
-    sendTeamAllocationEmails({
-      name: name,
-      memberNames: memberNames,
-      memberEmails: memberEmails,
-    });
 
     return id;
   }
