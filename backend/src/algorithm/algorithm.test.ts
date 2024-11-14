@@ -20,6 +20,7 @@ beforeEach(() => {
 
   s1 = {
     id: "1",
+    studentId: "1",
     stuGiven: "1first",
     stuLast: "1last",
     uniName: "1",
@@ -45,6 +46,7 @@ beforeEach(() => {
 
   s2 = {
     id: "2",
+    studentId: "2",
     stuGiven: "2first",
     stuLast: "2last",
     uniName: "1",
@@ -159,6 +161,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("getStudentScores: Should return an array of one StudentScore object (a full team)", () => {
     const s3: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -181,8 +184,8 @@ describe("Algorithm Score Calculation Unit Tests", () => {
       markdone: false,
     };
 
-    test_studentInfo.push(s3)
-    
+    test_studentInfo.push(s3);
+
     s1.preferences = s2.id + ", " + s3.id;
     s2.preferences = s1.id + ", " + s3.id;
 
@@ -192,13 +195,14 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     expect(calcscores[0]).toEqual({
       ids: [s1.id, s3.id, s2.id],
-      studentScore: (calculateScore(s1) + calculateScore(s2) + calculateScore(s3)) / 3,
+      studentScore:
+        (calculateScore(s1) + calculateScore(s2) + calculateScore(s3)) / 3,
       languagesSpoken: ["ab", "ab", "ab"],
       cppExperience: Experience.prof,
       cExpericence: Experience.prof,
       javaExperience: Experience.prof,
       pythonExperience: Experience.prof,
-      names: ["1first 1last", "3first 3last", "2first 2last", ],
+      names: ["1first 1last", "3first 3last", "2first 2last"],
       exclusions: [],
     });
 
@@ -210,6 +214,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("getStudentScores: Should return an array of two StudentScore object (a pair and a single)", () => {
     const s3: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -271,6 +276,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("isCompatible: Should test single students compatabilities", async () => {
     const noCompat: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -297,6 +303,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const CProf: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -323,6 +330,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const JavaSome: StudentInfo = {
       id: "5",
+      studentId: "5",
       stuGiven: "5first",
       stuLast: "5last",
       uniName: "1",
@@ -361,6 +369,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const noCompat: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -386,6 +395,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const CProf: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -417,6 +427,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("isCompatible: Test language compatabilities", async () => {
     const otherLang: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -442,6 +453,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const bothLang: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -476,6 +488,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("algorithm: Should return a singular team (Pair and Single)", () => {
     const noCompat: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -501,6 +514,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const CProf: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -532,6 +546,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("isCompatible: Test language compatabilities", async () => {
     const otherLang: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -557,6 +572,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const bothLang: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -591,6 +607,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("algorithm: Should return a singular team (Pair and Single)", () => {
     const noCompat: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -616,6 +633,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const CProf: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -647,6 +665,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("isCompatible: Test language compatabilities", async () => {
     const otherLang: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -673,6 +692,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const bothLang: StudentInfo = {
       id: "5",
+      studentId: "5",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -707,6 +727,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("algorithm: Should return a singular team (Pair and Single)", () => {
     const s3: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -777,6 +798,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("algorithm: Should return a singular team (Three Singles)", () => {
     const s3: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -856,6 +878,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("algorithm: Should return a singular team (Four Singles (1 Excluded))", () => {
     const s3: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -879,6 +902,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const s4: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -967,6 +991,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("algorithm: Should return no teams (Two Pairs, both excluded)", () => {
     const s3: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",
@@ -990,6 +1015,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
 
     const s4: StudentInfo = {
       id: "4",
+      studentId: "4",
       stuGiven: "4first",
       stuLast: "4last",
       uniName: "1",
@@ -1055,6 +1081,7 @@ describe("Algorithm Score Calculation Unit Tests", () => {
   it("algorithm: Should return one team that is flagged due to exclusions", () => {
     const s3: StudentInfo = {
       id: "3",
+      studentId: "3",
       stuGiven: "3first",
       stuLast: "3last",
       uniName: "1",

@@ -1,8 +1,9 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import {
   coursesCompletedByStudent,
   DatabaseConnection,
   languagesSpokenByStudent,
+  registrationDetails,
   studentDetails,
   teams,
   universities,
@@ -25,6 +26,7 @@ export type AllCoursesCompleted = {
 
 export type StudentResponse = {
   id: string;
+  studentId: string;
   stuGiven: string;
   stuLast: string;
   uniName: string;
@@ -54,8 +56,8 @@ export class AlgorithmService {
     this.db = db;
   }
 
-  async callAlgorithm(): Promise<RunAlgoResponse> {
-    const succesful = await runFullAlgorithm(this);
+  async callAlgorithm(contestId: string): Promise<RunAlgoResponse> {
+    const succesful = await runFullAlgorithm(this, contestId);
     return { success: succesful };
   }
 
@@ -71,10 +73,12 @@ export class AlgorithmService {
 
   async getAllStudentsFromUniversity(
     universityId: number,
+    contestId: string,
   ): Promise<AlgorithmStudentResponse> {
     const allStudents = await this.db
       .select({
         id: users.id,
+        studentId: studentDetails.studentId,
         stuGiven: users.givenName,
         stuLast: users.familyName,
         uniName: universities.name,
@@ -91,7 +95,16 @@ export class AlgorithmService {
       .from(users)
       .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
       .innerJoin(universities, eq(universities.id, users.university))
-      .where(eq(universities.id, universityId));
+      .innerJoin(registrationDetails, eq(registrationDetails.student, users.id))
+      .where(
+        and(
+          isNull(studentDetails.team),
+          and(
+            eq(universities.id, universityId),
+            eq(registrationDetails.contest, contestId),
+          ),
+        ),
+      );
 
     return { allStudents };
   }
@@ -121,7 +134,7 @@ export class AlgorithmService {
   }
 
   async createTeam(req: CreateTeamRequest) {
-    const { name, university, memberIds, flagged } = req;
+    const { name, university, memberIds, flagged, contest } = req;
 
     const [id] = await this.db
       .insert(teams)
@@ -129,6 +142,7 @@ export class AlgorithmService {
         name,
         university,
         flagged,
+        contest,
       })
       .returning({ teamId: teams.id });
 
