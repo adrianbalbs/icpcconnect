@@ -24,6 +24,8 @@ PG_TEST_HOST=localhost
 PG_TEST_PW=testpassword
 PG_TEST_DB=testdb
 PG_TEST_PORT=5556
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
 
 Then you can run

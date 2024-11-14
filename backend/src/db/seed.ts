@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { UserRole } from "../schemas/user-schema.js";
+import { LanguageExperience, Level, UserRole } from "../schemas/user-schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { getLogger } from "../utils/logger.js";
 import { DatabaseConnection } from "./database.js";
@@ -14,7 +14,12 @@ import {
   languagesSpokenByStudent,
   contests,
   teams,
+  coursesCompletedByStudent,
+  registrationDetails,
 } from "./schema.js";
+import { ContestService } from "../services/contest-service.js";
+import { JobQueue } from "../services/queue-service.js";
+import { AlgorithmService } from "../services/algorithm-service.js";
 
 type UserTable = {
   id: string;
@@ -33,9 +38,22 @@ type StudentTable = UserTable & {
   profile_pic: string,
   photoConsent: boolean;
   languagesSpoken: SpokenLanguage[];
+  level: Level;
+  contestExperience: number;
+  leetcodeRating: number;
+  codeforcesRating: number;
+  cppExperience: LanguageExperience;
+  cExperience: LanguageExperience;
+  javaExperience: LanguageExperience;
+  pythonExperience: LanguageExperience;
+  coursesTaken: number[];
 };
 
-const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
+const addStudent = async (
+  db: DatabaseConnection,
+  student: StudentTable,
+  contestId: string,
+) => {
   const {
     id,
     givenName,
@@ -50,6 +68,15 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
     profile_pic,
     photoConsent,
     languagesSpoken,
+    level,
+    contestExperience,
+    leetcodeRating,
+    codeforcesRating,
+    cppExperience,
+    cExperience,
+    javaExperience,
+    pythonExperience,
+    coursesTaken,
   } = student;
 
   const newPassword = await passwordUtils().hash(password);
@@ -80,12 +107,30 @@ const addStudent = async (db: DatabaseConnection, student: StudentTable) => {
         studentId,
         photoConsent,
         profile_pic,
+        level,
+        contestExperience,
+        codeforcesRating,
+        leetcodeRating,
+        cppExperience,
+        cExperience,
+        javaExperience,
+        pythonExperience,
       });
       for (const languageCode of languagesSpoken) {
         await tx
           .insert(languagesSpokenByStudent)
           .values({ studentId: user.userId, languageCode });
       }
+
+      for (const courseId of coursesTaken) {
+        await tx
+          .insert(coursesCompletedByStudent)
+          .values({ studentId: id, courseId });
+      }
+
+      await tx
+        .insert(registrationDetails)
+        .values({ student: id, contest: contestId });
     }
   });
 };
@@ -176,10 +221,54 @@ export const seed = async (db: DatabaseConnection) => {
     .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const dayAfterTomorrow = new Date();
+  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+  const contestDate = new Date();
+  contestDate.setDate(contestDate.getDate() + 3);
+
+  logger.info("Seeding contests");
+  const allContests = data.default.contests;
+  const contestService = new ContestService(
+    db,
+    new JobQueue(new AlgorithmService(db)),
+  );
+  for (const contest of allContests) {
+    const { name, site } = contest;
+    // await db
+    //   .insert(contests)
+    //   .values({
+    //     id,
+    //     name,
+    //     site,
+    //     earlyBirdDate: tomorrow,
+    //     cutoffDate: dayAfterTomorrow,
+    //     contestDate: contestDate,
+    //   })
+    //   .onConflictDoNothing();
+
+    await contestService.create({
+      name,
+      earlyBirdDate: tomorrow,
+      cutoffDate: dayAfterTomorrow,
+      contestDate: contestDate,
+      site,
+    });
+  }
+
+  const defaultContestName = "ICPC Preliminary Contest";
+  const [contest] = await db
+    .select({ id: contests.id })
+    .from(contests)
+    .where(eq(contests.name, defaultContestName));
+
   logger.info("Adding dummy students");
   const students = data.default.students as StudentTable[];
   for (const student of students) {
-    await addStudent(db, student);
+    await addStudent(db, student, contest.id);
   }
 
   logger.info("Adding dummy coaches");
@@ -199,23 +288,6 @@ export const seed = async (db: DatabaseConnection) => {
     .insert(teams)
     .values(data.default.teams)
     .onConflictDoNothing();
-
-  logger.info("Seeding contests");
-  const allContests = data.default.contests;
-  for (const contest of allContests) {
-    const { name, site, id } = contest;
-    await db
-      .insert(contests)
-      .values({
-        id,
-        name,
-        site,
-        earlyBirdDate: new Date(),
-        cutoffDate: new Date(),
-        contestDate: new Date(),
-      })
-      .onConflictDoNothing();
-  }
 
   logger.info("Adding default admin");
   const admins = data.default.admins as UserTable[];

@@ -248,8 +248,13 @@ export const coursesCompletedByStudentRelations = relations(
 
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 50 }),
+  name: varchar("name", { length: 50 }).notNull(),
   university: integer("university").references(() => universities.id),
+  contest: uuid("contest")
+    .references(() => contests.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   flagged: boolean("flagged").default(false).notNull(),
 });
 
@@ -270,6 +275,10 @@ export const replacementRelations = relations(replacements, ({one}) => ({
 export const teamRelations = relations(teams, ({ many, one }) => ({
   replacements: many(replacements),
   members: many(studentDetails),
+  contest: one(contests, {
+    fields: [teams.contest],
+    references: [contests.id],
+  }),
   university: one(universities, {
     fields: [teams.university],
     references: [universities.id],

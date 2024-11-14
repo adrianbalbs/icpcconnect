@@ -1,6 +1,11 @@
 import request from "supertest";
 import express from "express";
-import { AuthService, CodesService, EmailService, UserService } from "../services/index.js";
+import {
+  AuthService,
+  CodesService,
+  EmailService,
+  UserService,
+} from "../services/index.js";
 import { emailRouter, userRouter } from "../routers/index.js";
 import { DatabaseConnection, verifyEmail } from "../db/index.js";
 import {
@@ -24,7 +29,10 @@ beforeAll(async () => {
   app = express()
     .use(express.json())
     .use("/api", emailRouter(new EmailService(db)))
-    .use("/api/users", userRouter(new UserService(db), authService, codesService))
+    .use(
+      "/api/users",
+      userRouter(new UserService(db), authService, codesService),
+    );
 });
 
 afterAll(async () => {
@@ -39,17 +47,20 @@ describe("emailRouter tests", () => {
   it("should fail if user provide a non valid email address", async () => {
     const req: SendEmailVerificationCodeRequest = {
       email: "wrong@com",
-      isNormalVerificationEmail: true
+      isNormalVerificationEmail: true,
     };
 
     // It is not a valid email
-    await request(app).post("/api/registVerificationSend").send(req).expect(400);
+    await request(app)
+      .post("/api/registVerificationSend")
+      .send(req)
+      .expect(400);
   });
 
   it("should fail if user provide a non university email address", async () => {
     const req: SendEmailVerificationCodeRequest = {
       email: "icpc_test@outlook.com",
-      isNormalVerificationEmail: false
+      isNormalVerificationEmail: true,
     };
 
     // It is not a valid university email
@@ -66,7 +77,7 @@ describe("emailRouter tests", () => {
   it("should send valid link to a valid email address and user can verify", async () => {
     const req: SendEmailVerificationCodeRequest = {
       email: "z5354052@ad.unsw.edu.au",
-      isNormalVerificationEmail: false
+      isNormalVerificationEmail: true,
     };
     const response = await request(app)
       .post("/api/registVerificationSend")
@@ -119,7 +130,10 @@ describe("emailRouter tests", () => {
       userProvidedCode: "123456",
     };
 
-    await request(app).post("/api/registVerificationVerify").send(verify_req).expect(500);
+    await request(app)
+      .post("/api/registVerificationVerify")
+      .send(verify_req)
+      .expect(500);
   });
 
   // Forgot Password Tests
@@ -144,9 +158,9 @@ describe("emailRouter tests", () => {
     };
 
     const sendForgotPasswordResponse = await request(app)
-    .post("/api/forgotPasswordSend")
-    .send(forgotPasswordRequest)
-    .expect(200);
+      .post("/api/forgotPasswordSend")
+      .send(forgotPasswordRequest)
+      .expect(200);
     const actual_key = sendForgotPasswordResponse.body.codes;
 
     const verifyForgotPasswordRequest: PassForgotPasswordVerificationRequest = {
@@ -154,11 +168,10 @@ describe("emailRouter tests", () => {
       authenticationCode: actual_key,
     };
     const verifyForgotPasswordResponse = await request(app)
-    .post("/api/verifyForgotPassword")
-    .send(verifyForgotPasswordRequest)
-    .expect(200);
+      .post("/api/verifyForgotPassword")
+      .send(verifyForgotPasswordRequest)
+      .expect(200);
 
     expect(verifyForgotPasswordResponse.body.result === true);
-
   }, 10000);
 });
