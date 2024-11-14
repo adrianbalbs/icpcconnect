@@ -34,7 +34,6 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     tshirtSize: "",
   });
   const { userSession } = useAuth();
-
   const { storeProfileInfo, info } = useProfile();
 
   const storeInfo = async () => {

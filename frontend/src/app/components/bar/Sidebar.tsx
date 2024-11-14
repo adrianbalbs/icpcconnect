@@ -8,17 +8,15 @@ import { sidebarBtn } from "@/styles/sxStyles";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface SidebarProps {
-  profileId: string;
-  profileRole: string;
+  id: string;
+  role: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ profileId, profileRole }) => {
+const Sidebar: React.FC<SidebarProps> = ({ id, role }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [tab, setTab] = useState("profile");
-  const {
-    userSession: { id, role },
-  } = useAuth();
+  const { userSession } = useAuth();
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -26,15 +24,15 @@ const Sidebar: React.FC<SidebarProps> = ({ profileId, profileRole }) => {
   ) => {
     if (nextTab === null) return;
     const navTo = nextTab === "profile" ? "" : nextTab;
-    router.replace(`/profile/${profileId}/${navTo}`);
+    router.replace(`/profile/${id}/${navTo}`);
   };
 
   const checkView = () => {
-    if (profileRole === "Student") {
-      if (role === "Student") {
-        return id === profileId;
+    if (role === "Student") {
+      if (userSession.role === "Student") {
+        return userSession.id === id;
       }
-      return role === "Coach" || role === "Admin";
+      return userSession.role === "Coach" || userSession.role === "Admin";
     }
     return false;
   };
@@ -67,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ profileId, profileRole }) => {
             Preferences
           </ToggleButton>
         )}
-        {id === profileId && (
+        {userSession.id === id && (
           <ToggleButton value="account-settings" sx={sidebarBtn}>
             Account Settings
           </ToggleButton>

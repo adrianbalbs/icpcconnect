@@ -61,9 +61,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
           <p
             className={profileStyles.role}
           >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
-          {checkView() && (
-            <Sidebar profileId={params.id} profileRole={info.role} />
-          )}
+          {checkView() && <Sidebar id={params.id} role={info.role} />}
         </div>
         <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
           <ArrowBackIosIcon />

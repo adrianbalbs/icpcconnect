@@ -19,7 +19,6 @@ import LanguageSlider from "./modalInput/LanguageSlider";
 import { Experiences, ExperienceType } from "@/profile/[id]/experience/page";
 import NumberInput from "./modalInput/NumberInput";
 import CourseCheckbox from "./modalInput/CourseCheckbox";
-import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface ModalProps {
   id: string;
@@ -40,7 +39,6 @@ const ExperienceModal: React.FC<ModalProps> = ({
   const [type, setType] = useState("");
   const [disable, setDisable] = useState(false);
   const [newExperience, setNewExperience] = useState<Experiences>(experience);
-  const { userSession } = useAuth();
 
   const renderButton = () => {
     const add = Object.values(added).includes(false);
@@ -93,12 +91,9 @@ const ExperienceModal: React.FC<ModalProps> = ({
     }
   }, [type]);
 
-  const checkPermissions =
-    userSession.role === "Admin" || userSession.id === id;
-
   return (
     <div className={experienceStyles.modal}>
-      {!open && checkPermissions && (
+      {!open && (
         <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>
           {renderButton()}
         </Button>
