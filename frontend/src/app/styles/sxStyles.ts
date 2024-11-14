@@ -45,6 +45,7 @@ export const addBtn = {
 };
 
 export const experienceHeading = {
+  // fontSize: '14px',
   fontSize: "15px",
   fontWeight: 600,
 };
@@ -70,6 +71,14 @@ export const sidebarBtn = {
   "&:active": {
     color: "#4E5C88",
     bgcolor: "#8094ab61",
+  },
+};
+
+export const preferenceInput = {
+  "& .MuiInputBase-input": {
+    padding: "7px 14px",
+    fontSize: "14px",
+    color: "#666666",
   },
 };
 
@@ -102,4 +111,23 @@ export const enrolBtn = {
   height: 50,
   textTransform: "none",
   fontWeight: "bold",
+};
+
+export const saveExclBtn = {
+  height: "22.5px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "white",
+  borderColor: "#444444",
+  bgcolor: "#444444",
+};
+
+export const cancelExclBtn = {
+  height: "22.5px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "#444444",
+  borderColor: "#444444",
 };

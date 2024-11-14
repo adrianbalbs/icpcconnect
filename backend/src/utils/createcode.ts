@@ -102,10 +102,10 @@ export async function checkCoachCode(
 ): Promise<boolean> {
   const codes: InviteCodes[] = await codesService.getAllRoleCodes();
 
-  if (checkCode == undefined) { return false }
+  if (checkCode === undefined) { return false }
 
   for (const code of codes) {
-    if (code.code == Number(checkCode) && code.role == role.coach) {
+    if (code.code === Number(checkCode) && code.role === role.coach) {
       const expireTime: Date = addDays(new Date(code.createdAt), 1);
       const now: Date = new Date(Date.now());
 
@@ -137,10 +137,10 @@ export async function checkSiteCoordCode(
 ): Promise<boolean> {
   const codes: InviteCodes[] = await codesService.getAllRoleCodes();
 
-  if (checkCode == undefined) { return false }
+  if (checkCode === undefined) { return false }
 
   for (const code of codes) {
-    if (code.code == Number(checkCode) && code.role == role.site_coord) {
+    if (code.code === Number(checkCode) && code.role === role.site_coord) {
       const expireTime: Date = addDays(new Date(code.createdAt), 1);
       const now: Date = new Date(Date.now());
 
@@ -175,7 +175,7 @@ export async function checkAuthCode(
   const codes: AuthCodes[] = await codesService.getAllAuthCodes();
 
   for (const code of codes) {
-    if (code.code == checkCode && code.email == email) {
+    if (code.code === checkCode && code.email === email) {
       const expireTime: Date = addHours(new Date(code.createdAt), 1);
       const now: Date = new Date(Date.now());
 

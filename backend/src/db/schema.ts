@@ -99,6 +99,7 @@ export const studentDetails = pgTable("student_details", {
     .default("none")
     .notNull(),
   exclusions: text("exclusions").default("").notNull(),
+  preferences: text("preferences").default("").notNull(),
 });
 
 export const studentDetailsRelations = relations(

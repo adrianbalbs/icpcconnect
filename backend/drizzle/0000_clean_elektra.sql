@@ -68,7 +68,14 @@ CREATE TABLE IF NOT EXISTS "languages_spoken_by_student" (
 CREATE TABLE IF NOT EXISTS "registration_details" (
 	"student" uuid NOT NULL,
 	"contest" uuid NOT NULL,
+	"time_submitted" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "registration_details_student_contest_pk" PRIMARY KEY("student","contest")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "replacements" (
+	"team_id" uuid,
+	"leaving_id" text DEFAULT '' NOT NULL,
+	"student_id" text DEFAULT '' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "student_details" (
@@ -87,8 +94,8 @@ CREATE TABLE IF NOT EXISTS "student_details" (
 	"c_experience" "language_experience" DEFAULT 'none' NOT NULL,
 	"java_experience" "language_experience" DEFAULT 'none' NOT NULL,
 	"python_experience" "language_experience" DEFAULT 'none' NOT NULL,
-	"time_submitted" timestamp DEFAULT now() NOT NULL,
-	"exclusions" text DEFAULT '' NOT NULL
+	"exclusions" text DEFAULT '' NOT NULL,
+	"preferences" text DEFAULT '' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "teams" (
@@ -163,6 +170,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "registration_details" ADD CONSTRAINT "registration_details_contest_contests_id_fk" FOREIGN KEY ("contest") REFERENCES "public"."contests"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "replacements" ADD CONSTRAINT "replacements_team_id_teams_id_fk" FOREIGN KEY ("team_id") REFERENCES "public"."teams"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

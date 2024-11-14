@@ -36,7 +36,7 @@ export type StudentResponse = {
   javaExperience: string;
   pythonExperience: string;
   exclusions: string;
-  // paired_with: number | null,
+  preferences: string;
 };
 
 export type AlgorithmStudentResponse = {
@@ -86,6 +86,7 @@ export class AlgorithmService {
         javaExperience: studentDetails.javaExperience,
         pythonExperience: studentDetails.pythonExperience,
         exclusions: studentDetails.exclusions,
+        preferences: studentDetails.preferences,
       })
       .from(users)
       .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
@@ -134,7 +135,6 @@ export class AlgorithmService {
     const members = await this.db.query.users.findMany({
       where: inArray(users.id, memberIds),
     });
-
     for (const member of members) {
       await this.db
         .update(studentDetails)

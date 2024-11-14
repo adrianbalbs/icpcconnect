@@ -54,7 +54,7 @@ export interface StudentInfo {
   javaExperience: Experience;
   pythonExperience: Experience;
   exclusions: string;
-  paired_with: string | null;
+  preferences: string;
   markdone: boolean;
 }
 
@@ -96,7 +96,7 @@ export async function runFullAlgorithm(
     const studentsOfUni: AlgorithmStudentResponse =
       await algorithmService.getAllStudentsFromUniversity(uni.id);
 
-    if (studentsOfUni.allStudents.length == 0) {
+    if (studentsOfUni.allStudents.length === 0) {
       continue;
     }
 
@@ -153,6 +153,7 @@ async function convertToStudentInfo(
       await algorithmService.getCoursesFromStudent(s.id);
     const languages: AllLanguagesSpoken =
       await algorithmService.getLanguagesFromStudent(s.id);
+
     formattedInfo.push({
       id: s.id,
       stuGiven: s.stuGiven,
@@ -168,7 +169,7 @@ async function convertToStudentInfo(
       javaExperience: convertToEnum(s.javaExperience),
       pythonExperience: convertToEnum(s.pythonExperience),
       exclusions: s.exclusions,
-      paired_with: null,
+      preferences: s.preferences,
       markdone: false,
     });
   }
@@ -186,9 +187,9 @@ async function convertToStudentInfo(
  */
 
 function convertToEnum(s: string): Experience {
-  if (s == "prof") {
+  if (s === "prof") {
     return Experience.prof;
-  } else if (s == "some") {
+  } else if (s === "some") {
     return Experience.some;
   } else {
     return Experience.none;
@@ -225,6 +226,22 @@ function getLanguages(l: AllLanguagesSpoken): string[] {
     languages.push(la.code);
   }
   return languages;
+}
+
+/**
+ * getPreferences
+ * 
+ * Converts the raw string from the DB return into an array of individual student IDs
+ * 
+ * @param s: string
+ * @returns string[]
+ */
+function getPreferences(s: string): string[] {
+  if (s === "" || s === "none") {
+    return []
+  } else {
+    return (s).split(", ")
+  }
 }
 
 /**
@@ -283,11 +300,15 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
       continue;
     } // Case of it already being considered within a pair
 
-    if (s.paired_with != null) {
+    // Split the preferences into an array
+    const paired_with = getPreferences(s.preferences)
+
+    if (paired_with.length === 1) {
+      const pair = paired_with.pop()
       const p: StudentInfo | undefined = students.find(
-        (student) => student.id == s.paired_with,
+        (student) => student.id === pair,
       );
-      if (p == undefined) {
+      if (p === undefined) {
         return [score];
       } // Should never happen
       score = {
@@ -308,10 +329,45 @@ export function getStudentScores(students: StudentInfo[]): StudentScore[] {
           .split(", ")
           .map(String),
 
-        // Add their name
+        // Add their names
         names: [s.stuGiven + " " + s.stuLast, p.stuGiven + " " + p.stuLast],
       };
       p.markdone = true;
+    } else if (paired_with.length === 2) {
+      const pair1 = paired_with.pop()
+      const p1: StudentInfo | undefined = students.find(
+        (student) => student.id === pair1,
+      );
+
+      const pair2 = paired_with.pop()
+      const p2: StudentInfo | undefined = students.find(
+        (student) => student.id === pair2,
+      );
+
+      if (p1 === undefined || p2 === undefined) {
+        return [score];
+      } // Should never happen
+      score = {
+        ids: [s.id, p1.id, p2.id],
+        studentScore: (calculateScore(s) + calculateScore(p1) + calculateScore(p2)) / 3,
+
+        // We combine them together, we do a set operation later anyways
+        languagesSpoken: s.languagesSpoken.concat(p1.languagesSpoken).concat(p2.languagesSpoken),
+
+        // For pairs we consider the highest experience between the two
+        cppExperience: Math.max(s.cppExperience, p1.cppExperience, p2.cppExperience),
+        cExpericence: Math.max(s.cExpericence, p1.cExpericence, p2.cExpericence),
+        javaExperience: Math.max(s.javaExperience, p1.javaExperience, p2.javaExperience),
+        pythonExperience: Math.max(s.pythonExperience, p1.pythonExperience, p2.pythonExperience),
+
+        // We don't need the exlcusions
+        exclusions: [],
+
+        // Add their names
+        names: [s.stuGiven + " " + s.stuLast, p1.stuGiven + " " + p1.stuLast, p2.stuGiven + " " + p2.stuLast],
+      };
+      p1.markdone = true;
+      p2.markdone = true;
     } else {
       score = {
         ids: [s.id],
@@ -361,12 +417,21 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
       return groups;
     }
 
+    // A full team has been found
+    if (stu1.ids.length === 3) {
+      group.ids = stu1.ids;
+      group.totalScore = stu1.studentScore * 3;
+      group.flagged = false; // We assume that a full made team should not have any exclusions
+      groups.push(group);
+      continue;
+    }
+
     // Stu1 = Pair
-    if (stu1.ids.length == 2) {
+    if (stu1.ids.length === 2) {
       const stu2 = getNext(studentsScores, stu1, null, true);
 
       // No singular person exists to join this pair meaning only pairs are left
-      if (stu2 == undefined) {
+      if (stu2 === undefined) {
         return groups;
       }
 
@@ -392,7 +457,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
     }
 
     // Stu1 = Single, Stu 2 = Pair
-    if (stu1.ids.length + stu2.ids.length == 3) {
+    if (stu1.ids.length + stu2.ids.length === 3) {
       group.ids = stu1.ids.concat(stu2.ids);
       group.totalScore = stu2.studentScore * 2 + stu1.studentScore;
       group.flagged =
@@ -415,7 +480,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
     }
 
     // Stu1 = Single, Stu2 = Single, Stu3 = Single
-    if (stu1.ids.length + stu2.ids.length + stu3.ids.length == 3) {
+    if (stu1.ids.length + stu2.ids.length + stu3.ids.length === 3) {
       group.ids = stu1.ids.concat(stu2.ids).concat(stu3.ids);
       group.totalScore =
         stu1.studentScore + stu2.studentScore + stu3.studentScore;
@@ -431,7 +496,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
     }
 
     // Stu1 - Single, Stu2 = Single, Stu3 = Pair
-    if (stu1.ids.length + stu2.ids.length + stu3.ids.length == 4) {
+    if (stu1.ids.length + stu2.ids.length + stu3.ids.length === 4) {
       studentsScores.push(stu2);
       group.ids = stu1.ids.concat(stu3.ids);
       group.totalScore = stu1.studentScore + stu3.studentScore * 2;
@@ -465,11 +530,11 @@ function getNext(
   s2: StudentScore | null,
   needSingle: boolean,
 ): StudentScore | undefined {
-  if (s2 == null) {
+  if (s2 === null) {
     if (needSingle) {
       for (let i = studentsScores.length - 1; i >= 0; i--) {
         if (
-          studentsScores[i].ids.length == 1 &&
+          studentsScores[i].ids.length === 1 &&
           isCompatible(studentsScores[i], s1)
         ) {
           const student: StudentScore = studentsScores[i];
@@ -532,11 +597,11 @@ export function checkExclusions(
   othernames: string[],
 ): boolean {
   // Need to do a string contains for each string in exclusions
-  if (exclusions.length == 0) return false;
+  if (exclusions.length === 0) return false;
 
   for (const name of othernames) {
     for (const excl of exclusions) {
-      if (excl == "" || excl == " ") {
+      if (excl === "" || excl === " ") {
         continue;
       }
       if (name.includes(excl)) {

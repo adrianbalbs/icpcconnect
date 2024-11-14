@@ -50,7 +50,7 @@ export class TeamService {
       with: { members: true, university: true, replacements: true},
     });
 
-    if (team == undefined) {
+    if (team === undefined) {
       throw new HTTPError(badRequest);
     }
 

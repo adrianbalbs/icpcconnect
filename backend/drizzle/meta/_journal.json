@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1731230827742,
-      "tag": "0000_puzzling_shiva",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1731465192510,
-      "tag": "0001_rich_stranger",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1731470666756,
-      "tag": "0001_ambiguous_tigra",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1731483945396,
-      "tag": "0002_fair_banshee",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1731487680703,
-      "tag": "0003_narrow_mesmero",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1731487778239,
-      "tag": "0004_far_marvel_apes",
+      "when": 1731556473422,
+      "tag": "0000_clean_elektra",
       "breakpoints": true
     }
   ]
