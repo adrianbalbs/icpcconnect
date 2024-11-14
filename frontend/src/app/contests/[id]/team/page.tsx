@@ -13,7 +13,7 @@ import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { useParams } from "next/navigation";
 import { ContestResponse } from "@/contests/page";
 import StudentWaitingScreen from "@/components/waiting-screen/StudentWaitingScreen";
-import { Box, CircularProgress, Stack } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 type TeamInfo = {
   id: string;

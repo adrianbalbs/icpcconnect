@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SERVER_URL } from "@/utils/constants";
 import teamStyles from "@/styles/Teams.module.css";
 import TeamCard from "./TeamCard";
 import { Team } from "@/types/teams";
