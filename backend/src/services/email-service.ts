@@ -1,9 +1,9 @@
-import { DatabaseConnection, users, verifyEmail } from "../db/index.js";
+import { DatabaseConnection, studentDetails, users, verifyEmail } from "../db/index.js";
 import { ForgotPasswordResetPasswordRequest, PassForgotPasswordVerificationRequest, PassRegisterEmailVerificationRequest, SendEmailForgotPasswordCodeRequest, SendEmailVerificationCodeRequest, SendTeamAllocationEmail } from "../schemas/index.js";
 import { eq, inArray } from "drizzle-orm";
 // import { sendVerificationCode } from "./email-handler"
-import { sendEmail, sendGroupArrangedEmail } from './email-handler/email.js'; // Adjust the path as necessary
-import { HTTPError, badRequest } from "../utils/errors.js";
+import { sendEmail, sendGroupArrangedEmail, sendTeamAllocationEmails } from './email-handler/email.js'; // Adjust the path as necessary
+import { HTTPError, badRequest, internalServerError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 
 
@@ -280,4 +280,43 @@ public async forgotPasswordChangePassword(req: ForgotPasswordResetPasswordReques
 
     return true;
 }
+
+async sendTeamMemberInfo(): Promise<void> {
+    const teams = await this.db.query.teams.findMany();
+
+    for (const team of teams) {
+        const members = await this.db.query.studentDetails.findMany({
+            where: eq(studentDetails.team, team.id)
+        });
+
+        const memberNames = [];
+        const memberEmails = [];
+        for (const member of members) {
+            const result = await this.db.query.users.findMany({
+                where: eq(users.id, member.userId)
+            });
+            if (result.length === 0) {
+                throw new HTTPError({
+                    errorCode: internalServerError.errorCode,
+                    message: "It should not happen, check whether you have runned the runalgo.",
+                });
+            }
+            const user = result[0];
+            memberNames.push(user.givenName + " " + user.familyName);
+            memberEmails.push(user.email);
+        }
+
+        const teamName: string = team.name ?? "Unnamed Team";
+
+        // send email info....
+        sendTeamAllocationEmails({
+            name: teamName,
+            memberNames: memberNames,
+            memberEmails: memberEmails,
+        });
+    }
+}
+
+
+
 }

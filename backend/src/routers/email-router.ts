@@ -90,5 +90,20 @@ export function emailRouter(Service: EmailService) {
           next(err);
         }
       },
+    )
+    .post(
+      "/sendTeamCreatedEmail", // For front end: it should be called after you call the /runalgo route to create teams.
+      async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        try {
+          await Service.sendTeamMemberInfo();
+          res.status(200).json({});
+        } catch (err) {
+          next(err);
+        }
+      },
     );
 }

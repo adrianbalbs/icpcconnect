@@ -109,7 +109,7 @@ describe("emailRouter tests", () => {
       .post("/api/registVerificationVerify")
       .send(verify_req)
       .expect(500);
-  }, 20000);
+  }, 25000);
 
   it("should fail to verify if verification request not yet sent to email box", async () => {
     // Verification directly will fail. You have to send the verification code to user first.

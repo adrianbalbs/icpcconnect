@@ -4,6 +4,7 @@ import { DatabaseConnection, teams, users } from "../db/index.js";
 import {
   adminRouter,
   authRouter,
+  emailRouter,
   teamRouter,
   userRouter,
 } from "../routers/index.js";
@@ -11,6 +12,7 @@ import {
   AdminService,
   AuthService,
   ContestRegistrationService,
+  EmailService,
   TeamService,
   UserService,
 } from "../services/index.js";
@@ -42,6 +44,7 @@ describe("Algorithm Tests", () => {
     app = express()
       .use(express.json())
       .use(cookieParser())
+      .use("/api", emailRouter(new EmailService(db)))
       .use("/api/auth", authRouter(authService))
       .use("/api/users", userRouter(new UserService(db), authService))
       .use(
@@ -231,7 +234,7 @@ describe("Algorithm Tests", () => {
 
   it("should create three students at the same uni and create a team with them", async () => {
 
-    const USE_TRUE_EMAIL = false;
+    const USE_TRUE_EMAIL = true;
 
     const EMAILS = {
       adrian: {
@@ -325,7 +328,13 @@ describe("Algorithm Tests", () => {
       .set("Cookie", cookies)
       .expect(200);
     expect(teams.body).toHaveLength(1);
-  });
+
+    // Call send team created email stuff
+    await request(app)
+      .post("/api/sendTeamCreatedEmail")
+      .expect(200);
+
+  }, 60000);
 
   it("should create three students, two same uni, one different, and not create a team with them", async () => {
     const students = [
