@@ -289,6 +289,7 @@ export const StudentDetailsScehma = z.strictObject({
   pronouns: z.string().default(""),
   team: z.string().nullable(),
   dietaryRequirements: z.string().default(""),
+  profile_pic: z.string().default(""),
   tshirtSize: z.string().default(""), // Thinking "M", "L", etc. Could do it by numbers? Seems less descriptive
   photoConsent: z.boolean().default(false),
   languagesSpoken: z.array(LanguagesSchema).default([]),
