@@ -23,8 +23,7 @@ interface TeamInfo {
 const statusStrings = ["(Not allocated)", "(Awaiting allocation)"];
 
 const Team: React.FC = () => {
-  // const [status, setStatus] = useState(0);
-  const [status, setStatus] = useState(2);
+  const [status, setStatus] = useState(0);
   const [uni, setUni] = useState("");
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [team, setTeam] = useState<TeamInfo>({
@@ -59,8 +58,7 @@ const Team: React.FC = () => {
       setStatus(1);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) {
-        setStatus(2);
-        // setStatus(0);
+        setStatus(0);
       } else {
         console.error(err);
       }
@@ -73,8 +71,7 @@ const Team: React.FC = () => {
         `${SERVER_URL}/api/users/${id}/contest-registration/${params.id}`,
         { withCredentials: true },
       );
-      // setStatus(0);
-      setStatus(2);
+      setStatus(0);
     } catch (err) {
       console.error(err);
     }
@@ -86,15 +83,16 @@ const Team: React.FC = () => {
       if (studentData) {
         setUni(studentData.university);
       }
-      // const res = await axios.get(`${SERVER_URL}/api/teams/student/${id}`, {
-      //   withCredentials: true,
-      // });
-      // setTeam(res.data);
-      setTeam({
-        id: "",
-        name: "Tomato Factory",
-        members: [],
+      const res = await axios.get(`${SERVER_URL}/api/teams/student/${id}`, {
+        withCredentials: true,
       });
+      setTeam(res.data);
+      setStatus(2);
+      // setTeam({
+      //   id: "",
+      //   name: "Tomato Factory",
+      //   members: [],
+      // });
     } catch (error) {
       console.log(`Student get team error: ${error}`);
     }
@@ -108,21 +106,6 @@ const Team: React.FC = () => {
     if (id) initializeData();
   }, [getTeam, fetchContest, fetchEnrollment]);
 
-  // DELETE
-  const generateTeam = async () => {
-    await axios.post(`${SERVER_URL}/api/teams/register`, {
-      name: "hello", //name of team
-      university: 1, //university id - think 0 works?
-      memberIds: [
-        "c47253b3-5181-4680-81e0-01fc7b3c6c09",
-        "c14933de-4025-4391-a1bc-62eb8d76b716",
-        "2ad0e0b7-04a1-4d29-91d1-5024d394aaf1",
-        "c14933de-4025-4391-a1bc-62eb8d76b716",
-      ], //user-ids of member
-      flagged: false, // just set to false
-    });
-  };
-
   return (
     <>
       <h1 className={teamStyles["team-heading"]}>
@@ -132,11 +115,6 @@ const Team: React.FC = () => {
           <span className={teamStyles.status}> {statusStrings[status]}</span>
         )}
       </h1>
-      {/*delete*/}
-      <button
-        className={pageStyles["tile-button"]}
-        onClick={generateTeam}
-      ></button>
       <p className={teamStyles.university}>{uni}</p>
       {status !== 2 && <hr className={pageStyles.divider} />}
       {status === 0 && (
@@ -153,8 +131,8 @@ const Team: React.FC = () => {
           handleWithdrawEnrollment={handleWithdrawEnrollment}
         />
       )}
-      {/* {status === 2 && <Assigned members={team.members} />} */}
-      {status === 2 && (
+      {status === 2 && <Assigned members={team.members} />}
+      {/* {status === 2 && (
         <Assigned
           members={[
             {
@@ -180,7 +158,7 @@ const Team: React.FC = () => {
             },
           ]}
         />
-      )}
+      )} */}
     </>
   );
 };

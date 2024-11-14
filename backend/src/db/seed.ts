@@ -13,6 +13,7 @@ import {
   users,
   languagesSpokenByStudent,
   contests,
+  teams,
 } from "./schema.js";
 
 type UserTable = {
@@ -192,6 +193,12 @@ export const seed = async (db: DatabaseConnection) => {
   for (const siteCoordinator of siteCoordinators) {
     await addSiteCoordinator(db, siteCoordinator);
   }
+  
+  logger.info("Seeding Team Information");
+  await db
+    .insert(teams)
+    .values(data.default.teams)
+    .onConflictDoNothing();
 
   logger.info("Seeding contests");
   const allContests = data.default.contests;
