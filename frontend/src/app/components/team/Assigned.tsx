@@ -1,24 +1,97 @@
 import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Member, { MemberProps } from "./Member";
+import { Box, Modal, Typography } from "@mui/material";
+import { useState } from "react";
+import CloseBtn from "../utils/CloseBtn";
 
 interface AssignedProps {
   members: MemberProps[];
 }
 
 const Assigned: React.FC<AssignedProps> = ({ members }) => {
+  const [open, setOpen] = useState(false);
+  const handleSubmit = () => {
+    setOpen(false);
+  };
   return (
-    <div className={memberStyles.gap}>
-      <div className={`${pageStyles.bold} ${memberStyles.staff}`}>
-        <p>Team Member Name</p>
-        <p>Student ID</p>
-        <p>Email</p>
+    <>
+      <div className={memberStyles.gap}>
+        <div className={`${pageStyles.bold} ${memberStyles.staff}`}>
+          <p>Team Member Name</p>
+          <p>Student ID</p>
+          <p>Email</p>
+        </div>
+        <hr className={pageStyles.divider} />
+        {members.map((member) => (
+          <Member key={member.id} {...member} />
+        ))}
+        <button
+          onClick={() => setOpen(true)}
+          className={memberStyles.pullout}
+          style={{
+            top: "120px",
+            right: "170px",
+            position: "absolute",
+          }}
+        >
+          Request to pull out
+        </button>
+
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              backgroundColor: "white",
+              position: "absolute",
+              boxShadow: "10px solid black",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              maxHeight: "70%",
+              padding: "50px",
+              width: "35%",
+            }}
+          >
+            <div style={{ width: "100%" }}>
+              <h2>Request to pull out from team</h2>
+              <br />
+              <b>Reason</b>
+            </div>
+            <textarea
+              style={{ width: "100%" }}
+              placeholder="Your reason for pulling out..."
+              className={memberStyles["pullout-reason"]}
+            ></textarea>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "20px",
+                width: "100%",
+              }}
+            >
+              <b style={{ marginRight: "30px" }}>Substitution</b>
+              <input
+                placeholder="Leave blank if none"
+                className={memberStyles["pullout-substitution"]}
+              ></input>
+            </div>
+            <CloseBtn handleClose={() => setOpen(false)}></CloseBtn>
+            <button
+              className={memberStyles.pullout}
+              onClick={handleSubmit}
+              style={{ marginTop: "30px" }}
+            >
+              Submit
+            </button>
+          </Box>
+        </Modal>
       </div>
-      <hr className={pageStyles.divider} />
-      {members.map((member) => (
-        <Member key={member.id} {...member} />
-      ))}
-    </div>
+    </>
   );
 };
 

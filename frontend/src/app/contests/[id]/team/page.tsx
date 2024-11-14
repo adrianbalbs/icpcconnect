@@ -23,7 +23,8 @@ interface TeamInfo {
 const statusStrings = ["(Not allocated)", "(Awaiting allocation)"];
 
 const Team: React.FC = () => {
-  const [status, setStatus] = useState(0);
+  // const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(2);
   const [uni, setUni] = useState("");
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [team, setTeam] = useState<TeamInfo>({
@@ -58,7 +59,8 @@ const Team: React.FC = () => {
       setStatus(1);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 404) {
-        setStatus(0);
+        // setStatus(0);
+        setStatus(2);
       } else {
         console.error(err);
       }
@@ -130,7 +132,34 @@ const Team: React.FC = () => {
           handleWithdrawEnrollment={handleWithdrawEnrollment}
         />
       )}
-      {status === 2 && <Assigned members={team.members} />}
+      {/* {status === 2 && <Assigned members={team.members} />} */}
+      {status === 2 && (
+        <Assigned
+          members={[
+            {
+              id: "w",
+              givenName: "nadrew",
+              familyName: "sub",
+              studentId: "12312",
+              email: "andrew@gmail.com",
+            },
+            {
+              id: "string",
+              givenName: "aaron",
+              familyName: "hub",
+              studentId: "12312",
+              email: "ah@gmail.com",
+            },
+            {
+              id: "e",
+              givenName: "teehee",
+              familyName: "ssfgk",
+              studentId: "12312",
+              email: "teeheews@gmail.com",
+            },
+          ]}
+        />
+      )}
     </>
   );
 };
