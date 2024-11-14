@@ -9,6 +9,8 @@ import {
   CreateTeamRequestSchema,
   UpdateTeamRequest,
   UpdateTeamRequestSchema,
+  ReplacementRequest,
+  ReplacementRequestSchema,
 } from "../schemas/index.js";
 import { AuthService, TeamService } from "../services/index.js";
 
@@ -158,6 +160,21 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
             body: { accepting },
           } = req;
           const result = await teamService.handlePulloutReq(studentId, accepting);
+          res.status(200).send(result);
+        },
+    )
+    .put(
+      "/handleReplacement",
+      [
+        authenticate,
+        authorise(["Admin", "Coach"]),
+        validateData(ReplacementRequestSchema, "body"),
+      ],
+        async (
+          req: Request<{ studentId: string}, unknown, ReplacementRequest>,
+          res: Response,
+        ) => {
+          const result = await teamService.handleReplacement(req.body);
           res.status(200).send(result);
         },
     );

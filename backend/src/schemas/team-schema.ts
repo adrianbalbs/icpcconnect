@@ -30,3 +30,11 @@ export const SendTeamAllocatedEmailSchema = z.object({
 });
 
 export type SendTeamAllocationEmail = z.infer<typeof SendTeamAllocatedEmailSchema>;
+
+export const ReplacementRequestSchema = z.object({
+  team: z.string(),
+  student: z.string(),
+  replacedWith: z.string(),
+});
+
+export type ReplacementRequest = z.infer<typeof ReplacementRequestSchema>;
