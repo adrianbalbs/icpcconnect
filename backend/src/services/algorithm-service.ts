@@ -10,8 +10,6 @@ import {
 } from "../db/index.js";
 import { runFullAlgorithm } from "../algorithm/algorithm.js";
 import { CreateTeamRequest } from "../schemas/team-schema.js";
-import { EmailService } from "./email-service.js"
-import { sendTeamAllocationEmails } from "./email-handler/email.js";
 
 export type AllUniIDResponse = {
   allUniversityIds: { id: number }[];

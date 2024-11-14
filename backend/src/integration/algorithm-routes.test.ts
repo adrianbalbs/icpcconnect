@@ -11,7 +11,6 @@ import {
 import {
   AdminService,
   AuthService,
-  ContestRegistrationService,
   EmailService,
   CodesService,
   TeamService,

@@ -1,8 +1,8 @@
 import { DatabaseConnection, studentDetails, users, verifyEmail } from "../db/index.js";
 import { ForgotPasswordResetPasswordRequest, PassForgotPasswordVerificationRequest, PassRegisterEmailVerificationRequest, SendEmailForgotPasswordCodeRequest, SendEmailVerificationCodeRequest, SendTeamAllocationEmail } from "../schemas/index.js";
-import { eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 // import { sendVerificationCode } from "./email-handler"
-import { sendEmail, sendGroupArrangedEmail, sendTeamAllocationEmails } from './email-handler/email.js'; // Adjust the path as necessary
+import { sendEmail, sendTeamAllocationEmails } from './email-handler/email.js'; // Adjust the path as necessary
 import { HTTPError, badRequest, internalServerError } from "../utils/errors.js";
 import { passwordUtils } from "../utils/encrypt.js";
 

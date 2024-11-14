@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import { forget_password_email_content, verification_email_content } from './email-template/index.js';
 import { group_arranged_email_content } from './email-template/group-arranged-template.js';
 import { SendTeamAllocationEmail } from 'src/schemas/index.js';
-import { inArray } from 'drizzle-orm';
 
 export async function sendHtmlEmail(
     userName: string,
