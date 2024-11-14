@@ -85,9 +85,12 @@ const Team: React.FC = () => {
       if (studentData) {
         setUni(studentData.university);
       }
-      const res = await axios.get(`${SERVER_URL}/api/teams/student/${id}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${SERVER_URL}/api/teams/student/${id}/contest/${params.id}`,
+        {
+          withCredentials: true,
+        },
+      );
       setTeam(res.data);
       setStatus("assigned");
     } catch (err) {
