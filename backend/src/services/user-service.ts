@@ -14,6 +14,8 @@ import {
 } from "../db/schema.js";
 import {
   CreateUser,
+  ExclusionsResponse,
+  PreferencesResponse,
   UpdateStudentDetails,
   UpdateUser,
   UserDTO,
@@ -32,12 +34,12 @@ export class UserService {
     const { studentId, password, role, inviteCode, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
 
-    if (studentId == undefined && role != "Admin") {
+    if (studentId === undefined && role != "Admin") {
       let inviteExists: boolean = false
 
-      if (role == "Site Coordinator") {
+      if (role === "Site Coordinator") {
         inviteExists = await checkSiteCoordCode(codesService, inviteCode)
-      } else if (role == "Coach") {
+      } else if (role === "Coach") {
         inviteExists = await checkCoachCode(codesService, inviteCode)
       }
 
@@ -312,5 +314,50 @@ export class UserService {
 
     await this.db.delete(users).where(eq(users.id, id));
     return { status: "OK" };
+  }
+  
+  async getStudentExclusions(id: string): Promise<ExclusionsResponse> {
+    const [exclusions] = await this.db
+      .select({ exclusions: studentDetails.exclusions })
+      .from(studentDetails)
+      .where(eq(studentDetails.userId, id))
+
+    return exclusions
+  }
+
+  async getStudentPreferences(id: string): Promise<{ preferences: PreferencesResponse[] }> {
+    const [p] = await this.db
+      .select({ preferences: studentDetails.preferences })
+      .from(studentDetails)
+      .where(eq(studentDetails.userId, id))
+    
+    const preferencesReturn: PreferencesResponse[] = []
+
+    if (p.preferences.length === 0 || p.preferences === "none") {
+      return { preferences: preferencesReturn };
+    }
+
+    const prefArr = p.preferences.split(", ")
+    
+    for (const stuId of prefArr) {
+      const [per] = await this.db
+        .select({ 
+          studentId: studentDetails.studentId,
+          given: users.givenName,
+          family: users.familyName
+        })
+        .from(studentDetails)
+        .innerJoin(users, eq(users.id, studentDetails.userId))
+        .where(eq(studentDetails.studentId, stuId))
+        
+      const preference: PreferencesResponse = {
+        studentId: stuId,
+        name: per ? `${per.given} ${per.family}` : ""
+      }
+
+      preferencesReturn.push(preference)
+    }
+
+    return { preferences: preferencesReturn }
   }
 }

@@ -6,6 +6,7 @@ import teamStyles from "@/styles/Teams.module.css";
 import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
 import { useAuth } from "../AuthProvider/AuthProvider";
+import { getPreferences } from "@/utils/preferenceInfo";
 import { Button, Stack } from "@mui/material";
 import { User } from "@/types/users";
 import { enrolBtn } from "@/styles/sxStyles";
@@ -68,6 +69,17 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
     }
   }, [id]);
 
+  const checkPreference = useCallback(async () => {
+    try {
+      const preference = await getPreferences(id, "preferences");
+      if (preference && preference.length !== 0) {
+        setAdded((prev) => ({ ...prev, preference: true }));
+      }
+    } catch (err) {
+      console.log(`Check preference error: ${err}`);
+    }
+  }, [id]);
+
   const handleContestRegistration = async () => {
     try {
       await axios.post(
@@ -88,22 +100,19 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
     return cutoffDate ? new Date() > new Date(cutoffDate) : false;
   };
 
-  // const checkPreference = () => {
-  //   setAdded({ ...added, preference: true });
-  // }
+  const getProfileUrl = (path: string) => `/profile/${id}${path}`;
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      await Promise.all([checkProfile(), checkExperience()]);
+      await Promise.all([checkProfile(), checkExperience(), checkPreference()]);
     };
 
-    fetchInitialData();
-  }, [checkProfile, checkExperience]);
+    if (id) fetchInitialData();
+  }, [checkProfile, checkExperience, checkPreference]);
 
   useEffect(() => {
     setCompleted(Object.values(added).filter((a) => a).length);
   }, [added]);
-  const getProfileUrl = (path: string) => `/profile/${id}${path}`;
 
   return (
     <>
@@ -138,7 +147,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
       {/* TODO: Once preferences is merged, have disabled state linked to completed tasks */}
       <Stack justifyContent="center">
         <Button
-          disabled={isAfterCutoffDate(cutoffDate)}
+          disabled={isAfterCutoffDate(cutoffDate) || completed < 3}
           onClick={handleContestRegistration}
           sx={{
             ...enrolBtn,

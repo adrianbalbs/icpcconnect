@@ -39,10 +39,8 @@ const current: Info = {
   },
 };
 
-export const getInfo = async (id: string | null) => {
-  if (id === null) return current;
-  // if (id === current.id) return current;
-
+export const getInfo = async (id: string | null | undefined) => {
+  if (!id) return current;
   try {
     const res = await axios.get(`${SERVER_URL}/api/users/${id}`, {
       withCredentials: true,
@@ -85,7 +83,7 @@ export const getInfo = async (id: string | null) => {
     };
     return current;
   } catch (error) {
-    console.log(error);
+    console.log(`Get info error: ${error}`);
   }
 };
 

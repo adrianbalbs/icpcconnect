@@ -36,7 +36,7 @@ export type StudentResponse = {
   javaExperience: string;
   pythonExperience: string;
   exclusions: string;
-  // paired_with: number | null,
+  preferences: string;
 };
 
 export type AlgorithmStudentResponse = {
@@ -86,6 +86,7 @@ export class AlgorithmService {
         javaExperience: studentDetails.javaExperience,
         pythonExperience: studentDetails.pythonExperience,
         exclusions: studentDetails.exclusions,
+        preferences: studentDetails.preferences,
       })
       .from(users)
       .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
