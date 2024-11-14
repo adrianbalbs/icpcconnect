@@ -21,4 +21,4 @@ export const forget_password_email_content =
     <p>If you did not request the verification, please disregard this email.</p>
 </body>
 </html>
-`; // Provide as a html file content. Feel free to adjust it if you want a different style.
+`; // Provide as a html file content string. Feel free to adjust it if you want a different style.
