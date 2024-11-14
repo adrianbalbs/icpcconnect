@@ -7,12 +7,12 @@ import { getInfo } from "@/utils/profileInfo";
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
 import Assigned from "@/components/team/Assigned";
-import WaitingScreen from "@/components/teams/WaitingScreen";
 import TeamRegistration from "@/components/team/TeamRegistration";
 import { MemberProps } from "@/components/team/Member";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { useParams } from "next/navigation";
 import { ContestResponse } from "@/contests/page";
+import StudentWaitingScreen from "@/components/waiting-screen/StudentWaitingScreen";
 
 interface TeamInfo {
   id: string;
@@ -125,10 +125,9 @@ const Team: React.FC = () => {
         />
       )}
       {status === 1 && (
-        <WaitingScreen
-          setStatus={setStatus}
+        <StudentWaitingScreen
           contest={contest}
-          handleWithdrawEnrollment={handleWithdrawEnrollment}
+          onWithdraw={handleWithdrawEnrollment}
         />
       )}
       {status === 2 && <Assigned members={team.members} />}
