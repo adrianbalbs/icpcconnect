@@ -11,10 +11,11 @@ import {
   teams,
   universities,
   users,
-  replacements,
 } from "../db/schema.js";
 import {
   CreateUser,
+  ExclusionsResponse,
+  PreferencesResponse,
   UpdateStudentDetails,
   UpdateUser,
   UserDTO,
@@ -23,26 +24,22 @@ import {
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
-import { CodesService } from "./index.js";
 import { and, eq, getTableColumns } from "drizzle-orm";
+import { CodesService } from "./codes-service.js";
 
 export class UserService {
-  private readonly db: DatabaseConnection;
-
-  constructor(db: DatabaseConnection) {
-    this.db = db;
-  }
+  constructor(private readonly db: DatabaseConnection) {}
 
   async createUser(req: CreateUser, codesService: CodesService): Promise<{ id: string }> {
     const { studentId, password, role, inviteCode, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
 
-    if (studentId == undefined && role != "Admin") {
+    if (studentId === undefined && role != "Admin") {
       let inviteExists: boolean = false
 
-      if (role == "Site Coordinator") {
+      if (role === "Site Coordinator") {
         inviteExists = await checkSiteCoordCode(codesService, inviteCode)
-      } else if (role == "Coach") {
+      } else if (role === "Coach") {
         inviteExists = await checkCoachCode(codesService, inviteCode)
       }
 
@@ -318,5 +315,6 @@ export class UserService {
     await this.db.delete(users).where(eq(users.id, id));
     return { status: "OK" };
   }
+  
 
 }

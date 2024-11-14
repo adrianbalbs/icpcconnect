@@ -172,7 +172,7 @@ export class TeamService {
     return { status: "OK" };
   }
 
-  async pulloutMember(studentId: string, replacementId: string) {
+  async createPulloutReq(studentId: string, replacementId: string) {
     const [team] = await this.db
       .select({
         id: teams.id,
@@ -217,7 +217,7 @@ export class TeamService {
 
 
   //Handle replacement request
-  async handleReplacement(studentId: string, accepting: boolean) {
+  async handlePulloutReq(studentId: string, accepting: boolean) {
     const [replacement] = await this.db
       .select({
         team_id: replacements.associated_team,
@@ -233,16 +233,16 @@ export class TeamService {
 
     if (accepting ) {
       //Set students team to null
-      this.userService.updateStudentDetails(studentId, { team: null});
+      await this.userService.updateStudentDetails(studentId, { team: null});
 
       //Set replacements team to the current team
-      const replacementInternalId = await this.db
+      const [replacementInternalId] = await this.db
         .select({
           id: studentDetails.userId,
         }).from(studentDetails)
         .where(eq(studentDetails.studentId, replacement.replacing));
 
-      this.userService.updateStudentDetails(studentId, { team: replacement.team_id });
+      await this.userService.updateStudentDetails(replacementInternalId.id, { team: replacement.team_id });
 
       //Believe this is actually unnecessary
       /*
@@ -260,7 +260,7 @@ export class TeamService {
 
     //Delete replacement request from db
     await this.db.delete(replacements).where(eq(replacements.leavingInternalId, studentId));
-
+    
     return { status: "OK" };
   }
 }
