@@ -14,9 +14,6 @@ export const UpdateTeamRequestSchema = CreateTeamRequestSchema.partial();
 
 export type UpdateTeamRequest = z.infer<typeof UpdateTeamRequestSchema>;
 
-export const PulloutRequestSchema = z.object({
-  replacement: z.string(),
-}).partial();
 export const PutStudentTeamSchema = z.object({
   studentIds: z.string(),
 })
@@ -38,3 +35,11 @@ export const ReplacementRequestSchema = z.object({
 });
 
 export type ReplacementRequest = z.infer<typeof ReplacementRequestSchema>;
+
+export const PulloutRequestSchema = z.object({
+  studentId: z.string(),
+  replacedWith: z.string(),
+  reason: z.string(),
+});
+
+export type PulloutRequest = z.infer<typeof PulloutRequestSchema>;

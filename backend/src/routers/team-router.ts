@@ -11,6 +11,8 @@ import {
   UpdateTeamRequestSchema,
   ReplacementRequest,
   ReplacementRequestSchema,
+  PulloutRequest,
+  PulloutRequestSchema,
 } from "../schemas/index.js";
 import { AuthService, TeamService } from "../services/index.js";
 
@@ -123,21 +125,23 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
       },
     )
     .post(
-      "/createPullout/:studentId/:replacementId",
+      "/createPullout/:studentId",
       [
         authorise(["Student", "Admin"]),
+        validateData(PulloutRequestSchema, "body"),
       ],
       async (
-        req: Request<{ studentId: string, replacementId: string }, unknown>,
+        req: Request<{ studentId: string}, unknown, PulloutRequest>,
         res: Response,
         next: NextFunction,
       ) => {
         //studentId is the *internal* id of the student pulling out (so that no student can pull out another)
         //replacementId is the *student* id of the replacing student, such that only if they know the student closely
         //that they can choose them as a replacmeent
-        const { studentId, replacementId } = req.params;
+        const { studentId } = req.params;
+
         try {
-          const team = teamService.createPulloutReq(studentId, replacementId);
+          const team = teamService.createPulloutReq(studentId, req.body);
           res.status(200).json(team);
         } catch (err) {
           next(err);

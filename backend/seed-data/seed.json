@@ -15,6 +15,7 @@
       "university": 1,
       "studentId": "z5397730",
       "pronouns": "he/him",
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -28,6 +29,7 @@
       "password": "test2",
       "email": "student_2@ad.com",
       "role": "Student",
+	  "profile_pic": "",
       "university": 1,
       "studentId": "z5418213",
       "pronouns": "she/her",
@@ -48,6 +50,7 @@
       "studentId": "z5421467",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -64,6 +67,7 @@
       "studentId": "z5419703",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -80,6 +84,7 @@
       "studentId": "z5354052",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -96,6 +101,7 @@
       "studentId": "z1342356",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -112,6 +118,7 @@
       "studentId": "z1334567",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -128,6 +135,7 @@
       "studentId": "z2324535",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -144,6 +152,7 @@
       "studentId": "z8534085",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -160,6 +169,7 @@
       "studentId": "z1123333",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],
@@ -176,6 +186,7 @@
       "studentId": "z1123333",
       "pronouns": "he/him",
       "photoConsent": true,
+	  "profile_pic": "",
       "languagesSpoken": [
         "en"
       ],

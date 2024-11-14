@@ -6,7 +6,7 @@ import {
   replacements,
   users,
 } from "../db/index.js";
-import { ReplacementRequest, CreateTeamRequest, UpdateTeamRequest } from "../schemas/index.js";
+import { ReplacementRequest, CreateTeamRequest, UpdateTeamRequest, PulloutRequest } from "../schemas/index.js";
 import { badRequest, HTTPError } from "../utils/errors.js";
 import { UserService} from "./index.js"
 
@@ -172,7 +172,9 @@ export class TeamService {
     return { status: "OK" };
   }
 
-  async createPulloutReq(studentId: string, replacementId: string) {
+  async createPulloutReq(studentId: string, pulloutReq: PulloutRequest) {
+    const { replacedWith, reason } = pulloutReq;
+
     const [team] = await this.db
       .select({
         id: teams.id,
@@ -186,20 +188,22 @@ export class TeamService {
       throw new HTTPError(badRequest);
     }
 
+    //Seing if we already have a replacement proposed
     const replacement = await this.db
       .select({
 
       }).from(replacements)
       .where(eq(replacements.leavingInternalId, studentId));
 
-    //Don't have an existing replacement
+    //Don't have an existing replacement proposed
     if (replacement.length === 0) {
       await this.db
         .insert(replacements)
         .values({
           associated_team: team.id,
           leavingInternalId: studentId,
-          replacementStudentId: replacementId,
+          replacementStudentId: replacedWith,
+          reason: reason,
         });
     } else { 
       //Overwrite our existing replacement
@@ -207,7 +211,8 @@ export class TeamService {
         .update(replacements)
         .set({
           associated_team: team.id,
-          replacementStudentId: replacementId,
+          replacementStudentId: replacedWith,
+          reason: reason,
         })
         .where(eq(replacements.leavingInternalId, studentId));
     }
@@ -235,27 +240,18 @@ export class TeamService {
       //Set students team to null
       await this.userService.updateStudentDetails(studentId, { team: null});
 
-      //Set replacements team to the current team
-      const [replacementInternalId] = await this.db
-        .select({
-          id: studentDetails.userId,
-        }).from(studentDetails)
-        .where(eq(studentDetails.studentId, replacement.replacing));
+      //If a replacement is proposed
+      //I believe if not its an empty string 
+      if (replacement.replacing !== undefined && replacement.replacing.length !== 0) {
+        //Set replacements team to the current team
+        const [replacementInternalId] = await this.db
+          .select({
+            id: studentDetails.userId,
+          }).from(studentDetails)
+          .where(eq(studentDetails.studentId, replacement.replacing));
 
-      await this.userService.updateStudentDetails(replacementInternalId.id, { team: replacement.team_id });
-
-      //Believe this is actually unnecessary
-      /*
-      //Set team's members to include replacement
-      const member_ids = (await this.db
-        .select({
-          id: studentDetails.userId,
-        }).from(studentDetails)
-        .where(eq(studentDetails.team, replacement.team_id)))
-        .map((m) => m.id);
-
-      this.updateTeam(replacement.team_id, { memberIds: member_ids});
-      */
+        await this.userService.updateStudentDetails(replacementInternalId.id, { team: replacement.team_id });
+      }
     }
 
     //Delete replacement request from db
