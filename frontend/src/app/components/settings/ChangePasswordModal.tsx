@@ -8,6 +8,11 @@ import CloseBtn from "../utils/CloseBtn";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import ModalInput from "../utils/ModalInput";
 
+interface Errors {
+  old?: string;
+  new?: string;
+}
+
 const ChangePasswordModal = ({
   setOpen,
 }: {
@@ -15,12 +20,18 @@ const ChangePasswordModal = ({
 }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<Errors>({});
+
   const {
     userSession: { id },
   } = useAuth();
 
   const handleSubmit = async () => {
+    if (newPassword !== confirmPassword) {
+      setErrors({ new: "New passwords do not match." });
+      return;
+    }
     try {
       await axios.put(
         `${SERVER_URL}/api/users/${id}/password`,
@@ -28,13 +39,15 @@ const ChangePasswordModal = ({
         { withCredentials: true },
       );
       setOpen(false);
+      setErrors({});
     } catch (error) {
       console.log(`Change password error: ${error}`);
+      setErrors({ old: "Old password is incorrect." });
     }
   };
 
-  const isInvalidInput = () => {
-    return newPassword === "" || newPassword !== confirmNewPassword;
+  const isInputEmpty = () => {
+    return oldPassword === "" || newPassword === "" || confirmPassword === "";
   };
 
   return (
@@ -49,8 +62,8 @@ const ChangePasswordModal = ({
           placeholder="Enter Old Password"
           value={oldPassword}
           handleChange={(e) => setOldPassword(e.target.value)}
-          disabled={false}
           gap={"15px"}
+          errorMsg={errors.old}
         />
         <ModalInput
           label="New Password:"
@@ -58,23 +71,22 @@ const ChangePasswordModal = ({
           placeholder="Enter New Password"
           value={newPassword}
           handleChange={(e) => setNewPassword(e.target.value)}
-          disabled={false}
           gap={"15px"}
         />
         <ModalInput
           label="Confirm New Password:"
           type="password"
-          placeholder="Confirm Password"
-          value={confirmNewPassword}
-          handleChange={(e) => setConfirmNewPassword(e.target.value)}
-          disabled={false}
+          placeholder="Confirm New Password"
+          value={confirmPassword}
+          handleChange={(e) => setConfirmPassword(() => e.target.value)}
+          errorMsg={errors.new}
         />
       </Box>
       <Button
         variant="contained"
         sx={addBtn}
         onClick={handleSubmit}
-        disabled={isInvalidInput()}
+        disabled={isInputEmpty()}
       >
         Submit
       </Button>

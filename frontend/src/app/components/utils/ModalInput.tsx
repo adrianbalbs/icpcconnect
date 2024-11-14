@@ -14,6 +14,7 @@ interface InputProps {
   ) => void;
   disabled?: boolean;
   gap?: string;
+  errorMsg?: string;
 }
 
 const ModalInput = ({
@@ -25,6 +26,7 @@ const ModalInput = ({
   handleChange,
   disabled,
   gap,
+  errorMsg,
 }: InputProps) => {
   return (
     <Box
@@ -43,9 +45,11 @@ const ModalInput = ({
         type={type ?? "text"}
         placeholder={placeholder}
         value={value}
-        sx={preferenceInput}
+        sx={preferenceInput(type === "password")}
         onChange={handleChange}
         disabled={disabled ?? false}
+        error={!!errorMsg}
+        helperText={errorMsg}
       />
     </Box>
   );

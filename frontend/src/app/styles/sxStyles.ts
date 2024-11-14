@@ -74,13 +74,19 @@ export const sidebarBtn = {
   },
 };
 
-export const preferenceInput = {
-  justifySelf: "start",
-  "& .MuiInputBase-input": {
-    padding: "7px 14px",
-    fontSize: "14px",
-    color: "#666666",
-  },
+export const preferenceInput = (isLong: boolean) => {
+  return {
+    width: isLong ? "200px" : "auto",
+    justifySelf: "start",
+    "& .MuiInputBase-input": {
+      padding: "7px 14px",
+      fontSize: "14px",
+      color: "#666666",
+    },
+    "& .MuiOutlinedInput-root.Mui-focused": {
+      borderColor: "red",
+    },
+  };
 };
 
 export const menuBtn = {
