@@ -98,7 +98,7 @@ export default function Register() {
         setLoading(true);
         const obj = {
           email,
-          isNormalVerificationEmail: true,
+          isNormalVerificationEmail: roleName === "Student",
         };
         await axios.post(`${SERVER_URL}/api/email/registVerificationSend`, obj);
         alert(
@@ -134,9 +134,9 @@ export default function Register() {
       submitForm();
     } else if (password !== confirmPassword) {
       alert("Passwords do not match!");
-    } else if (step === 4 && roleName === "Student") {
+    } else if (step === 4) {
       await verifyCode();
-    } else if (step === 3 && !loading && roleName === "Student") {
+    } else if (step === 3 && !loading) {
       await sendEmail();
     } else if (step === 2 && roleName === "Student" && !eligibility) {
       alert("You have not declared yourself eligible for the competition.");
