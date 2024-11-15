@@ -10,10 +10,14 @@ import {
   UpdateContestResponse,
   UpdateContest,
 } from "../schemas/index.js";
+import { JobQueue } from "./queue-service.js";
 
 
 export class ContestService {
-  constructor(private readonly db: DatabaseConnection) {}
+  constructor(
+    private readonly db: DatabaseConnection,
+    private readonly jobQueue: JobQueue,
+  ) {}
 
   /*
   * Create a new contest for students to participate in
@@ -37,8 +41,14 @@ export class ContestService {
         cutoffDate: new Date(req.cutoffDate),
         contestDate: new Date(req.contestDate),
       })
-      .returning({ id: contests.id });
-    return res;
+      .returning({
+        id: contests.id,
+        cutoffDate: contests.cutoffDate,
+        earlyBirdDate: contests.earlyBirdDate,
+      });
+
+    await this.jobQueue.addJob(res.id, res.earlyBirdDate, res.cutoffDate);
+    return { id: res.id };
   }
 
   /*
@@ -135,6 +145,7 @@ export class ContestService {
     }
 
     await this.db.delete(contests).where(eq(contests.id, contestId));
+    await this.jobQueue.removeJob(contestId);
     return { status: "OK" };
   }
 
@@ -142,7 +153,7 @@ export class ContestService {
     contestId: string,
     req: UpdateContest,
   ): Promise<UpdateContestResponse> {
-    await this.db
+    const [res] = await this.db
       .update(contests)
       .set({
         ...req,
@@ -150,7 +161,15 @@ export class ContestService {
         cutoffDate: new Date(req.cutoffDate),
         contestDate: new Date(req.contestDate),
       })
-      .where(eq(contests.id, contestId));
+      .where(eq(contests.id, contestId))
+      .returning({
+        id: contests.id,
+        cutoffDate: contests.cutoffDate,
+        earlyBirdDate: contests.earlyBirdDate,
+      });
+
+    await this.jobQueue.removeJob(res.id);
+    await this.jobQueue.addJob(res.id, res.earlyBirdDate, res.cutoffDate);
     return req;
   }
 }

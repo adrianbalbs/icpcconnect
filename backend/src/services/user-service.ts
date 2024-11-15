@@ -23,7 +23,7 @@ import {
 } from "../schemas/index.js";
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
-import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
+import { badRequest, HTTPError, notFoundError, unauthorizedError } from "../utils/errors.js";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import { CodesService } from "./codes-service.js";
 
@@ -49,22 +49,21 @@ export class UserService {
   * @returns id - Internal id of the user
   * 
   */
-  async createUser(req: CreateUser, codesService: CodesService): Promise<{ id: string }> {
+  async createUser(
+    req: CreateUser,
+    codesService: CodesService,
+  ): Promise<{ id: string }> {
     const { studentId, password, role, inviteCode, ...rest } = req;
     const hashedPassword = await passwordUtils().hash(password);
 
-    if (studentId === undefined && role != "Admin") {
-      let inviteExists: boolean = false
+    if (role === "Site Coordinator" || role === "Coach") {
+      const isValid =
+        role === "Site Coordinator"
+          ? await checkSiteCoordCode(codesService, inviteCode)
+          : await checkCoachCode(codesService, inviteCode);
 
-      if (role === "Site Coordinator") {
-        inviteExists = await checkSiteCoordCode(codesService, inviteCode)
-      } else if (role === "Coach") {
-        inviteExists = await checkCoachCode(codesService, inviteCode)
-      }
-
-      if (!inviteExists) {
-        const id = "INVALID"
-        return { id }
+      if (!isValid) {
+        return { id: "INVALID" };
       }
     }
 
@@ -160,19 +159,35 @@ export class UserService {
   * Update a given user's password
   *
   * @param id - User's internal id
-  * @param password - User's new password
+  * @param oldPassword - User's old password
+  * @param newPassword - User's new password
   * 
   * @returns id - user's internal id
   * 
   */
-  async updatePassword(id: string, password: string): Promise<{ id: string }> {
-    password = await passwordUtils().hash(password);
-    const [user] = await this.db
-      .update(users)
-      .set({ password })
-      .where(eq(users.id, id))
-      .returning({ id: users.id });
-    return user;
+  async updatePassword(id: string, oldPassword: string, newPassword: string): Promise<{ id: string }> {
+    const checkUser = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, id));
+
+    if (!checkUser.length) {
+      throw new HTTPError(unauthorizedError);
+    }
+
+    // Compare the provided password with the stored hash
+    const storedHash = checkUser[0].password;
+    const isPasswordValid = await passwordUtils().compare(oldPassword, storedHash);
+    if (isPasswordValid) {
+      newPassword = await passwordUtils().hash(newPassword);
+      const [user] = await this.db
+        .update(users)
+        .set({ password: newPassword })
+        .where(eq(users.id, id))
+        .returning({ id: users.id });
+        return user;
+    }
+    throw new HTTPError(unauthorizedError);
   }
 
   /*
@@ -450,9 +465,9 @@ export class UserService {
     const [exclusions] = await this.db
       .select({ exclusions: studentDetails.exclusions })
       .from(studentDetails)
-      .where(eq(studentDetails.userId, id))
+      .where(eq(studentDetails.userId, id));
 
-    return exclusions
+    return exclusions;
   }
 
   /*
@@ -465,39 +480,41 @@ export class UserService {
   *   - studentId: Preferred students studentId
   * 
   */
-  async getStudentPreferences(id: string): Promise<{ preferences: PreferencesResponse[] }> {
+  async getStudentPreferences(
+    id: string,
+  ): Promise<{ preferences: PreferencesResponse[] }> {
     const [p] = await this.db
       .select({ preferences: studentDetails.preferences })
       .from(studentDetails)
-      .where(eq(studentDetails.userId, id))
-    
-    const preferencesReturn: PreferencesResponse[] = []
+      .where(eq(studentDetails.userId, id));
+
+    const preferencesReturn: PreferencesResponse[] = [];
 
     if (p.preferences.length === 0 || p.preferences === "none") {
       return { preferences: preferencesReturn };
     }
 
-    const prefArr = p.preferences.split(", ")
-    
+    const prefArr = p.preferences.split(", ");
+
     for (const stuId of prefArr) {
       const [per] = await this.db
-        .select({ 
+        .select({
           studentId: studentDetails.studentId,
           given: users.givenName,
-          family: users.familyName
+          family: users.familyName,
         })
         .from(studentDetails)
         .innerJoin(users, eq(users.id, studentDetails.userId))
-        .where(eq(studentDetails.studentId, stuId))
-        
+        .where(eq(studentDetails.studentId, stuId));
+
       const preference: PreferencesResponse = {
         studentId: stuId,
-        name: per ? `${per.given} ${per.family}` : ""
-      }
+        name: per ? `${per.given} ${per.family}` : "",
+      };
 
-      preferencesReturn.push(preference)
+      preferencesReturn.push(preference);
     }
 
-    return { preferences: preferencesReturn }
+    return { preferences: preferencesReturn };
   }
 }

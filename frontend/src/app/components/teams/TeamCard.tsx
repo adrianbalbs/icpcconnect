@@ -1,6 +1,6 @@
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
+// import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 
 interface TeamCardProps {
   name: string;
@@ -13,14 +13,14 @@ const TeamCard: React.FC<TeamCardProps> = ({
   name,
   university,
   members,
-  canEdit,
+  // canEdit,
 }) => {
   return (
     <div className={teamStyles["team-container"]}>
       <div className={teamStyles.team}>
         <p>
           <span className={pageStyles.bold}>Team Name:</span> {name}{" "}
-          {canEdit && <DriveFileRenameOutlineOutlinedIcon />}
+          {/* {canEdit && <DriveFileRenameOutlineOutlinedIcon />} */}
         </p>
         <p>
           <span className={pageStyles.bold}>Institution:</span> {university}

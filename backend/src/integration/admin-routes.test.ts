@@ -33,7 +33,7 @@ beforeAll(async () => {
     .use("/api/auth", authRouter(authService))
     .use("/api/users", userRouter(new UserService(db), authService, codesService))
     .use(
-      "/api",
+      "/api/admin",
       adminRouter(new AdminService(db), authService, new AlgorithmService(db)),
     );
 });

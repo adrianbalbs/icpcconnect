@@ -10,7 +10,7 @@
       "givenName": "Adrian",
       "familyName": "Balbalosa",
       "password": "test1",
-      "email": "student_1@ad.com",
+      "email": "z5397730@ad.unsw.edu.au",
       "role": "Student",
       "university": 1,
       "studentId": "z5397730",
@@ -19,7 +19,16 @@
         "en"
       ],
       "team": null,
-      "photoConsent": true
+      "photoConsent": true,
+      "level": "B",
+      "contestExperience": 1,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "some",
+      "cExperience": "some",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3]
     },
     {
       "id": "c47253b3-5181-4680-81e0-01fc7b3c6c09",
@@ -35,7 +44,16 @@
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 1,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3,4]
     },
     {
       "id": "d6d7f907-8ff9-4de5-8f3b-c60e0fc73b36",
@@ -51,7 +69,16 @@
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 1,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3]
     },
     {
       "id": "06746f7d-994d-4e93-b8cf-16f5d9f3739e",
@@ -67,7 +94,16 @@
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 1,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3]
     },
     {
       "id": "2f3579df-7b29-47b5-96cb-8e0f79853fd7",
@@ -83,28 +119,46 @@
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 1,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3,4]
     },
     {
       "id": "5ab06b75-8724-4ae5-b0a6-5a6bba0e2d7f",
-      "givenName": "Some",
-      "familyName": "Rando1",
+      "givenName": "Makka",
+      "familyName": "Pakka",
       "password": "test7",
       "email": "student_7@ad.com",
       "role": "Student",
-      "university": 2,
+      "university": 1,
       "studentId": "z1342356",
       "pronouns": "he/him",
       "photoConsent": true,
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 5,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "none",
+      "pythonExperience": "none",
+      "coursesTaken": [1,2]
     },
     {
       "id": "2d5a4ff6-b708-4204-a8e5-c5f54f83651c",
-      "givenName": "Some",
-      "familyName": "Rando2",
+      "givenName": "Jappy",
+      "familyName": "Jonathan",
       "password": "test7",
       "email": "student_8@ad.com",
       "role": "Student",
@@ -115,12 +169,21 @@
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 5,
+      "leetcodeRating": 1000,
+      "codeforcesRating": 1000,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3,4]
     },
     {
       "id": "e5093f3a-07ef-4218-bf3e-9bfc8c60ed94",
-      "givenName": "Some",
-      "familyName": "Rando3",
+      "givenName": "Noko",
+      "familyName": "Shikanoko",
       "password": "test7",
       "email": "student_9@ad.com",
       "role": "Student",
@@ -131,12 +194,21 @@
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 5,
+      "leetcodeRating": 1000,
+      "codeforcesRating": 1000,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3,4]
     },
     {
       "id": "c14933de-4025-4391-a1bc-62eb8d76b716",
-      "givenName": "Some",
-      "familyName": "Rando4",
+      "givenName": "Lo-fi",
+      "familyName": "Chan",
       "password": "test7",
       "email": "student_10@ad.com",
       "role": "Student",
@@ -147,12 +219,21 @@
       "languagesSpoken": [
         "en"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 5,
+      "leetcodeRating": 1000,
+      "codeforcesRating": 1000,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "prof",
+      "pythonExperience": "prof",
+      "coursesTaken": [1,2,3,4]
     },
     {
       "id": "2ad0e0b7-04a1-4d29-91d1-5024d394aaf1",
-      "givenName": "Some",
-      "familyName": "Rando5",
+      "givenName": "Epic",
+      "familyName": "Gamer",
       "password": "test7",
       "email": "student_11@ad.com",
       "role": "Student",
@@ -161,14 +242,23 @@
       "pronouns": "he/him",
       "photoConsent": true,
       "languagesSpoken": [
-        "en"
+        "ja"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 5,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "none",
+      "pythonExperience": "none",
+      "coursesTaken": [1,2]
     },
     {
       "id": "2c582be4-78c3-41f3-8b08-d0635d4c9313",
-      "givenName": "Some",
-      "familyName": "Rando8",
+      "givenName": "Immanuel",
+      "familyName": "Kant",
       "password": "test7",
       "email": "student_12@ad.com",
       "role": "Student",
@@ -177,9 +267,43 @@
       "pronouns": "he/him",
       "photoConsent": true,
       "languagesSpoken": [
-        "en"
+        "ja"
       ],
-      "team": null
+      "team": null,
+      "level": "B",
+      "contestExperience": 5,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "none",
+      "pythonExperience": "none",
+      "coursesTaken": [1,2]
+    },
+    {
+      "id": "2c522be4-71c3-41f3-8b08-d0635d4c9319",
+      "givenName": "Hitori",
+      "familyName": "Goto",
+      "password": "test7",
+      "email": "student_13@ad.com",
+      "role": "Student",
+      "university": 2,
+      "studentId": "z1123333",
+      "pronouns": "he/him",
+      "photoConsent": true,
+      "languagesSpoken": [
+        "ja"
+      ],
+      "team": null,
+      "level": "B",
+      "contestExperience": 5,
+      "leetcodeRating": 0,
+      "codeforcesRating": 0,
+      "cppExperience": "prof",
+      "cExperience": "prof",
+      "javaExperience": "none",
+      "pythonExperience": "none",
+      "coursesTaken": [1,2]
     }
   ],
   "coaches": [

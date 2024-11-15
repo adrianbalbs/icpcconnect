@@ -7,6 +7,7 @@ import authStyles from "@/styles/Auth.module.css";
 import { useRouter } from "next/navigation";
 import { StepOne } from "@/components/register/StepOne";
 import { StepTwo } from "@/components/register/StepTwo";
+import { LinearProgress } from "@mui/material";
 
 export default function Register() {
   const router = useRouter();
@@ -36,7 +37,6 @@ export default function Register() {
           university,
           email,
           password,
-          verificationCode,
           ...(roleName === "Site Coordinator" || roleName === "Coach"
             ? { inviteCode }
             : {}),
@@ -47,7 +47,7 @@ export default function Register() {
           payload,
         );
         // Checking whether the invite code they entered was valid
-        if (valid.id === "INVALID" || valid.id === undefined) {
+        if (valid.id === "INVALID") {
           alert("Registration failed: Invalid Invite Code Entered");
         } else {
           router.push("/login");
@@ -99,7 +99,7 @@ export default function Register() {
         setLoading(true);
         const obj = {
           email,
-          isNormalVerificationEmail: true,
+          isNormalVerificationEmail: roleName === "Student",
         };
         await axios.post(`${SERVER_URL}/api/email/registVerificationSend`, obj);
         alert(
@@ -165,7 +165,9 @@ export default function Register() {
 
   return (
     <div className={authStyles.background}>
-      <div className={authStyles["register-polygon"]}></div>
+      <div className={authStyles.shadow}>
+        <div className={authStyles["register-polygon"]} />
+      </div>
       <div className={authStyles["info-container"]}>
         {step === 1 && (
           <StepOne
@@ -361,8 +363,18 @@ export default function Register() {
             </div>
           </>
         )}
-        {/* Unimplemented Progress Bar */}
-        <div className={authStyles["progress-bar"]}></div>
+        <LinearProgress
+          variant="determinate"
+          value={(step - 1) * 20}
+          sx={{
+            width: "500px",
+            backgroundColor: "#e8def8",
+            "& .MuiLinearProgress-bar": {
+              opacity: "70%",
+              backgroundColor: "#65558f",
+            },
+          }}
+        />
       </div>
     </div>
   );

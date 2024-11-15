@@ -1,9 +1,15 @@
-import request from "supertest";
+import request, { Response } from "supertest";
 import express from "express";
-import { DatabaseConnection, teams, users } from "../db/index.js";
+import {
+  DatabaseConnection,
+  registrationDetails,
+  teams,
+  users,
+} from "../db/index.js";
 import {
   adminRouter,
   authRouter,
+  contestRouter,
   emailRouter,
   teamRouter,
   userRouter,
@@ -11,6 +17,8 @@ import {
 import {
   AdminService,
   AuthService,
+  ContestService,
+  JobQueue,
   EmailService,
   CodesService,
   TeamService,
@@ -36,25 +44,34 @@ describe("Algorithm Tests", () => {
   let db: DatabaseConnection;
   let app: ReturnType<typeof express>;
   let cookies: string;
+  let contest: Response;
+
   beforeAll(async () => {
     const dbSetup = await setupTestDatabase();
     db = dbSetup.db;
     const authService = new AuthService(db);
+    const algorithmService = new AlgorithmService(db);
     const codesService = new CodesService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api", emailRouter(new EmailService(db)))
       .use("/api/auth", authRouter(authService))
-      .use("/api/users", userRouter(new UserService(db), authService, codesService))
+      .use(
+        "/api/users",
+        userRouter(new UserService(db), authService, codesService),
+      )
       .use("/api/teams", teamRouter(new TeamService(db), authService))
       .use(
-        "/api",
-        adminRouter(
-          new AdminService(db),
+        "/api/contests",
+        contestRouter(
+          new ContestService(db, new JobQueue(algorithmService)),
           authService,
-          new AlgorithmService(db),
         ),
+      )
+      .use(
+        "/api",
+        adminRouter(new AdminService(db), authService, algorithmService),
       );
   });
 
@@ -67,11 +84,33 @@ describe("Algorithm Tests", () => {
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+    const contestDate = new Date();
+    contestDate.setDate(contestDate.getDate() + 3);
+
+    contest = await request(app)
+      .post("/api/contests")
+      .set("Cookie", cookies)
+      .send({
+        name: "Test Contest",
+        earlyBirdDate: tomorrow,
+        cutoffDate: dayAfterTomorrow,
+        contestDate: contestDate,
+        site: 1,
+      })
+      .expect(200);
   });
 
   afterEach(async () => {
     await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
     await db.delete(teams);
+    await db.delete(registrationDetails);
   });
 
   afterAll(async () => {
@@ -80,8 +119,9 @@ describe("Algorithm Tests", () => {
 
   it("should just return success (no registrations)", async () => {
     const numTeam = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
+      .send({ contestId: contest.body.id })
       .expect(200);
     expect(numTeam.body.success).toBe(true);
 
@@ -89,7 +129,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should just return success (1 registrations)", async () => {
@@ -132,11 +172,18 @@ describe("Algorithm Tests", () => {
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
+
+      await request(app)
+        .post(`/api/users/contest-registration`)
+        .set("Cookie", cookies)
+        .send({ contest: contest.body.id, student: response.body.id })
+        .expect(200);
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
+      .send({ contestId: contest.body.id })
       .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
@@ -144,7 +191,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should just return success (2 registrations)", async () => {
@@ -196,11 +243,18 @@ describe("Algorithm Tests", () => {
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
+
+      await request(app)
+        .post(`/api/users/contest-registration`)
+        .set("Cookie", cookies)
+        .send({ contest: contest.body.id, student: response.body.id })
+        .expect(200);
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
+      .send({ contestId: contest.body.id })
       .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
@@ -208,26 +262,25 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should create three students at the same uni and create a team with them", async () => {
-
     const USE_TRUE_EMAIL = false;
 
     const EMAILS = {
       adrian: {
         true: "z5397730@ad.unsw.edu.au",
-        fake: "adrianbalbs@comp3900.com"
+        fake: "adrianbalbs@comp3900.com",
       },
       zac: {
         true: "z5419703@ad.unsw.edu.au",
-        fake: "zac@comp3900.com"
+        fake: "zac@comp3900.com",
       },
       delph: {
         true: "z5354052@ad.unsw.edu.au",
-        fake: "delph@comp3900.com"
-      }
+        fake: "delph@comp3900.com",
+      },
     };
 
     const students = [
@@ -238,7 +291,7 @@ describe("Algorithm Tests", () => {
         email: USE_TRUE_EMAIL ? EMAILS.adrian.true : EMAILS.adrian.fake,
         studentId: "z5397730",
         password: "helloworld",
-        university: 1
+        university: 1,
       }),
       generateCreateUserFixture({
         role: "Student",
@@ -247,7 +300,7 @@ describe("Algorithm Tests", () => {
         email: USE_TRUE_EMAIL ? EMAILS.delph.true : EMAILS.delph.fake,
         studentId: "z5354052",
         password: "password123",
-        university: 1
+        university: 1,
       }),
       generateCreateUserFixture({
         role: "Student",
@@ -256,8 +309,8 @@ describe("Algorithm Tests", () => {
         email: USE_TRUE_EMAIL ? EMAILS.zac.true : EMAILS.zac.fake,
         studentId: "z5419703",
         password: "securepass",
-        university: 1
-      })
+        university: 1,
+      }),
     ];
 
     const studentIds: string[] = [];
@@ -287,11 +340,18 @@ describe("Algorithm Tests", () => {
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
+
+      await request(app)
+        .post(`/api/users/contest-registration`)
+        .set("Cookie", cookies)
+        .send({ contest: contest.body.id, student: response.body.id })
+        .expect(200);
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
+      .send({ contestId: contest.body.id })
       .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
@@ -299,13 +359,13 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(1);
+    expect(teams.body.allTeams).toHaveLength(1);
 
     // Call send team created email stuff
     await request(app)
       .post("/api/sendTeamCreatedEmail")
+      .send({ contestId: contest.body.id })
       .expect(200);
-
   }, 60000);
 
   it("should create three students, two same uni, one different, and not create a team with them", async () => {
@@ -366,11 +426,18 @@ describe("Algorithm Tests", () => {
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
+
+      await request(app)
+        .post(`/api/users/contest-registration`)
+        .set("Cookie", cookies)
+        .send({ contest: contest.body.id, student: response.body.id })
+        .expect(200);
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
+      .send({ contestId: contest.body.id })
       .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
@@ -378,7 +445,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(0);
+    expect(teams.body.allTeams).toHaveLength(0);
   });
 
   it("should create three students for two unis and create a team for both of them", async () => {
@@ -466,11 +533,18 @@ describe("Algorithm Tests", () => {
         .set("Cookie", cookies)
         .send(registration)
         .expect(200);
+
+      await request(app)
+        .post(`/api/users/contest-registration`)
+        .set("Cookie", cookies)
+        .send({ contest: contest.body.id, student: response.body.id })
+        .expect(200);
     }
 
     const algoSuccess = await request(app)
-      .post("/api/runalgo")
+      .post("/api/algo")
       .set("Cookie", cookies)
+      .send({ contestId: contest.body.id })
       .expect(200);
     expect(algoSuccess.body.success).toBe(true);
 
@@ -478,7 +552,7 @@ describe("Algorithm Tests", () => {
       .get("/api/teams/all")
       .set("Cookie", cookies)
       .expect(200);
-    expect(teams.body).toHaveLength(2);
+    expect(teams.body.allTeams).toHaveLength(2);
   });
 
   // it("should generate 50 students at the same uni, 30 at another, and 20 at another, and create a total of 32 teams", async () => {
@@ -571,7 +645,7 @@ describe("Algorithm Tests", () => {
   //     .get("/api/teams/all")
   //     .set("Cookie", cookies)
   //     .expect(200);
-  //   expect(teams.body).toHaveLength(32);
+  //   expect(teams.body.allTeams).toHaveLength(32);
   // }, 60000);
 });
 

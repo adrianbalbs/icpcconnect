@@ -11,11 +11,17 @@ import {
   expect,
 } from "vitest";
 import { authRouter, contestRouter } from "../routers";
-import { AuthService, ContestService, CreateContest } from "../services";
+import {
+  AuthService,
+  ContestService,
+  CreateContest,
+  JobQueue,
+} from "../services";
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers";
 import { errorHandlerMiddleware } from "../middleware";
 import { contests, DatabaseConnection } from "../db";
 import { v4 } from "uuid";
+import { AlgorithmService } from "../services/algorithm-service";
 
 describe("contestRouter tests", () => {
   let db: DatabaseConnection;
@@ -30,7 +36,13 @@ describe("contestRouter tests", () => {
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use("/api/contests", contestRouter(new ContestService(db), authService))
+      .use(
+        "/api/contests",
+        contestRouter(
+          new ContestService(db, new JobQueue(new AlgorithmService(db))),
+          authService,
+        ),
+      )
       .use(errorHandlerMiddleware);
   });
 

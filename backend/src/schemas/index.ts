@@ -4,3 +4,4 @@ export * from "./codes-schema.js";
 export * from "./auth-schema.js";
 export * from "./algo-schema.js";
 export * from "./contest-schema.js";
+export * from "./admin-schema.js";

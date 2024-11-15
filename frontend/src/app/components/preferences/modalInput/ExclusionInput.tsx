@@ -1,27 +1,15 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
-import { Box, Stack, TextField } from "@mui/material";
-import styles from "@/styles/Experience.module.css";
-import { preferenceInput } from "@/styles/sxStyles";
+import { useEffect, useState } from "react";
+import { modalInputBox } from "@/styles/sxStyles";
+import { Box } from "@mui/material";
+import ModalInput from "@/components/utils/ModalInput";
 
 interface ExclusionProps {
-  setDisable: Dispatch<SetStateAction<boolean>>;
-  setPref: Dispatch<SetStateAction<string>>;
+  setDisable: (disable: boolean) => void;
+  setPref: (pref: string) => void;
 }
 
 const ExclusionInput = ({ setDisable, setPref }: ExclusionProps) => {
   const [student, setStudent] = useState("");
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setStudent(e.target.value);
-  };
 
   useEffect(() => {
     setDisable(student === "");
@@ -29,21 +17,13 @@ const ExclusionInput = ({ setDisable, setPref }: ExclusionProps) => {
   }, [student]);
 
   return (
-    <Box sx={{ m: "30px 35px", width: "calc(100% - 70px)" }}>
-      <Stack
-        spacing={4}
-        direction="row"
-        sx={{ alignItems: "center", justifyContent: "center" }}
-      >
-        <p className={styles.language}>Student:</p>
-        <TextField
-          name="student"
-          placeholder="Enter name to exclude"
-          value={student}
-          sx={preferenceInput}
-          onChange={handleChange}
-        />
-      </Stack>
+    <Box sx={modalInputBox}>
+      <ModalInput
+        label="Student:"
+        placeholder="Enter name to exclude"
+        value={student}
+        handleChange={(e) => setStudent(e.target.value)}
+      />
     </Box>
   );
 };

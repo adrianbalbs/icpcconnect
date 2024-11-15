@@ -6,6 +6,7 @@ import { SERVER_URL } from "@/utils/constants";
 import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Staff, { StaffProps } from "./Staff";
+import SortBy from "../utils/SortBy";
 
 interface CoachInfo {
   id: string;
@@ -16,15 +17,9 @@ interface CoachInfo {
   university: string;
 }
 
-const Coaches: React.FC = () => {
-  const [coaches, setCoaches] = useState<StaffProps[]>([
-    {
-      id: "123",
-      name: "Rebecca Liu",
-      institution: "UNSW",
-      email: "r.liu@unsw.edu.au",
-    },
-  ]);
+const Coaches = () => {
+  const [coaches, setCoaches] = useState<StaffProps[]>([]);
+  const [sort, setSort] = useState("Default");
 
   const getCoaches = async () => {
     try {
@@ -39,7 +34,17 @@ const Coaches: React.FC = () => {
         institution: coach.university,
         email: coach.email,
       }));
-      setCoaches(filteredInfo);
+
+      // Sort based on user option
+      if (sort !== "Default") {
+        const key = sort.toLowerCase() as keyof StaffProps;
+        const sorted: StaffProps[] = filteredInfo.sort((a, b) =>
+          a[key].localeCompare(b[key]),
+        );
+        setCoaches(sorted);
+      } else {
+        setCoaches(filteredInfo);
+      }
     } catch (error) {
       console.log(`Get coaches: ${error}`);
     }
@@ -47,7 +52,7 @@ const Coaches: React.FC = () => {
 
   useEffect(() => {
     getCoaches();
-  }, []);
+  }, [sort]);
 
   return (
     <div className={memberStyles.gap}>
@@ -56,6 +61,8 @@ const Coaches: React.FC = () => {
         <p>Institution</p>
         <p>Email</p>
       </div>
+      <hr className={pageStyles.divider} />
+      <SortBy type="members" sort={sort} setSort={setSort} />
       <hr className={pageStyles.divider} />
       {coaches.map((coach) => (
         <Staff key={coach.email} {...coach} />
