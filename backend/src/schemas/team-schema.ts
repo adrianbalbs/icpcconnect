@@ -21,6 +21,7 @@ export type CreateTeamResponse = z.infer<typeof CreateTeamResponseSchema>;
 export const UpdateTeamRequestSchema = CreateTeamRequestSchema.partial();
 
 export type UpdateTeamRequest = z.infer<typeof UpdateTeamRequestSchema>;
+export type UpdateTeamResponse = UpdateTeamRequest;
 
 export type Member = Pick<
   UserDTO,
