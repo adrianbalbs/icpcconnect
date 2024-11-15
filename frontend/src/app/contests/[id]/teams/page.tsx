@@ -13,6 +13,7 @@ import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
 import SortBy from "@/components/utils/SortBy";
+import { getInfo } from "@/utils/profileInfo";
 // const statusStrings = [
 //   "Waiting for students to register...",
 //   "Waiting for all teams to be allocated...",
@@ -30,7 +31,7 @@ const Teams: React.FC = () => {
   const [sort, setSort] = useState("Default");
   const { id } = useParams<{ id: string }>();
   const {
-    userSession: { role },
+    userSession: { id: userId, role },
   } = useAuth();
 
   const fetchContest = useCallback(async () => {
@@ -48,7 +49,7 @@ const Teams: React.FC = () => {
   const fetchTeams = useCallback(async () => {
     setStatus(1);
     try {
-      console.log("fetched");
+      const userData = await getInfo(userId);
       const res = await axios.get<{ allTeams: Team[] }>(
         `${SERVER_URL}/api/teams/all`,
         {
@@ -60,14 +61,20 @@ const Teams: React.FC = () => {
       );
       const { allTeams } = res.data;
       let sorted = allTeams;
+      // Filters teams for specific university coach
+      if (role === "Coach") {
+        sorted = allTeams.filter(
+          (team) => team.university === userData?.university,
+        );
+      }
+
+      // If sort is applied, sort according to the type chosen
       if (sort === "Team Name") {
-        sorted = allTeams.sort((a, b) => a.name.localeCompare(b.name));
-        console.log(sorted);
+        sorted = sorted.sort((a, b) => a.name.localeCompare(b.name));
       } else if (sort === "Institution") {
-        sorted = allTeams.sort((a, b) =>
+        sorted = sorted.sort((a, b) =>
           a.university.localeCompare(b.university),
         );
-        console.log(sorted);
       }
       setTeams(sorted);
       setStatus(allTeams.length === 0 ? 0 : 2);
@@ -92,7 +99,11 @@ const Teams: React.FC = () => {
         Institution: {contest?.site}
       </h1>
       <hr className={pageStyles.divider} />
-      <SortBy type="teams" sort={sort} setSort={setSort} />
+      <SortBy
+        type={role === "Coach" ? "teams" : "teamsAll"}
+        sort={sort}
+        setSort={setSort}
+      />
       {status === 0 && (
         <AdminWaitingScreen
           contest={contest}
