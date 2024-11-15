@@ -12,6 +12,7 @@ import { ContestResponse } from "@/contests/page";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
+import SortBy from "@/components/utils/SortBy";
 // const statusStrings = [
 //   "Waiting for students to register...",
 //   "Waiting for all teams to be allocated...",
@@ -22,7 +23,12 @@ const Teams: React.FC = () => {
   const [status, setStatus] = useState(0);
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
+  const [sort, setSort] = useState("Default");
   const { id } = useParams<{ id: string }>();
+  const {
+    userSession: { role },
+  } = useAuth();
+
   const fetchContest = useCallback(async () => {
     try {
       const contest = await axios.get<ContestResponse>(
@@ -55,10 +61,6 @@ const Teams: React.FC = () => {
     }
   }, [contest?.id]);
 
-  const {
-    userSession: { role },
-  } = useAuth();
-
   useEffect(() => {
     fetchContest();
   }, [fetchContest]);
@@ -75,6 +77,7 @@ const Teams: React.FC = () => {
         Institution: {contest?.site}
       </h1>
       <hr className={pageStyles.divider} />
+      <SortBy type="teams" sort={sort} setSort={setSort} />
       {status === 0 && (
         <AdminWaitingScreen contest={contest} onTeamsAllocated={fetchTeams} />
       )}

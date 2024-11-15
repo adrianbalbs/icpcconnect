@@ -16,15 +16,8 @@ interface CoachInfo {
   university: string;
 }
 
-const Coaches: React.FC = () => {
-  const [coaches, setCoaches] = useState<StaffProps[]>([
-    {
-      id: "123",
-      name: "Rebecca Liu",
-      institution: "UNSW",
-      email: "r.liu@unsw.edu.au",
-    },
-  ]);
+const Coaches = ({ sort }: { sort: string }) => {
+  const [coaches, setCoaches] = useState<StaffProps[]>([]);
 
   const getCoaches = async () => {
     try {
@@ -39,7 +32,17 @@ const Coaches: React.FC = () => {
         institution: coach.university,
         email: coach.email,
       }));
-      setCoaches(filteredInfo);
+
+      // Sort based on user option
+      if (sort !== "Default" && sort.includes("Team")) {
+        const key = sort.toLowerCase() as keyof StaffProps;
+        const sorted: StaffProps[] = filteredInfo.sort((a, b) =>
+          a[key].localeCompare(b[key]),
+        );
+        setCoaches(sorted);
+      } else {
+        setCoaches(filteredInfo);
+      }
     } catch (error) {
       console.log(`Get coaches: ${error}`);
     }
@@ -47,7 +50,7 @@ const Coaches: React.FC = () => {
 
   useEffect(() => {
     getCoaches();
-  }, []);
+  }, [sort]);
 
   return (
     <div className={memberStyles.gap}>
