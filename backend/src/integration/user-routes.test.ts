@@ -283,7 +283,7 @@ describe("userRoutes tests", () => {
     const idRes = await request(app).post("/api/users").send(user).expect(200);
     await request(app)
       .put(`/api/users/${idRes.body.id}/password`)
-      .send({ oldPassword: "securePassword123", newPassword: "Bruh" })
+      .send({ oldPassword: "securePassword123!", newPassword: "Bruh" })
       .set("Cookie", cookies)
       .expect(200);
   });
