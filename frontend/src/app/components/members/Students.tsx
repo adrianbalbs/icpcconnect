@@ -50,30 +50,32 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
   };
 
   useEffect(() => {
-    // {getStudents();}
-    setStudents([
-      {
-        id: "w",
-        name: "nadrew",
-        team: "sub",
-        institution: "12312",
-        email: "andrew@gmail.com",
-      },
-      {
-        id: "string",
-        name: "aaron",
-        team: "hub",
-        institution: "12312",
-        email: "ah@gmail.com",
-      },
-      {
-        id: "e",
-        name: "teehee",
-        team: "ssfgk",
-        institution: "12312",
-        email: "teeheews@gmail.com",
-      },
-    ]);
+    {
+      getStudents();
+    }
+    // setStudents([
+    //   {
+    //     id: "w",
+    //     name: "nadrew",
+    //     team: "sub",
+    //     institution: "12312",
+    //     email: "andrew@gmail.com",
+    //   },
+    //   {
+    //     id: "string",
+    //     name: "aaron",
+    //     team: "hub",
+    //     institution: "12312",
+    //     email: "ah@gmail.com",
+    //   },
+    //   {
+    //     id: "e",
+    //     name: "teehee",
+    //     team: "ssfgk",
+    //     institution: "12312",
+    //     email: "teeheews@gmail.com",
+    //   },
+    // ]);
   }, []);
 
   return (
@@ -88,6 +90,7 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
       {students.map((student) => (
         <Student key={student.id} {...student} />
       ))}
+
       {/* <div className={`${memberStyles.students} ${memberStyles.space}`}>
       <p>Rachel Chen</p>
       <p>Randos</p>

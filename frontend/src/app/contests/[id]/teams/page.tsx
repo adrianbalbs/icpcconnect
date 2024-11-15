@@ -12,6 +12,9 @@ import { ContestResponse } from "@/contests/page";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
+import { Box, Modal } from "@mui/material";
+import CloseBtn from "@/components/utils/CloseBtn";
+import memberStyles from "@/styles/Members.module.css";
 // const statusStrings = [
 //   "Waiting for students to register...",
 //   "Waiting for all teams to be allocated...",
@@ -23,6 +26,7 @@ const Teams: React.FC = () => {
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const { id } = useParams<{ id: string }>();
+  const [open, setOpen] = useState(true);
   const fetchContest = useCallback(async () => {
     try {
       const contest = await axios.get<ContestResponse>(
@@ -55,6 +59,14 @@ const Teams: React.FC = () => {
     }
   }, [contest?.id]);
 
+  const handleApprove = () => {
+    setOpen(false);
+  };
+
+  const handleReject = () => {
+    setOpen(false);
+  };
+
   const {
     userSession: { role },
   } = useAuth();
@@ -71,6 +83,63 @@ const Teams: React.FC = () => {
 
   return (
     <>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "left",
+            backgroundColor: "white",
+            position: "absolute",
+            boxShadow: "10px solid black",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            maxHeight: "70%",
+            padding: "50px",
+            width: "35%",
+          }}
+        >
+          <div style={{ width: "100%" }}>
+            <p style={{ fontSize: "25px" }}>
+              <b>Pull Out Request - </b>Student Here
+            </p>
+          </div>
+          <hr className={pageStyles["divider-light"]}></hr>
+          <b style={{ marginBottom: "10px" }}>Reason</b>
+          <div>hello</div>
+          <hr className={pageStyles["divider-light"]}></hr>
+          <b style={{ marginBottom: "10px" }}>Substitute</b>
+          <div>sub</div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <button
+              className={memberStyles.pullout}
+              onClick={handleApprove}
+              style={{ marginTop: "30px" }}
+            >
+              Approve and modify team
+            </button>
+            &nbsp;&nbsp;
+            <p style={{ marginTop: "30px" }}>or</p>
+            &nbsp;&nbsp;
+            <button
+              className={memberStyles.pullout}
+              onClick={handleReject}
+              style={{ marginTop: "30px" }}
+            >
+              Reject request
+            </button>
+          </div>
+          <CloseBtn handleClose={() => setOpen(false)}></CloseBtn>
+        </Box>
+      </Modal>
       <h1 className={teamStyles["teams-heading"]}>
         Institution: {contest?.site}
       </h1>

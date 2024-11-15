@@ -283,11 +283,11 @@ export const seed = async (db: DatabaseConnection) => {
     await addSiteCoordinator(db, siteCoordinator);
   }
   
-  logger.info("Seeding Team Information");
-  await db
-    .insert(teams)
-    .values(data.default.teams)
-    .onConflictDoNothing();
+  // logger.info("Seeding Team Information");
+  // await db
+  //   .insert(teams)
+  //   .values(data.default.teams)
+  //   .onConflictDoNothing();
 
   logger.info("Adding default admin");
   const admins = data.default.admins as UserTable[];
