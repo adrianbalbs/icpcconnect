@@ -1,5 +1,5 @@
 import styles from "@/styles/Page.module.css";
-import Menu from "./profile/Menu";
+import Menu from "../profile/Menu";
 
 const Navbar: React.FC = () => {
   return (

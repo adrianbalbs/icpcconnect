@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteExclusion from "./modalInput/EditExclusion";
+import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface ExclusionProps {
   id: string;
@@ -27,6 +28,7 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
   const [studentString, setStudentString] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const { userSession } = useAuth();
 
   const getExclusions = async () => {
     const exclusions = await getPreferences(id, "exclusions");
@@ -49,6 +51,10 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
     setOpenEdit(false);
   };
 
+  const checkPerms = () => {
+    return userSession.id === id || userSession.role === "Admin";
+  };
+
   useEffect(() => {
     getExclusions();
   }, [changed]);
@@ -66,7 +72,7 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
           }}
         >
           <Typography sx={experienceHeading}>Student Names</Typography>
-          {!openEdit ? (
+          {!openEdit && checkPerms() && (
             <IconButton
               sx={{
                 height: "21px",
@@ -78,7 +84,8 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
             >
               <EditNoteIcon sx={{ fontSize: "23px" }} />
             </IconButton>
-          ) : (
+          )}
+          {openEdit && checkPerms() && (
             <ButtonGroup>
               <Button sx={saveExclBtn} onClick={saveEdit}>
                 Save

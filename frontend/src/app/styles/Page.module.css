@@ -1,5 +1,5 @@
 .screen {
-  margin: 100px 12.5vw 0;
+  margin: 100px calc(12.5vw - 90px) 0 calc(12.5vw + 90px);
   width: 75vw;
   flex-wrap: wrap;
   background-color: white;
@@ -128,4 +128,11 @@
   flex-direction: row;
   justify-content: space-evenly;
   margin: 50px 0;
+}
+
+.modal-heading {
+  margin: 5px 0 20px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
 }

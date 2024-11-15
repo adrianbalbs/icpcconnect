@@ -19,7 +19,6 @@ import PairInput from "./modalInput/PairInput";
 import ExclusionInput from "./modalInput/ExclusionInput";
 import TeamPairAlert from "./modalInput/TeamPairAlert";
 import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
-import { useAuth } from "../AuthProvider/AuthProvider";
 
 interface ModalProps {
   id: string;
@@ -35,7 +34,7 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   const [alert, setAlert] = useState({ old: "", curr: "" });
   const [include, setInclude] = useState("");
   const [exclude, setExclude] = useState("");
-  const { userSession } = useAuth();
+
   const reset = () => {
     setAlert({ old: "", curr: "" });
     setInclude("");
@@ -99,11 +98,9 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
     checkExclusivity(type);
   }, [added]);
 
-  const checkPermissions =
-    userSession.role === "Admin" || userSession.id === id;
   return (
     <div className={experienceStyles.modal}>
-      {!open && checkPermissions && (
+      {!open && (
         <Button variant="contained" sx={addExperienceBtn} onClick={handleOpen}>
           Add New Preference
         </Button>

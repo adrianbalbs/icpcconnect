@@ -330,12 +330,14 @@ export type BaseUserDTO = Omit<BaseUser, "password" | "university"> & {
 export const UpdateUserSchema = BaseUserSchema.omit({
   id: true,
   password: true,
+  role: true,
 }).partial();
 
 export type UpdateUser = z.infer<typeof UpdateUserSchema>;
 
 export const UpdatePasswordSchema = z.strictObject({
-  password: z.string().min(1).max(255),
+  oldPassword: z.string().min(1).max(255),
+  newPassword: z.string().min(1).max(255),
 });
 
 export const CreateUserSchema = BaseUserSchema.extend({

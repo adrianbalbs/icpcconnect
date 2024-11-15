@@ -1,13 +1,14 @@
 "use client";
 
 import "@/styles/globals.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/bar/Navbar";
 import {
   AuthContextProvider,
   useAuth,
 } from "@/components/AuthProvider/AuthProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
@@ -25,10 +26,13 @@ export default function RootLayout({
 
 function Root({ children }: { children: React.ReactNode }) {
   const { userSession, isLoading } = useAuth();
+  const pathname = usePathname();
   return (
     <html lang="en">
       <body>
-        {!isLoading && userSession.id && <Navbar />}
+        {!isLoading && userSession.id && !pathname.includes("404") && (
+          <Navbar />
+        )}
         {children}
       </body>
     </html>

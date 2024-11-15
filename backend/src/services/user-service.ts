@@ -23,7 +23,7 @@ import {
 } from "../schemas/index.js";
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
-import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
+import { badRequest, HTTPError, notFoundError, unauthorizedError } from "../utils/errors.js";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import { CodesService } from "./codes-service.js";
 
@@ -111,14 +111,29 @@ export class UserService {
     return user;
   }
 
-  async updatePassword(id: string, password: string): Promise<{ id: string }> {
-    password = await passwordUtils().hash(password);
-    const [user] = await this.db
-      .update(users)
-      .set({ password })
-      .where(eq(users.id, id))
-      .returning({ id: users.id });
-    return user;
+  async updatePassword(id: string, oldPassword: string, newPassword: string): Promise<{ id: string }> {
+    const checkUser = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, id));
+
+    if (!checkUser.length) {
+      throw new HTTPError(unauthorizedError);
+    }
+
+    // Compare the provided password with the stored hash
+    const storedHash = checkUser[0].password;
+    const isPasswordValid = await passwordUtils().compare(oldPassword, storedHash);
+    if (isPasswordValid) {
+      newPassword = await passwordUtils().hash(newPassword);
+      const [user] = await this.db
+        .update(users)
+        .set({ password: newPassword })
+        .where(eq(users.id, id))
+        .returning({ id: users.id });
+        return user;
+    }
+    throw new HTTPError(unauthorizedError);
   }
 
   async updateStudentDetails(

@@ -7,6 +7,7 @@ import authStyles from "@/styles/Auth.module.css";
 import { useRouter } from "next/navigation";
 import { StepOne } from "@/components/register/StepOne";
 import { StepTwo } from "@/components/register/StepTwo";
+import { LinearProgress } from "@mui/material";
 
 export default function Register() {
   const router = useRouter();
@@ -164,7 +165,9 @@ export default function Register() {
 
   return (
     <div className={authStyles.background}>
-      <div className={authStyles["register-polygon"]}></div>
+      <div className={authStyles.shadow}>
+        <div className={authStyles["register-polygon"]} />
+      </div>
       <div className={authStyles["info-container"]}>
         {step === 1 && (
           <StepOne
@@ -360,8 +363,18 @@ export default function Register() {
             </div>
           </>
         )}
-        {/* Unimplemented Progress Bar */}
-        <div className={authStyles["progress-bar"]}></div>
+        <LinearProgress
+          variant="determinate"
+          value={(step - 1) * 20}
+          sx={{
+            width: "500px",
+            backgroundColor: "#e8def8",
+            "& .MuiLinearProgress-bar": {
+              opacity: "70%",
+              backgroundColor: "#65558f",
+            },
+          }}
+        />
       </div>
     </div>
   );
