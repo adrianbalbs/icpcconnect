@@ -19,7 +19,7 @@ const Member: React.FC<MemberProps> = ({
 }) => {
   const router = useRouter();
 
-  const handleClick = () => router.push(`/profile/${id}/preferences`);
+  const handleClick = () => router.push(`/profile/${id}`);
 
   return (
     <>

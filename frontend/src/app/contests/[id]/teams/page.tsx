@@ -12,6 +12,8 @@ import { ContestResponse } from "@/contests/page";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
+import SortBy from "@/components/utils/SortBy";
+import { getInfo } from "@/utils/profileInfo";
 // const statusStrings = [
 //   "Waiting for students to register...",
 //   "Waiting for all teams to be allocated...",
@@ -19,10 +21,19 @@ import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
 // ];
 
 const Teams: React.FC = () => {
+  // Status Key
+  // 0: before early bird registration closes
+  // 1: after early bird -- coach review
+  // 2: finalised teams allocated
   const [status, setStatus] = useState(0);
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
+  const [sort, setSort] = useState("Default");
   const { id } = useParams<{ id: string }>();
+  const {
+    userSession: { id: userId, role },
+  } = useAuth();
+
   const fetchContest = useCallback(async () => {
     try {
       const contest = await axios.get<ContestResponse>(
@@ -38,6 +49,7 @@ const Teams: React.FC = () => {
   const fetchTeams = useCallback(async () => {
     setStatus(1);
     try {
+      const userData = await getInfo(userId);
       const res = await axios.get<{ allTeams: Team[] }>(
         `${SERVER_URL}/api/teams/all`,
         {
@@ -48,16 +60,28 @@ const Teams: React.FC = () => {
         },
       );
       const { allTeams } = res.data;
-      setTeams(allTeams);
+      let sorted = allTeams;
+      // Filters teams for specific university coach
+      if (role === "Coach") {
+        sorted = allTeams.filter(
+          (team) => team.university === userData?.university,
+        );
+      }
+
+      // If sort is applied, sort according to the type chosen
+      if (sort === "Team Name") {
+        sorted = sorted.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sort === "Institution") {
+        sorted = sorted.sort((a, b) =>
+          a.university.localeCompare(b.university),
+        );
+      }
+      setTeams(sorted);
       setStatus(allTeams.length === 0 ? 0 : 2);
     } catch (error) {
       console.log(`Get teams error: ${error}`);
     }
-  }, [contest?.id]);
-
-  const {
-    userSession: { role },
-  } = useAuth();
+  }, [contest?.id, sort]);
 
   useEffect(() => {
     fetchContest();
@@ -75,6 +99,11 @@ const Teams: React.FC = () => {
         Institution: {contest?.site}
       </h1>
       <hr className={pageStyles.divider} />
+      <SortBy
+        type={role === "Coach" ? "teams" : "teamsAll"}
+        sort={sort}
+        setSort={setSort}
+      />
       {status === 0 && (
         <AdminWaitingScreen
           contest={contest}

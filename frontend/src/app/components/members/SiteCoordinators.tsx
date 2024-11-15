@@ -6,6 +6,7 @@ import { SERVER_URL } from "@/utils/constants";
 import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Staff, { StaffProps } from "./Staff";
+import SortBy from "../utils/SortBy";
 
 interface SiteCoordInfo {
   id: string;
@@ -16,15 +17,9 @@ interface SiteCoordInfo {
   university: string;
 }
 
-const SiteCoordinators: React.FC = () => {
-  const [siteCoords, setSiteCoords] = useState<StaffProps[]>([
-    {
-      id: "123",
-      name: "Lily Belle",
-      institution: "UNSW",
-      email: "l.belle@unsw.edu.au",
-    },
-  ]);
+const SiteCoordinators = () => {
+  const [siteCoords, setSiteCoords] = useState<StaffProps[]>([]);
+  const [sort, setSort] = useState("Default");
 
   const getSiteCoords = async () => {
     try {
@@ -39,7 +34,17 @@ const SiteCoordinators: React.FC = () => {
         institution: sc.university,
         email: sc.email,
       }));
-      setSiteCoords(filteredInfo);
+
+      // Sort based on user option
+      if (sort !== "Default") {
+        const key = sort.toLowerCase() as keyof StaffProps;
+        const sorted: StaffProps[] = filteredInfo.sort((a, b) =>
+          a[key].localeCompare(b[key]),
+        );
+        setSiteCoords(sorted);
+      } else {
+        setSiteCoords(filteredInfo);
+      }
     } catch (error) {
       console.log(`Get sitecoords: ${error}`);
     }
@@ -47,7 +52,7 @@ const SiteCoordinators: React.FC = () => {
 
   useEffect(() => {
     getSiteCoords();
-  }, []);
+  }, [sort]);
 
   return (
     <div className={memberStyles.gap}>
@@ -56,6 +61,8 @@ const SiteCoordinators: React.FC = () => {
         <p>Site</p>
         <p>Email</p>
       </div>
+      <hr className={pageStyles.divider} />
+      <SortBy type="members" sort={sort} setSort={setSort} />
       <hr className={pageStyles.divider} />
       {siteCoords.map((siteCoord) => (
         <Staff key={siteCoord.id} {...siteCoord} />
