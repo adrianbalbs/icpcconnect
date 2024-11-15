@@ -378,3 +378,12 @@ export const CreateContestRegistrationSchema = z.strictObject({
 export type CreateContestRegistration = z.infer<
   typeof CreateContestRegistrationSchema
 >;
+
+export const PulloutSchema = z.object({
+  associated_team: z.string(), // team id,
+  leavingInternalId: z.string(), //leaving persons internal id
+  replacementStudentId: z.string(), //potential replacements student id,
+  reason: z.string(),
+});
+
+export type Pullout = z.infer<typeof PulloutSchema>;

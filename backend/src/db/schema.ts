@@ -259,7 +259,7 @@ export const teams = pgTable("teams", {
 });
 
 export const replacements = pgTable("replacements", {
-  associated_team: uuid("team_id").references(() => teams.id),
+  associated_team: uuid("team_id").notNull().references(() => teams.id),
   leavingInternalId: text("leaving_id").notNull().default(""),
   replacementStudentId: text("student_id").notNull().default(""),
   reason: text("reason").notNull().default(""),
