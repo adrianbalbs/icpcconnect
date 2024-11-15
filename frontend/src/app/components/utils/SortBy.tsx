@@ -18,13 +18,14 @@ interface SortByProps {
 
 const list = {
   members: ["Default", "Name", "Team (students only)", "Institution", "Email"],
-  teams: ["Default", "Name", "University"],
+  teams: ["Default", "Team Name", "Institution"],
 };
 
 const SortBy = ({ type, sort, setSort }: SortByProps) => {
   const [open, setOpen] = useState(false);
 
   const handleOnClick = (type: string) => {
+    console.log(type);
     setSort(type);
     setOpen(false);
   };

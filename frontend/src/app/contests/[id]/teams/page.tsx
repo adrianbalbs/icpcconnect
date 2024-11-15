@@ -20,6 +20,10 @@ import SortBy from "@/components/utils/SortBy";
 // ];
 
 const Teams: React.FC = () => {
+  // Status Key
+  // 0: before early bird registration closes
+  // 1: after early bird -- coach review
+  // 2: finalised teams allocated
   const [status, setStatus] = useState(0);
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -44,6 +48,7 @@ const Teams: React.FC = () => {
   const fetchTeams = useCallback(async () => {
     setStatus(1);
     try {
+      console.log("fetched");
       const res = await axios.get<{ allTeams: Team[] }>(
         `${SERVER_URL}/api/teams/all`,
         {
@@ -54,12 +59,22 @@ const Teams: React.FC = () => {
         },
       );
       const { allTeams } = res.data;
-      setTeams(allTeams);
+      let sorted = allTeams;
+      if (sort === "Team Name") {
+        sorted = allTeams.sort((a, b) => a.name.localeCompare(b.name));
+        console.log(sorted);
+      } else if (sort === "Institution") {
+        sorted = allTeams.sort((a, b) =>
+          a.university.localeCompare(b.university),
+        );
+        console.log(sorted);
+      }
+      setTeams(sorted);
       setStatus(allTeams.length === 0 ? 0 : 2);
     } catch (error) {
       console.log(`Get teams error: ${error}`);
     }
-  }, [contest?.id]);
+  }, [contest?.id, sort]);
 
   useEffect(() => {
     fetchContest();
