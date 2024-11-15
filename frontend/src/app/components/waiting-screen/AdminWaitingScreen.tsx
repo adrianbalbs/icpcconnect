@@ -4,14 +4,17 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { ContestResponse } from "@/contests/page";
 import WaitingScreenBase from "./WaitingScreenBase";
+import { Role } from "@/types/users";
 
 interface AdminWaitingScreenProps {
   contest: ContestResponse | null;
+  role: Role;
   onTeamsAllocated: () => Promise<void>;
 }
 
 const AdminWaitingScreen: React.FC<AdminWaitingScreenProps> = ({
   contest,
+  role,
   onTeamsAllocated,
 }) => {
   const handleRunAlgorithm = async () => {
@@ -29,9 +32,11 @@ const AdminWaitingScreen: React.FC<AdminWaitingScreenProps> = ({
 
   return (
     <WaitingScreenBase contest={contest}>
-      <Button sx={{ ...purpleBtn, mt: "15px" }} onClick={handleRunAlgorithm}>
-        Allocate Teams
-      </Button>
+      {role === "Admin" && (
+        <Button sx={{ ...purpleBtn, mt: "15px" }} onClick={handleRunAlgorithm}>
+          Allocate Teams
+        </Button>
+      )}
     </WaitingScreenBase>
   );
 };

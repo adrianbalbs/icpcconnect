@@ -16,7 +16,6 @@ import {
   coursesCompletedByStudent,
   registrationDetails,
 } from "./schema.js";
-import { ContestService } from "../services/contest-service.js";
 import { JobQueue } from "../services/queue-service.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
 
@@ -228,31 +227,21 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding contests");
   const allContests = data.default.contests;
-  const contestService = new ContestService(
-    db,
-    new JobQueue(new AlgorithmService(db)),
-  );
+  const jobQueue = new JobQueue(new AlgorithmService(db));
   for (const contest of allContests) {
-    const { name, site } = contest;
-    // await db
-    //   .insert(contests)
-    //   .values({
-    //     id,
-    //     name,
-    //     site,
-    //     earlyBirdDate: tomorrow,
-    //     cutoffDate: dayAfterTomorrow,
-    //     contestDate: contestDate,
-    //   })
-    //   .onConflictDoNothing();
-
-    await contestService.create({
-      name,
-      earlyBirdDate: tomorrow,
-      cutoffDate: dayAfterTomorrow,
-      contestDate: contestDate,
-      site,
-    });
+    const { id, name, site } = contest;
+    await db
+      .insert(contests)
+      .values({
+        id,
+        name,
+        site,
+        earlyBirdDate: tomorrow,
+        cutoffDate: dayAfterTomorrow,
+        contestDate: contestDate,
+      })
+      .onConflictDoNothing();
+    jobQueue.addJob(id, tomorrow, dayAfterTomorrow);
   }
 
   const defaultContestName = "ICPC Preliminary Contest";

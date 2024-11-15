@@ -76,7 +76,11 @@ const Teams: React.FC = () => {
       </h1>
       <hr className={pageStyles.divider} />
       {status === 0 && (
-        <AdminWaitingScreen contest={contest} onTeamsAllocated={fetchTeams} />
+        <AdminWaitingScreen
+          contest={contest}
+          onTeamsAllocated={fetchTeams}
+          role={role}
+        />
       )}
       {status === 1 && (
         <div className={pageStyles["waiting-screen"]}>
