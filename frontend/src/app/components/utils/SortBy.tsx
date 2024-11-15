@@ -11,13 +11,14 @@ import { ExpandLess, ExpandMore, SortRounded } from "@mui/icons-material";
 import { sortIcons } from "@/styles/sxStyles";
 
 interface SortByProps {
-  type: "members" | "teams" | "teamsAll";
+  type: "students" | "members" | "teams" | "teamsAll";
   sort: string;
   setSort: (sort: string) => void;
 }
 
 const list = {
-  members: ["Default", "Name", "Team (students only)", "Institution", "Email"],
+  students: ["Default", "Name", "Team", "Institution", "Email"],
+  members: ["Default", "Name", "Institution", "Email"],
   teams: ["Default", "Team Name"],
   teamsAll: ["Default", "Team Name", "Institution"],
 };

@@ -6,6 +6,7 @@ import { SERVER_URL } from "@/utils/constants";
 import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Staff, { StaffProps } from "./Staff";
+import SortBy from "../utils/SortBy";
 
 interface CoachInfo {
   id: string;
@@ -16,8 +17,9 @@ interface CoachInfo {
   university: string;
 }
 
-const Coaches = ({ sort }: { sort: string }) => {
+const Coaches = () => {
   const [coaches, setCoaches] = useState<StaffProps[]>([]);
+  const [sort, setSort] = useState("Default");
 
   const getCoaches = async () => {
     try {
@@ -34,7 +36,7 @@ const Coaches = ({ sort }: { sort: string }) => {
       }));
 
       // Sort based on user option
-      if (sort !== "Default" && sort.includes("Team")) {
+      if (sort !== "Default") {
         const key = sort.toLowerCase() as keyof StaffProps;
         const sorted: StaffProps[] = filteredInfo.sort((a, b) =>
           a[key].localeCompare(b[key]),
@@ -59,6 +61,8 @@ const Coaches = ({ sort }: { sort: string }) => {
         <p>Institution</p>
         <p>Email</p>
       </div>
+      <hr className={pageStyles.divider} />
+      <SortBy type="members" sort={sort} setSort={setSort} />
       <hr className={pageStyles.divider} />
       {coaches.map((coach) => (
         <Staff key={coach.email} {...coach} />
