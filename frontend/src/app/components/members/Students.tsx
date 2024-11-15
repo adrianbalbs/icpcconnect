@@ -25,8 +25,9 @@ export interface StudentInfo {
 
 type StudentsProps = {
   contest?: string;
+  sort: string;
 };
-const Students: React.FC<StudentsProps> = ({ contest }) => {
+const Students: React.FC<StudentsProps> = ({ contest, sort }) => {
   const [students, setStudents] = useState<StudentProps[]>([]);
 
   const getStudents = async () => {
@@ -43,7 +44,16 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
         institution: student.university,
         email: student.email,
       }));
-      setStudents(filteredInfo);
+
+      if (sort !== "Default") {
+        const key = sort.toLowerCase() as keyof StudentProps;
+        const sorted: StudentProps[] = filteredInfo.sort((a, b) =>
+          a[key].localeCompare(b[key]),
+        );
+        setStudents(sorted);
+      } else {
+        setStudents(filteredInfo);
+      }
     } catch (error) {
       console.log(`Get students: ${error}`);
     }
@@ -51,7 +61,7 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
 
   useEffect(() => {
     getStudents();
-  }, []);
+  }, [sort]);
 
   return (
     <div className={memberStyles.gap}>

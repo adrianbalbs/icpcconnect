@@ -140,3 +140,7 @@ export const cancelExclBtn = {
 };
 
 export const modalInputBox = { m: "30px 35px", width: "calc(100% - 70px)" };
+
+export const sortIcons = {
+  fontSize: "20px",
+};

@@ -16,15 +16,8 @@ interface SiteCoordInfo {
   university: string;
 }
 
-const SiteCoordinators: React.FC = () => {
-  const [siteCoords, setSiteCoords] = useState<StaffProps[]>([
-    {
-      id: "123",
-      name: "Lily Belle",
-      institution: "UNSW",
-      email: "l.belle@unsw.edu.au",
-    },
-  ]);
+const SiteCoordinators = ({ sort }: { sort: string }) => {
+  const [siteCoords, setSiteCoords] = useState<StaffProps[]>([]);
 
   const getSiteCoords = async () => {
     try {
@@ -39,7 +32,17 @@ const SiteCoordinators: React.FC = () => {
         institution: sc.university,
         email: sc.email,
       }));
-      setSiteCoords(filteredInfo);
+
+      // Sort based on user option
+      if (sort !== "Default" && !sort.includes("Team")) {
+        const key = sort.toLowerCase() as keyof StaffProps;
+        const sorted: StaffProps[] = filteredInfo.sort((a, b) =>
+          a[key].localeCompare(b[key]),
+        );
+        setSiteCoords(sorted);
+      } else {
+        setSiteCoords(filteredInfo);
+      }
     } catch (error) {
       console.log(`Get sitecoords: ${error}`);
     }
@@ -47,7 +50,7 @@ const SiteCoordinators: React.FC = () => {
 
   useEffect(() => {
     getSiteCoords();
-  }, []);
+  }, [sort]);
 
   return (
     <div className={memberStyles.gap}>
