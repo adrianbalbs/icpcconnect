@@ -16,7 +16,6 @@ import {
   coursesCompletedByStudent,
   registrationDetails,
 } from "./schema.js";
-import { ContestService } from "../services/contest-service.js";
 import { JobQueue } from "../services/queue-service.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
 
