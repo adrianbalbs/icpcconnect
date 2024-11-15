@@ -7,14 +7,15 @@ import {
   users,
   universities,
   contests,
+  replacementRelations,
 } from "../db/index.js";
+import { UserService} from "./index.js"
 import {
   ReplacementRequest, CreateTeamRequest,
   TeamDTO,
   UpdateTeamRequest, PulloutRequest,
 } from "../schemas/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
-import { UserService} from "./index.js"
 
 export class TeamService {
   private readonly db: DatabaseConnection;
@@ -84,7 +85,17 @@ export class TeamService {
       .innerJoin(users, eq(users.id, studentDetails.userId))
       .where(eq(studentDetails.team, teamId));
 
-    return { ...team, members };
+
+    const replacement_arr = await this.db
+      .select({
+          leavingUserId: replacements.leavingInternalId,
+          replacementStudentId: replacements.replacementStudentId,
+          reason: replacements.reason,
+      })
+      .from(replacements)
+      .where(eq(replacements.associated_team, team.id));
+
+    return { ...team, members, replacements: replacement_arr };
   }
 
   async getTeamByStudentAndContest(
@@ -126,9 +137,19 @@ export class TeamService {
       .where(eq(studentDetails.team, team.id))
       .innerJoin(users, eq(users.id, studentDetails.userId));
 
-    return { ...team, members};
+    const replacement_arr = await this.db
+      .select({
+          leavingUserId: replacements.leavingInternalId,
+          replacementStudentId: replacements.replacementStudentId,
+          reason: replacements.reason,
+      })
+      .from(replacements)
+      .where(eq(replacements.associated_team, team.id));
+
+    return { ...team, members, replacements: replacement_arr};
   }
 
+  //TODO add in replacements
   async getAllTeams(contest?: string): Promise<{ allTeams: TeamDTO[] }> {
     const query = this.db
       .select({
@@ -162,7 +183,16 @@ export class TeamService {
           .innerJoin(users, eq(users.id, studentDetails.userId))
           .where(eq(studentDetails.team, team.id));
 
-        return { ...team, members };
+        const replacement_arr = await this.db
+          .select({
+              leavingUserId: replacements.leavingInternalId,
+              replacementStudentId: replacements.replacementStudentId,
+              reason: replacements.reason,
+          })
+          .from(replacements)
+          .where(eq(replacements.associated_team, team.id));
+
+        return { ...team, members, replacements: replacement_arr };
       }),
     );
     return { allTeams };
