@@ -21,6 +21,13 @@ export type Member = Pick<
   "id" | "studentId" | "givenName" | "familyName" | "email"
 >;
 
+export const ReplacementSchema = z.object({
+  reason: z.string(),
+  leavingUserId: z.string(),
+  replacementStudentId: z.string(),
+});
+export type Replacement = z.infer<typeof ReplacementSchema>;
+
 export type TeamDTO = {
   id: string;
   name: string;
@@ -28,6 +35,7 @@ export type TeamDTO = {
   contest: string;
   flagged: boolean;
   members: Member[];
+  replacements: Replacement[];
 };
 
 export const PutStudentTeamSchema = z.object({
@@ -42,9 +50,23 @@ export const SendTeamAllocatedEmailSchema = z.object({
   memberEmails: z.array(z.string().email()),
 });
 
-export type SendTeamAllocationEmail = z.infer<
-  typeof SendTeamAllocatedEmailSchema
->;
+export type SendTeamAllocationEmail = z.infer<typeof SendTeamAllocatedEmailSchema>;
+
+export const ReplacementRequestSchema = z.object({
+  team: z.string(),
+  student: z.string(),
+  replacedWith: z.string(),
+});
+
+export type ReplacementRequest = z.infer<typeof ReplacementRequestSchema>;
+
+export const PulloutRequestSchema = z.object({
+  studentId: z.string(),
+  replacedWith: z.string(),
+  reason: z.string(),
+});
+
+export type PulloutRequest = z.infer<typeof PulloutRequestSchema>;
 
 export const GetAllTeamsQuerySchema = z.strictObject({
   contest: z.string().optional(),

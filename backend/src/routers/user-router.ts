@@ -208,5 +208,21 @@ export function userRouter(
         const user = await userService.deleteUser(id);
         res.status(200).send(user);
       }),
-    );
+    )
+    .get(
+      "/pullouts",
+      [
+        authenticate,
+        authorise(["Admin", "Coach", ]),
+      ],
+      handle(
+        async (
+          req: Request,
+          res,
+        ) => {
+          const pullouts = await userService.getAllPullouts();
+          res.status(200).send(pullouts);
+        },
+      ),
+    )
 }

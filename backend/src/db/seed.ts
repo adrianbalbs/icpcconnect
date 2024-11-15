@@ -33,6 +33,7 @@ type StudentTable = UserTable & {
   team: string | null;
   pronouns: string;
   studentId: string;
+  profile_pic: string,
   photoConsent: boolean;
   languagesSpoken: SpokenLanguage[];
   level: Level;
@@ -63,6 +64,7 @@ const addStudent = async (
     team,
     pronouns,
     studentId,
+    profile_pic,
     photoConsent,
     languagesSpoken,
     level,
@@ -104,6 +106,7 @@ const addStudent = async (
         pronouns,
         studentId,
         photoConsent,
+        profile_pic,
         level,
         contestExperience,
         codeforcesRating,

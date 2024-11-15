@@ -11,6 +11,7 @@ import {
   teams,
   universities,
   users,
+  replacements,
 } from "../db/schema.js";
 import {
   CreateUser,
@@ -20,6 +21,7 @@ import {
   UpdateUser,
   UserDTO,
   UserRole,
+  Pullout,
 } from "../schemas/index.js";
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
@@ -376,4 +378,20 @@ export class UserService {
 
     return { preferences: preferencesReturn };
   }
+
+  async getAllPullouts(
+  ): Promise<{ allPullouts: Pullout[] }> {
+    const pullouts = await this.db
+      .select({
+        associated_team : replacements.associated_team,
+        leavingInternalId : replacements.leavingInternalId,
+        replacementStudentId : replacements.replacementStudentId,
+        reason : replacements.reason,
+      })
+      .from(replacements)
+
+
+    return { allPullouts: pullouts };
+  }
+
 }
