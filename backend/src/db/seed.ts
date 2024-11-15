@@ -44,6 +44,7 @@ type StudentTable = UserTable & {
   javaExperience: LanguageExperience;
   pythonExperience: LanguageExperience;
   coursesTaken: number[];
+  preferences: string;
 };
 
 const addStudent = async (
@@ -73,6 +74,7 @@ const addStudent = async (
     javaExperience,
     pythonExperience,
     coursesTaken,
+    preferences,
   } = student;
 
   const newPassword = await passwordUtils().hash(password);
@@ -110,6 +112,7 @@ const addStudent = async (
         cExperience,
         javaExperience,
         pythonExperience,
+        preferences,
       });
       for (const languageCode of languagesSpoken) {
         await tx
