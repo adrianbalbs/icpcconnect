@@ -1,6 +1,7 @@
 import {
   DatabaseConnection,
   studentDetails,
+  teams,
   users,
   verifyEmail,
 } from "../db/index.js";
@@ -288,10 +289,12 @@ export class EmailService {
     return true;
   }
 
-  async sendTeamMemberInfo(): Promise<void> {
-    const teams = await this.db.query.teams.findMany();
+  async sendTeamMemberInfo(contestId: string): Promise<void> {
+    const allTeams = await this.db.query.teams.findMany({
+      where: eq(teams.contest, contestId),
+    });
 
-    for (const team of teams) {
+    for (const team of allTeams) {
       const members = await this.db.query.studentDetails.findMany({
         where: eq(studentDetails.team, team.id),
       });
