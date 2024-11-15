@@ -12,4 +12,9 @@ export type Team = {
   contest: string;
   flagged: boolean;
   members: Member[];
+  replacements: {  
+    reason: string,
+    leavingUserId: string,
+    replacementStudentId: string
+  }[];
 };

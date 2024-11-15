@@ -27,6 +27,7 @@ const Teams: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const { id } = useParams<{ id: string }>();
   const [open, setOpen] = useState(true);
+  const { userSession } = useAuth();
   const fetchContest = useCallback(async () => {
     try {
       const contest = await axios.get<ContestResponse>(
@@ -59,7 +60,18 @@ const Teams: React.FC = () => {
     }
   }, [contest?.id]);
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
+    try {
+      await axios.post(
+        `${SERVER_URL}/api/teams/handlePullout/${userSession.id}`,
+        {
+          studentId: userSession.id,
+        },
+        { withCredentials: true },
+      );
+    } catch (err) {
+      console.error(err);
+    }
     setOpen(false);
   };
 

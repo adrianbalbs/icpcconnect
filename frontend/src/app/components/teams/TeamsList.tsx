@@ -24,8 +24,9 @@ const TeamsList: React.FC<TeamsListProps> = ({ teams, role }) => {
           key={team.id}
           name={team.name}
           university={team.university}
-          members={team.members.map((m) => `${m.givenName} ${m.familyName}`)}
+          members={team.members}
           canEdit={canEdit}
+          replacements={team.replacements.map((r) => r.leavingUserId)}
         />
       ))}
     </div>
