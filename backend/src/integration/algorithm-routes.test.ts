@@ -362,7 +362,10 @@ describe("Algorithm Tests", () => {
     expect(teams.body.allTeams).toHaveLength(1);
 
     // Call send team created email stuff
-    await request(app).post("/api/sendTeamCreatedEmail").expect(200);
+    await request(app)
+      .post("/api/sendTeamCreatedEmail")
+      .send({ contestId: contest.body.id })
+      .expect(200);
   }, 60000);
 
   it("should create three students, two same uni, one different, and not create a team with them", async () => {

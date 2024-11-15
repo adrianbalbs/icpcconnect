@@ -24,6 +24,12 @@ const AdminWaitingScreen: React.FC<AdminWaitingScreenProps> = ({
         { contestId: contest?.id },
         { withCredentials: true },
       );
+
+      await axios.post(
+        `${SERVER_URL}/api/email/sendTeamCreatedEmail`,
+        { contestId: contest?.id },
+        { withCredentials: true },
+      );
       await onTeamsAllocated();
     } catch (err) {
       console.error(`An unexpected error occurred: ${err}`);
