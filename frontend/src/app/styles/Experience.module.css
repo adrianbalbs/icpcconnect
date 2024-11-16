@@ -7,6 +7,7 @@
 }
 
 .language {
+  justify-self: end;
   font-size: 15px;
   font-weight: 600;
   color: rgb(96, 96, 96);
@@ -28,7 +29,7 @@
   height: 1px;
   width: 100%;
   border: none;
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
 }
 
 .heading {

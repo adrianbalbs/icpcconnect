@@ -132,7 +132,7 @@ export function userRouter(
       "/:id",
       [
         authenticate,
-        authorise(["Admin", "Coach", "Student"]),
+        authorise(["Admin", "Coach", "Site Coordinator"]),
         validateData(UpdateUserSchema, "body"),
       ],
       handle(async (req: Request<{ id: string }, unknown, UpdateUser>, res) => {
@@ -146,7 +146,7 @@ export function userRouter(
       "/:id/student-details",
       [
         authenticate,
-        authorise(["Admin", "Coach", "Student"]),
+        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
         validateData(UpdateStudentDetailsSchema, "body"),
       ],
       handle(
@@ -183,19 +183,19 @@ export function userRouter(
       "/:id/password",
       [
         authenticate,
-        authorise(["Admin", "Coach", "Student"]),
+        authorise(["Admin", "Coach", "Site Coordinator", "Student"]),
         validateData(UpdatePasswordSchema, "body"),
       ],
       handle(
         async (
-          req: Request<{ id: string }, unknown, { password: string }>,
+          req: Request<{ id: string }, unknown, { oldPassword: string, newPassword: string }>,
           res,
         ) => {
           const { id } = req.params;
           const {
-            body: { password },
+            body: { oldPassword, newPassword },
           } = req;
-          const result = await userService.updatePassword(id, password);
+          const result = await userService.updatePassword(id, oldPassword, newPassword);
           res.status(200).send(result);
         },
       ),

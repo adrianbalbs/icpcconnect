@@ -1,7 +1,7 @@
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
 import { Member } from "@/types/teams";
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
+// import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import WarningIcon from "@mui/icons-material/Warning";
 
 interface TeamCardProps {
@@ -16,7 +16,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
   name,
   university,
   members,
-  canEdit,
+  // canEdit,
   replacements,
 }) => {
   return (
@@ -24,7 +24,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
       <div className={teamStyles.team}>
         <p>
           <span className={pageStyles.bold}>Team Name:</span> {name}{" "}
-          {canEdit && <DriveFileRenameOutlineOutlinedIcon />}
+          {/* {canEdit && <DriveFileRenameOutlineOutlinedIcon />} */}
         </p>
         <p>
           <span className={pageStyles.bold}>Institution:</span> {university}

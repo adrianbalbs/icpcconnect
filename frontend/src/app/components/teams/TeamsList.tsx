@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import teamStyles from "@/styles/Teams.module.css";
 import TeamCard from "./TeamCard";
@@ -10,7 +8,7 @@ type TeamsListProps = {
   teams: Team[];
   role: Role;
 };
-const TeamsList: React.FC<TeamsListProps> = ({ teams, role }) => {
+const TeamsList = ({ teams, role }: TeamsListProps) => {
   const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {

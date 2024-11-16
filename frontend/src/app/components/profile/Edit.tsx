@@ -8,11 +8,12 @@ import { TshirtSize } from "./TshirtSize";
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 interface EditProps {
+  role: string;
   editInfo: EditInfo;
   setEditInfo: Dispatch<SetStateAction<EditInfo>>;
 }
 
-export const Edit: React.FC<EditProps> = ({ editInfo, setEditInfo }) => {
+export const Edit: React.FC<EditProps> = ({ role, editInfo, setEditInfo }) => {
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     setEditInfo({ ...editInfo, photoConsent: e.target.value === "yes" });
   };
@@ -30,6 +31,29 @@ export const Edit: React.FC<EditProps> = ({ editInfo, setEditInfo }) => {
       e.target.value === "Select T-Shirt Size" ? null : e.target.value;
     setEditInfo({ ...editInfo, tshirtSize: size });
   };
+
+  if (role !== "Student") {
+    return (
+      <>
+        <EditInput
+          name="First Name"
+          value={editInfo.givenName}
+          onChange={handleInfoChange}
+        />
+        <EditInput
+          name="Last Name"
+          value={editInfo.familyName}
+          onChange={handleInfoChange}
+        />
+        <EditInput
+          name="Pronouns"
+          value={editInfo.pronouns}
+          onChange={handleInfoChange}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <EditInput

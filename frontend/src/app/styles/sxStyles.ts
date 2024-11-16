@@ -74,12 +74,19 @@ export const sidebarBtn = {
   },
 };
 
-export const preferenceInput = {
-  "& .MuiInputBase-input": {
-    padding: "7px 14px",
-    fontSize: "14px",
-    color: "#666666",
-  },
+export const preferenceInput = (isLong: boolean) => {
+  return {
+    width: isLong ? "200px" : "auto",
+    justifySelf: "start",
+    "& .MuiInputBase-input": {
+      padding: "7px 14px",
+      fontSize: "14px",
+      color: "#666666",
+    },
+    "& .MuiOutlinedInput-root.Mui-focused": {
+      borderColor: "red",
+    },
+  };
 };
 
 export const menuBtn = {
@@ -130,4 +137,10 @@ export const cancelExclBtn = {
   textTransform: "none",
   color: "#444444",
   borderColor: "#444444",
+};
+
+export const modalInputBox = { m: "30px 35px", width: "calc(100% - 70px)" };
+
+export const sortIcons = {
+  fontSize: "20px",
 };

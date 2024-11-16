@@ -6,6 +6,7 @@ import { SERVER_URL } from "@/utils/constants";
 import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Student, { StudentProps } from "./Student";
+import SortBy from "../utils/SortBy";
 
 export interface StudentInfo {
   id: string;
@@ -26,8 +27,10 @@ export interface StudentInfo {
 type StudentsProps = {
   contest?: string;
 };
+
 const Students: React.FC<StudentsProps> = ({ contest }) => {
   const [students, setStudents] = useState<StudentProps[]>([]);
+  const [sort, setSort] = useState("Default");
 
   const getStudents = async () => {
     try {
@@ -43,16 +46,22 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
         institution: student.university,
         email: student.email,
       }));
-      setStudents(filteredInfo);
+
+      if (sort !== "Default") {
+        const key = sort.toLowerCase() as keyof StudentProps;
+        const sorted: StudentProps[] = filteredInfo.sort((a, b) =>
+          a[key].localeCompare(b[key]),
+        );
+        setStudents(sorted);
+      } else {
+        setStudents(filteredInfo);
+      }
     } catch (error) {
       console.log(`Get students: ${error}`);
     }
   };
 
   useEffect(() => {
-    {
-      getStudents();
-    }
     // setStudents([
     //   {
     //     id: "w",
@@ -76,7 +85,8 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
     //     email: "teeheews@gmail.com",
     //   },
     // ]);
-  }, []);
+    getStudents();
+  }, [sort]);
 
   return (
     <div className={memberStyles.gap}>
@@ -87,17 +97,11 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
         <p>Email</p>
       </div>
       <hr className={pageStyles.divider} />
+      <SortBy type="students" sort={sort} setSort={setSort} />
+      <hr className={pageStyles.divider} />
       {students.map((student) => (
         <Student key={student.id} {...student} />
       ))}
-
-      {/* <div className={`${memberStyles.students} ${memberStyles.space}`}>
-      <p>Rachel Chen</p>
-      <p>Randos</p>
-      <p>UNSW Sydney</p>
-      <p className={memberStyles.overflow}>z5432123@ad.unsw.edu.au</p>
-    </div>
-    <hr className={pageStyles.divider}/> */}
     </div>
   );
 };

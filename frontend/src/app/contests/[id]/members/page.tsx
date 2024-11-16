@@ -1,10 +1,10 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import SiteCoordinators from "@/components/members/SiteCoordinators";
 import Coaches from "@/components/members/Coaches";
 import Students from "@/components/members/Students";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
-import { useParams } from "next/navigation";
 
 const Members: React.FC = () => {
   const {

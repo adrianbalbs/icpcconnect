@@ -206,11 +206,11 @@ export default function Contests() {
     { field: "earlyBirdDate", headerName: "Early Bird Date", width: 150 },
     { field: "cutoffDate", headerName: "Cutoff Date", width: 150 },
     { field: "contestDate", headerName: "Start Date", width: 150 },
-    { field: "site", headerName: "Site", width: 380 },
+    { field: "site", headerName: "Site", width: 370 },
     {
       field: "actions",
       headerName: "Actions",
-      width: 300,
+      width: 240,
       sortable: false,
       renderCell: (params: GridRenderCellParams<ContestResponse>) => (
         <>

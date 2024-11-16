@@ -5,10 +5,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
 import image from "@/assets/image.png";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/bar/Sidebar";
 import { getInfo } from "@/utils/profileInfo";
 import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
 
 interface ProfileLayoutProps {
   children: React.ReactNode;
@@ -33,12 +34,18 @@ export function useProfile() {
 const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
   const router = useRouter();
   const [info, setInfo] = useState({ name: "", role: "", pronouns: "" });
+  const { userSession } = useAuth();
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
     if (data !== undefined) {
       setInfo(data.sideInfo);
     }
+  };
+
+  const checkView = () => {
+    if (userSession.id === params.id) return true;
+    return userSession.role !== "Student" && info.role === "Student";
   };
 
   useEffect(() => {
@@ -54,7 +61,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
           <p
             className={profileStyles.role}
           >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
-          <Sidebar id={params.id} />
+          {checkView() && <Sidebar id={params.id} role={info.role} />}
         </div>
         <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
           <ArrowBackIosIcon />

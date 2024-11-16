@@ -20,9 +20,13 @@ export interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ params }) => {
-  const [info, setInfo] = useState<[string, string | number][]>([]);
+  const [profileInfo, setProfileInfo] = useState<[string, string | number][]>(
+    [],
+  );
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editInfo, setEditInfo] = useState<EditInfo>({
+    givenName: "",
+    familyName: "",
     pronouns: "",
     languagesSpoken: [],
     photoConsent: false,
@@ -30,13 +34,12 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     tshirtSize: "",
   });
   const { userSession } = useAuth();
-
-  const { storeProfileInfo } = useProfile();
+  const { storeProfileInfo, info } = useProfile();
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
     if (data !== undefined) {
-      setInfo(data.info);
+      setProfileInfo(data.info);
       setEditInfo(data.editInfo);
     }
   };
@@ -46,17 +49,18 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
 
   const handleSaveClick = async () => {
     setIsEditing(false);
-    const update = {
-      pronouns: editInfo.pronouns === "" ? undefined : editInfo.pronouns,
-      languagesSpoken: editInfo.languagesSpoken,
-      photoConsent: editInfo.photoConsent,
-      tshirtSize: editInfo.tshirtSize === "" ? undefined : editInfo.tshirtSize,
-      dietaryRequirements:
-        editInfo.dietaryRequirements === ""
-          ? undefined
-          : editInfo.dietaryRequirements,
-    };
     try {
+      const update = {
+        pronouns: editInfo.pronouns === "" ? undefined : editInfo.pronouns,
+        languagesSpoken: editInfo.languagesSpoken,
+        photoConsent: editInfo.photoConsent,
+        tshirtSize:
+          editInfo.tshirtSize === "" ? undefined : editInfo.tshirtSize,
+        dietaryRequirements:
+          editInfo.dietaryRequirements === ""
+            ? undefined
+            : editInfo.dietaryRequirements,
+      };
       await axios.patch(
         `${SERVER_URL}/api/users/${params.id}/student-details`,
         update,
@@ -64,6 +68,17 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
           withCredentials: true,
         },
       );
+      if (info.role !== "Student") {
+        // Update object for coach, site coordinator and admin
+        const update = {
+          givenName: editInfo.givenName,
+          familyName: editInfo.familyName,
+        };
+        await axios.patch(`${SERVER_URL}/api/users/${params.id}`, update, {
+          withCredentials: true,
+        });
+      }
+
       storeInfo();
       storeProfileInfo();
     } catch (error) {
@@ -96,11 +111,11 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
       <hr className={pageStyles.divider} />
 
       {!isEditing ? (
-        info.map((i) => (
+        profileInfo.map((i) => (
           <Info key={i[0]} name={capitalise(i[0])} value={i[1]} />
         ))
       ) : (
-        <Edit editInfo={editInfo} setEditInfo={setEditInfo} />
+        <Edit role={info.role} editInfo={editInfo} setEditInfo={setEditInfo} />
       )}
     </div>
   );
