@@ -144,7 +144,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         validateData(PulloutRequestSchema, "body"),
       ],
       async (
-        req: Request<{ studentId: string}, unknown, PulloutRequest>,
+        req: Request<{ studentId: string }, unknown, PulloutRequest>,
         res: Response,
         next: NextFunction,
       ) => {
@@ -168,7 +168,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         authorise(["Admin", "Coach"]),
       ],
         async (
-          req: Request<{ studentId: string}, unknown, {accepting: boolean}>,
+          req: Request<{ studentId: string }, unknown, { accepting: boolean }>,
           res: Response,
           next: NextFunction,
         ) => {
@@ -194,7 +194,7 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         validateData(ReplacementRequestSchema, "body"),
       ],
         async (
-          req: Request<{ studentId: string}, unknown, ReplacementRequest>,
+          req: Request<{ studentId: string }, unknown, ReplacementRequest>,
           res: Response,
           next: NextFunction,
         ) => {

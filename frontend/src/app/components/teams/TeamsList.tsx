@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import teamStyles from "@/styles/Teams.module.css";
 import TeamCard from "./TeamCard";
 import { Team } from "@/types/teams";
@@ -7,8 +7,9 @@ import { Role } from "@/types/users";
 type TeamsListProps = {
   teams: Team[];
   role: Role;
+  id: string;
 };
-const TeamsList = ({ teams, role }: TeamsListProps) => {
+const TeamsList = ({ teams, role, id }: TeamsListProps) => {
   const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,8 @@ const TeamsList = ({ teams, role }: TeamsListProps) => {
           university={team.university}
           members={team.members}
           canEdit={canEdit}
-          replacements={team.replacements.map((r) => r.leavingUserId)}
+          replacements={team.replacements}
+          id={id}
         />
       ))}
     </div>

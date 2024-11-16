@@ -332,7 +332,7 @@ export class TeamService {
     }
 
 
-    if (accepting ) {
+    if (accepting) {
       //Set students team to null
       await this.userService.updateStudentDetails(studentId, { team: null});
 
