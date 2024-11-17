@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
 import Sidebar from "@/components/bar/Sidebar";
 import { getInfo } from "@/utils/profileInfo";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import ProfileImage from "@/components/profile/ProfileImage";
@@ -62,9 +62,11 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
           >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
           {checkView() && <Sidebar id={params.id} role={info.role} />}
         </div>
-        <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
-          <ArrowBackIosIcon />
-        </IconButton>
+        <Tooltip title="Back">
+          <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
+            <ArrowBackIosIcon />
+          </IconButton>
+        </Tooltip>
         {children}
       </div>
     </ProfileContext.Provider>

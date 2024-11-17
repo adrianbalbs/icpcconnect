@@ -128,10 +128,35 @@ export const saveExclBtn = {
   color: "white",
   borderColor: "#444444",
   bgcolor: "#444444",
+  "&:hover": {
+    opacity: "90%",
+  },
 };
 
 export const cancelExclBtn = {
   height: "22.5px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "#444444",
+  borderColor: "#444444",
+};
+
+export const saveProfileBtn = {
+  height: "30px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "white",
+  borderColor: "#444444",
+  bgcolor: "#444444",
+  "&:hover": {
+    opacity: "90%",
+  },
+};
+
+export const cancelProfileBtn = {
+  height: "30px",
   fontSize: "12px",
   fontWeight: "bold",
   textTransform: "none",

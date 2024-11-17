@@ -6,6 +6,7 @@ import {
   IconButton,
   Popover,
   Tooltip,
+  tooltipClasses,
 } from "@mui/material";
 
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
@@ -52,7 +53,20 @@ const ProfileImage = () => {
         src={image || "/assets/image.png"}
         sx={{ width: "218px", height: "218px", border: "0.8px solid #888888" }}
       />
-      <Tooltip title="Edit Profile Picture">
+      <Tooltip
+        title="Edit Profile Picture"
+        placement="bottom-start"
+        slotProps={{
+          popper: {
+            sx: {
+              [`&.${tooltipClasses.popper}[data-popper-placement*="bottom"] .${tooltipClasses.tooltip}`]:
+                {
+                  marginTop: "3px",
+                },
+            },
+          },
+        }}
+      >
         <IconButton
           sx={{
             position: "absolute",

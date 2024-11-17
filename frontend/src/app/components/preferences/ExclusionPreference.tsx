@@ -12,6 +12,7 @@ import {
   Button,
   ButtonGroup,
   IconButton,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
@@ -73,17 +74,19 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
         >
           <Typography sx={experienceHeading}>Student Names</Typography>
           {!openEdit && checkPerms() && (
-            <IconButton
-              sx={{
-                height: "21px",
-                width: "25px",
-                borderRadius: "5px",
-                justifySelf: "end",
-              }}
-              onClick={() => setOpenEdit(true)}
-            >
-              <EditNoteIcon sx={{ fontSize: "23px" }} />
-            </IconButton>
+            <Tooltip title="Edit Exclusions" placement="left">
+              <IconButton
+                sx={{
+                  height: "21px",
+                  width: "25px",
+                  borderRadius: "5px",
+                  justifySelf: "end",
+                }}
+                onClick={() => setOpenEdit(true)}
+              >
+                <EditNoteIcon sx={{ fontSize: "23px" }} />
+              </IconButton>
+            </Tooltip>
           )}
           {openEdit && checkPerms() && (
             <ButtonGroup>

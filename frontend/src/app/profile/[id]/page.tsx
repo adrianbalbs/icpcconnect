@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import profileStyles from "@/styles/Profile.module.css";
 import pageStyles from "@/styles/Page.module.css";
-import { IconButton } from "@mui/material";
+import { Button, ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import Info from "@/components/profile/Info";
 import { getInfo, capitalise, EditInfo } from "@/utils/profileInfo";
@@ -12,6 +12,7 @@ import { SERVER_URL } from "@/utils/constants";
 import { Edit } from "@/components/profile/Edit";
 import { useProfile } from "./layout";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { cancelProfileBtn, saveProfileBtn } from "@/styles/sxStyles";
 
 export interface ProfileProps {
   params: {
@@ -96,16 +97,20 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
         <h3>Profile</h3>
         {(userSession.role === "Admin" || userSession.id === params.id) &&
           (isEditing ? (
-            <button
-              className={profileStyles["profile-button"]}
-              onClick={handleSaveClick}
-            >
-              Save
-            </button>
+            <ButtonGroup sx={{ ml: "auto" }}>
+              <Button sx={saveProfileBtn} onClick={handleSaveClick}>
+                Save
+              </Button>
+              <Button sx={cancelProfileBtn} onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
+            </ButtonGroup>
           ) : (
-            <IconButton onClick={handleEditClick}>
-              <EditTwoToneIcon />
-            </IconButton>
+            <Tooltip title="Edit Profile" placement="right">
+              <IconButton onClick={handleEditClick}>
+                <EditTwoToneIcon />
+              </IconButton>
+            </Tooltip>
           ))}
       </div>
       <hr className={pageStyles.divider} />
