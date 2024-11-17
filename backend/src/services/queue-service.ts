@@ -41,16 +41,15 @@ export class JobQueue {
     return Number(targetDate) - Date.now();
   }
 
-
   /*
-  * Add a contest to the job-queue, to run team-matching algorithm 
-  * on both the earlyBird and cutoff dates
-  * 
-  * @param contestId - contest-id of the contest we are queueing
-  * @param earlyBirdDate - The early-bird date of the contest, when the team-matching algo will first run
-  * @param cutoffDate - Cut-off date for submissions, will re-run the team-mathching algo
-  * 
-  */ 
+   * Add a contest to the job-queue, to run team-matching algorithm
+   * on both the earlyBird and cutoff dates
+   *
+   * @param contestId - contest-id of the contest we are queueing
+   * @param earlyBirdDate - The early-bird date of the contest, when the team-matching algo will first run
+   * @param cutoffDate - Cut-off date for submissions, will re-run the team-mathching algo
+   *
+   */
   async addJob(contestId: string, earlyBirdDate: Date, cutoffDate: Date) {
     const earlyBirdDelay = this.calculateDelay(earlyBirdDate);
     await this.queue.add(
@@ -70,11 +69,11 @@ export class JobQueue {
   }
 
   /*
-  * Remove a contest's job from the job-queue
-  *
-  * @param contestId - contest-id of the contest we are removing
-  * 
-  */ 
+   * Remove a contest's job from the job-queue
+   *
+   * @param contestId - contest-id of the contest we are removing
+   *
+   */
   async removeJob(contestId: string) {
     const earlyBirdJob = await this.queue.getJob(contestId + ":early");
     await earlyBirdJob?.remove();
