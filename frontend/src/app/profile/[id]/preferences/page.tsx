@@ -55,11 +55,11 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
   useEffect(() => {
     if (checkViewingPermissions(params.id, userSession)) {
       if (userSession.id === params.id) setDefault();
-    } else {
+    } else if (userSession.id !== "") {
       // Redirect user to 404 page not found if they don't have permission to view route
       router.replace("/404");
     }
-  }, []);
+  }, [userSession]);
 
   return (
     <div className={profileStyles["inner-screen"]}>

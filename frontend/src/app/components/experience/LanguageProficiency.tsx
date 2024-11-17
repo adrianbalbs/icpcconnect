@@ -20,7 +20,7 @@ const LanguageProficiency: React.FC<ProficiencyProps> = ({
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: "1fr 4fr",
+        gridTemplateColumns: "8fr 33fr 1fr",
         alignItems: "center",
         m: "20px 40px",
       }}

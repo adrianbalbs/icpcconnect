@@ -23,10 +23,13 @@ const AccountSettings: React.FC<ProfileProps> = ({ params }) => {
 
   // Redirect user to 404 page not found if they don't have permission to view route
   useEffect(() => {
-    if (!checkViewingPermissions(params.id, userSession)) {
+    if (
+      userSession.id !== "" &&
+      !checkViewingPermissions(params.id, userSession)
+    ) {
       router.replace("/404");
     }
-  }, []);
+  }, [userSession]);
 
   return (
     <div className={profileStyles["inner-screen"]}>

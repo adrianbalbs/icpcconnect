@@ -4,11 +4,10 @@ import { getPreferences } from "@/utils/preferenceInfo";
 import pageStyles from "@/styles/Page.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { experienceHeading } from "@/styles/sxStyles";
-import { Box, IconButton, Typography } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography } from "@mui/material";
 import { PreferenceType, Teammate } from "@/profile/[id]/preferences/page";
 import { updatePreferences } from "@/utils/preferenceInfo";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import DeleteBtn from "../utils/DeleteBtn";
 
 interface InclusionProps {
   id: string;
@@ -19,7 +18,6 @@ interface InclusionProps {
 const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
   const [type, setType] = useState("");
   const [inclusion, setInclusion] = useState<Teammate[]>([]);
-  const { userSession } = useAuth();
 
   const getStudents = async () => {
     const preference = await getPreferences(id, "preferences");
@@ -56,19 +54,7 @@ const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
         >
           <Typography sx={experienceHeading}>Student Id</Typography>
           <Typography sx={experienceHeading}>Student Name</Typography>
-          {(userSession.id === id || userSession.role === "Admin") && (
-            <IconButton
-              sx={{
-                height: "21px",
-                width: "25px",
-                borderRadius: "5px",
-                justifySelf: "end",
-              }}
-              onClick={deletePreference}
-            >
-              <DeleteIcon sx={{ fontSize: "21px" }} />
-            </IconButton>
-          )}
+          <DeleteBtn id={id} handleDelete={deletePreference} />
         </Box>
         <hr className={pageStyles.divider} />
         {inclusion.map((i) => (

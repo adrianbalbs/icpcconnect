@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import pageStyles from "@/styles/Page.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
-import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import DeleteBtn from "../utils/DeleteBtn";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/constants";
+import { experienceIcon, experienceItemText } from "@/styles/sxStyles";
+
+interface CourseProps {
+  id: string;
+  coursesTaken: number[];
+  update: () => Promise<void>;
+}
 
 export const valueToText = [
   "Programming Fundamentals",
@@ -11,8 +21,21 @@ export const valueToText = [
   "Programming Challenges",
 ];
 
-const CoursesExperience = ({ coursesTaken }: { coursesTaken: number[] }) => {
+const CoursesExperience = ({ id, coursesTaken, update }: CourseProps) => {
   const [courses, setCourses] = useState<number[]>([]);
+
+  const handleDelete = async () => {
+    try {
+      await axios.patch(
+        `${SERVER_URL}/api/users/${id}/student-details`,
+        { coursesCompleted: [] },
+        { withCredentials: true },
+      );
+      update();
+    } catch (error) {
+      console.log(`Delete course experience error: ${error}`);
+    }
+  };
 
   useEffect(() => {
     const sorted = [...coursesTaken];
@@ -22,17 +45,28 @@ const CoursesExperience = ({ coursesTaken }: { coursesTaken: number[] }) => {
 
   return (
     <>
-      <h3 className={experienceStyles.heading}>Relevant Courses</h3>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          m: "0 32px 10px 0",
+        }}
+      >
+        <h3 className={experienceStyles.heading}>Relevant Courses</h3>
+        <Box sx={{ placeSelf: "end" }}>
+          <DeleteBtn id={id} handleDelete={handleDelete} />
+        </Box>
+      </Box>
       <hr className={pageStyles.divider} />
       <List sx={{ m: "12px 40px 0", p: 0, width: "100%", maxWidth: 360 }}>
         {courses.map((c) => (
           <ListItem key={c} sx={{ padding: "5px" }}>
-            <ListItemIcon sx={{ color: "#444444" }}>
-              <SchoolRoundedIcon />
+            <ListItemIcon>
+              <SchoolRoundedIcon sx={experienceIcon} />
             </ListItemIcon>
             <ListItemText
               primary={valueToText[c - 1]}
-              sx={{ fontSize: "14px", color: "#333333" }}
+              sx={experienceItemText}
             />
           </ListItem>
         ))}

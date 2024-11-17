@@ -30,7 +30,7 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
-  const [disable, setDisable] = useState(false);
+  const [disable, setDisable] = useState(true);
   const [alert, setAlert] = useState({ old: "", curr: "" });
   const [include, setInclude] = useState("");
   const [exclude, setExclude] = useState("");

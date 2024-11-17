@@ -144,3 +144,18 @@ export const modalInputBox = { m: "30px 35px", width: "calc(100% - 70px)" };
 export const sortIcons = {
   fontSize: "20px",
 };
+
+export const experienceItem = {
+  display: "grid",
+  gridTemplateColumns: "1fr 5fr 1fr 9fr",
+  p: "5px",
+};
+
+export const experienceItemText = {
+  "& .MuiTypography-root": {
+    fontSize: "14px",
+  },
+  color: "#333333",
+};
+
+export const experienceIcon = { fontSize: "21px", color: "#444444" };

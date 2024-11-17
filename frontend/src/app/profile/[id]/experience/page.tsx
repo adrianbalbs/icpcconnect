@@ -118,11 +118,11 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
 
     if (checkViewingPermissions(params.id, userSession)) {
       initialisePage();
-    } else {
+    } else if (userSession.id !== "") {
       // Redirect user to 404 page not found if they don't have permission to view route
       router.replace("/404");
     }
-  }, [getExperience]);
+  }, [getExperience, userSession]);
 
   return (
     <div className={profileStyles["inner-screen"]}>
@@ -131,14 +131,29 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider} />
       <Box sx={{ height: "calc(100% - 121px)", overflow: "scroll" }}>
-        {added.language && <LanguageExperience {...experience} />}
+        {added.language && (
+          <LanguageExperience
+            {...experience}
+            id={params.id}
+            update={getExperience}
+          />
+        )}
         {added.coursesCompleted && (
-          <CoursesExperience coursesTaken={experience.coursesCompleted} />
+          <CoursesExperience
+            id={params.id}
+            coursesTaken={experience.coursesCompleted}
+            update={getExperience}
+          />
         )}
         {(added.contestExperience ||
           added.leetcodeRating ||
           added.codeforcesRating) && (
-          <ContestExperience added={added} experience={experience} />
+          <ContestExperience
+            id={params.id}
+            added={added}
+            experience={experience}
+            update={getExperience}
+          />
         )}
         {userSession.id === params.id && (
           <ExperienceModal

@@ -43,14 +43,12 @@
 }
 
 .numbers {
-  position: absolute;
-  right: 0;
-  margin: 0px 10px;
+  margin: 0;
   padding: 0 7px;
   height: 19px;
+  width: 55px;
   text-align: center;
   color: rgb(111, 111, 163);
   font-weight: bold;
-  /* border-top: 3px double white; */
-  /* border-bottom: 3px double rgb(111, 111, 163); */
+  font-size: 14px;
 }

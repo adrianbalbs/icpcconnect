@@ -37,7 +37,7 @@ const ExperienceModal: React.FC<ModalProps> = ({
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
-  const [disable, setDisable] = useState(false);
+  const [disable, setDisable] = useState(true);
   const [newExperience, setNewExperience] = useState<Experiences>(experience);
 
   const renderButton = () => {
@@ -90,6 +90,17 @@ const ExperienceModal: React.FC<ModalProps> = ({
       buttonRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [type]);
+
+  useEffect(() => {
+    if (type === "language") {
+      setDisable(
+        newExperience.cExperience === "none" &&
+          newExperience.cppExperience === "none" &&
+          newExperience.pythonExperience === "none" &&
+          newExperience.javaExperience === "none",
+      );
+    }
+  }, [newExperience]);
 
   return (
     <div className={experienceStyles.modal}>
