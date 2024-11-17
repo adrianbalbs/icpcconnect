@@ -11,6 +11,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 
 interface TeamCardProps {
+  teamId: string;
   name: string;
   university: string;
   members: Array<Member>;
@@ -24,6 +25,7 @@ interface TeamCardProps {
 }
 
 const TeamCard: React.FC<TeamCardProps> = ({
+  teamId,
   name,
   university,
   members,
@@ -35,6 +37,8 @@ const TeamCard: React.FC<TeamCardProps> = ({
   const [substitute, setSubstitute] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+
+  const replacementArr: string[] = new Array(members.length).fill("");
 
   const handleClick = (
     member: Member,
@@ -50,11 +54,40 @@ const TeamCard: React.FC<TeamCardProps> = ({
     setSubstitute(replacement.replacementStudentId);
   };
 
+  const handleReplace = async (index: number, replace: string) => {
+    console.log(index, replacementArr[index]);
+    replacementArr[index] = replace;
+  };
+
   const handleOpenEdit = async () => {
     setOpenEdit(true);
   };
 
   const handleEdit = async () => {
+    console.log(replacementArr);
+    for (const i in replacementArr) {
+      if (replacementArr[i] != "") {
+        try {
+          console.log({
+            team: teamId,
+            student: members[i].id,
+            replacedWith: replacementArr[i],
+          });
+          await axios.put(
+            `${SERVER_URL}/api/teams/handleReplacement/`,
+            {
+              team: teamId,
+              student: members[i].id,
+              replacedWith: replacementArr[i],
+            },
+            { withCredentials: true },
+          );
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      replacementArr[i] = "";
+    }
     setOpenEdit(false);
   };
 
@@ -180,6 +213,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
               <input
                 className={memberStyles["member-edit"]}
                 placeholder="Replace with..."
+                onChange={(e) => handleReplace(index, e.target.value)}
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "Replace with...")}
               ></input>
