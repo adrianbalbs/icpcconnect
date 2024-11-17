@@ -1,57 +1,15 @@
 import { DatabaseConnection } from "../db/database.js";
-import z from "zod";
 import { contests, universities } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { DeleteResponse } from "../types/api-res.js";
+import {
+  CreateContest,
+  GetContestResponse,
+  UpdateContestResponse,
+  UpdateContest,
+} from "../schemas/index.js";
 import { JobQueue } from "./queue-service.js";
-
-export const CreateContestSchema = z
-  .strictObject({
-    name: z.string().min(5),
-    earlyBirdDate: z
-      .string()
-      .transform((dateStr) => new Date(dateStr))
-      .refine((date) => date > new Date(), {
-        message: "Early Bird Date must be in the future",
-      }),
-    cutoffDate: z
-      .string()
-      .transform((dateStr) => new Date(dateStr))
-      .refine((date) => date > new Date(), {
-        message: "Cutoff Date must be in the future",
-      }),
-    contestDate: z
-      .string()
-      .transform((dateStr) => new Date(dateStr))
-      .refine((date) => date > new Date(), {
-        message: "Contest Date must be in the future",
-      }),
-    site: z.number(),
-  })
-  .refine((data) => data.earlyBirdDate <= data.cutoffDate, {
-    message: "Early Bird Date should be before Cutoff Date",
-    path: ["earlyBirdDate"],
-  })
-  .refine((data) => data.cutoffDate <= data.contestDate, {
-    message: "Cutoff Date should be before Contest Date",
-    path: ["cutoffDate"],
-  });
-
-export type CreateContest = z.infer<typeof CreateContestSchema>;
-export const UpdateContestSchema = CreateContestSchema;
-export type UpdateContest = z.infer<typeof UpdateContestSchema>;
-export type UpdateContestResponse = UpdateContest;
-
-export type GetContestResponse = {
-  id: string;
-  name: string;
-  earlyBirdDate: Date;
-  cutoffDate: Date;
-  contestDate: Date;
-  siteId: number;
-  site: string;
-};
 
 export class ContestService {
   constructor(
@@ -59,6 +17,19 @@ export class ContestService {
     private readonly jobQueue: JobQueue,
   ) {}
 
+  /*
+   * Create a new contest for students to participate in
+   *
+   * @param req -CreateContest
+   *   req.name - name of contest
+   *   req.earlyBirdDate -
+   *   req.cutoffDate  - Cutoff for student applications
+   *   req.contestDate - When the contest is running
+   *   req.site - The university id corresponding to the site contest is held at
+   *
+   * @returns id - Internal id of the contest
+   *
+   */
   async create(req: CreateContest): Promise<{ id: string }> {
     const [res] = await this.db
       .insert(contests)
@@ -78,6 +49,24 @@ export class ContestService {
     return { id: res.id };
   }
 
+  /*
+   * Get information about a given contest, given it's id
+   *
+   * @param contestId - id of the given contest
+   *
+   * @returns GetContestResponse
+   *   response.id - Contest's Id
+   *   response.name - Name of contest
+   *   response.earlyBirdDate - EarlyBird date for team-matching
+   *   response.cutoffDate - Cutoff date for applications
+   *   response.contestDate - When contest is running
+   *   response.siteId - Id of university contest is held at
+   *   response.site - Name of universtiy contest is held at
+   *
+   * @throws NotFoundError
+   *   - If contest-id is invalid / doesn't correspond to a contest
+   *
+   */
   async get(contestId: string): Promise<GetContestResponse> {
     const [contest] = await this.db
       .select({
@@ -100,6 +89,19 @@ export class ContestService {
     return contest;
   }
 
+  /*
+   * Get information about all currently registered contests
+   *
+   * @returns GetContestResponse[]
+   *   response.id - Contest's Id
+   *   response.name - Name of contest
+   *   response.earlyBirdDate - EarlyBird date for team-matching
+   *   response.cutoffDate - Cutoff date for applications
+   *   response.contestDate - When contest is running
+   *   response.siteId - Id of university contest is held at
+   *   response.site - Name of universtiy contest is held at
+   *
+   */
   async getAll(): Promise<{ allContests: GetContestResponse[] }> {
     const allContests = await this.db
       .select({
@@ -117,6 +119,17 @@ export class ContestService {
     return { allContests };
   }
 
+  /*
+   * Delete a contest, given it's associated id
+   *
+   * @param contestId - id of the given contest
+   *
+   * @returns DeleteResponse - wrapper around {status: "OK"}
+   *
+   * @throws BadRequest
+   *   - If contest-id is invalid / doesn't correspond to a contest
+   *
+   */
   async delete(contestId: string): Promise<DeleteResponse> {
     const [contest] = await this.db
       .select()

@@ -4,11 +4,13 @@ import { authorise } from "../middleware/authorise.js";
 import { validateData } from "../middleware/validator-middleware.js";
 import { AuthService } from "../services/auth-service.js";
 import {
-  ContestService,
   CreateContest,
   CreateContestSchema,
   UpdateContestSchema,
-} from "../services/contest-service.js";
+} from "../schemas/index.js";
+import {
+  ContestService
+} from "../services/index.js";
 
 export function contestRouter(
   contestService: ContestService,

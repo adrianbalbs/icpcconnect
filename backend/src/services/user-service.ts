@@ -23,13 +23,37 @@ import {
 } from "../schemas/index.js";
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
-import { badRequest, HTTPError, notFoundError, unauthorizedError } from "../utils/errors.js";
-import { and, eq, getTableColumns } from "drizzle-orm";
+import {
+  badRequest,
+  HTTPError,
+  notFoundError,
+  unauthorizedError,
+} from "../utils/errors.js";
+import { and, eq, getTableColumns, isNull } from "drizzle-orm";
 import { CodesService } from "./codes-service.js";
 
 export class UserService {
   constructor(private readonly db: DatabaseConnection) {}
 
+  /*
+   * Create a new user
+   *
+   * @remarks
+   *  Doesn't throw on invalid inviteCode, but returns "INVALID" as id
+   *
+   * @param req - CreateUser
+   *   req.givenName - users' given name
+   *   req.familyName - users' family name
+   *   req.email - users' email
+   *   req.password - account's password
+   *   req.role - users' role (e.g Student, Coach)
+   *   req.studentId - Optional, student-id of user
+   *   req.inviteCode - Optional, invite code (for privileged users)
+   *   req.verificationCode - Optional, verification code
+   *
+   * @returns id - Internal id of the user
+   *
+   */
   async createUser(
     req: CreateUser,
     codesService: CodesService,
@@ -58,6 +82,17 @@ export class UserService {
     });
   }
 
+  /*
+   * Get a user, given their internal-id
+   *
+   * @param id - user's internal id
+   *
+   * @returns UserDTO - All user details, omitting their password
+   *
+   * @throws NotFoundError
+   *   If user-id doesn't correspond to a user
+   *
+   */
   async getUserById(id: string): Promise<UserDTO> {
     const { password, refreshTokenVersion, ...usersRest } =
       getTableColumns(users);
@@ -99,6 +134,20 @@ export class UserService {
     return { ...user, languagesSpoken, coursesCompleted };
   }
 
+  /*
+   * Update a given user's general details
+   *
+   * @param id - User's internal id
+   * @param req - UpdateUser (All fields are optional)
+   *   req.givenName - User's new given name
+   *   req.familyName - User's new family name
+   *   req.email - User's new email
+   *   req.role  - User's new role
+   *   req.university - User's new university
+   *
+   * @returns id - user's internal id
+   *
+   */
   async updateUser(id: string, req: UpdateUser): Promise<{ id: string }> {
     if (Object.keys(req).length === 0) {
       return { id };
@@ -111,7 +160,21 @@ export class UserService {
     return user;
   }
 
-  async updatePassword(id: string, oldPassword: string, newPassword: string): Promise<{ id: string }> {
+  /*
+   * Update a given user's password
+   *
+   * @param id - User's internal id
+   * @param oldPassword - User's old password
+   * @param newPassword - User's new password
+   *
+   * @returns id - user's internal id
+   *
+   */
+  async updatePassword(
+    id: string,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<{ id: string }> {
     const checkUser = await this.db
       .select()
       .from(users)
@@ -123,7 +186,10 @@ export class UserService {
 
     // Compare the provided password with the stored hash
     const storedHash = checkUser[0].password;
-    const isPasswordValid = await passwordUtils().compare(oldPassword, storedHash);
+    const isPasswordValid = await passwordUtils().compare(
+      oldPassword,
+      storedHash,
+    );
     if (isPasswordValid) {
       newPassword = await passwordUtils().hash(newPassword);
       const [user] = await this.db
@@ -131,11 +197,20 @@ export class UserService {
         .set({ password: newPassword })
         .where(eq(users.id, id))
         .returning({ id: users.id });
-        return user;
+      return user;
     }
     throw new HTTPError(unauthorizedError);
   }
 
+  /*
+   * Update a given user's student details
+   *
+   * @param id - User's internal id
+   * @param req - UpdateStudentDetails
+   *
+   * @returns id - user's internal id
+   *
+   */
   async updateStudentDetails(
     id: string,
     req: UpdateStudentDetails,
@@ -176,6 +251,15 @@ export class UserService {
     return user;
   }
 
+  /*
+   * Get all user's details
+   *
+   * @param role - if specified, only query users of given role
+   * @param contest - if specified, only query users in a given contest
+   *
+   * @returns UserDTO[] - All user details, omitting their password
+   *
+   */
   async getAllUsers(
     role?: UserRole,
     contest?: string,
@@ -241,6 +325,85 @@ export class UserService {
     return { allUsers };
   }
 
+  async getStudentsWithoutTeam(
+    contest: string,
+    university: number,
+  ): Promise<{ allUsers: UserDTO[] }> {
+    const { password, refreshTokenVersion, ...usersRest } =
+      getTableColumns(users);
+
+    const { userId, ...studentDetailsRest } = getTableColumns(studentDetails);
+    const rawUsers = await this.db
+      .select({
+        ...usersRest,
+        ...studentDetailsRest,
+        university: universities.name,
+        team: teams.name,
+      })
+      .from(users)
+      .innerJoin(studentDetails, eq(studentDetails.userId, users.id))
+      .innerJoin(universities, eq(universities.id, users.university))
+      .innerJoin(registrationDetails, eq(registrationDetails.student, users.id))
+      .leftJoin(teams, eq(teams.id, studentDetails.team))
+      .where(
+        and(
+          and(
+            isNull(studentDetails.team),
+            and(
+              eq(universities.id, university),
+              eq(registrationDetails.contest, contest),
+            ),
+          ),
+          eq(users.role, "Student"),
+        ),
+      );
+
+    const allUsers = await Promise.all(
+      rawUsers.map(async (user) => {
+        const languagesSpoken = await this.db
+          .select({ code: languages.code, name: languages.name })
+          .from(languages)
+          .innerJoin(
+            languagesSpokenByStudent,
+            eq(languages.code, languagesSpokenByStudent.languageCode),
+          )
+          .where(eq(languagesSpokenByStudent.studentId, user.id));
+
+        const coursesCompleted = await this.db
+          .select({
+            id: coursesCompletedByStudent.courseId,
+            type: courses.type,
+          })
+          .from(coursesCompletedByStudent)
+          .innerJoin(
+            courses,
+            eq(courses.id, coursesCompletedByStudent.courseId),
+          )
+          .where(eq(coursesCompletedByStudent.studentId, user.id));
+
+        return { ...user, languagesSpoken, coursesCompleted };
+      }),
+    );
+
+    return { allUsers };
+  }
+
+  /*
+   * Register a user for a given contest
+   *
+   * @param student - The user-id of the given student
+   * @param contest - The id of the contest we are registering for
+   *
+   * @returns
+   *   student - the user-id of the given contest
+   *   contest - the contest-id of the given contest
+   *   timeSubmitted - the date when registration occured
+   *
+   * @throws NotFoundError
+   *   - If contest-id doesnt match a contest
+   * @throws BadRequest
+   *   - If contest's cutoffDate has already passed
+   */
   async registerForContest(
     student: string,
     contest: string,
@@ -275,6 +438,20 @@ export class UserService {
     return res;
   }
 
+  /*
+   * Get contest-registration details of a given user
+   *
+   * @param student - The user-id of the given student
+   * @param contest - The id of the contest we are registering for
+   *
+   * @returns
+   *   student - the user-id of the given contest
+   *   contest - the contest-id of the given contest
+   *   timeSubmitted - the date when registration occured
+   *
+   * @throws NotFoundError
+   *   - If the contest-id doesn't match a given contest
+   */
   async getContestRegistrationDetails(
     student: string,
     contest: string,
@@ -297,6 +474,15 @@ export class UserService {
     return res;
   }
 
+  /*
+   * Delete a given user's registration for a contest
+   *
+   * @param student - The user-id of the given student
+   * @param contest - The id of the contest we are registering for
+   *
+   * @returns DeleteResponse - a wrapper around {status: "OK"}
+   *
+   */
   async deleteContestRegistration(
     student: string,
     contest: string,
@@ -313,6 +499,17 @@ export class UserService {
     return { status: "OK" };
   }
 
+  /*
+   * Delete a given user's registration for a contest
+   *
+   * @param id - The user-id of the given user
+   *
+   * @returns DeleteResponse - a wrapper around {status: "OK"}
+   *
+   * @throws BadRequest
+   *  - If specified user doesn't exist
+   *
+   */
   async deleteUser(id: string): Promise<DeleteResponse> {
     const [user] = await this.db
       .select({ id: users.id })
@@ -330,6 +527,15 @@ export class UserService {
     return { status: "OK" };
   }
 
+  /*
+   * Get a given student's entered exclusions
+   *
+   * @param id - The user-id of the given student
+   *
+   * @returns ExclusionsResponse
+   *   exclusions: comma-delimited list of excluded 'names'
+   *
+   */
   async getStudentExclusions(id: string): Promise<ExclusionsResponse> {
     const [exclusions] = await this.db
       .select({ exclusions: studentDetails.exclusions })
@@ -339,6 +545,16 @@ export class UserService {
     return exclusions;
   }
 
+  /*
+   * Get a given student's entered preferences
+   *
+   * @param id - The user-id of the given student
+   *
+   * @returns PreferencesResponse[]
+   *   - name: Name of student
+   *   - studentId: Preferred students studentId
+   *
+   */
   async getStudentPreferences(
     id: string,
   ): Promise<{ preferences: PreferencesResponse[] }> {

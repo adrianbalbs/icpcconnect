@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS "student_details" (
 CREATE TABLE IF NOT EXISTS "teams" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(50) NOT NULL,
-	"university" integer,
+	"university" integer NOT NULL,
 	"contest" uuid NOT NULL,
 	"flagged" boolean DEFAULT false NOT NULL
 );
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS "teams" (
 CREATE TABLE IF NOT EXISTS "universities" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(200) NOT NULL,
-	"hosted_at" integer
+	"hosted_at" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
