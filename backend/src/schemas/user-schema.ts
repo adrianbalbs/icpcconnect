@@ -301,6 +301,7 @@ export const StudentDetailsScehma = z.strictObject({
   javaExperience: LanguageExperienceEnum,
   pythonExperience: LanguageExperienceEnum,
   coursesCompleted: z.array(CourseSchema),
+  preferences: z.string().default(""),
   exclusions: z.string().default(""),
 });
 
@@ -360,17 +361,17 @@ export const GetAllUsersQuerySchema = z.strictObject({
 });
 
 export const ExclusionsResponseSchema = z.object({
-  exclusions: z.string()
-})
+  exclusions: z.string(),
+});
 
-export type ExclusionsResponse = z.infer<typeof ExclusionsResponseSchema>
+export type ExclusionsResponse = z.infer<typeof ExclusionsResponseSchema>;
 
 export const PreferencesResponseSchema = z.object({
   studentId: z.string(),
-  name: z.string()
-})
+  name: z.string(),
+});
 
-export type PreferencesResponse = z.infer<typeof PreferencesResponseSchema>
+export type PreferencesResponse = z.infer<typeof PreferencesResponseSchema>;
 export const CreateContestRegistrationSchema = z.strictObject({
   student: z.string(),
   contest: z.string(),

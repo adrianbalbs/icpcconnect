@@ -1,17 +1,20 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { AdminService, AuthService } from "../services/index.js";
+import {
+  AdminService,
+  AlgorithmRewriteService,
+  AuthService,
+} from "../services/index.js";
 import {
   createAuthenticationMiddleware,
   validateData,
   authorise,
 } from "../middleware/index.js";
-import { AlgorithmService } from "../services/algorithm-service.js";
 import { AlgorithmRequest, AlgorithmRequestSchema } from "../schemas/index.js";
 
 export function adminRouter(
   adminService: AdminService,
   authService: AuthService,
-  algorithmService: AlgorithmService,
+  algorithmService: AlgorithmRewriteService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
   return Router()
@@ -26,7 +29,7 @@ export function adminRouter(
       ) => {
         try {
           const { contestId } = req.body;
-          const success = await algorithmService.callAlgorithm(contestId);
+          const success = await algorithmService.run(contestId);
           res.status(200).json(success);
         } catch (err) {
           next(err);

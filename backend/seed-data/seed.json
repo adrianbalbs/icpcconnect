@@ -10,7 +10,7 @@
       "givenName": "Adrian",
       "familyName": "Balbalosa",
       "password": "test1",
-      "email": "z5397730@ad.unsw.edu.au",
+      "email": "student_1@ad.com",
       "role": "Student",
       "university": 1,
       "studentId": "z5397730",
@@ -29,7 +29,7 @@
       "javaExperience": "prof",
       "pythonExperience": "prof",
       "coursesTaken": [1,2,3],
-      "preferences": ""
+      "preferences": "z5418213, z5421467"
     },
     {
       "id": "c47253b3-5181-4680-81e0-01fc7b3c6c09",
@@ -247,7 +247,7 @@
       "email": "student_11@ad.com",
       "role": "Student",
       "university": 2,
-      "studentId": "z1123333",
+      "studentId": "z2382031",
       "pronouns": "he/him",
       "photoConsent": true,
       "languagesSpoken": [
@@ -273,7 +273,7 @@
       "email": "student_12@ad.com",
       "role": "Student",
       "university": 2,
-      "studentId": "z1123333",
+      "studentId": "z2023419",
       "pronouns": "he/him",
       "photoConsent": true,
       "languagesSpoken": [
@@ -299,7 +299,7 @@
       "email": "student_13@ad.com",
       "role": "Student",
       "university": 2,
-      "studentId": "z1123333",
+      "studentId": "z9876543",
       "pronouns": "he/him",
       "photoConsent": true,
       "languagesSpoken": [

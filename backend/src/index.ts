@@ -11,6 +11,7 @@ import {
   UserService,
   EmailService,
   JobQueue,
+  AlgorithmRewriteService,
 } from "./services/index.js";
 import {
   codesRouter,
@@ -49,6 +50,11 @@ const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
 const algorithmService = new AlgorithmService(dbConn);
+const newAlgorithmService = new AlgorithmRewriteService(
+  dbConn,
+  userService,
+  teamService,
+);
 const emailService = new EmailService(dbConn);
 const jobQueue = new JobQueue(algorithmService);
 const contestService = new ContestService(dbConn, jobQueue);
@@ -78,7 +84,10 @@ app
   .use("/api/email", emailRouter(emailService))
   .use("/api/contests", contestRouter(contestService, authService))
   .use("/api", codesRouter(codesService, authService))
-  .use("/api/admin", adminRouter(adminService, authService, algorithmService))
+  .use(
+    "/api/admin",
+    adminRouter(adminService, authService, newAlgorithmService),
+  )
   .use("/api/admin/queues", serverAdapter.getRouter())
   .use(errorHandlerMiddleware);
 
