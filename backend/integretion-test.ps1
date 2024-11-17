@@ -47,4 +47,5 @@ try {
 }
 finally {
     Cleanup
+    redis
 }
