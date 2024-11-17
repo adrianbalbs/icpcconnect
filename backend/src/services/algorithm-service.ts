@@ -68,31 +68,17 @@ export class AlgorithmService {
   }
 
   /**
-   * Converts a string of preferences (comma-separated) into a Set of preferences.
+   * Converts a string (comma-separated) into a Set of items.
    *
-   * @param {string} s The string representing the preferences.
-   * @returns {Set<string>} A Set containing the preferences as individual items.
+   * @param {string} s The string to be converted.
+   * @param {string} [defaultValue="none"] The value to treat as empty.
+   * @returns {Set<string>} A Set containing the items as individual elements.
    */
-  private getPreferences(s: string): Set<string> {
-    if (s === "" || s === "none") {
+  private parseToSet(s: string, defaultValue: string = "none"): Set<string> {
+    if (s === "" || s === defaultValue) {
       return new Set();
-    } else {
-      return new Set(s.split(", "));
     }
-  }
-
-  /**
-   * Converts a string of exclusions (comma-separated) into a Set of exclusions.
-   *
-   * @param {string} s The string representing the exclusions.
-   * @returns {Set<string>} A Set containing the exclusions as individual items.
-   */
-  private getExclusions(s: string): Set<string> {
-    if (s === "") {
-      return new Set();
-    } else {
-      return new Set(s.split(", "));
-    }
+    return new Set(s.split(", "));
   }
 
   /**
@@ -396,8 +382,8 @@ export class AlgorithmService {
         ...user,
         name: `${user.givenName} ${user.familyName}`,
         score: this.calculateScore(user),
-        preferences: this.getPreferences(user.preferences),
-        exclusions: this.getExclusions(user.exclusions),
+        preferences: this.parseToSet(user.preferences),
+        exclusions: this.parseToSet(user.exclusions),
       };
       map.set(student.studentId, student);
       return map;
