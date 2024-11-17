@@ -16,9 +16,12 @@ import {
   coursesCompletedByStudent,
   registrationDetails,
 } from "./schema.js";
-import { JobQueue } from "../services/queue-service.js";
-import { AlgorithmService } from "../services/algorithm-service.js";
-
+import {
+  AlgorithmService,
+  JobQueue,
+  TeamService,
+  UserService,
+} from "../services/index.js";
 type UserTable = {
   id: string;
   givenName: string;
@@ -230,7 +233,9 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding contests");
   const allContests = data.default.contests;
-  const jobQueue = new JobQueue(new AlgorithmService(db));
+  const jobQueue = new JobQueue(
+    new AlgorithmService(db, new UserService(db), new TeamService(db)),
+  );
   for (const contest of allContests) {
     const { id, name, site } = contest;
     await db
