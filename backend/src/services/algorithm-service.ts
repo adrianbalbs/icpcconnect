@@ -328,6 +328,7 @@ export class AlgorithmService {
       const fstStudent = pq.pop()!;
       const tempQueue: Student[] = [];
       let foundTeam = false;
+
       while (pq.size() > 0) {
         const sndStudent = pq.pop()!;
         if (!this.isCompatible(fstStudent, sndStudent)) {
@@ -335,6 +336,7 @@ export class AlgorithmService {
           continue;
         }
         const tempQueue2: Student[] = [];
+
         while (pq.size() > 0) {
           const thrdStudent = pq.pop()!;
           if (
