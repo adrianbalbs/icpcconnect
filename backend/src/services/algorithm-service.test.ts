@@ -8,7 +8,6 @@ import {
 import { TeamService, UserService, AlgorithmService } from "./index.js";
 
 describe("Algorithm Service Tests", () => {
-  // Refactored createUser function using object and destructuring
   const createUser = ({
     id,
     studentId,
