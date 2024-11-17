@@ -49,6 +49,11 @@ export class AlgorithmService {
     private readonly teamService: TeamService,
   ) {}
 
+  /**
+   * Fetches a list of all universities excluding the "N/A University" option
+   *
+   * @returns {Promise<{ id: number; name: string }[]>} An array of university objects with ID and name.
+   */
   private async getAllUniversities(): Promise<{ id: number; name: string }[]> {
     // Ignore the N/A University
     const allUniversities = await this.db
@@ -62,6 +67,12 @@ export class AlgorithmService {
     return allUniversities;
   }
 
+  /**
+   * Converts a string of preferences (comma-separated) into a Set of preferences.
+   *
+   * @param {string} s The string representing the preferences.
+   * @returns {Set<string>} A Set containing the preferences as individual items.
+   */
   private getPreferences(s: string): Set<string> {
     if (s === "" || s === "none") {
       return new Set();
@@ -70,6 +81,12 @@ export class AlgorithmService {
     }
   }
 
+  /**
+   * Converts a string of exclusions (comma-separated) into a Set of exclusions.
+   *
+   * @param {string} s The string representing the exclusions.
+   * @returns {Set<string>} A Set containing the exclusions as individual items.
+   */
   private getExclusions(s: string): Set<string> {
     if (s === "") {
       return new Set();
@@ -78,6 +95,13 @@ export class AlgorithmService {
     }
   }
 
+  /**
+   * Calculates the score for a student based on various factors like contest experience,
+   * Leetcode/Codeforces rating, and completed courses.
+   *
+   * @param {UserDTO} student The student object containing the user's data.
+   * @returns {number} The calculated score.
+   */
   private calculateScore(student: UserDTO): number {
     return (
       student.contestExperience * this.contestWeight +
@@ -89,6 +113,13 @@ export class AlgorithmService {
     );
   }
 
+  /**
+   * Returns the maximum experience between two LanguageExperience values.
+   *
+   * @param {LanguageExperience} experience1 The first experience value.
+   * @param {LanguageExperience} experience2 The second experience value.
+   * @returns {LanguageExperience} The experience with the higher level.
+   */
   private maxExperience(
     experience1: LanguageExperience,
     experience2: LanguageExperience,
@@ -98,6 +129,13 @@ export class AlgorithmService {
       : experience2;
   }
 
+  /**
+   * Checks whether two students are compatible based on their coding languages and spoken languages.
+   *
+   * @param {Score} student1 The first student's score and language data.
+   * @param {Score} student2 The second student's score and language data.
+   * @returns {boolean} True if the students are compatible, false otherwise.
+   */
   private isCompatible(student1: Score, student2: Score): boolean {
     const sameCoding =
       (student1.pythonExperience !== "none" &&
@@ -115,6 +153,13 @@ export class AlgorithmService {
     return sameCoding && sameSpoken;
   }
 
+  /**
+   * Processes students who have full teams (2 preferences) and assigns them to teams.
+   *
+   * @param {Student[]} studentsWithFullTeam The list of students with full team preferences.
+   * @param {Map<string, Student>} studentMap A map of student IDs to student objects.
+   * @param {Team[]} teams The array to store the created teams.
+   */
   private processStudentsWithFullTeam(
     studentsWithFullTeam: Student[],
     studentMap: Map<string, Student>,
@@ -144,6 +189,12 @@ export class AlgorithmService {
     }
   }
 
+  /**
+   * Checks if a team contains any exclusions based on the students' preferences.
+   *
+   * @param {Student[]} team The list of students in the team.
+   * @returns {boolean} True if the team has an exclusion, false otherwise.
+   */
   private checkExclusions(team: Student[]): boolean {
     for (const student of team) {
       for (const otherStudent of team) {
@@ -162,6 +213,54 @@ export class AlgorithmService {
     return false;
   }
 
+  /**
+   * Combines the data from two students into a single object containing the maximum values for their experiences
+   * and the combined language set.
+   *
+   * @param {Student} student1 The first student
+   * @param {Student} student2 The second student
+   * @returns {Score} The maximum score between both students
+   */
+  private combineStudentData(student1: Student, student2: Student): Score {
+    const score = Math.max(student1.score, student2.score);
+    const languagesSpoken = [
+      ...new Set([...student1.languagesSpoken, ...student2.languagesSpoken]),
+    ];
+    const cppExperience = this.maxExperience(
+      student1.cppExperience,
+      student2.cppExperience,
+    );
+    const cExperience = this.maxExperience(
+      student1.cExperience,
+      student2.cExperience,
+    );
+    const javaExperience = this.maxExperience(
+      student1.javaExperience,
+      student2.javaExperience,
+    );
+    const pythonExperience = this.maxExperience(
+      student1.pythonExperience,
+      student2.pythonExperience,
+    );
+
+    return {
+      score,
+      languagesSpoken,
+      cppExperience,
+      cExperience,
+      javaExperience,
+      pythonExperience,
+    };
+  }
+
+  /**
+   * Processes students who have one preference (pair preference) and attempts to match them with compatible students.
+   *
+   * @param {Map<string, Student>} studentMap A map of student IDs to student objects.
+   * @param {Student[]} studentsWithPairs The list of students with one preference.
+   * @param {Heap<Student>} pq The priority queue to manage students based on score.
+   * @param {Team[]} teams The array to store the created teams.
+   */
   private processPairPreferences(
     studentMap: Map<string, Student>,
     studentsWithPairs: Student[],
@@ -177,26 +276,14 @@ export class AlgorithmService {
         studentMap.delete(fst);
         teamIds.push(pref.id);
 
-        const score = Math.max(student.score, pref.score);
-        const languagesSpoken = [
-          ...new Set([...student.languagesSpoken, ...pref.languagesSpoken]),
-        ];
-        const cppExperience = this.maxExperience(
-          student.cppExperience,
-          pref.cppExperience,
-        );
-        const cExperience = this.maxExperience(
-          student.cExperience,
-          pref.cExperience,
-        );
-        const javaExperience = this.maxExperience(
-          student.javaExperience,
-          pref.javaExperience,
-        );
-        const pythonExperience = this.maxExperience(
-          student.pythonExperience,
-          pref.pythonExperience,
-        );
+        const {
+          score,
+          languagesSpoken,
+          cppExperience,
+          cExperience,
+          javaExperience,
+          pythonExperience,
+        } = this.combineStudentData(student, pref);
 
         const tempQueue: Student[] = [];
         let compatibleFound = false;
@@ -244,6 +331,12 @@ export class AlgorithmService {
     }
   }
 
+  /**
+   * Processes remaining individual students, forming teams of three based on compatibility.
+   *
+   * @param {Heap<Student>} pq The priority queue with individual students to process.
+   * @param {Team[]} teams The array to store the created teams.
+   */
   private processIndividualStudents(pq: Heap<Student>, teams: Team[]) {
     while (pq.size() >= 3) {
       const fstStudent = pq.pop()!;
@@ -291,6 +384,12 @@ export class AlgorithmService {
     }
   }
 
+  /**
+   * Main function to process all students and form teams for each university.
+   *
+   * @param {UserDTO[]} allUsers An array of user objects representing all students.
+   * @returns {Team[]} An array of newly formed teams.
+   */
   processStudents(allUsers: UserDTO[]): Team[] {
     const studentMap = allUsers.reduce((map, user) => {
       const student = {
@@ -333,6 +432,12 @@ export class AlgorithmService {
     return teams;
   }
 
+  /**
+   * Runs the algorithm to form teams for each university for a specific contest.
+   *
+   * @param {string} contestId The ID of the contest for which to form teams.
+   * @returns {Promise<{ success: boolean }>} A promise that resolves with a success status.
+   */
   async run(contestId: string): Promise<{ success: boolean }> {
     const unis = await this.getAllUniversities();
 
