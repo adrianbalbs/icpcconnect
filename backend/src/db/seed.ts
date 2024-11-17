@@ -237,8 +237,9 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding contests");
   const allContests = data.default.contests;
+  const userService = new UserService(db);
   const jobQueue = new JobQueue(
-    new AlgorithmService(db, new UserService(db), new TeamService(db)),
+    new AlgorithmService(db, userService, new TeamService(db, userService)),
   );
   for (const contest of allContests) {
     const { id, name, site } = contest;

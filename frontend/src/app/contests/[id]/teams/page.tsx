@@ -12,9 +12,6 @@ import { ContestResponse } from "@/contests/page";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
-import { Box, Modal } from "@mui/material";
-import CloseBtn from "@/components/utils/CloseBtn";
-import memberStyles from "@/styles/Members.module.css";
 import SortBy from "@/components/utils/SortBy";
 import { getInfo } from "@/utils/profileInfo";
 // const statusStrings = [

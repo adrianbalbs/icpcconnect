@@ -133,8 +133,8 @@ const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
         </p>
         <p className={pageStyles.bold}>Members:</p>
         {team.members.map((member, index) => (
-          <div style={{ display: "flex" }}>
-            <p key={index} className={pageStyles.indented}>
+          <div key={index} style={{ display: "flex" }}>
+            <p className={pageStyles.indented}>
               {`${member.givenName} ${member.familyName}`}
               {replacedIds.includes(member.id) && (
                 <IconButton
@@ -191,6 +191,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
           </h2>
           {team.members.map((member, index) => (
             <div
+              key={index}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -199,7 +200,6 @@ const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
             >
               <div
                 className={memberStyles["member-name"]}
-                key={index}
               >{`${member.givenName} ${member.familyName}`}</div>
               <input
                 className={memberStyles["member-edit"]}
