@@ -1,5 +1,5 @@
 {
-  "id": "73963da9-2e12-495f-8016-26a9bb1228e2",
+  "id": "c5807dcb-c883-4a11-9334-ac75e9a06710",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -526,7 +526,7 @@
           "name": "university",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "contest": {
           "name": "contest",
@@ -594,7 +594,7 @@
           "name": "hosted_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},

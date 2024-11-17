@@ -4,13 +4,15 @@
 
 import { CreateTeamRequest } from "../schemas/team-schema.js";
 import {
+  AlgorithmService
+} from "../services/algorithm-service.js";
+import {
   AllUniIDResponse,
   AlgorithmStudentResponse,
   StudentResponse,
   AllCoursesCompleted,
   AllLanguagesSpoken,
-  AlgorithmService,
-} from "../services/algorithm-service.js";
+} from "../schemas/index.js";
 
 /** Enums **/
 

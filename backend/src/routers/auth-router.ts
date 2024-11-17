@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { validateData } from "../middleware/validator-middleware.js";
-import { AuthService, LoginRequest } from "../services/auth-service.js";
+import { AuthService } from "../services/auth-service.js";
+import { LoginRequest } from "../schemas/index.js";
 import { LoginRequestSchema } from "../schemas/index.js";
 import { clearCookies, setCookies } from "../utils/jwt.js";
 import { createAuthenticationMiddleware } from "../middleware/authenticate.js";

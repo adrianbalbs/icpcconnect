@@ -18,6 +18,16 @@ export class AdminService {
     this.db = db;
   }
 
+  /*
+  * Returns admin profile, given an internal user-id
+  *
+  * @param userId - Internal user-id of the admin 
+  * 
+  * @returns The admin profile of the user specified
+  * 
+  * @throws BadRequest if user-id doesn't correspond to an admin
+  * 
+  */
   async getAdminById(userId: string): Promise<AdminProfileResponse> {
     const admin = await this.db
       .select({
@@ -37,6 +47,16 @@ export class AdminService {
     return admin[0];
   }
 
+  /*
+  * Deletes an admin, given their internal user-id
+  *
+  * @param userId - Internal user-id of the admin 
+  * 
+  * @returns DeleteResponse - with an OK status
+  * 
+  * @throws BadRequest if user-id doesn't correspond to an admin
+  * 
+  */
   async deleteAdmin(userId: string): Promise<DeleteResponse> {
     const admin = await this.db
       .select({ userId: users.id })

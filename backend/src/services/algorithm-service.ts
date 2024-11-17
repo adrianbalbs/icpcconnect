@@ -10,44 +10,16 @@ import {
   users,
 } from "../db/index.js";
 import { runFullAlgorithm } from "../algorithm/algorithm.js";
-import { CreateTeamRequest } from "../schemas/team-schema.js";
+import { 
+  CreateTeamRequest,
+  RunAlgoResponse,
+  AllUniIDResponse,
+  AlgorithmStudentResponse,
+  AllLanguagesSpoken,
+  AllCoursesCompleted,
+  TeamId,
+} from "../schemas/index.js";
 
-export type AllUniIDResponse = {
-  allUniversityIds: { id: number }[];
-};
-
-export type AllLanguagesSpoken = {
-  languages: { code: string }[];
-};
-
-export type AllCoursesCompleted = {
-  courses: { code: number }[];
-};
-
-export type StudentResponse = {
-  id: string;
-  studentId: string;
-  stuGiven: string;
-  stuLast: string;
-  uniName: string;
-  contestExperience: number;
-  leetcodeRating: number;
-  codeforcesRating: number;
-  cppExperience: string;
-  cExpericence: string;
-  javaExperience: string;
-  pythonExperience: string;
-  exclusions: string;
-  preferences: string;
-};
-
-export type AlgorithmStudentResponse = {
-  allStudents: StudentResponse[];
-};
-
-export type RunAlgoResponse = {
-  success: boolean;
-};
 
 export class AlgorithmService {
   private readonly db: DatabaseConnection;
@@ -61,6 +33,11 @@ export class AlgorithmService {
     return { success: succesful };
   }
 
+  /*
+  * Get an array of ids for all universities registered
+  *
+  * @returns AllUniIdResponse - an array of ids corresponding to a university
+  */
   async getAllUniversityIds(): Promise<AllUniIDResponse> {
     const allUniversityIds = await this.db
       .select({
@@ -71,6 +48,13 @@ export class AlgorithmService {
     return { allUniversityIds };
   }
 
+  /*
+  * Get all students of a given university
+  *
+  * @param universityId - the id of the given university
+  *
+  * @returns AlgorithmStudentResponse - an array of StudentResponse's
+  */
   async getAllStudentsFromUniversity(
     universityId: number,
     contestId: string,
@@ -109,6 +93,13 @@ export class AlgorithmService {
     return { allStudents };
   }
 
+  /*
+  * Get all students of a given university
+  *
+  * @param universityId - the id of the given university
+  *
+  * @returns AlgorithmStudentResponse - an array of StudentResponse's
+  */
   async getLanguagesFromStudent(
     studentId: string,
   ): Promise<AllLanguagesSpoken> {
@@ -122,6 +113,13 @@ export class AlgorithmService {
     return { languages };
   }
 
+  /*
+  * Get all courses a given student has completed
+  *
+  * @param studentId - the given student's studentId
+  *
+  * @returns AllCoursesCompleted - an array of course codes
+  */
   async getCoursesFromStudent(studentId: string): Promise<AllCoursesCompleted> {
     const courses = await this.db
       .select({
@@ -133,6 +131,19 @@ export class AlgorithmService {
     return { courses };
   }
 
+  /*
+  * Creates a new team of students
+  *
+  * @param req - 
+  *   req.name - Name of the team
+  *   req.university - Id of the university team belongs to
+  *   req.flagged - boolean indicating team might have conflicting members
+  *   req.memberIds - array of userIds, corresponding to students
+  *   req.contest - contest team is registered for
+  * 
+  * 
+  * @returns the teamId of the newly created team
+  */
   async createTeam(req: CreateTeamRequest) {
     const { name, university, memberIds, flagged, contest } = req;
 
