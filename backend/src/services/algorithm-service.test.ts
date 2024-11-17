@@ -314,6 +314,41 @@ describe("Algorithm Service Tests", () => {
     expect(teams).toHaveLength(1);
   });
 
+  it("should not form team from pair if third students are incompatable", () => {
+    const users = [
+      createUser({
+        id: "1",
+        studentId: "1",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        preferences: "2",
+      }),
+      createUser({
+        id: "2",
+        studentId: "2",
+        givenName: "Yian",
+        familyName: "Li",
+      }),
+      createUser({
+        id: "3",
+        studentId: "3",
+        givenName: "Kobe",
+        familyName: "Shen",
+        languagesSpoken: [{ code: "fr", name: "French" }],
+      }),
+      createUser({
+        id: "4",
+        studentId: "4",
+        givenName: "Zac",
+        familyName: "Ecob",
+        languagesSpoken: [{ code: "fr", name: "French" }],
+      }),
+    ];
+
+    const teams = service.processStudents(users);
+    expect(teams).toHaveLength(0);
+  });
+
   it("should not form a team if there is not enough people to form a pair", () => {
     const users = [
       createUser({

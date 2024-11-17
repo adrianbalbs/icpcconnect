@@ -303,7 +303,6 @@ export class AlgorithmService {
       map.set(student.studentId, student);
       return map;
     }, new Map<string, Student>());
-
     const teams: Team[] = [];
 
     // We prioritise students with a full team first
