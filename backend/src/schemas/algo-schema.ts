@@ -12,6 +12,7 @@ export type AllCoursesCompleted = {
 
 export type StudentResponse = {
   id: string;
+  studentId: string;
   stuGiven: string;
   stuLast: string;
   uniName: string;
