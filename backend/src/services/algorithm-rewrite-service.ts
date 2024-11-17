@@ -7,7 +7,11 @@ import { LanguageExperience, UserDTO } from "src/schemas/user-schema.js";
 import { CreateTeamRequest } from "src/schemas/team-schema.js";
 import { eq, not } from "drizzle-orm";
 
-type Student = Omit<UserDTO, "exclusions" | "preferences"> & {
+type Student = Omit<
+  UserDTO,
+  "exclusions" | "preferences" | "givenName" | "familyName"
+> & {
+  name: string;
   score: number;
   exclusions: Set<string>;
   preferences: Set<string>;
@@ -45,7 +49,7 @@ export class AlgorithmRewriteService {
     private readonly teamService: TeamService,
   ) {}
 
-  async getAllUniversities(): Promise<{ id: number; name: string }[]> {
+  private async getAllUniversities(): Promise<{ id: number; name: string }[]> {
     // Ignore the N/A University
     const allUniversities = await this.db
       .select({
@@ -140,6 +144,24 @@ export class AlgorithmRewriteService {
     }
   }
 
+  private checkExclusions(team: Student[]): boolean {
+    for (const student of team) {
+      for (const otherStudent of team) {
+        if (
+          student !== otherStudent &&
+          Array.from(student.exclusions).some((excludedName) =>
+            otherStudent.name
+              .toLowerCase()
+              .includes(excludedName.toLowerCase()),
+          )
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   private processPairPreferences(
     studentMap: Map<string, Student>,
     studentsWithPairs: Student[],
@@ -176,8 +198,9 @@ export class AlgorithmRewriteService {
           pref.pythonExperience,
         );
 
-        let compatibleFound = false;
         const tempQueue: Student[] = [];
+        let compatibleFound = false;
+        let flagged = false;
 
         while (pq.size() > 0) {
           const potential = pq.pop()!;
@@ -196,6 +219,9 @@ export class AlgorithmRewriteService {
           ) {
             compatibleFound = true;
             teamIds.push(potential.id);
+            flagged =
+              this.checkExclusions([student, potential]) &&
+              this.checkExclusions([pref, potential]);
             break;
           }
           tempQueue.push(potential);
@@ -212,7 +238,7 @@ export class AlgorithmRewriteService {
         }
         // TODO: Handle exclusions
         teamIds.push(student.id);
-        teams.push({ ids: teamIds, flagged: false });
+        teams.push({ ids: teamIds, flagged });
       } else {
         pq.push(student);
       }
@@ -231,7 +257,6 @@ export class AlgorithmRewriteService {
           continue;
         }
         const tempQueue2: Student[] = [];
-        //TODO: Deal with exclusions
         while (pq.size() > 0) {
           const thrdStudent = pq.pop()!;
           if (
@@ -240,7 +265,11 @@ export class AlgorithmRewriteService {
           ) {
             teams.push({
               ids: [fstStudent.id, sndStudent.id, thrdStudent.id],
-              flagged: false,
+              flagged: this.checkExclusions([
+                fstStudent,
+                sndStudent,
+                thrdStudent,
+              ]),
             });
             foundTeam = true;
             break;
@@ -267,6 +296,7 @@ export class AlgorithmRewriteService {
     const studentMap = allUsers.reduce((map, user) => {
       const student = {
         ...user,
+        name: `${user.givenName} ${user.familyName}`,
         score: this.calculateScore(user),
         preferences: this.getPreferences(user.preferences),
         exclusions: this.getExclusions(user.exclusions),
