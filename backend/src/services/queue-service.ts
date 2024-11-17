@@ -16,7 +16,7 @@ export class JobQueue {
   private readonly worker = new Worker(
     "algorithm-scheduler",
     async (job) => {
-      await this.algorithmService.callAlgorithm(job.data.contestId);
+      await this.algorithmService.run(job.data.contestId);
       this.logger.info(`Algorithm finished running`);
     },
     {

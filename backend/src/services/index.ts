@@ -6,4 +6,4 @@ export * from "./email-service.js";
 export * from "./contest-service.js";
 export * from "./user-service.js";
 export * from "./queue-service.js";
-export * from "./algorithm-rewrite-service.js";
+export * from "./algorithm-service.js";

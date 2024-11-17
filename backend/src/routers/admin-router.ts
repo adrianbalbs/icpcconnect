@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import {
   AdminService,
-  AlgorithmRewriteService,
+  AlgorithmService,
   AuthService,
 } from "../services/index.js";
 import {
@@ -14,7 +14,7 @@ import { AlgorithmRequest, AlgorithmRequestSchema } from "../schemas/index.js";
 export function adminRouter(
   adminService: AdminService,
   authService: AuthService,
-  algorithmService: AlgorithmRewriteService,
+  algorithmService: AlgorithmService,
 ) {
   const authenticate = createAuthenticationMiddleware(authService);
   return Router()

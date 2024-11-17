@@ -37,7 +37,7 @@ const experienceMap = {
   prof: 2,
 } as const;
 
-export class AlgorithmRewriteService {
+export class AlgorithmService {
   private readonly contestWeight = 5;
   private readonly leetcodeWeight = 4;
   private readonly codeforcesWeight = 4;

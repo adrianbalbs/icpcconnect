@@ -11,7 +11,7 @@ import {
   UserService,
   EmailService,
   JobQueue,
-  AlgorithmRewriteService,
+  AlgorithmService,
 } from "./services/index.js";
 import {
   codesRouter,
@@ -27,7 +27,6 @@ import {
 } from "./middleware/index.js";
 import { getLogger } from "./utils/logger.js";
 import cookieParser from "cookie-parser";
-import { AlgorithmService } from "./services/algorithm-service.js";
 import { userRouter } from "./routers/user-router.js";
 import { ExpressAdapter } from "@bull-board/express";
 import { createBullBoard } from "@bull-board/api";
@@ -49,12 +48,7 @@ const teamService = new TeamService(dbConn);
 const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
-const algorithmService = new AlgorithmService(dbConn);
-const newAlgorithmService = new AlgorithmRewriteService(
-  dbConn,
-  userService,
-  teamService,
-);
+const algorithmService = new AlgorithmService(dbConn, userService, teamService);
 const emailService = new EmailService(dbConn);
 const jobQueue = new JobQueue(algorithmService);
 const contestService = new ContestService(dbConn, jobQueue);
@@ -84,10 +78,7 @@ app
   .use("/api/email", emailRouter(emailService))
   .use("/api/contests", contestRouter(contestService, authService))
   .use("/api", codesRouter(codesService, authService))
-  .use(
-    "/api/admin",
-    adminRouter(adminService, authService, newAlgorithmService),
-  )
+  .use("/api/admin", adminRouter(adminService, authService, algorithmService))
   .use("/api/admin/queues", serverAdapter.getRouter())
   .use(errorHandlerMiddleware);
 
