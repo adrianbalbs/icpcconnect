@@ -276,6 +276,7 @@ const CourseNamesEnum = z.enum([
   "Algorithm Design",
   "Programming Challenges",
 ]);
+export type CourseNames = z.infer<typeof CourseNamesEnum>;
 
 const CourseSchema = z.strictObject({
   id: z.number(),

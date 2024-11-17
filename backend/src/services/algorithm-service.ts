@@ -71,7 +71,7 @@ export class AlgorithmService {
   }
 
   private getExclusions(s: string): Set<string> {
-    if (s === "" || s === "none") {
+    if (s === "") {
       return new Set();
     } else {
       return new Set(s.split(", "));
@@ -220,7 +220,7 @@ export class AlgorithmService {
             compatibleFound = true;
             teamIds.push(potential.id);
             flagged =
-              this.checkExclusions([student, potential]) &&
+              this.checkExclusions([student, potential]) ||
               this.checkExclusions([pref, potential]);
             break;
           }
@@ -236,7 +236,6 @@ export class AlgorithmService {
           remainingStudents.forEach((s) => pq.push(s));
           break;
         }
-        // TODO: Handle exclusions
         teamIds.push(student.id);
         teams.push({ ids: teamIds, flagged });
       } else {
