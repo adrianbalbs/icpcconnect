@@ -1,6 +1,6 @@
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
-import { Member } from "@/types/teams";
+import { Member, Team } from "@/types/teams";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import { Box, IconButton, Modal } from "@mui/material";
 import WarningIcon from "@mui/icons-material/WarningRounded";
@@ -11,10 +11,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 
 interface TeamCardProps {
-  teamId: string;
-  name: string;
-  university: string;
-  members: Array<Member>;
+  team: Team;
   canEdit: boolean;
   replacements: {
     reason: string;
@@ -24,21 +21,14 @@ interface TeamCardProps {
   id: string;
 }
 
-const TeamCard: React.FC<TeamCardProps> = ({
-  teamId,
-  name,
-  university,
-  members,
-  canEdit,
-  replacements,
-}) => {
+const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [reason, setReason] = useState("");
   const [substitute, setSubstitute] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
 
-  const replacementArr: string[] = new Array(members.length).fill("");
+  const replacementArr: string[] = new Array(team.members.length).fill("");
 
   const handleClick = (
     member: Member,
@@ -69,15 +59,15 @@ const TeamCard: React.FC<TeamCardProps> = ({
       if (replacementArr[i] != "") {
         try {
           console.log({
-            team: teamId,
-            student: members[i].id,
+            team: team.id,
+            student: team.members[i].id,
             replacedWith: replacementArr[i],
           });
           await axios.put(
             `${SERVER_URL}/api/teams/handleReplacement/`,
             {
-              team: teamId,
-              student: members[i].id,
+              team: team.id,
+              student: team.members[i].id,
               replacedWith: replacementArr[i],
             },
             { withCredentials: true },
@@ -127,7 +117,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
     <div className={teamStyles["team-container"]}>
       <div className={teamStyles.team}>
         <p>
-          <span className={pageStyles.bold}>Team Name:</span> {name}{" "}
+          <span className={pageStyles.bold}>Team Name:</span> {team.name}{" "}
           {
             <IconButton
               onClick={handleOpenEdit}
@@ -138,10 +128,11 @@ const TeamCard: React.FC<TeamCardProps> = ({
           }
         </p>
         <p>
-          <span className={pageStyles.bold}>Institution:</span> {university}
+          <span className={pageStyles.bold}>Institution:</span>{" "}
+          {team.university}
         </p>
         <p className={pageStyles.bold}>Members:</p>
-        {members.map((member, index) => (
+        {team.members.map((member, index) => (
           <div style={{ display: "flex" }}>
             <p key={index} className={pageStyles.indented}>
               {`${member.givenName} ${member.familyName}`}
@@ -191,14 +182,14 @@ const TeamCard: React.FC<TeamCardProps> = ({
           <div style={{ width: "100%" }}>
             <p style={{ fontSize: "25px" }}>
               <b>Editing Team - </b>
-              {name}
+              {team.name}
             </p>
           </div>
           <hr className={pageStyles["divider"]}></hr>
           <h2 style={{ margin: "10px 0" }}>
             <b>Members:</b>
           </h2>
-          {members.map((member, index) => (
+          {team.members.map((member, index) => (
             <div
               style={{
                 display: "flex",
