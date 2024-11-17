@@ -7,7 +7,12 @@ export default defineConfig({
     globals: true,
     coverage: {
       enabled: true,
-      reporter: "html",
+      include: [
+        "src/middleware/**/*",
+        "src/routers/**/*",
+        "src/services/**/*",
+        "src/utils/**/*",
+      ],
     },
   },
 });
