@@ -449,6 +449,7 @@ export function algorithm(studentsScores: StudentScore[]): Group[] {
       group.ids = stu1.ids;
       group.totalScore = stu1.studentScore * 3;
       group.flagged = false; // We assume that a full made team should not have any exclusions
+      groups.push(group);
       continue;
     }
 

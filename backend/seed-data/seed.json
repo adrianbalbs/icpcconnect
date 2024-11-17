@@ -28,7 +28,8 @@
       "cExperience": "some",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3]
+      "coursesTaken": [1,2,3],
+      "preferences": ""
     },
     {
       "id": "c47253b3-5181-4680-81e0-01fc7b3c6c09",
@@ -53,7 +54,8 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4]
+      "coursesTaken": [1,2,3,4],
+      "preferences": ""
     },
     {
       "id": "d6d7f907-8ff9-4de5-8f3b-c60e0fc73b36",
@@ -78,7 +80,8 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3]
+      "coursesTaken": [1,2,3],
+      "preferences": ""
     },
     {
       "id": "06746f7d-994d-4e93-b8cf-16f5d9f3739e",
@@ -103,7 +106,8 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3]
+      "coursesTaken": [1,2,3],
+      "preferences": ""
     },
     {
       "id": "2f3579df-7b29-47b5-96cb-8e0f79853fd7",
@@ -128,7 +132,8 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4]
+      "coursesTaken": [1,2,3,4],
+      "preferences": ""
     },
     {
       "id": "5ab06b75-8724-4ae5-b0a6-5a6bba0e2d7f",
@@ -153,7 +158,8 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2]
+      "coursesTaken": [1,2],
+      "preferences": ""
     },
     {
       "id": "2d5a4ff6-b708-4204-a8e5-c5f54f83651c",
@@ -178,7 +184,8 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4]
+      "coursesTaken": [1,2,3,4],
+      "preferences": ""
     },
     {
       "id": "e5093f3a-07ef-4218-bf3e-9bfc8c60ed94",
@@ -203,7 +210,8 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4]
+      "coursesTaken": [1,2,3,4],
+      "preferences": ""
     },
     {
       "id": "c14933de-4025-4391-a1bc-62eb8d76b716",
@@ -228,7 +236,8 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4]
+      "coursesTaken": [1,2,3,4],
+      "preferences": ""
     },
     {
       "id": "2ad0e0b7-04a1-4d29-91d1-5024d394aaf1",
@@ -253,7 +262,8 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2]
+      "coursesTaken": [1,2],
+      "preferences": ""
     },
     {
       "id": "2c582be4-78c3-41f3-8b08-d0635d4c9313",
@@ -278,7 +288,8 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2]
+      "coursesTaken": [1,2],
+      "preferences": ""
     },
     {
       "id": "2c522be4-71c3-41f3-8b08-d0635d4c9319",
@@ -303,7 +314,8 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2]
+      "coursesTaken": [1,2],
+      "preferences": ""
     }
   ],
   "coaches": [
