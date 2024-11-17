@@ -1,15 +1,14 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
-import image from "@/assets/image.png";
 import Sidebar from "@/components/bar/Sidebar";
 import { getInfo } from "@/utils/profileInfo";
 import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import ProfileImage from "@/components/profile/ProfileImage";
 
 interface ProfileLayoutProps {
   children: React.ReactNode;
@@ -56,7 +55,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
     <ProfileContext.Provider value={{ info, storeProfileInfo: storeInfo }}>
       <div className={profileStyles.screen}>
         <div className={profileStyles["side-screen"]}>
-          <Image src={image} alt="pfp" className={profileStyles.pfp} />
+          <ProfileImage />
           <h1 className={profileStyles.name}>{info.name}</h1>
           <p
             className={profileStyles.role}

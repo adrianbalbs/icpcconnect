@@ -159,3 +159,11 @@ export const experienceItemText = {
 };
 
 export const experienceIcon = { fontSize: "21px", color: "#444444" };
+
+export const imageEditBtn = {
+  width: "100px",
+  p: "10px 14px",
+  fontSize: "14px",
+  textTransform: "none",
+  color: "#7D84AF",
+};

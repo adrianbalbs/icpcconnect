@@ -35,7 +35,7 @@ const Menu: React.FC = () => {
       <Tooltip title="Account profile">
         <IconButton
           onClick={handleClick}
-          sx={{ height: "55px", width: "55px" }}
+          sx={{ mr: "5px", height: "55px", width: "55px" }}
         >
           <Avatar>{info.name.charAt(0)}</Avatar>
         </IconButton>
