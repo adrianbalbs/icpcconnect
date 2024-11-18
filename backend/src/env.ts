@@ -7,6 +7,7 @@ const BaseEnvSchema = z.object({
   LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
   REDIS_HOST: z.string(),
   REDIS_PORT: z.string().transform(Number).pipe(z.number().min(0).max(65535)),
+  SMTP_SERVER: z.string(),
   EMAIL_USER: z.string().email(),
   EMAIL_PASSWORD: z.string(),
   EMAIL_PORT: z.string().transform(Number).pipe(z.number().min(0).max(65535)),
