@@ -192,3 +192,10 @@ export const imageEditBtn = {
   textTransform: "none",
   color: "#7D84AF",
 };
+
+export const deleteAccBtn = {
+  mx: "20px",
+  p: "2px 5px",
+  textTransform: "none",
+  fontSize: "13px",
+};

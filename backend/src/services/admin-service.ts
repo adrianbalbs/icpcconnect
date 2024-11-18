@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { DatabaseConnection, users } from "../db/index.js";
 import { DeleteResponse, UserProfileResponse } from "../types/api-res.js";
 import { HTTPError, badRequest, unauthorizedError } from "../utils/errors.js";
-import { passwordUtils } from "src/utils/encrypt.js";
+import { passwordUtils } from "../utils/encrypt.js";
 
 export type AdminProfileUpdateResponse = UserProfileResponse;
 
