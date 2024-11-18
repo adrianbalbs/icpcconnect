@@ -202,11 +202,11 @@ export default function Contests() {
   };
 
   const columns: GridColDef[] = [
-    { field: "name", headerName: "Name", width: 400 },
+    { field: "name", headerName: "Name", width: 380 },
     { field: "earlyBirdDate", headerName: "Early Bird Date", width: 150 },
     { field: "cutoffDate", headerName: "Cutoff Date", width: 150 },
     { field: "contestDate", headerName: "Start Date", width: 150 },
-    { field: "site", headerName: "Site", width: 370 },
+    { field: "site", headerName: "Site", width: 349 },
     {
       field: "actions",
       headerName: "Actions",
@@ -252,9 +252,12 @@ export default function Contests() {
   ];
 
   return (
-    <Container sx={{ mt: 15 }} maxWidth="xl">
-      <Stack>
-        <Typography variant="h5" fontWeight="bold">
+    <Container
+      sx={{ mt: 15, mx: "3vw", px: "0", width: "94vw" }}
+      disableGutters
+    >
+      <Stack sx={{ width: "94vw" }}>
+        <Typography variant="h5" fontWeight="bold" color="rgb(69, 70, 94)">
           Contests
         </Typography>
         <Divider sx={{ mt: 1 }} />
@@ -286,6 +289,11 @@ export default function Contests() {
             loadingOverlay: {
               variant: "skeleton",
               noRowsVariant: "skeleton",
+            },
+            toolbar: {
+              sx: {
+                ".MuiButton-root": { color: "#5c69ab" },
+              },
             },
           }}
           sx={{ mt: 2 }}

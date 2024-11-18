@@ -96,14 +96,14 @@ export const menuBtn = {
 };
 
 export const deleteBtn = {
-  backgroundColor: "#ea6968",
+  backgroundColor: "#DF7981",
   color: "white",
   textTransform: "none",
   boxShadow: "none",
 };
 
 export const editBtn = {
-  backgroundColor: "#f592b3",
+  backgroundColor: "#E99FB7",
   color: "white",
   textTransform: "none",
   boxShadow: "none",

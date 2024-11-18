@@ -41,7 +41,7 @@ const LanguageProficiency: React.FC<ProficiencyProps> = ({
             width: "80%",
             backgroundColor: "#c8cce5",
             "& .MuiLinearProgress-bar": {
-              backgroundColor: "#969fdd",
+              backgroundColor: "#7079b5",
             },
           }}
         />

@@ -37,7 +37,7 @@ const Menu: React.FC = () => {
           onClick={handleClick}
           sx={{ mr: "5px", height: "55px", width: "55px" }}
         >
-          <Avatar>{info.name.charAt(0)}</Avatar>
+          <Avatar sx={{ bgcolor: "#b3bac9" }}>{info.name.charAt(0)}</Avatar>
         </IconButton>
       </Tooltip>
       <div className={styles["pfp-label"]}>

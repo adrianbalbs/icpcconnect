@@ -37,7 +37,7 @@
   padding: 0 3vw;
   height: 60px;
   width: 100vw;
-  background-color: #e4eeff;
+  background-color: #eff3f9;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
@@ -64,7 +64,7 @@
 .website {
   margin: 14px 0 13.5px;
   font-size: 28px;
-  color: #415478;
+  color: #6179ac;
 }
 
 .timeline {

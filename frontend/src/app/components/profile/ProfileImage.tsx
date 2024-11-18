@@ -51,7 +51,12 @@ const ProfileImage = () => {
     <Box sx={{ position: "relative", width: "218px", height: "218px" }}>
       <Avatar
         src={image || "/assets/image.png"}
-        sx={{ width: "218px", height: "218px", border: "0.8px solid #888888" }}
+        sx={{
+          width: "218px",
+          height: "218px",
+          border: "0.8px solid #888888",
+          bgcolor: "#b3bac9",
+        }}
       />
       <Tooltip
         title="Edit Profile Picture"
