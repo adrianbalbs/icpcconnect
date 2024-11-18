@@ -97,13 +97,6 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     );
   };
 
-  const setMsg = (msg: string) => {
-    setNotif({
-      type: msg.includes("success") ? "edit" : "delete",
-      message: msg,
-    });
-  };
-
   useEffect(() => {
     storeInfo();
   }, [params.id]);

@@ -6,7 +6,7 @@ import Coaches from "@/components/members/Coaches";
 import Students from "@/components/members/Students";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useEffect, useState } from "react";
-import Notif from "@/components/utils/Notif";
+import { Alert, Snackbar } from "@mui/material";
 
 const Members: React.FC = () => {
   const {
@@ -14,18 +14,17 @@ const Members: React.FC = () => {
   } = useAuth();
 
   const { id } = useParams<{ id: string }>();
-  const [notif, setNotif] = useState({ type: "", message: "" });
+  const [userDeleted, setUserDeleted] = useState("");
 
   const handleClose = () => {
-    setNotif({ type: "", message: "" });
+    localStorage.removeItem("accountDeleted");
+    setUserDeleted("");
   };
 
   useEffect(() => {
     if (localStorage.getItem("accountDeleted")) {
       const name = localStorage.getItem("accountDeleted");
-      localStorage.removeItem("accountDeleted");
-      const message = `${name}'s account has been deleted successfully`;
-      setNotif({ type: "delete", message: message });
+      setUserDeleted(name ?? "");
     }
   }, []);
 
@@ -34,17 +33,22 @@ const Members: React.FC = () => {
       {role === "Admin" && <SiteCoordinators />}
       {(role === "Admin" || role === "Site Coordinator") && <Coaches />}
       <Students contest={id} />
-      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
-      {/* <Snackbar open={snackbar} autoHideDuration={3000} onClose={handleClose}>
-        <Alert
-          severity="error"
-          variant="filled"
+      {userDeleted !== "" && (
+        <Snackbar
+          open={userDeleted !== ""}
+          autoHideDuration={5000}
           onClose={handleClose}
-          sx={{ height: "50px", width: "100%", bgcolor: "#d15c65" }}
         >
-          {`${userDeleted}'s account has been deleted successfully`}
-        </Alert>
-      </Snackbar> */}
+          <Alert
+            severity="error"
+            variant="filled"
+            onClose={handleClose}
+            sx={{ height: "50px", width: "100%", bgcolor: "#d15c65" }}
+          >
+            {`${userDeleted}'s account has been deleted successfully`}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };

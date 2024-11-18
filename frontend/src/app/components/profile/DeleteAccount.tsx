@@ -42,7 +42,11 @@ const DeleteAccount = ({ id, user }: DeleteProps) => {
         { id, password },
         { withCredentials: true },
       );
-      res.data ? setStatus(2) : setErrorMsg("Incorrect password!");
+      if (res.data) {
+        setStatus(2);
+      } else {
+        setErrorMsg("Incorrect password!");
+      }
     } catch (err) {
       console.log(`Admin account-deletion password error: ${err}`);
     }

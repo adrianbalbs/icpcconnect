@@ -7,7 +7,6 @@ import {
   editContestBtn,
 } from "@/styles/sxStyles";
 import {
-  Alert,
   Button,
   Container,
   Dialog,
@@ -16,7 +15,6 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
