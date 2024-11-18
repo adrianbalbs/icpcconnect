@@ -62,7 +62,7 @@ const ContestExperience = ({ id, added, experience, update }: ContestProps) => {
     <>
       <h3 className={experienceStyles.heading}>Competitive Experience</h3>
       <hr className={pageStyles.divider} />
-      <List sx={{ m: "12px 40px 0", p: 0 }}>
+      <List sx={{ m: "12px 32px 0 40px", p: 0 }}>
         {contestAdded.contestExperience && (
           <ListItem sx={experienceItem}>
             <ListItemIcon>

@@ -172,7 +172,7 @@ export const sortIcons = {
 
 export const experienceItem = {
   display: "grid",
-  gridTemplateColumns: "1fr 5fr 1fr 9fr",
+  gridTemplateColumns: "1fr 5fr 1fr 12fr",
   p: "5px",
 };
 
