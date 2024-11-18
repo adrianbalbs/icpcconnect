@@ -62,7 +62,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
             className={profileStyles.role}
           >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
           {checkView() && <Sidebar id={params.id} role={info.role} />}
-          {userSession.role === "Admin" && (
+          {userSession.role === "Admin" && info.role !== "Admin" && (
             <DeleteAccount
               id={userSession.id}
               user={{ id: params.id, name: info.name }}

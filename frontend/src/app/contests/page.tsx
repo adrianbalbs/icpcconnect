@@ -308,6 +308,16 @@ export default function Contests() {
                 ".MuiButton-root": { color: "#5c69ab" },
               },
             },
+            pagination: {
+              sx: {
+                ".MuiTablePagination-selectLabel": {
+                  py: "4.56px",
+                },
+                ".MuiSelect-select": {
+                  p: "5.5px 24px 3.5px 8px",
+                },
+              },
+            },
           }}
           sx={{ mt: 2 }}
         />
@@ -344,7 +354,10 @@ export default function Contests() {
             }}
             severity={notif.type === "delete" ? "error" : "success"}
             variant="filled"
-            sx={{ width: "100%" }}
+            sx={{
+              width: "100%",
+              bgcolor: notif.type === "delete" ? "#d15c65" : "#7BA381",
+            }}
           >
             {notif.type === "invite" && `New ${notif.name} Invite Code Copied!`}
             {notif.type === "create" && `New Contest Created: ${notif.name}`}

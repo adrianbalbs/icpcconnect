@@ -77,7 +77,7 @@ const DeleteAccount = ({ id, user }: DeleteProps) => {
         Delete Account
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <CloseBtn handleClose={handleClose} />
+        {status !== 2 && <CloseBtn handleClose={handleClose} />}
         <DialogContent sx={{ width: "450px", p: "40px 40px 35px" }}>
           <DialogContentText
             id="admin-password"
