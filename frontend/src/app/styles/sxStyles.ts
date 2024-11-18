@@ -199,3 +199,11 @@ export const deleteAccBtn = {
   textTransform: "none",
   fontSize: "13px",
 };
+
+export const editContestBtn = {
+  px: "20px",
+  color: "#5c69ab",
+  textTransform: "none",
+  fontWeight: "bold",
+  border: "0.5px solid #5c69ab",
+};

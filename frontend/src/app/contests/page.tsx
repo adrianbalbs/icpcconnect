@@ -1,6 +1,11 @@
 "use client";
 
-import { purpleBtn, deleteBtn, editBtn } from "@/styles/sxStyles";
+import {
+  purpleBtn,
+  deleteBtn,
+  editBtn,
+  editContestBtn,
+} from "@/styles/sxStyles";
 import {
   Alert,
   Button,
@@ -42,6 +47,11 @@ export type ContestResponse = {
   site: string;
 };
 
+type ContestDelete = {
+  id: string;
+  name: string;
+};
+
 const universities = [
   { id: 1, label: "University of New South Wales" },
   { id: 2, label: "University of Sydney" },
@@ -75,9 +85,11 @@ const DeleteContestDialog: React.FC<DeleteContestDialogProps> = ({
             teams for this contest.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={handleDelete} autoFocus>
+        <DialogActions sx={{ p: "0 24px 25px" }}>
+          <Button onClick={onClose} sx={editContestBtn}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} sx={editContestBtn} autoFocus>
             Delete
           </Button>
         </DialogActions>
@@ -97,7 +109,7 @@ type FormData = {
 export default function Contests() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [selectDelete, setSelectDelete] = useState<ContestDelete | null>(null);
   const [selectedContest, setSelectedContest] =
     useState<ContestResponse | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
@@ -161,10 +173,11 @@ export default function Contests() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${SERVER_URL}/api/contests/${deleteId}`, {
+      await axios.delete(`${SERVER_URL}/api/contests/${selectDelete?.id}`, {
         withCredentials: true,
       });
-      setDeleteId(null);
+      setNotif({ type: "delete", name: selectDelete?.name ?? "" });
+      setSelectDelete(null);
       setDeleteDialogOpen(false);
       fetchContests();
     } catch (err) {
@@ -238,7 +251,7 @@ export default function Contests() {
                 variant="contained"
                 sx={{ ...deleteBtn, ml: 1 }}
                 onClick={() => {
-                  setDeleteId(params.row.id);
+                  setSelectDelete({ id: params.row.id, name: params.row.name });
                   setDeleteDialogOpen(true);
                 }}
               >
@@ -307,11 +320,12 @@ export default function Contests() {
         errors={errors}
         mode={dialogMode}
         contestData={selectedContest}
+        setNotif={setNotif}
       />
       <DeleteContestDialog
         open={deleteDialogOpen}
         onClose={() => {
-          setDeleteId(null);
+          setSelectDelete(null);
           setDeleteDialogOpen(false);
         }}
         handleDelete={handleDelete}
@@ -323,16 +337,22 @@ export default function Contests() {
           setNotif({ type: "", name: "" });
         }}
       >
-        <Alert
-          onClose={() => {
-            setNotif({ type: "", name: "" });
-          }}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Invite Code Copied!
-        </Alert>
+        {notif.type !== "" ? (
+          <Alert
+            onClose={() => {
+              setNotif({ type: "", name: "" });
+            }}
+            severity={notif.type === "delete" ? "error" : "success"}
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            {notif.type === "invite" && `New ${notif.name} Invite Code Copied!`}
+            {notif.type === "create" && `New Contest Created: ${notif.name}`}
+            {notif.type === "delete" && `Contest Deleted: ${notif.name}`}
+          </Alert>
+        ) : (
+          <div></div>
+        )}
       </Snackbar>
     </Container>
   );

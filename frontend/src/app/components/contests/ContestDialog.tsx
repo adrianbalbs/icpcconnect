@@ -15,9 +15,10 @@ import { z } from "zod";
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { CreateContestSchema } from "@/types/contests";
 import { ContestResponse } from "@/contests/page";
+import { editContestBtn } from "@/styles/sxStyles";
 
 interface ContestDialogProps {
   open: boolean;
@@ -33,6 +34,12 @@ interface ContestDialogProps {
   errors: z.inferFlattenedErrors<typeof CreateContestSchema>;
   mode: "create" | "edit";
   contestData?: ContestResponse | null;
+  setNotif: (
+    value: SetStateAction<{
+      type: string;
+      name: string;
+    }>,
+  ) => void;
 }
 
 dayjs.extend(utc);
@@ -46,6 +53,7 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
   errors,
   mode,
   contestData,
+  setNotif,
 }) => {
   const [contestName, setContestName] = useState("");
   const [earlyBirdDate, setEarlyBirdDate] = useState<Dayjs | null>(null);
@@ -97,6 +105,7 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
     };
 
     onSubmit(formData);
+    setNotif({ type: "create", name: contestName });
   };
 
   const dialogTitle = mode === "create" ? "Create Contest" : "Edit Contest";
@@ -187,9 +196,13 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
             />
           </Stack>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit">{submitButtonText}</Button>
+        <DialogActions sx={{ p: "5px 24px 25px" }}>
+          <Button onClick={onClose} sx={editContestBtn}>
+            Cancel
+          </Button>
+          <Button type="submit" sx={editContestBtn}>
+            {submitButtonText}
+          </Button>
         </DialogActions>
       </form>
     </Dialog>
