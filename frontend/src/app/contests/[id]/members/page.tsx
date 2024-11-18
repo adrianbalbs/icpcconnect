@@ -7,6 +7,7 @@ import Students from "@/components/members/Students";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useEffect, useState } from "react";
 import { Alert, Snackbar } from "@mui/material";
+import { getInfo } from "@/utils/profileInfo";
 
 /**
  * Members Page - /contests/:id/members
@@ -17,11 +18,17 @@ import { Alert, Snackbar } from "@mui/material";
  */
 const Members: React.FC = () => {
   const {
-    userSession: { role },
+    userSession: { id: ownId, role },
   } = useAuth();
 
   const { id } = useParams<{ id: string }>();
   const [userDeleted, setUserDeleted] = useState("");
+  const [ownUni, setOwnUni] = useState("");
+
+  const fetchInfo = async () => {
+    const ownData = await getInfo(ownId);
+    if (ownData) setOwnUni(ownData.university);
+  };
 
   const handleClose = () => {
     localStorage.removeItem("accountDeleted");
@@ -33,13 +40,14 @@ const Members: React.FC = () => {
       const name = localStorage.getItem("accountDeleted");
       setUserDeleted(name ?? "");
     }
+    fetchInfo();
   }, []);
 
   return (
     <>
       {role === "Admin" && <SiteCoordinators />}
       {(role === "Admin" || role === "Site Coordinator") && <Coaches />}
-      <Students contest={id} />
+      <Students role={role} ownUni={ownUni} contest={id} />
       {userDeleted !== "" && (
         <Snackbar
           open={userDeleted !== ""}

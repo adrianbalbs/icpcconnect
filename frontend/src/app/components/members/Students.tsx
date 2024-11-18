@@ -7,6 +7,9 @@ import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Student, { StudentProps } from "./Student";
 import SortBy from "../utils/SortBy";
+import { useAuth } from "../context-provider/AuthProvider";
+import { getInfo } from "@/utils/profileInfo";
+import { siteToUniversity } from "@/utils/university";
 
 export interface StudentInfo {
   id: string;
@@ -26,6 +29,8 @@ export interface StudentInfo {
 }
 
 type StudentsProps = {
+  role: string;
+  ownUni: string;
   contest?: string;
 };
 
@@ -33,7 +38,7 @@ type StudentsProps = {
  * Students component
  * - renders list of students
  */
-const Students: React.FC<StudentsProps> = ({ contest }) => {
+const Students: React.FC<StudentsProps> = ({ role, ownUni, contest }) => {
   const [students, setStudents] = useState<StudentProps[]>([]);
   const [sort, setSort] = useState("Default");
 
@@ -44,13 +49,20 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
         { withCredentials: true, params: { role: "Student", contest } },
       );
       const allStudents: StudentInfo[] = res.data.allUsers;
-      const filteredInfo: StudentProps[] = allStudents.map((student) => ({
+      let filteredInfo: StudentProps[] = allStudents.map((student) => ({
         id: student.id,
         name: student.givenName + " " + student.familyName,
         team: student.team ? student.team : "(not allocated)",
         institution: student.university,
         email: student.email,
       }));
+
+      if (role === "Coach") {
+        filteredInfo = filteredInfo.filter((s) => s.institution === ownUni);
+      } else if (role === "Site Coordinator") {
+        const unis = await siteToUniversity(ownUni);
+        filteredInfo = filteredInfo.filter((s) => unis.includes(s.institution));
+      }
 
       if (sort !== "Default") {
         const key = sort.toLowerCase() as keyof StudentProps;
@@ -68,7 +80,7 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
 
   useEffect(() => {
     getStudents();
-  }, [sort]);
+  }, [sort, ownUni]);
 
   return (
     <div className={memberStyles.gap}>

@@ -12,7 +12,6 @@ import {
   universities,
   University,
   users,
-  replacements,
 } from "../db/schema.js";
 import {
   CreateUser,

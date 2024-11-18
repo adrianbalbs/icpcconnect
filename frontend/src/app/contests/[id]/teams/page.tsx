@@ -15,6 +15,7 @@ import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
 import SortBy from "@/components/utils/SortBy";
 import { getInfo } from "@/utils/profileInfo";
 import { Typography } from "@mui/material";
+import { siteToUniversity } from "@/utils/university";
 
 /**
  * Teams Page - /contests/:id/teams
@@ -90,6 +91,9 @@ const Teams: React.FC = () => {
         sorted = allTeams.filter(
           (team) => team.university === userData?.university,
         );
+      } else if (userData && role === "Site Coordinator") {
+        const unis = await siteToUniversity(userData.university);
+        sorted = allTeams.filter((team) => unis.includes(team.university));
       }
 
       // If sort is applied, sort according to the type chosen
