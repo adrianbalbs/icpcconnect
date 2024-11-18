@@ -73,7 +73,11 @@ CREATE TABLE IF NOT EXISTS "registration_details" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "replacements" (
+<<<<<<<< HEAD:backend/drizzle/0000_strong_owl.sql
 	"team_id" uuid NOT NULL,
+========
+	"team_id" uuid,
+>>>>>>>> main:backend/drizzle/0000_fine_tarot.sql
 	"leaving_id" text DEFAULT '' NOT NULL,
 	"student_id" text DEFAULT '' NOT NULL,
 	"reason" text DEFAULT '' NOT NULL
@@ -103,7 +107,7 @@ CREATE TABLE IF NOT EXISTS "student_details" (
 CREATE TABLE IF NOT EXISTS "teams" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(50) NOT NULL,
-	"university" integer,
+	"university" integer NOT NULL,
 	"contest" uuid NOT NULL,
 	"flagged" boolean DEFAULT false NOT NULL
 );
@@ -111,7 +115,7 @@ CREATE TABLE IF NOT EXISTS "teams" (
 CREATE TABLE IF NOT EXISTS "universities" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(200) NOT NULL,
-	"hosted_at" integer
+	"hosted_at" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (

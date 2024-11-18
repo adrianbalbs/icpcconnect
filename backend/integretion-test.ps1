@@ -22,7 +22,7 @@ try {
     docker-compose down
 
     Write-Host "Starting PostgreSQL container..."
-    docker-compose --profile test up -d test-db
+    docker-compose --profile test up -d test-db redis
 
     Wait-ForPostgres
 
@@ -47,4 +47,5 @@ try {
 }
 finally {
     Cleanup
+    redis
 }

@@ -47,7 +47,7 @@ export type User = InferSelectModel<typeof users>;
 export const universities = pgTable("universities", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
-  hostedAt: integer("hosted_at"),
+  hostedAt: integer("hosted_at").notNull(),
 });
 
 export const universityRelations = relations(universities, ({ one, many }) => ({
@@ -249,7 +249,9 @@ export const coursesCompletedByStudentRelations = relations(
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }).notNull(),
-  university: integer("university").references(() => universities.id),
+  university: integer("university")
+    .references(() => universities.id)
+    .notNull(),
   contest: uuid("contest")
     .references(() => contests.id, {
       onDelete: "cascade",
@@ -259,17 +261,17 @@ export const teams = pgTable("teams", {
 });
 
 export const replacements = pgTable("replacements", {
-  associated_team: uuid("team_id").notNull().references(() => teams.id),
+  associated_team: uuid("team_id").references(() => teams.id),
   leavingInternalId: text("leaving_id").notNull().default(""),
   replacementStudentId: text("student_id").notNull().default(""),
   reason: text("reason").notNull().default(""),
-})
+});
 
-export const replacementRelations = relations(replacements, ({one}) => ({
+export const replacementRelations = relations(replacements, ({ one }) => ({
   associated_team: one(teams, {
     fields: [replacements.associated_team],
     references: [teams.id],
-  })
+  }),
 }));
 
 export const teamRelations = relations(teams, ({ many, one }) => ({

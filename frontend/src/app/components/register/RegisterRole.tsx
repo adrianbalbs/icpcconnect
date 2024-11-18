@@ -1,7 +1,7 @@
 import authStyles from "@/styles/Auth.module.css";
 import React, { Dispatch, SetStateAction } from "react";
 
-interface StepOneProps {
+interface RegisterRoleProps {
   givenName: string;
   setGivenName: Dispatch<SetStateAction<string>>;
   familyName: string;
@@ -11,7 +11,7 @@ interface StepOneProps {
   handleNext: () => Promise<void>;
 }
 
-export const StepOne: React.FC<StepOneProps> = ({
+export const RegisterRole: React.FC<RegisterRoleProps> = ({
   givenName,
   setGivenName,
   familyName,

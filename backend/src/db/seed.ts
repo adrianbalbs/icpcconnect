@@ -13,12 +13,16 @@ import {
   users,
   languagesSpokenByStudent,
   contests,
+  teams,
   coursesCompletedByStudent,
   registrationDetails,
 } from "./schema.js";
-import { JobQueue } from "../services/queue-service.js";
-import { AlgorithmService } from "../services/algorithm-service.js";
-
+import {
+  AlgorithmService,
+  JobQueue,
+  TeamService,
+  UserService,
+} from "../services/index.js";
 type UserTable = {
   id: string;
   givenName: string;
@@ -233,7 +237,10 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding contests");
   const allContests = data.default.contests;
-  const jobQueue = new JobQueue(new AlgorithmService(db));
+  const userService = new UserService(db);
+  const jobQueue = new JobQueue(
+    new AlgorithmService(db, userService, new TeamService(db, userService)),
+  );
   for (const contest of allContests) {
     const { id, name, site } = contest;
     await db
@@ -273,6 +280,12 @@ export const seed = async (db: DatabaseConnection) => {
   for (const siteCoordinator of siteCoordinators) {
     await addSiteCoordinator(db, siteCoordinator);
   }
+  
+  // logger.info("Seeding Team Information");
+  // await db
+  //   .insert(teams)
+  //   .values(data.default.teams)
+  //   .onConflictDoNothing();
 
   logger.info("Adding default admin");
   const admins = data.default.admins as UserTable[];

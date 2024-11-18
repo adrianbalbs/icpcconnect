@@ -1,5 +1,5 @@
 {
-  "id": "9b7705e2-1cf4-4fb6-9d8f-6d23eb93a2d5",
+  "id": "92d35f99-a535-467c-9b5b-9483b73af2fa",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -354,7 +354,11 @@
           "name": "team_id",
           "type": "uuid",
           "primaryKey": false,
+<<<<<<< HEAD
           "notNull": true
+=======
+          "notNull": false
+>>>>>>> main
         },
         "leaving_id": {
           "name": "leaving_id",
@@ -584,7 +588,7 @@
           "name": "university",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "contest": {
           "name": "contest",
@@ -652,7 +656,7 @@
           "name": "hosted_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
