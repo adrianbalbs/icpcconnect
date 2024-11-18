@@ -1,11 +1,6 @@
-"use client";
-
 import useUniversities from "@/hooks/useUniversities";
 import authStyles from "@/styles/Auth.module.css";
-import { University } from "@/types/users";
-import { SERVER_URL } from "@/utils/constants";
-import axios from "axios";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 interface EnterDetailsProps {
   roleName: string;
@@ -55,7 +50,9 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
           Select University
         </option>
         {universities.map((university) => (
-          <option value={university.id}>{university.name}</option>
+          <option key={university.id} value={university.id}>
+            {university.name}
+          </option>
         ))}
       </select>
       {roleName === "Student" ? (
