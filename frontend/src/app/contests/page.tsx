@@ -35,7 +35,9 @@ import { SERVER_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import InviteCode from "@/components/utils/InviteCode";
 import Notif from "@/components/utils/Notif";
-import useUniversities from "@/hooks/useUniversities";
+import { useSites } from "@/utils/university";
+import { universityToSiteId } from "@/utils/university";
+import { getInfo } from "@/utils/profileInfo";
 
 export type ContestResponse = {
   id: string;
@@ -115,38 +117,43 @@ export default function Contests() {
   >({ formErrors: [], fieldErrors: {} });
 
   const {
-    userSession: { role },
+    userSession: { id, role },
   } = useAuth();
 
   const router = useRouter();
   const fetchContests = async () => {
     try {
+      const ownData = await getInfo(id);
       const res = await axios.get<{ allContests: ContestResponse[] }>(
         `${SERVER_URL}/api/contests`,
         {
           withCredentials: true,
         },
       );
-      setContests(
-        res.data.allContests.map((c) => ({
-          ...c,
-          earlyBirdDate: c.earlyBirdDate.split("T")[0],
-          cutoffDate: c.cutoffDate.split("T")[0],
-          contestDate: c.contestDate.split("T")[0],
-        })),
-      );
+      let filtered = res.data.allContests.map((c) => ({
+        ...c,
+        earlyBirdDate: c.earlyBirdDate.split("T")[0],
+        cutoffDate: c.cutoffDate.split("T")[0],
+        contestDate: c.contestDate.split("T")[0],
+      }));
+      if (ownData && role !== "Admin") {
+        const currSite = await universityToSiteId(ownData.university);
+        console.log(filtered);
+        filtered = filtered.filter((s) => s.siteId === currSite);
+      }
+      setContests(filtered);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const { universities } = useUniversities();
+  const { universities } = useSites();
 
   useEffect(() => {
     setDataGridLoading(true);
     fetchContests();
     setDataGridLoading(false);
-  }, []);
+  }, [id]);
 
   const handleCreate = () => {
     setDialogMode("create");

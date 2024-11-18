@@ -1,33 +1,54 @@
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { SERVER_URL } from "./constants";
+import { University } from "@/types/users";
 
-export const university = [
-  "Select University",
-  "University of New South Wales",
-  "University of Sydney",
-  "University of Technology Sydney",
-  "Macquarie University",
-];
+export const useUniversities = () => {
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-type University = {
-  id: number;
-  name: string;
-  hostedAt: number;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get<{ allUnis: University[] }>(
+          `${SERVER_URL}/api/users/universities`,
+        );
+        setUniversities(data.allUnis);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching universities:", err);
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { universities, loading, error };
 };
 
-export const nameToId = (name: string) => {
-  return university.indexOf(name);
+export const useSites = () => {
+  return {
+    universities: [
+      { id: 1, name: "University of New South Wales", hostedAt: 1 },
+      { id: 43, name: "University of the South Pacific", hostedAt: 43 },
+    ],
+  };
 };
 
-export const universityToSite = async (university: string) => {
+export const universityToSiteId = async (university: string) => {
   try {
     const res = await axios.get(`${SERVER_URL}/api/users/universities`, {
       withCredentials: true,
     });
     const { allUnis } = res.data;
+    console.log(allUnis);
     const givenUni = allUnis.find((u: University) => u.name === university);
-    const site = allUnis.find((u: University) => u.id === givenUni.hostedAt);
-    return site.name;
+    console.log(givenUni);
+    return givenUni.hostedAt;
   } catch (error) {
     console.log(`Get universities error: ${error}`);
     return "";

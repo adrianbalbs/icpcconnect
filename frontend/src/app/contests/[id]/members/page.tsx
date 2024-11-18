@@ -46,7 +46,9 @@ const Members: React.FC = () => {
   return (
     <>
       {role === "Admin" && <SiteCoordinators />}
-      {(role === "Admin" || role === "Site Coordinator") && <Coaches />}
+      {(role === "Admin" || role === "Site Coordinator") && (
+        <Coaches role={role} ownUni={ownUni} />
+      )}
       <Students role={role} ownUni={ownUni} contest={id} />
       {userDeleted !== "" && (
         <Snackbar

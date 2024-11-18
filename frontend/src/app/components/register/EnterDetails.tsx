@@ -1,4 +1,4 @@
-import useUniversities from "@/hooks/useUniversities";
+import { useUniversities } from "@/utils/university";
 import authStyles from "@/styles/Auth.module.css";
 import {
   FormControl,
