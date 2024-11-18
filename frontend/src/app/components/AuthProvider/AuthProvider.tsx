@@ -112,6 +112,7 @@ export function AuthContextProvider({
       setUserSession(data);
       router.push("/contests");
     } catch (err) {
+      console.error(err);
       setError(true);
     } finally {
       setIsLoading(false);
