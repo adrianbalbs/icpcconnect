@@ -1,7 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { AdminService, AuthService, CodesService, UserService } from "../services/index.js";
+import {
+  AdminService,
+  AuthService,
+  CodesService,
+  TeamService,
+  UserService,
+} from "../services/index.js";
 import { adminRouter, authRouter, userRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
@@ -27,14 +33,23 @@ beforeAll(async () => {
   db = dbSetup.db;
   const authService = new AuthService(db);
   const codesService = new CodesService(db);
+  const userService = new UserService(db);
+  const teamService = new TeamService(db, userService);
   adminApp = express()
     .use(express.json())
     .use(cookieParser())
     .use("/api/auth", authRouter(authService))
-    .use("/api/users", userRouter(new UserService(db), authService, codesService))
+    .use(
+      "/api/users",
+      userRouter(new UserService(db), authService, codesService),
+    )
     .use(
       "/api/admin",
-      adminRouter(new AdminService(db), authService, new AlgorithmService(db)),
+      adminRouter(
+        new AdminService(db),
+        authService,
+        new AlgorithmService(db, userService, teamService),
+      ),
     );
 });
 

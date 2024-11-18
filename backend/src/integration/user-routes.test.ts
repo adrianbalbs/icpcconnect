@@ -10,6 +10,7 @@ import {
   JobQueue,
   CodesService,
   UserService,
+  TeamService,
 } from "../services/index.js";
 import cookieParser from "cookie-parser";
 import {
@@ -33,19 +34,26 @@ describe("userRoutes tests", () => {
     db = dbSetup.db;
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
+    const userService = new UserService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use(
-        "/api/users",
-        userRouter(new UserService(db), authService, codesService),
-      )
+      .use("/api/users", userRouter(userService, authService, codesService))
       .use("/api/codes", codesRouter(codesService, authService))
       .use(
         "/api/contests",
         contestRouter(
-          new ContestService(db, new JobQueue(new AlgorithmService(db))),
+          new ContestService(
+            db,
+            new JobQueue(
+              new AlgorithmService(
+                db,
+                userService,
+                new TeamService(db, userService),
+              ),
+            ),
+          ),
           authService,
         ),
       )
