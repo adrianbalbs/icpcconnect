@@ -14,15 +14,7 @@ import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
 import SortBy from "@/components/utils/SortBy";
 import { getInfo } from "@/utils/profileInfo";
-<<<<<<< HEAD
 import { Typography } from "@mui/material";
-// const statusStrings = [
-//   "Waiting for students to register...",
-//   "Waiting for all teams to be allocated...",
-//   "All teams",
-// ];
-=======
->>>>>>> main
 
 const Teams: React.FC = () => {
   // Status Key
@@ -159,13 +151,9 @@ const Teams: React.FC = () => {
           {`Coach Review: ${getTimeDiff()}`}
         </Typography>
       )}
-<<<<<<< HEAD
-      {!loading && status > 0 && <TeamsList teams={teams} role={role} />}
-=======
-      {status === 2 && (
+      {!loading && status > 0 && (
         <TeamsList teams={teams} role={role} id={id} fetchTeams={fetchTeams} />
       )}
->>>>>>> main
     </>
   );
 };

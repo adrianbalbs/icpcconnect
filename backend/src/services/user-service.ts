@@ -597,17 +597,4 @@ export class UserService {
 
     return { preferences: preferencesReturn };
   }
-
-  async getAllPullouts(): Promise<{ allPullouts: Pullout[] }> {
-    const pullouts = await this.db
-      .select({
-        associated_team: replacements.associated_team,
-        leavingInternalId: replacements.leavingInternalId,
-        replacementStudentId: replacements.replacementStudentId,
-        reason: replacements.reason,
-      })
-      .from(replacements);
-
-    return { allPullouts: pullouts };
-  }
 }

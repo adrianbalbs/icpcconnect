@@ -73,11 +73,7 @@ CREATE TABLE IF NOT EXISTS "registration_details" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "replacements" (
-<<<<<<<< HEAD:backend/drizzle/0000_strong_owl.sql
-	"team_id" uuid NOT NULL,
-========
 	"team_id" uuid,
->>>>>>>> main:backend/drizzle/0000_fine_tarot.sql
 	"leaving_id" text DEFAULT '' NOT NULL,
 	"student_id" text DEFAULT '' NOT NULL,
 	"reason" text DEFAULT '' NOT NULL
