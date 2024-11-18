@@ -10,9 +10,15 @@ import { SERVER_URL } from "@/utils/constants";
 
 interface AssignedProps {
   members: MemberProps[];
+  getTeam: () => Promise<void>;
+  pendingPullOut: () => boolean;
 }
 
-const Assigned: React.FC<AssignedProps> = ({ members }) => {
+const Assigned: React.FC<AssignedProps> = ({
+  members,
+  getTeam,
+  pendingPullOut,
+}) => {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [replacementId, setReplacementId] = useState("");
@@ -33,6 +39,7 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
     } catch (err) {
       console.error(err);
     }
+    getTeam();
     setOpen(false);
   };
 
@@ -51,12 +58,18 @@ const Assigned: React.FC<AssignedProps> = ({ members }) => {
         <div
           style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
         >
-          <button
-            onClick={() => setOpen(true)}
-            className={memberStyles.pullout}
-          >
-            Request to pull out
-          </button>
+          {!pendingPullOut() ? (
+            <button
+              onClick={() => setOpen(true)}
+              className={memberStyles.pullout}
+            >
+              Request to Pull Out
+            </button>
+          ) : (
+            <button className={memberStyles["pullout-disabled"]}>
+              Pending Pull Out Request
+            </button>
+          )}
         </div>
 
         <Modal open={open} onClose={() => setOpen(false)}>

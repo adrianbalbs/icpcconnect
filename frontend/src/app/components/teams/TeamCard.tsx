@@ -274,23 +274,13 @@ const TeamCard: React.FC<TeamCardProps> = ({
               justifyContent: "center",
             }}
           >
-            {replacements.length === 0 && (
-              <button
-                className={memberStyles.pullout}
-                onClick={handleEdit}
-                style={{ marginTop: "30px" }}
-              >
-                Done
-              </button>
-            )}
-            {replacements.length !== 0 && (
-              <button
-                className={memberStyles["pullout-disabled"]}
-                style={{ marginTop: "30px" }}
-              >
-                Pending Pull Out Request
-              </button>
-            )}
+            <button
+              className={memberStyles.pullout}
+              onClick={handleEdit}
+              style={{ marginTop: "30px" }}
+            >
+              Done
+            </button>
           </div>
           <CloseBtn handleClose={() => setOpenEdit(false)}></CloseBtn>
         </Box>

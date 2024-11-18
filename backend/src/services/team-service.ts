@@ -512,6 +512,11 @@ export class TeamService {
     return { status: "OK" };
   }
 
+  async deletePulloutReq(userId: string): Promise<DeleteResponse> {
+    await this.db.delete(replacements).where(eq(replacements.leavingInternalId, userId));
+    return { status: "OK" };
+  }
+
   async handleReplacement(replacementReq: ReplacementRequest) {
     const studentInternalId = replacementReq.student;
     const teamId = replacementReq.team;
@@ -552,6 +557,5 @@ export class TeamService {
         team: replacingInfo.team,
       }
     ]}
-
   }
 }

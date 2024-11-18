@@ -206,6 +206,30 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
             next(err);
           }
         },
+    ).delete(
+      "/deletePullout/:userId",
+      [
+        authenticate,
+        authorise(["Student", "Admin"]),
+      ],
+        async (
+          req: Request<{ userId: string }, unknown>,
+          res: Response,
+          next: NextFunction,
+        ) => {
+          //The *internal* id of the student whose pullout we wish to delete
+          const { userId } = req.params;
+          const {
+            body: {},
+          } = req;
+
+          try {
+            const result = await teamService.deletePulloutReq(userId);
+            res.status(200).send(result);
+          } catch (err) {
+            next(err);
+          }
+        },
     ).put(
       "/update/sids/:id",
       [
