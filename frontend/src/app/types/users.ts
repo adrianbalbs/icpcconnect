@@ -25,3 +25,9 @@ export type User = {
   languagesSpoken: { code: string; name: string }[];
   coursesCompleted: { id: number; type: string }[];
 };
+
+export type University = {
+  id: number;
+  name: string;
+  hostedAt: number;
+};

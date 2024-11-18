@@ -1,5 +1,11 @@
+"use client";
+
+import useUniversities from "@/hooks/useUniversities";
 import authStyles from "@/styles/Auth.module.css";
-import React, { Dispatch, SetStateAction } from "react";
+import { University } from "@/types/users";
+import { SERVER_URL } from "@/utils/constants";
+import axios from "axios";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface EnterDetailsProps {
   roleName: string;
@@ -28,6 +34,8 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
   handleBack,
   handleNext,
 }) => {
+  const { universities } = useUniversities();
+
   return (
     <>
       <h1 className={authStyles.h1}>Enter your details</h1>
@@ -46,10 +54,9 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
         <option value={0} disabled selected>
           Select University
         </option>
-        <option value={1}>UNSW</option>
-        <option value={2}>University of Sydney</option>
-        <option value={3}>University of Technology Sydney</option>
-        <option value={4}>Macquarie University</option>
+        {universities.map((university) => (
+          <option value={university.id}>{university.name}</option>
+        ))}
       </select>
       {roleName === "Student" ? (
         <form className={authStyles["form-container"]}>

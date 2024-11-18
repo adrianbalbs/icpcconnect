@@ -30,7 +30,7 @@ import {
   notFoundError,
   unauthorizedError,
 } from "../utils/errors.js";
-import { and, eq, getTableColumns, isNull } from "drizzle-orm";
+import { and, eq, getTableColumns, isNull, not } from "drizzle-orm";
 import { CodesService } from "./codes-service.js";
 
 export class UserService {
@@ -595,12 +595,15 @@ export class UserService {
   }
 
   /**
-   * Retrieves all existing universities
+   * Retrieves all existing universities except the N/A option
    *
    * @returns {Promise<{ allUnis: University[]}>} An object containing an array of university objects
    */
   async getAllUniversities(): Promise<{ allUnis: University[] }> {
-    const allUnis = await this.db.select().from(universities);
+    const allUnis = await this.db
+      .select()
+      .from(universities)
+      .where(not(eq(universities.id, 0)));
     return { allUnis };
   }
 }
