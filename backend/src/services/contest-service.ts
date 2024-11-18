@@ -1,6 +1,6 @@
 import { DatabaseConnection } from "../db/database.js";
-import { contests, universities } from "../db/schema.js";
-import { eq } from "drizzle-orm";
+import { contests, studentDetails, teams, universities } from "../db/schema.js";
+import { eq, inArray } from "drizzle-orm";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { DeleteResponse } from "../types/api-res.js";
 import {
@@ -142,8 +142,25 @@ export class ContestService {
       throw new HTTPError(badRequest);
     }
 
-    await this.db.delete(contests).where(eq(contests.id, contestId));
-    await this.jobQueue.removeJob(contestId);
+    await this.db.transaction(async (tx) => {
+      const contestTeams = await tx
+        .select({ id: teams.id })
+        .from(teams)
+        .where(eq(teams.contest, contestId));
+
+      await tx
+        .update(studentDetails)
+        .set({ team: null })
+        .where(
+          inArray(
+            studentDetails.team,
+            contestTeams.map((c) => c.id),
+          ),
+        );
+
+      await tx.delete(contests).where(eq(contests.id, contestId));
+      await this.jobQueue.removeJob(contestId);
+    });
     return { status: "OK" };
   }
 

@@ -164,9 +164,10 @@ export default function Contests() {
       await axios.delete(`${SERVER_URL}/api/contests/${deleteId}`, {
         withCredentials: true,
       });
+
+      await fetchContests();
       setDeleteId(null);
       setDeleteDialogOpen(false);
-      fetchContests();
     } catch (err) {
       console.log(err);
     }
@@ -194,7 +195,7 @@ export default function Contests() {
           },
         );
       }
-      fetchContests();
+      await fetchContests();
       handleDialogClose();
     } catch (err) {
       console.error("Error:", err);
