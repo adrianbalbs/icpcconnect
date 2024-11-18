@@ -1,5 +1,6 @@
 import authStyles from "@/styles/Auth.module.css";
-import React, { Dispatch, SetStateAction } from "react";
+import { TextField } from "@mui/material";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 interface CreatePasswordProps {
   roleName: string;
@@ -9,8 +10,8 @@ interface CreatePasswordProps {
   setConfirmPassword: Dispatch<SetStateAction<string>>;
   checked: boolean;
   setChecked: Dispatch<SetStateAction<boolean>>;
-  handleBack: () => void;
-  handleNext: () => Promise<void>;
+  setStep: Dispatch<SetStateAction<number>>;
+  submitForm: () => Promise<void>;
 }
 
 export const CreatePassword: React.FC<CreatePasswordProps> = ({
@@ -21,9 +22,48 @@ export const CreatePassword: React.FC<CreatePasswordProps> = ({
   setConfirmPassword,
   checked,
   setChecked,
-  handleBack,
-  handleNext,
+  setStep,
+  submitForm,
 }) => {
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const validatePasswords = () => {
+    let valid = true;
+
+    if (!password) {
+      setPasswordError("Please enter a password.");
+      valid = false;
+    } else if (password.length < 8) {
+      setPasswordError("Password must be 8 or more characters.");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!confirmPassword) {
+      setConfirmPasswordError("Please confirm your password.");
+      valid = false;
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match.");
+      valid = false;
+    } else {
+      setConfirmPasswordError("");
+    }
+
+    return valid;
+  };
+
+  const handleBack = () => {
+    setStep(4);
+  };
+
+  const handleNext = () => {
+    if (validatePasswords() && checked) {
+      submitForm();
+    }
+  };
+
   return (
     <>
       <h1 className={authStyles.h1}>Create a password</h1>
@@ -32,34 +72,46 @@ export const CreatePassword: React.FC<CreatePasswordProps> = ({
         {roleName}
       </h1>
       <br />
-      <input
+      <TextField
         type="password"
         placeholder="Password"
-        className={authStyles["input-field"]}
+        variant="standard"
         value={password}
+        sx={{
+          m: "20px 0",
+          "& .MuiOutlinedInput-root": {
+            "& .MuiInputBase-input": {
+              py: "10px",
+              fontSize: "14px",
+            },
+          },
+        }}
         onChange={(e) => setPassword(e.target.value)}
+        error={!!passwordError}
+        id="password-error"
+        fullWidth
+        helperText={passwordError}
       />
-      <input
+      <TextField
         type="password"
         placeholder="Confirm Password"
-        className={authStyles["input-field"]}
+        variant="standard"
         value={confirmPassword}
+        sx={{
+          m: "20px 0",
+          "& .MuiOutlinedInput-root": {
+            "& .MuiInputBase-input": {
+              py: "10px",
+              fontSize: "14px",
+            },
+          },
+        }}
         onChange={(e) => setConfirmPassword(e.target.value)}
+        error={!!confirmPasswordError}
+        id="confirm-password-error"
+        fullWidth
+        helperText={confirmPasswordError}
       />
-      {!checked && (
-        <>
-          <p style={{ color: "red" }}>
-            Please agree to the terms and conditions.
-          </p>
-          <br />
-        </>
-      )}
-      {password !== confirmPassword && (
-        <>
-          <p style={{ color: "red" }}>Passwords do not match.</p>
-          <br />
-        </>
-      )}
       <label htmlFor="tnc">
         <input
           id="tnc"
@@ -70,6 +122,15 @@ export const CreatePassword: React.FC<CreatePasswordProps> = ({
         &nbsp;Yes, I agree to the{" "}
         <a className="link">Terms and Conditions of Use</a>
       </label>
+      <br />
+      {!checked && (
+        <>
+          <p style={{ color: "red" }}>
+            Please agree to the terms and conditions.
+          </p>
+          <br />
+        </>
+      )}
       <div className={authStyles["horizontal-container"]}>
         <button
           onClick={handleBack}

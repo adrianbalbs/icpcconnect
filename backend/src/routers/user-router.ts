@@ -36,6 +36,13 @@ export function userRouter(
       }),
     )
     .get(
+      "/universities",
+      handle(async (_req, res) => {
+        const universities = await userService.getAllUniversities();
+        res.status(200).send(universities);
+      }),
+    )
+    .get(
       "/",
       [
         authenticate,

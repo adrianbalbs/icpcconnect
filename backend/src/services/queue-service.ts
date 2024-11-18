@@ -2,6 +2,7 @@ import { Queue, Worker } from "bullmq";
 import dotenv from "dotenv";
 import { AlgorithmService } from "./algorithm-service.js";
 import { getLogger } from "../utils/logger.js";
+import { env } from "../env.js";
 
 dotenv.config();
 
@@ -9,8 +10,8 @@ export class JobQueue {
   private readonly logger = getLogger();
   readonly queue = new Queue("algorithm-scheduler", {
     connection: {
-      host: process.env.REDIS_HOST || "localhost",
-      port: Number(process.env.REDIS_PORT) || 6379,
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
     },
   });
   private readonly worker = new Worker(
@@ -21,8 +22,8 @@ export class JobQueue {
     },
     {
       connection: {
-        host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT) || 6739,
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
       },
     },
   );

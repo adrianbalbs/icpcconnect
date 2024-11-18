@@ -7,7 +7,6 @@ import {
   users,
   universities,
   contests,
-  replacementRelations,
 } from "../db/index.js";
 import { UserService } from "./index.js";
 import {
@@ -424,8 +423,14 @@ export class TeamService {
         message: `Team with id: ${teamId} does not exist`,
       });
     }
+    await this.db.transaction(async (tx) => {
+      await tx
+        .update(studentDetails)
+        .set({ team: null })
+        .where(eq(studentDetails.team, teamId));
+      await tx.delete(teams).where(eq(teams.id, teamId));
+    });
 
-    await this.db.delete(teams).where(eq(teams.id, teamId));
     return { status: "OK" };
   }
 

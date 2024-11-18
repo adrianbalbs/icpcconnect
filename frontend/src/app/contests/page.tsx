@@ -35,6 +35,7 @@ import { SERVER_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import InviteCode from "@/components/utils/InviteCode";
 import Notif from "@/components/utils/Notif";
+import useUniversities from "@/hooks/useUniversities";
 
 export type ContestResponse = {
   id: string;
@@ -50,13 +51,6 @@ type ContestDelete = {
   id: string;
   name: string;
 };
-
-const universities = [
-  { id: 1, label: "University of New South Wales" },
-  { id: 2, label: "University of Sydney" },
-  { id: 3, label: "University of Technology Sydney" },
-  { id: 4, label: "Macquarie University" },
-];
 
 type DeleteContestDialogProps = {
   open: boolean;
@@ -146,6 +140,8 @@ export default function Contests() {
     }
   };
 
+  const { universities } = useUniversities();
+
   useEffect(() => {
     setDataGridLoading(true);
     fetchContests();
@@ -175,13 +171,14 @@ export default function Contests() {
       await axios.delete(`${SERVER_URL}/api/contests/${selectDelete?.id}`, {
         withCredentials: true,
       });
+
+      await fetchContests();
+      setSelectDelete(null);
+      setDeleteDialogOpen(false);
       setNotif({
         type: "delete",
         message: `Contest Deleted: ${selectDelete?.name}`,
       });
-      setSelectDelete(null);
-      setDeleteDialogOpen(false);
-      fetchContests();
     } catch (err) {
       console.log(err);
     }
@@ -209,7 +206,7 @@ export default function Contests() {
           },
         );
       }
-      fetchContests();
+      await fetchContests();
       handleDialogClose();
     } catch (err) {
       console.error("Error:", err);

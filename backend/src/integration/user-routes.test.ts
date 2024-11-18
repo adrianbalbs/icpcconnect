@@ -10,6 +10,7 @@ import {
   JobQueue,
   CodesService,
   UserService,
+  TeamService,
 } from "../services/index.js";
 import cookieParser from "cookie-parser";
 import {
@@ -22,6 +23,7 @@ import { eq, not } from "drizzle-orm";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { generateCreateUserFixture } from "./fixtures.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
+import { env } from "../env.js";
 
 describe("userRoutes tests", () => {
   let db: DatabaseConnection;
@@ -33,19 +35,25 @@ describe("userRoutes tests", () => {
     db = dbSetup.db;
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
+    const userService = new UserService(db);
     app = express()
       .use(express.json())
       .use(cookieParser())
       .use("/api/auth", authRouter(authService))
-      .use(
-        "/api/users",
-        userRouter(new UserService(db), authService, codesService),
-      )
+      .use("/api/users", userRouter(userService, authService, codesService))
       .use("/api/codes", codesRouter(codesService, authService))
       .use(
         "/api/contests",
         contestRouter(
-          new ContestService(db, new JobQueue(new AlgorithmService(db))),
+          new ContestService(
+            db,
+            new JobQueue(
+              new AlgorithmService(
+                userService,
+                new TeamService(db, userService),
+              ),
+            ),
+          ),
           authService,
         ),
       )
@@ -56,15 +64,15 @@ describe("userRoutes tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];
   });
 
   afterEach(async () => {
-    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+    await db.delete(users).where(not(eq(users.email, env.ADMIN_EMAIL)));
   });
 
   it("should register a student user", async () => {

@@ -30,12 +30,14 @@ import cookieParser from "cookie-parser";
 import { userRouter } from "./routers/user-router.js";
 import { ExpressAdapter } from "@bull-board/express";
 import { createBullBoard } from "@bull-board/api";
+import { env, isProdEnv } from "./env.js";
 
 const logger = getLogger();
 
 logger.info("Setup Express");
 const app = express();
-const port = process.env.PORT || "3000";
+const port = isProdEnv(env) ? env.PORT : 3000;
+const frontendUrl = isProdEnv(env) ? env.FRONTEND_URL : "http://localhost:3000";
 
 const db = new DevDatabase();
 const dbConn = db.getConnection();
@@ -48,7 +50,7 @@ const teamService = new TeamService(dbConn, userService);
 const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
-const algorithmService = new AlgorithmService(dbConn, userService, teamService);
+const algorithmService = new AlgorithmService(userService, teamService);
 const emailService = new EmailService(dbConn);
 const jobQueue = new JobQueue(algorithmService);
 const contestService = new ContestService(dbConn, jobQueue);
@@ -64,7 +66,7 @@ logger.info("Setup HTTP Server");
 app
   .use(
     cors({
-      origin: process.env.FRONTEND_URL,
+      origin: frontendUrl,
       credentials: true,
     }),
   )

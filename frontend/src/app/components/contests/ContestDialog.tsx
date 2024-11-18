@@ -20,6 +20,7 @@ import { CreateContestSchema } from "@/types/contests";
 import { ContestResponse } from "@/contests/page";
 import { editContestBtn } from "@/styles/sxStyles";
 import { NotifType } from "../utils/Notif";
+import { University } from "@/types/users";
 
 interface ContestDialogProps {
   open: boolean;
@@ -31,7 +32,7 @@ interface ContestDialogProps {
     contestDate: string | undefined;
     site: number | undefined;
   }) => void;
-  universities: { id: number; label: string }[];
+  universities: University[];
   errors: z.inferFlattenedErrors<typeof CreateContestSchema>;
   mode: "create" | "edit";
   contestData?: ContestResponse | null;
@@ -55,10 +56,8 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
   const [earlyBirdDate, setEarlyBirdDate] = useState<Dayjs | null>(null);
   const [cutoffDate, setCutoffDate] = useState<Dayjs | null>(null);
   const [contestDate, setContestDate] = useState<Dayjs | null>(null);
-  const [selectedUniversity, setSelectedUniversity] = useState<{
-    id: number;
-    label: string;
-  } | null>(null);
+  const [selectedUniversity, setSelectedUniversity] =
+    useState<University | null>(null);
 
   useEffect(() => {
     if (mode === "edit" && contestData && open) {
@@ -182,7 +181,9 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
             <Autocomplete
               options={universities}
               value={selectedUniversity}
-              onChange={(event, newValue) => setSelectedUniversity(newValue)}
+              onChange={(_event, newValue) => setSelectedUniversity(newValue)}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
               sx={{ mt: 2 }}
               renderInput={(params) => (
                 <TextField
