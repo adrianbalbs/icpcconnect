@@ -62,15 +62,9 @@ const TeamCard: React.FC<TeamCardProps> = ({
   };
 
   const handleEdit = async () => {
-    console.log(replacementArr);
     for (const i in replacementArr) {
       if (replacementArr[i] != "") {
         try {
-          console.log({
-            team: team.id,
-            student: team.members[i].id,
-            replacedWith: replacementArr[i],
-          });
           await axios.put(
             `${SERVER_URL}/api/teams/handleReplacement/`,
             {
@@ -153,18 +147,29 @@ const TeamCard: React.FC<TeamCardProps> = ({
             },
           }}
         >
-          <p className={teamStyles.overflow}>
-            <span className={pageStyles.bold}>Team Name:</span>{" "}
-            {`${team.name} `}
+          <Box display="grid" mb="8px" gridTemplateColumns="9fr 1fr">
+            <span className={teamStyles.overflow}>
+              <b>Team Name:&nbsp;</b>
+              {`${team.name}`}
+            </span>
             {
               <IconButton
                 onClick={handleOpenEdit}
-                sx={{ padding: "0", marginBottom: "3px", marginLeft: "3px" }}
+                sx={{
+                  p: "1px",
+                  width: "15px",
+                  height: "15px",
+                  justifySelf: "end",
+                }}
               >
-                {canEdit && <DriveFileRenameOutlineOutlinedIcon />}
+                {canEdit && (
+                  <DriveFileRenameOutlineOutlinedIcon
+                    sx={{ fontSize: "18px" }}
+                  />
+                )}
               </IconButton>
             }
-          </p>
+          </Box>
         </Tooltip>
         <p>
           <span className={pageStyles.bold}>Institution:</span>{" "}

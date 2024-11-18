@@ -77,7 +77,7 @@ const Teams: React.FC = () => {
         },
       );
       const { allTeams } = res.data;
-      let sorted = allTeams;
+      let sorted = allTeams.filter((t) => t.members.length > 0);
       // Filters teams for specific university coach
       if (role === "Coach") {
         sorted = allTeams.filter(
