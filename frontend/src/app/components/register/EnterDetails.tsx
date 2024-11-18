@@ -1,6 +1,13 @@
 import useUniversities from "@/hooks/useUniversities";
 import authStyles from "@/styles/Auth.module.css";
-import React, { Dispatch, SetStateAction } from "react";
+import {
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 interface EnterDetailsProps {
   roleName: string;
@@ -12,8 +19,9 @@ interface EnterDetailsProps {
   setEmail: Dispatch<SetStateAction<string>>;
   inviteCode: string;
   setInviteCode: Dispatch<SetStateAction<string>>;
-  handleBack: () => void;
-  handleNext: () => Promise<void>;
+  setStep: Dispatch<SetStateAction<number>>;
+  sendEmail: () => Promise<void>;
+  setEligibility: Dispatch<SetStateAction<boolean>>;
 }
 
 export const EnterDetails: React.FC<EnterDetailsProps> = ({
@@ -26,9 +34,40 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
   setEmail,
   inviteCode,
   setInviteCode,
-  handleBack,
-  handleNext,
+  setStep,
+  sendEmail,
+  setEligibility,
 }) => {
+  const [uniError, setUniError] = useState(false);
+  const [inviteCodeError, setInviteCodeError] = useState(false);
+  const [studentIdError, setStudentIdError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+
+  const handleBack = () => {
+    setEligibility(false);
+    if (roleName === "Student") {
+      setStep(2);
+    } else {
+      setStep(1);
+    }
+  };
+
+  const handleNext = async () => {
+    setUniError(university === 0);
+    setInviteCodeError(roleName !== "Student" && inviteCode === "");
+    setStudentIdError(roleName === "Student" && studentId === "");
+    setEmailError(email === "");
+    const valid = !(
+      (university === 0 && roleName === "Student" && studentId === "") ||
+      (roleName !== "Student" && inviteCode === "") ||
+      university === 0 ||
+      email === ""
+    );
+    if (valid) {
+      await sendEmail();
+    }
+  };
+
   const { universities } = useUniversities();
 
   return (
@@ -39,57 +78,82 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
         {roleName}
       </h1>
       <br />
-      <select
-        id="select-university"
-        name="Select University"
-        className={authStyles["input-field"]}
-        value={university}
-        onChange={(e) => setUniversity(Number(e.target.value))}
-      >
-        <option value={0} disabled selected>
-          Select University
-        </option>
-        {universities.map((university) => (
-          <option key={university.id} value={university.id}>
-            {university.name}
-          </option>
-        ))}
-      </select>
+      <FormControl variant="standard" fullWidth error={uniError}>
+        <Select
+          value={university}
+          onChange={(e) => setUniversity(Number(e.target.value))}
+        >
+          <MenuItem sx={{ color: "#777777" }} value={0}>
+            <p style={{ color: "#BBBBBB" }}>Enter University</p>
+          </MenuItem>
+          {universities.map((university) => (
+            <MenuItem key={university.id} value={university.id}>
+              {university.name}
+            </MenuItem>
+          ))}
+        </Select>
+        {uniError && (
+          <FormHelperText>Please select a university.</FormHelperText>
+        )}
+      </FormControl>
+      <br />
       {roleName === "Student" ? (
-        <form className={authStyles["form-container"]}>
-          <input
-            placeholder="Student ID"
-            className={authStyles["input-field"]}
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-          />
-          <input
-            type="Email"
-            id="email"
-            placeholder="Email"
-            className={authStyles["input-field"]}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </form>
+        <TextField
+          fullWidth
+          placeholder="Student ID"
+          variant="standard"
+          value={studentId}
+          sx={{
+            m: "20px 0",
+            "& .MuiOutlinedInput-root": {
+              "& .MuiInputBase-input": {
+                py: "10px",
+                fontSize: "14px",
+              },
+            },
+          }}
+          onChange={(e) => setStudentId(e.target.value)}
+          error={studentIdError}
+          helperText={studentIdError ? "Please enter your student ID." : ""}
+        />
       ) : (
-        <form className={authStyles["form-container"]}>
-          <input
-            placeholder="Invite Code"
-            className={authStyles["input-field"]}
-            value={inviteCode}
-            onChange={(e) => setInviteCode(e.target.value)}
-          />
-          <input
-            type="Email"
-            id="email"
-            placeholder="Email"
-            className={authStyles["input-field"]}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </form>
+        <TextField
+          fullWidth
+          placeholder="Invite Code"
+          variant="standard"
+          value={inviteCode}
+          sx={{
+            m: "20px 0",
+            "& .MuiOutlinedInput-root": {
+              "& .MuiInputBase-input": {
+                py: "10px",
+                fontSize: "14px",
+              },
+            },
+          }}
+          onChange={(e) => setInviteCode(e.target.value)}
+          error={inviteCodeError}
+          helperText={inviteCodeError ? "Please enter your invite code." : ""}
+        />
       )}
+      <TextField
+        fullWidth
+        placeholder="Email"
+        variant="standard"
+        value={email}
+        sx={{
+          m: "20px 0",
+          "& .MuiOutlinedInput-root": {
+            "& .MuiInputBase-input": {
+              py: "10px",
+              fontSize: "14px",
+            },
+          },
+        }}
+        onChange={(e) => setEmail(e.target.value)}
+        error={emailError}
+        helperText={emailError ? "Please enter your email." : ""}
+      />
       <div className={authStyles["horizontal-container"]}>
         <button
           onClick={handleBack}

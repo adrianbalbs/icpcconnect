@@ -1,5 +1,13 @@
 import authStyles from "@/styles/Auth.module.css";
-import React, { Dispatch, SetStateAction } from "react";
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 interface RegisterRoleProps {
   givenName: string;
@@ -8,7 +16,7 @@ interface RegisterRoleProps {
   setFamilyName: Dispatch<SetStateAction<string>>;
   roleName: string;
   setRoleName: Dispatch<SetStateAction<string>>;
-  handleNext: () => Promise<void>;
+  setStep: Dispatch<SetStateAction<number>>;
 }
 
 export const RegisterRole: React.FC<RegisterRoleProps> = ({
@@ -18,39 +26,91 @@ export const RegisterRole: React.FC<RegisterRoleProps> = ({
   setFamilyName,
   roleName,
   setRoleName,
-  handleNext,
+  setStep,
 }) => {
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+
+  const handleNext = () => {
+    setHasAttemptedSubmit(true);
+
+    const isNameValid = givenName !== "" && familyName !== "";
+    const isRoleValid = roleName !== "";
+
+    if (isNameValid && isRoleValid) {
+      if (roleName === "Student") {
+        setStep(2);
+      } else {
+        setStep(3);
+      }
+    }
+  };
+
   return (
     <>
       <h1 className={authStyles.h1}>Create an account</h1>
       <div className={authStyles["horizontal-container"]}>
-        <input
+        <TextField
           placeholder="First Name"
-          className={authStyles["input-field-short"]}
+          variant="standard"
           value={givenName}
+          sx={{
+            m: "20px 0",
+            "& .MuiOutlinedInput-root": {
+              "& .MuiInputBase-input": {
+                py: "10px",
+                fontSize: "14px",
+              },
+            },
+            width: "230px",
+            margin: "20px",
+          }}
           onChange={(e) => setGivenName(e.target.value)}
+          error={hasAttemptedSubmit && givenName === ""}
+          helperText={
+            hasAttemptedSubmit && givenName === ""
+              ? "Please enter your first name."
+              : ""
+          }
         />
-        <input
+        <TextField
           placeholder="Last Name"
-          className={authStyles["input-field-short"]}
+          variant="standard"
           value={familyName}
+          sx={{
+            m: "20px 0",
+            "& .MuiOutlinedInput-root": {
+              "& .MuiInputBase-input": {
+                py: "10px",
+                fontSize: "14px",
+              },
+            },
+            width: "230px",
+            margin: "20px",
+          }}
           onChange={(e) => setFamilyName(e.target.value)}
+          error={hasAttemptedSubmit && familyName === ""}
+          helperText={
+            hasAttemptedSubmit && familyName === ""
+              ? "Please enter your last name."
+              : ""
+          }
         />
       </div>
-      <select
-        value={roleName}
-        onChange={(e) => setRoleName(e.target.value)}
-        id="select-role"
-        name="Select Role"
-        className={authStyles["input-field"]}
+      <FormControl
+        variant="standard"
+        fullWidth
+        error={hasAttemptedSubmit && roleName === ""}
       >
-        <option value="" disabled selected>
-          Select Role
-        </option>
-        <option value="Student">Student</option>
-        <option value="Coach">Coach</option>
-        <option value="Site Coordinator">Site Coordinator</option>
-      </select>
+        <InputLabel>Select Role</InputLabel>
+        <Select value={roleName} onChange={(e) => setRoleName(e.target.value)}>
+          <MenuItem value={"Student"}>Student</MenuItem>
+          <MenuItem value={"Coach"}>Coach</MenuItem>
+          <MenuItem value={"Site Coordinator"}>Site Coordinator</MenuItem>
+        </Select>
+        {hasAttemptedSubmit && roleName === "" && (
+          <FormHelperText>Please select a role.</FormHelperText>
+        )}
+      </FormControl>
       <div className={authStyles["horizontal-container"]}>
         <a
           href={"/login"}
