@@ -9,6 +9,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import ProfileImage from "@/components/profile/ProfileImage";
+import DeleteAccount from "@/components/profile/DeleteAccount";
 
 interface ProfileLayoutProps {
   children: React.ReactNode;
@@ -61,6 +62,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
             className={profileStyles.role}
           >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
           {checkView() && <Sidebar id={params.id} role={info.role} />}
+          {userSession.role === "Admin" && <DeleteAccount />}
         </div>
         <Tooltip title="Back">
           <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>

@@ -83,69 +83,67 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
 
   return (
     <>
-      <Fragment>
-        <Button
-          sx={purpleBtn}
-          variant="contained"
-          startIcon={<PersonAddIcon />}
-          onClick={handleOpen}
-        >
-          New Invite Code
-        </Button>
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="new-invite-code"
-          aria-describedby="generate-invite-code"
-        >
-          <CloseBtn handleClose={handleClose} />
-          <DialogContent sx={{ width: "450px", p: "40px 40px" }}>
-            <FormControl sx={{ m: "10px 0", fontSize: "12px" }} fullWidth>
-              <InputLabel
-                id="new-invite-code-label"
-                sx={{ lineHeight: "15px", fontSize: "14px" }}
-              >
-                New Invite Code
-              </InputLabel>
-              <Select
-                id="select-type"
-                value={type}
-                label="New Invite Code"
-                sx={{ height: "45px", fontSize: "14px" }}
-                onChange={handleSelect}
-              >
-                <MenuItem sx={{ fontSize: "14px" }} value="newSiteCoordCode">
-                  Site Coordinator
-                </MenuItem>
-                <MenuItem sx={{ fontSize: "14px" }} value="newCoachCode">
-                  Coach
-                </MenuItem>
-              </Select>
-            </FormControl>
-            <hr className={pageStyles.divider} />
-            <DialogContentText
-              id="invite-code"
-              sx={{
-                display: "flex",
-                margin: "15px 0 0 14px",
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
+      <Button
+        sx={purpleBtn}
+        variant="contained"
+        startIcon={<PersonAddIcon />}
+        onClick={handleOpen}
+      >
+        New Invite Code
+      </Button>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="new-invite-code"
+        aria-describedby="generate-invite-code"
+      >
+        <CloseBtn handleClose={handleClose} />
+        <DialogContent sx={{ width: "450px", p: "40px 40px" }}>
+          <FormControl sx={{ m: "10px 0", fontSize: "12px" }} fullWidth>
+            <InputLabel
+              id="new-invite-code-label"
+              sx={{ lineHeight: "15px", fontSize: "14px" }}
             >
-              Invite Code:
-              <div className={pageStyles.code}>{code}</div>
-            </DialogContentText>
-          </DialogContent>
-          <Button
-            variant="contained"
-            sx={{ ...purpleBtn, margin: "0 auto 30px", width: "170px" }}
-            onClick={handleButton}
-            disabled={type === ""}
+              New Invite Code
+            </InputLabel>
+            <Select
+              id="select-type"
+              value={type}
+              label="New Invite Code"
+              sx={{ height: "45px", fontSize: "14px" }}
+              onChange={handleSelect}
+            >
+              <MenuItem sx={{ fontSize: "14px" }} value="newSiteCoordCode">
+                Site Coordinator
+              </MenuItem>
+              <MenuItem sx={{ fontSize: "14px" }} value="newCoachCode">
+                Coach
+              </MenuItem>
+            </Select>
+          </FormControl>
+          <hr className={pageStyles.divider} />
+          <DialogContentText
+            id="invite-code"
+            sx={{
+              display: "flex",
+              margin: "15px 0 0 14px",
+              fontSize: "14px",
+              fontWeight: "bold",
+            }}
           >
-            {status}
-          </Button>
-        </Dialog>
-      </Fragment>
+            Invite Code:
+            <div className={pageStyles.code}>{code}</div>
+          </DialogContentText>
+        </DialogContent>
+        <Button
+          variant="contained"
+          sx={{ ...purpleBtn, margin: "0 auto 30px", width: "170px" }}
+          onClick={handleButton}
+          disabled={type === ""}
+        >
+          {status}
+        </Button>
+      </Dialog>
     </>
   );
 };

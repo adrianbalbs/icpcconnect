@@ -21,7 +21,11 @@ const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
 
   const getStudents = async () => {
     const preference = await getPreferences(id, "preferences");
-    if (preference && preference.length > 0) {
+    if (
+      preference &&
+      preference.length > 0 &&
+      preference[0].studentId !== "none"
+    ) {
       setInclusion(preference);
       setType(preference.length > 1 ? "team" : "pair");
     }

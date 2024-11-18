@@ -42,11 +42,11 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
   const setDefault = async () => {
     const preference = await getPreferences(params.id, "preferences");
     if (preference) {
-      if (preference.length === 1) {
+      if (preference.length === 1 && preference[0].studentId !== "none") {
         setAdded({ ...added, pair: true });
       } else if (preference.length === 2) {
         setAdded({ ...added, team: true });
-      } else {
+      } else if (preference.length === 0) {
         await updatePreferences(params.id, "preferences", "none");
       }
     }

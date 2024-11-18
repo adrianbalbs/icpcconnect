@@ -72,7 +72,11 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   const checkPreference = useCallback(async () => {
     try {
       const preference = await getPreferences(id, "preferences");
-      if (preference && preference.length !== 0) {
+      const exclusion = await getPreferences(id, "exclusions");
+      if (
+        (preference && preference.length > 0) ||
+        (exclusion && exclusion.length > 0)
+      ) {
         setAdded((prev) => ({ ...prev, preference: true }));
       }
     } catch (err) {

@@ -25,7 +25,12 @@ import {
 } from "../schemas/index.js";
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
-import { badRequest, HTTPError, notFoundError, unauthorizedError } from "../utils/errors.js";
+import {
+  badRequest,
+  HTTPError,
+  notFoundError,
+  unauthorizedError,
+} from "../utils/errors.js";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import { CodesService } from "./codes-service.js";
 
@@ -113,7 +118,11 @@ export class UserService {
     return user;
   }
 
-  async updatePassword(id: string, oldPassword: string, newPassword: string): Promise<{ id: string }> {
+  async updatePassword(
+    id: string,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<{ id: string }> {
     const checkUser = await this.db
       .select()
       .from(users)
@@ -125,7 +134,10 @@ export class UserService {
 
     // Compare the provided password with the stored hash
     const storedHash = checkUser[0].password;
-    const isPasswordValid = await passwordUtils().compare(oldPassword, storedHash);
+    const isPasswordValid = await passwordUtils().compare(
+      oldPassword,
+      storedHash,
+    );
     if (isPasswordValid) {
       newPassword = await passwordUtils().hash(newPassword);
       const [user] = await this.db
@@ -133,7 +145,7 @@ export class UserService {
         .set({ password: newPassword })
         .where(eq(users.id, id))
         .returning({ id: users.id });
-        return user;
+      return user;
     }
     throw new HTTPError(unauthorizedError);
   }
@@ -351,8 +363,11 @@ export class UserService {
 
     const preferencesReturn: PreferencesResponse[] = [];
 
-    if (p.preferences.length === 0 || p.preferences === "none") {
+    if (p.preferences.length === 0) {
       return { preferences: preferencesReturn };
+    } else if (p.preferences === "none") {
+      console.log("yaa");
+      return { preferences: [{ studentId: "none", name: "" }] };
     }
 
     const prefArr = p.preferences.split(", ");
@@ -379,19 +394,16 @@ export class UserService {
     return { preferences: preferencesReturn };
   }
 
-  async getAllPullouts(
-  ): Promise<{ allPullouts: Pullout[] }> {
+  async getAllPullouts(): Promise<{ allPullouts: Pullout[] }> {
     const pullouts = await this.db
       .select({
-        associated_team : replacements.associated_team,
-        leavingInternalId : replacements.leavingInternalId,
-        replacementStudentId : replacements.replacementStudentId,
-        reason : replacements.reason,
+        associated_team: replacements.associated_team,
+        leavingInternalId: replacements.leavingInternalId,
+        replacementStudentId: replacements.replacementStudentId,
+        reason: replacements.reason,
       })
-      .from(replacements)
-
+      .from(replacements);
 
     return { allPullouts: pullouts };
   }
-
 }

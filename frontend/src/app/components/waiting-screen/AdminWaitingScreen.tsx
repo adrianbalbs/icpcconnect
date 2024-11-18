@@ -41,7 +41,7 @@ const AdminWaitingScreen: React.FC<AdminWaitingScreenProps> = ({
       {role === "Admin" && (
         <Button
           variant="contained"
-          sx={{ ...purpleBtn, mt: "30px", p: "10px 15px", fontWeight: "bold" }}
+          sx={{ ...purpleBtn, mt: "30px", p: "10px 30px", fontWeight: "bold" }}
           onClick={handleRunAlgorithm}
         >
           Allocate Teams

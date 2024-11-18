@@ -50,7 +50,7 @@ const ProfileImage = () => {
   return (
     <Box sx={{ position: "relative", width: "218px", height: "218px" }}>
       <Avatar
-        src={image || "/assets/image.png"}
+        src={image || ""}
         sx={{
           width: "218px",
           height: "218px",
