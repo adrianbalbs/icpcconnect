@@ -10,6 +10,7 @@ import {
   studentDetails,
   teams,
   universities,
+  University,
   users,
 } from "../db/schema.js";
 import {
@@ -591,5 +592,15 @@ export class UserService {
     }
 
     return { preferences: preferencesReturn };
+  }
+
+  /**
+   * Retrieves all existing universities
+   *
+   * @returns {Promise<{ allUnis: University[]}>} An object containing an array of university objects
+   */
+  async getAllUniversities(): Promise<{ allUnis: University[] }> {
+    const allUnis = await this.db.select().from(universities);
+    return { allUnis };
   }
 }
