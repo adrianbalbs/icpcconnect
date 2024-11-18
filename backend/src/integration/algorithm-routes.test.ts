@@ -53,7 +53,7 @@ describe("Algorithm Tests", () => {
     const authService = new AuthService(db);
     const userService = new UserService(db);
     const teamService = new TeamService(db, userService);
-    const algorithmService = new AlgorithmService(db, userService, teamService);
+    const algorithmService = new AlgorithmService(userService, teamService);
     const codesService = new CodesService(db);
     app = express()
       .use(express.json())

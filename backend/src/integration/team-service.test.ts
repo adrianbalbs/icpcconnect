@@ -48,7 +48,7 @@ describe("TeamService tests", () => {
     const codesService = new CodesService(db);
     userService = new UserService(db);
     const teamService = new TeamService(db, userService);
-    const algorithmService = new AlgorithmService(db, userService, teamService);
+    const algorithmService = new AlgorithmService(userService, teamService);
     app = express()
       .use(express.json())
       .use(cookieParser())

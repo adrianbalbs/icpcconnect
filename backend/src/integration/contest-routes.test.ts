@@ -46,7 +46,7 @@ describe("contestRouter tests", () => {
         contestRouter(
           new ContestService(
             db,
-            new JobQueue(new AlgorithmService(db, userService, teamService)),
+            new JobQueue(new AlgorithmService(userService, teamService)),
           ),
           authService,
         ),

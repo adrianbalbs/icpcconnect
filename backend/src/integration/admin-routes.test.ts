@@ -49,7 +49,7 @@ beforeAll(async () => {
       adminRouter(
         new AdminService(db),
         authService,
-        new AlgorithmService(db, userService, teamService),
+        new AlgorithmService(userService, teamService),
       ),
     );
 });

@@ -23,6 +23,7 @@ import { eq, not } from "drizzle-orm";
 import { errorHandlerMiddleware } from "../middleware/error-handler-middleware.js";
 import { generateCreateUserFixture } from "./fixtures.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
+import { env } from "../env.js";
 
 describe("userRoutes tests", () => {
   let db: DatabaseConnection;
@@ -35,7 +36,6 @@ describe("userRoutes tests", () => {
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
     const userService = new UserService(db);
-    const teamService = new TeamService(db, userService);
     app = express()
       .use(express.json())
       .use(cookieParser())
@@ -49,7 +49,6 @@ describe("userRoutes tests", () => {
             db,
             new JobQueue(
               new AlgorithmService(
-                db,
                 userService,
                 new TeamService(db, userService),
               ),
@@ -65,8 +64,8 @@ describe("userRoutes tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];
