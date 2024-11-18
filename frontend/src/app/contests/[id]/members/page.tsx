@@ -6,8 +6,7 @@ import Coaches from "@/components/members/Coaches";
 import Students from "@/components/members/Students";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { useEffect, useState } from "react";
-import { Alert, IconButton, Snackbar } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Alert, Snackbar } from "@mui/material";
 
 const Members: React.FC = () => {
   const {
@@ -40,19 +39,10 @@ const Members: React.FC = () => {
         <Alert
           severity="error"
           variant="filled"
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            height: "50px",
-            width: "100%",
-            bgcolor: "#d15c65",
-          }}
+          onClose={handleClose}
+          sx={{ height: "50px", width: "100%", bgcolor: "#d15c65" }}
         >
           {`${userDeleted}'s account has been deleted successfully`}
-          <IconButton size="small" color="inherit" onClick={handleClose}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
         </Alert>
       </Snackbar>
     </>

@@ -59,6 +59,8 @@
   font-weight: lighter;
   color: #4b4b4b;
   background-color: #e5eaf3;
+  border: 0.5px solid #aaaaaa;
+  border-radius: 5px;
 }
 
 .website {
