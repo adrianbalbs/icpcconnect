@@ -13,6 +13,7 @@ import { Edit } from "@/components/profile/Edit";
 import { useProfile } from "./layout";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { cancelProfileBtn, saveProfileBtn } from "@/styles/sxStyles";
+import Notif from "@/components/utils/Notif";
 
 export interface ProfileProps {
   params: {
@@ -36,6 +37,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
   });
   const { userSession } = useAuth();
   const { storeProfileInfo, info } = useProfile();
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
   const storeInfo = async () => {
     const data = await getInfo(params.id);
@@ -82,8 +84,10 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
 
       storeInfo();
       storeProfileInfo();
+      setNotif({ type: "edit", message: "Profile Updated Successfully!" });
     } catch (error) {
       console.error("Failed to update:", error);
+      setNotif({ type: "delete", message: "Profile Update Failed!" });
     }
   };
 
@@ -91,6 +95,13 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     return (
       "Admin Coach".includes(userSession.role) || userSession.id === params.id
     );
+  };
+
+  const setMsg = (msg: string) => {
+    setNotif({
+      type: msg.includes("success") ? "edit" : "delete",
+      message: msg,
+    });
   };
 
   useEffect(() => {
@@ -128,6 +139,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
       ) : (
         <Edit role={info.role} editInfo={editInfo} setEditInfo={setEditInfo} />
       )}
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </div>
   );
 };

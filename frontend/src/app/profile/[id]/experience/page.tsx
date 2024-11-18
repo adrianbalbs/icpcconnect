@@ -15,6 +15,7 @@ import { User } from "@/types/users";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { useRouter } from "next/navigation";
+import Notif from "@/components/utils/Notif";
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -60,6 +61,14 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
 
   const { userSession } = useAuth();
   const router = useRouter();
+  const [notif, setNotif] = useState({ type: "", message: "" });
+
+  const setMsg = (msg: string) => {
+    setNotif({
+      type: msg.includes("Deleted") ? "delete" : "add",
+      message: msg,
+    });
+  };
 
   // Fetch experience data from backend
   const getExperience = useCallback(async () => {
@@ -136,6 +145,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
             {...experience}
             id={params.id}
             update={getExperience}
+            setMsg={setMsg}
           />
         )}
         {added.coursesCompleted && (
@@ -143,6 +153,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
             id={params.id}
             coursesTaken={experience.coursesCompleted}
             update={getExperience}
+            setMsg={setMsg}
           />
         )}
         {(added.contestExperience ||
@@ -153,6 +164,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
             added={added}
             experience={experience}
             update={getExperience}
+            setMsg={setMsg}
           />
         )}
         {userSession.id === params.id && (
@@ -161,9 +173,11 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
             added={added}
             experience={experience}
             getExperience={getExperience}
+            setMsg={setMsg}
           />
         )}
       </Box>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </div>
   );
 };

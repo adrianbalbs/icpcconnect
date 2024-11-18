@@ -20,9 +20,16 @@ interface ContestProps {
   added: ExperienceType;
   experience: Experiences;
   update: () => Promise<void>;
+  setMsg: (msg: string) => void;
 }
 
-const ContestExperience = ({ id, added, experience, update }: ContestProps) => {
+const ContestExperience = ({
+  id,
+  added,
+  experience,
+  update,
+  setMsg,
+}: ContestProps) => {
   const [contestAdded, setContestAdded] = useState({
     codeforcesRating: false,
     contestExperience: false,
@@ -43,6 +50,12 @@ const ContestExperience = ({ id, added, experience, update }: ContestProps) => {
         { withCredentials: true },
       );
       update();
+      if (type.includes("Rating")) {
+        const msg = type === "codeforcesRating" ? "Codeforces" : "LeetCode";
+        setMsg(`${msg} Rating Deleted!`);
+      } else {
+        setMsg("Past Contest Experience Deleted!");
+      }
     } catch (error) {
       console.log(`Delete ${type} experience error: ${error}`);
     }

@@ -12,6 +12,7 @@ interface CourseProps {
   id: string;
   coursesTaken: number[];
   update: () => Promise<void>;
+  setMsg: (msg: string) => void;
 }
 
 export const valueToText = [
@@ -21,7 +22,12 @@ export const valueToText = [
   "Programming Challenges",
 ];
 
-const CoursesExperience = ({ id, coursesTaken, update }: CourseProps) => {
+const CoursesExperience = ({
+  id,
+  coursesTaken,
+  update,
+  setMsg,
+}: CourseProps) => {
   const [courses, setCourses] = useState<number[]>([]);
 
   const handleDelete = async () => {
@@ -32,6 +38,7 @@ const CoursesExperience = ({ id, coursesTaken, update }: CourseProps) => {
         { withCredentials: true },
       );
       update();
+      setMsg("Courses Experience Deleted!");
     } catch (error) {
       console.log(`Delete course experience error: ${error}`);
     }

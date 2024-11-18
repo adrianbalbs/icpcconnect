@@ -26,7 +26,9 @@ export const updatePreferences = async (
       { [type]: updated },
       { withCredentials: true },
     );
+    return true;
   } catch (error) {
     console.log(`Update ${type} error: ${error}`);
+    return false;
   }
 };

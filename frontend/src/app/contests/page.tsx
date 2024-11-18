@@ -36,6 +36,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import InviteCode from "@/components/utils/InviteCode";
+import Notif from "@/components/utils/Notif";
 
 export type ContestResponse = {
   id: string;
@@ -115,7 +116,7 @@ export default function Contests() {
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
   const [contests, setContests] = useState<ContestResponse[]>([]);
   const [dataGridLoading, setDataGridLoading] = useState(true);
-  const [notif, setNotif] = useState({ type: "", name: "" });
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
   const [errors, setErrors] = useState<
     z.inferFlattenedErrors<typeof CreateContestSchema>
@@ -176,7 +177,10 @@ export default function Contests() {
       await axios.delete(`${SERVER_URL}/api/contests/${selectDelete?.id}`, {
         withCredentials: true,
       });
-      setNotif({ type: "delete", name: selectDelete?.name ?? "" });
+      setNotif({
+        type: "delete",
+        message: `Contest Deleted: ${selectDelete?.name}`,
+      });
       setSelectDelete(null);
       setDeleteDialogOpen(false);
       fetchContests();
@@ -340,33 +344,7 @@ export default function Contests() {
         }}
         handleDelete={handleDelete}
       />
-      <Snackbar
-        open={notif.type !== ""}
-        autoHideDuration={2000}
-        onClose={() => {
-          setNotif({ type: "", name: "" });
-        }}
-      >
-        {notif.type !== "" ? (
-          <Alert
-            onClose={() => {
-              setNotif({ type: "", name: "" });
-            }}
-            severity={notif.type === "delete" ? "error" : "success"}
-            variant="filled"
-            sx={{
-              width: "100%",
-              bgcolor: notif.type === "delete" ? "#d15c65" : "#7BA381",
-            }}
-          >
-            {notif.type === "invite" && `New ${notif.name} Invite Code Copied!`}
-            {notif.type === "create" && `New Contest Created: ${notif.name}`}
-            {notif.type === "delete" && `Contest Deleted: ${notif.name}`}
-          </Alert>
-        ) : (
-          <div></div>
-        )}
-      </Snackbar>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </Container>
   );
 }

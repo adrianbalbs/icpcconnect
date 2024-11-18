@@ -19,6 +19,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { CreateContestSchema } from "@/types/contests";
 import { ContestResponse } from "@/contests/page";
 import { editContestBtn } from "@/styles/sxStyles";
+import { NotifType } from "../utils/Notif";
 
 interface ContestDialogProps {
   open: boolean;
@@ -34,12 +35,7 @@ interface ContestDialogProps {
   errors: z.inferFlattenedErrors<typeof CreateContestSchema>;
   mode: "create" | "edit";
   contestData?: ContestResponse | null;
-  setNotif: (
-    value: SetStateAction<{
-      type: string;
-      name: string;
-    }>,
-  ) => void;
+  setNotif: (value: SetStateAction<NotifType>) => void;
 }
 
 dayjs.extend(utc);
@@ -105,7 +101,10 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
     };
 
     onSubmit(formData);
-    setNotif({ type: "create", name: contestName });
+    setNotif({
+      type: "create",
+      message: `New Contest Created: ${contestName}`,
+    });
   };
 
   const dialogTitle = mode === "create" ? "Create Contest" : "Edit Contest";

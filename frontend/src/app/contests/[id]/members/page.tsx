@@ -6,7 +6,7 @@ import Coaches from "@/components/members/Coaches";
 import Students from "@/components/members/Students";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useEffect, useState } from "react";
-import { Alert, Snackbar } from "@mui/material";
+import Notif from "@/components/utils/Notif";
 
 const Members: React.FC = () => {
   const {
@@ -14,19 +14,18 @@ const Members: React.FC = () => {
   } = useAuth();
 
   const { id } = useParams<{ id: string }>();
-  const [snackbar, setSnackbar] = useState(false);
-  const [userDeleted, setUserDeleted] = useState("");
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
   const handleClose = () => {
-    setSnackbar(false);
+    setNotif({ type: "", message: "" });
   };
 
   useEffect(() => {
     if (localStorage.getItem("accountDeleted")) {
       const name = localStorage.getItem("accountDeleted");
       localStorage.removeItem("accountDeleted");
-      setUserDeleted(name ?? "");
-      setSnackbar(true);
+      const message = `${name}'s account has been deleted successfully`;
+      setNotif({ type: "delete", message: message });
     }
   }, []);
 
@@ -35,7 +34,8 @@ const Members: React.FC = () => {
       {role === "Admin" && <SiteCoordinators />}
       {(role === "Admin" || role === "Site Coordinator") && <Coaches />}
       <Students contest={id} />
-      <Snackbar open={snackbar} autoHideDuration={3000} onClose={handleClose}>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
+      {/* <Snackbar open={snackbar} autoHideDuration={3000} onClose={handleClose}>
         <Alert
           severity="error"
           variant="filled"
@@ -44,7 +44,7 @@ const Members: React.FC = () => {
         >
           {`${userDeleted}'s account has been deleted successfully`}
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
     </>
   );
 };

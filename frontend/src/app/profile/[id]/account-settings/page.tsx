@@ -10,18 +10,18 @@ import { Button } from "@mui/material";
 import ChangePasswordModal from "@/components/profile/ChangePasswordModal";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { ProfileProps } from "../page";
-// import Error from "next/error";
+import Notif from "@/components/utils/Notif";
 
 const AccountSettings: React.FC<ProfileProps> = ({ params }) => {
   const [open, setOpen] = useState(false);
   const { userSession } = useAuth();
   const router = useRouter();
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
-  // if (!checkViewingPermissions(params.id, userSession)) {
-  //   return <Error statusCode={404} />;
-  // }
+  const setMsg = (msg: string) => {
+    setNotif({ type: "update", message: msg });
+  };
 
-  // Redirect user to 404 page not found if they don't have permission to view route
   useEffect(() => {
     if (
       userSession.id !== "" &&
@@ -47,9 +47,10 @@ const AccountSettings: React.FC<ProfileProps> = ({ params }) => {
             Change Password
           </Button>
         ) : (
-          <ChangePasswordModal setOpen={setOpen} />
+          <ChangePasswordModal setOpen={setOpen} setMsg={setMsg} />
         )}
       </div>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </div>
   );
 };

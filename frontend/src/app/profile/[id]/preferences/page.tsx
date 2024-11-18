@@ -12,6 +12,7 @@ import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { useRouter } from "next/navigation";
+import Notif from "@/components/utils/Notif";
 
 export interface PreferenceType {
   team: boolean;
@@ -38,6 +39,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
   });
   const { userSession } = useAuth();
   const router = useRouter();
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
   const setDefault = async () => {
     const preference = await getPreferences(params.id, "preferences");
@@ -50,6 +52,13 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
         await updatePreferences(params.id, "preferences", "none");
       }
     }
+  };
+
+  const setMsg = (msg: string) => {
+    setNotif({
+      type: msg.includes("Deleted") || msg.includes("Not") ? "delete" : "add",
+      message: msg,
+    });
   };
 
   useEffect(() => {
@@ -68,16 +77,28 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider} />
       <Box sx={{ height: "calc(100% - 121px)", overflow: "scroll" }}>
-        <InclusionPreference id={params.id} added={added} setAdded={setAdded} />
+        <InclusionPreference
+          id={params.id}
+          added={added}
+          setAdded={setAdded}
+          setMsg={setMsg}
+        />
         <ExclusionPreference
           id={params.id}
           changed={added.exclusions}
           complete={() => setAdded({ ...added, exclusions: false })}
+          setMsg={setMsg}
         />
         {userSession.id === params.id && (
-          <PreferenceModal id={params.id} added={added} setAdded={setAdded} />
+          <PreferenceModal
+            id={params.id}
+            added={added}
+            setAdded={setAdded}
+            setMsg={setMsg}
+          />
         )}
       </Box>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </div>
   );
 };

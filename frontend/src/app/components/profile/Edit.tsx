@@ -3,14 +3,13 @@ import pageStyles from "@/styles/Page.module.css";
 import { SelectLanguage } from "./SelectLanguage";
 import { EditInput } from "./EditInput";
 import { EditInfo } from "@/utils/profileInfo";
-import { Dispatch, SetStateAction } from "react";
 import { TshirtSize } from "./TshirtSize";
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 interface EditProps {
   role: string;
   editInfo: EditInfo;
-  setEditInfo: Dispatch<SetStateAction<EditInfo>>;
+  setEditInfo: (value: EditInfo) => void;
 }
 
 export const Edit: React.FC<EditProps> = ({ role, editInfo, setEditInfo }) => {

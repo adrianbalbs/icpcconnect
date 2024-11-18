@@ -16,11 +16,13 @@ import { imageEditBtn } from "@/styles/sxStyles";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { useNav } from "../context-provider/NavProvider";
+import Notif from "../utils/Notif";
 
 const ProfileImage = ({ id, ownId }: { id: string; ownId: string }) => {
   const [image, setImage] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { storeNavInfo } = useNav();
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
   const fetchImage = async () => {
     try {
@@ -41,8 +43,16 @@ const ProfileImage = ({ id, ownId }: { id: string; ownId: string }) => {
         { withCredentials: true },
       );
       if (id === ownId) storeNavInfo();
+      setNotif({
+        type: "add",
+        message: "Profile Picture Updated Successfully!",
+      });
     } catch (error) {
       console.log(`Upload profile image error: ${error}`);
+      setNotif({
+        type: "delete",
+        message: "Profile Picture Update Failed - Image Must Not Exceed 10MB!",
+      });
     }
   };
 
@@ -72,6 +82,11 @@ const ProfileImage = ({ id, ownId }: { id: string; ownId: string }) => {
       );
       setImage(null);
       setAnchorEl(null);
+      if (id === ownId) storeNavInfo();
+      setNotif({
+        type: "delete",
+        message: "Profile Picture Deleted!",
+      });
     } catch (error) {
       console.log(`Delete profile image error: ${error}`);
     }
@@ -159,6 +174,7 @@ const ProfileImage = ({ id, ownId }: { id: string; ownId: string }) => {
           Remove
         </Button>
       </Popover>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </Box>
   );
 };

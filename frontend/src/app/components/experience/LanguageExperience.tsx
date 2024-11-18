@@ -12,6 +12,7 @@ import { SERVER_URL } from "@/utils/constants";
 interface LanguageProps extends Experiences {
   id: string;
   update: () => Promise<void>;
+  setMsg: (msg: string) => void;
 }
 
 const LanguageExperience = (props: LanguageProps) => {
@@ -35,6 +36,7 @@ const LanguageExperience = (props: LanguageProps) => {
         { withCredentials: true },
       );
       props.update();
+      props.setMsg("Programming Language Experience Deleted!");
     } catch (error) {
       console.log(`Delete language experience error: ${error}`);
     }

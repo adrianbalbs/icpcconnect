@@ -15,12 +15,14 @@ type TeamRegistrationProps = {
   contestId: string;
   cutoffDate?: string;
   fetchEnrollment: () => void;
+  setMsg: (msg: string) => void;
 };
 
 const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   contestId,
   cutoffDate,
   fetchEnrollment,
+  setMsg,
 }) => {
   const [completed, setCompleted] = useState(0);
   const [added, setAdded] = useState({
@@ -95,6 +97,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
         { withCredentials: true },
       );
       fetchEnrollment();
+      setMsg("Enrolled For Contest Successfully!");
     } catch (err) {
       console.error(err);
     }
@@ -148,7 +151,6 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
           added={added.preference}
         />
       </div>
-      {/* TODO: Once preferences is merged, have disabled state linked to completed tasks */}
       <Stack justifyContent="center">
         <Button
           disabled={isAfterCutoffDate(cutoffDate) || completed < 3}

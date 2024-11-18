@@ -13,9 +13,15 @@ interface InclusionProps {
   id: string;
   added: PreferenceType;
   setAdded: Dispatch<SetStateAction<PreferenceType>>;
+  setMsg: (msg: string) => void;
 }
 
-const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
+const InclusionPreference = ({
+  id,
+  added,
+  setAdded,
+  setMsg,
+}: InclusionProps) => {
   const [type, setType] = useState("");
   const [inclusion, setInclusion] = useState<Teammate[]>([]);
 
@@ -36,6 +42,7 @@ const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
     setType("");
     setInclusion([]);
     setAdded({ ...added, [type]: false });
+    setMsg(`${capitalise(type)} Preference Deleted!`);
   };
 
   useEffect(() => {

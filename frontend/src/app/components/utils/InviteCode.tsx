@@ -39,10 +39,11 @@ const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
 
   const copyToClipboard = async () => {
     try {
+      const role = type === "newCoachCode" ? "Coach" : "Site Coordinator";
       await navigator.clipboard.writeText(code);
       setNotif({
         type: "invite",
-        name: type === "newCoachCode" ? "Coach" : "Site Coordinator",
+        message: `New ${role} Invite Code Copied!`,
       });
     } catch (error) {
       console.error("Failed to copy: ", error);

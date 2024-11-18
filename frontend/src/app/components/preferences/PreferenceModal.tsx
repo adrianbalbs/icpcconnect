@@ -24,9 +24,15 @@ interface ModalProps {
   id: string;
   added: PreferenceType;
   setAdded: Dispatch<SetStateAction<PreferenceType>>;
+  setMsg: (msg: string) => void;
 }
 
-const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
+const PreferenceModal: React.FC<ModalProps> = ({
+  id,
+  added,
+  setAdded,
+  setMsg,
+}) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
@@ -68,8 +74,10 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   };
 
   const addPreference = async () => {
+    let success: boolean | undefined = false;
     if (type === "team" || type === "pair") {
-      await updatePreferences(id, "preferences", include);
+      success = await updatePreferences(id, "preferences", include);
+      if (success) setMsg(`New ${capitalise(type)} Preference Added!`);
     } else if (type === "exclusions") {
       // Capitalise first and last names
       const names = exclude.split(" ").map((n) => capitalise(n));
@@ -81,9 +89,14 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
       }
       // Sort exclusions alphabetically
       const sorted = exclusions.split(", ").sort().join(", ");
-      await updatePreferences(id, type, sorted);
+      success = await updatePreferences(id, type, sorted);
+      if (success) setMsg("New Exclusion Preference Added!");
     }
-    setAdded({ ...added, [type]: true });
+    if (success) {
+      setAdded({ ...added, [type]: true });
+    } else {
+      setMsg("New Preference Was Not Added Successfully!");
+    }
     handleClose();
   };
 

@@ -15,8 +15,10 @@ interface Errors {
 
 const ChangePasswordModal = ({
   setOpen,
+  setMsg,
 }: {
   setOpen: (open: boolean) => void;
+  setMsg: (msg: string) => void;
 }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -40,6 +42,7 @@ const ChangePasswordModal = ({
       );
       setOpen(false);
       setErrors({});
+      setMsg("Password Updated Successfully!");
     } catch (error) {
       console.log(`Change password error: ${error}`);
       setErrors({ old: "Old password is incorrect." });

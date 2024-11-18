@@ -25,6 +25,7 @@ interface ModalProps {
   added: ExperienceType;
   experience: Experiences;
   getExperience: () => void;
+  setMsg: (msg: string) => void;
 }
 
 const ExperienceModal: React.FC<ModalProps> = ({
@@ -32,6 +33,7 @@ const ExperienceModal: React.FC<ModalProps> = ({
   added,
   experience,
   getExperience,
+  setMsg,
 }) => {
   const hrRef = useRef<HTMLHRElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -73,6 +75,7 @@ const ExperienceModal: React.FC<ModalProps> = ({
         { withCredentials: true },
       );
       getExperience();
+      setMsg("Experiences Updated!");
     } catch (error) {
       console.log(`Update experience error: ${error}`);
     }

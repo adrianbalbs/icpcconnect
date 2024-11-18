@@ -23,9 +23,15 @@ interface ExclusionProps {
   id: string;
   changed: boolean;
   complete: (type: string) => void;
+  setMsg: (msg: string) => void;
 }
 
-const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
+const ExclusionPreference = ({
+  id,
+  changed,
+  complete,
+  setMsg,
+}: ExclusionProps) => {
   const [studentString, setStudentString] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
@@ -42,9 +48,11 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
 
   const saveEdit = async () => {
     const newPref = selected.length > 0 ? selected.join(", ") : "";
+    const msg = newPref.length > 0 ? "Updated" : "Deleted";
     await updatePreferences(id, "exclusions", newPref);
     setStudentString(newPref);
     setOpenEdit(false);
+    setMsg(`Exclusion Preference ${msg}!`);
   };
 
   const cancelEdit = () => {
