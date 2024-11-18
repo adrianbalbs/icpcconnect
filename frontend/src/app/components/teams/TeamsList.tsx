@@ -8,8 +8,9 @@ type TeamsListProps = {
   teams: Team[];
   role: Role;
   id: string;
+  fetchTeams: () => Promise<void>;
 };
-const TeamsList = ({ teams, role, id }: TeamsListProps) => {
+const TeamsList = ({ teams, role, id, fetchTeams }: TeamsListProps) => {
   const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const TeamsList = ({ teams, role, id }: TeamsListProps) => {
           canEdit={canEdit}
           replacements={team.replacements}
           id={id}
+          fetchTeams={fetchTeams}
         />
       ))}
     </div>

@@ -19,9 +19,15 @@ interface TeamCardProps {
     replacementStudentId: string;
   }[];
   id: string;
+  fetchTeams: () => Promise<void>;
 }
 
-const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
+const TeamCard: React.FC<TeamCardProps> = ({
+  team,
+  canEdit,
+  replacements,
+  fetchTeams,
+}) => {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [reason, setReason] = useState("");
   const [substitute, setSubstitute] = useState("");
@@ -72,6 +78,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
             },
             { withCredentials: true },
           );
+          fetchTeams();
         } catch (err) {
           console.log(err);
         }
@@ -90,6 +97,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
         },
         { withCredentials: true },
       );
+      fetchTeams();
     } catch (err) {
       console.error(err);
     }
@@ -105,6 +113,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ team, canEdit, replacements }) => {
         },
         { withCredentials: true },
       );
+      fetchTeams();
     } catch (err) {
       console.error(err);
     }
