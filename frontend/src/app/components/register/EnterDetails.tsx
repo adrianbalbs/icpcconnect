@@ -3,7 +3,6 @@ import authStyles from "@/styles/Auth.module.css";
 import {
   FormControl,
   FormHelperText,
-  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -46,7 +45,11 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
 
   const handleBack = () => {
     setEligibility(false);
-    roleName === "Student" ? setStep(2) : setStep(1);
+    if (roleName === "Student") {
+      setStep(2);
+    } else {
+      setStep(1);
+    }
   };
 
   const handleNext = async () => {

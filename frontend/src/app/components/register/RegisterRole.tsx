@@ -37,7 +37,11 @@ export const RegisterRole: React.FC<RegisterRoleProps> = ({
     const isRoleValid = roleName !== "";
 
     if (isNameValid && isRoleValid) {
-      roleName === "Student" ? setStep(2) : setStep(3);
+      if (roleName === "Student") {
+        setStep(2);
+      } else {
+        setStep(3);
+      }
     }
   };
 

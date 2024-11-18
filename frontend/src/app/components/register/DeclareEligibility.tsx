@@ -25,7 +25,11 @@ export const DeclareEligibility: React.FC<DeclareEligibilityProps> = ({
   };
 
   const handleNext = () => {
-    !eligibility ? setError(true) : setStep(3);
+    if (!eligibility) {
+      setError(true);
+    } else {
+      setStep(3);
+    }
   };
   return (
     <>

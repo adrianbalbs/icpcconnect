@@ -57,7 +57,7 @@ export const EnterCode: React.FC<EnterCodeProps> = ({
         helperText={codeError ? "Incorrect or invalid verification code!" : ""}
       />
       <div style={{ width: "500px", display: "flex", justifyContent: "end" }}>
-        Didn't get the code?&nbsp;
+        Didn&apos;t get the code?&nbsp;
         <button
           onClick={sendEmail}
           style={{ background: "none", border: "none", fontSize: "16px" }}
