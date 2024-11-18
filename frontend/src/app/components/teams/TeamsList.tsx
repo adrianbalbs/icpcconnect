@@ -7,8 +7,10 @@ import { Role } from "@/types/users";
 type TeamsListProps = {
   teams: Team[];
   role: Role;
+  id: string;
+  fetchTeams: () => Promise<void>;
 };
-const TeamsList = ({ teams, role }: TeamsListProps) => {
+const TeamsList = ({ teams, role, id, fetchTeams }: TeamsListProps) => {
   const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
@@ -20,10 +22,11 @@ const TeamsList = ({ teams, role }: TeamsListProps) => {
       {teams.map((team) => (
         <TeamCard
           key={team.id}
-          name={team.name}
-          university={team.university}
-          members={team.members.map((m) => `${m.givenName} ${m.familyName}`)}
+          team={team}
           canEdit={canEdit}
+          replacements={team.replacements}
+          id={id}
+          fetchTeams={fetchTeams}
         />
       ))}
     </div>

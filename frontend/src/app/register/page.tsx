@@ -5,9 +5,12 @@ import { useState } from "react";
 import { SERVER_URL } from "@/utils/constants";
 import authStyles from "@/styles/Auth.module.css";
 import { useRouter } from "next/navigation";
-import { StepOne } from "@/components/register/StepOne";
-import { StepTwo } from "@/components/register/StepTwo";
+import { RegisterRole } from "@/components/register/RegisterRole";
+import { DeclareEligibility } from "@/components/register/DeclareEligibility";
 import { LinearProgress } from "@mui/material";
+import { EnterDetails } from "@/components/register/EnterDetails";
+import { EnterInviteCode } from "@/components/register/EnterInviteCode";
+import { CreatePassword } from "@/components/register/CreatePassword";
 
 export default function Register() {
   const router = useRouter();
@@ -170,7 +173,7 @@ export default function Register() {
       </div>
       <div className={authStyles["info-container"]}>
         {step === 1 && (
-          <StepOne
+          <RegisterRole
             {...{
               givenName,
               setGivenName,
@@ -185,7 +188,7 @@ export default function Register() {
         {step === 2 && (
           <>
             {roleName === "Student" ? (
-              <StepTwo
+              <DeclareEligibility
                 {...{
                   setEligibility,
                   handleBack,
@@ -198,170 +201,47 @@ export default function Register() {
           </>
         )}
         {step === 3 && (
-          <>
-            <h1 className={authStyles.h1}>Enter your details</h1>
-            <br />
-            <h1 className={authStyles.h1} style={{ color: "#9298DA" }}>
-              {roleName}
-            </h1>
-            <br />
-            <select
-              id="select-university"
-              name="Select University"
-              className={authStyles["input-field"]}
-              value={university}
-              onChange={(e) => setUniversity(Number(e.target.value))}
-            >
-              <option value={0} disabled selected>
-                Select University
-              </option>
-              <option value={1}>UNSW</option>
-              <option value={2}>University of Sydney</option>
-              <option value={3}>University of Technology Sydney</option>
-              <option value={4}>Macquarie University</option>
-            </select>
-            {roleName === "Student" ? (
-              <form className={authStyles["form-container"]}>
-                <input
-                  placeholder="Student ID"
-                  className={authStyles["input-field"]}
-                  value={studentId}
-                  onChange={(e) => setStudentId(e.target.value)}
-                />
-                <input
-                  type="Email"
-                  id="email"
-                  placeholder="Email"
-                  className={authStyles["input-field"]}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </form>
-            ) : (
-              <form className={authStyles["form-container"]}>
-                <input
-                  placeholder="Invite Code"
-                  className={authStyles["input-field"]}
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value)}
-                />
-                <input
-                  type="Email"
-                  id="email"
-                  placeholder="Email"
-                  className={authStyles["input-field"]}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </form>
-            )}
-            <div className={authStyles["horizontal-container"]}>
-              <button
-                onClick={handleBack}
-                className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["short"]}`}
-              >
-                Back
-              </button>
-              <button
-                onClick={handleNext}
-                className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["short"]}`}
-              >
-                Next
-              </button>
-            </div>
-          </>
+          <EnterDetails
+            {...{
+              roleName,
+              university,
+              setUniversity,
+              studentId,
+              setStudentId,
+              email,
+              setEmail,
+              inviteCode,
+              setInviteCode,
+              handleBack,
+              handleNext,
+            }}
+          ></EnterDetails>
         )}
         {step === 4 && (
-          <>
-            <h1 className={authStyles.h1}>Verify email address</h1>
-            <br />
-            <h1 className={authStyles.h1} style={{ color: "#9298DA" }}>
-              {roleName}
-            </h1>
-            <br />
-            <input
-              placeholder="Enter Verification Code"
-              className={authStyles["input-field"]}
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-            />
-            <div className={authStyles["horizontal-container"]}>
-              <button
-                onClick={handleBack}
-                className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["short"]}`}
-              >
-                Back
-              </button>
-              <button
-                onClick={handleNext}
-                className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["short"]}`}
-              >
-                Next
-              </button>
-            </div>
-          </>
+          <EnterInviteCode
+            {...{
+              roleName,
+              verificationCode,
+              setVerificationCode,
+              handleBack,
+              handleNext,
+            }}
+          ></EnterInviteCode>
         )}
         {step === 5 && (
-          <>
-            <h1 className={authStyles.h1}>Create a password</h1>
-            <br />
-            <h1 className={authStyles.h1} style={{ color: "#9298DA" }}>
-              {roleName}
-            </h1>
-            <br />
-            <input
-              type="password"
-              placeholder="Password"
-              className={authStyles["input-field"]}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              className={authStyles["input-field"]}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            {!checked && (
-              <>
-                <p style={{ color: "red" }}>
-                  Please agree to the terms and conditions.
-                </p>
-                <br />
-              </>
-            )}
-            {password !== confirmPassword && (
-              <>
-                <p style={{ color: "red" }}>Passwords do not match.</p>
-                <br />
-              </>
-            )}
-            <label htmlFor="tnc">
-              <input
-                id="tnc"
-                type="checkbox"
-                checked={checked}
-                onChange={(e) => setChecked(e.target.checked)}
-              />
-              &nbsp;Yes, I agree to the{" "}
-              <a className="link">Terms and Conditions of Use</a>
-            </label>
-            <div className={authStyles["horizontal-container"]}>
-              <button
-                onClick={handleBack}
-                className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["short"]}`}
-              >
-                Back
-              </button>
-              <button
-                onClick={handleNext}
-                className={`${authStyles["auth-button"]} ${authStyles["dark"]} ${authStyles["short"]}`}
-              >
-                Register
-              </button>
-            </div>
-          </>
+          <CreatePassword
+            {...{
+              roleName,
+              password,
+              setPassword,
+              confirmPassword,
+              setConfirmPassword,
+              checked,
+              setChecked,
+              handleBack,
+              handleNext,
+            }}
+          ></CreatePassword>
         )}
         <LinearProgress
           variant="determinate"

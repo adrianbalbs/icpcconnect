@@ -35,6 +35,7 @@ import { AlgorithmService } from "../services/algorithm-service.js";
 
 describe("TeamService tests", () => {
   let db: DatabaseConnection;
+  let userService: UserService;
   let app: ReturnType<typeof express>;
   let cookies: string;
   let contest: Response;
@@ -44,6 +45,7 @@ describe("TeamService tests", () => {
     db = dbSetup.db;
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
+    userService = new UserService(db);
     const algorithmService = new AlgorithmService(db);
     app = express()
       .use(express.json())
@@ -53,7 +55,7 @@ describe("TeamService tests", () => {
         "/api/users",
         userRouter(new UserService(db), authService, codesService),
       )
-      .use("/api/teams", teamRouter(new TeamService(db), authService))
+      .use("/api/teams", teamRouter(new TeamService(db, userService), authService))
 
       .use(
         "/api/contests",
@@ -353,4 +355,672 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(400);
   });
+
+  it("Should create a pullout request", async () => {
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User3",
+        email: "testuser3@comp3900.com",
+        studentId: "z1234569",
+        password: "helloworld",
+        university: 1,
+      }),
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/users")
+        .send(student)
+        .expect(200);
+      const { id } = res.body;
+      userIds.push(id);
+    }
+
+    const req: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds.slice(0, -1), // dont take last member
+      flagged: false,
+      contest: contest.body.id,
+    };
+
+    const team_res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(req)
+      .expect(200);
+
+
+    //get student id of the student not in the team
+    const sId_req = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    const pulloutReq = {
+      studentId: userIds[0],
+      reason: "",
+      replacedWith: sId_req.body.studentId,
+    };
+
+    await request(app)
+      .post(`/api/teams/createPullout/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .send(pulloutReq)
+      .expect(200);
+
+    const info_res = await request(app)
+      .get(`/api/teams/${team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+    expect(info_res).not.toBeNull();
+    expect(info_res.body.replacements).not.toBeNull();
+  });
+
+  it("Should create and accept a pullout request", async () => {
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User3",
+        email: "testuser3@comp3900.com",
+        studentId: "z1234569",
+        password: "helloworld",
+        university: 1,
+      }),
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/users")
+        .send(student)
+        .expect(200);
+      const { id } = res.body;
+      userIds.push(id);
+    }
+
+    const req: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds.slice(0, -1), // dont take last member
+      flagged: false,
+      contest: contest.body.id,
+    };
+
+    const team_res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(req)
+      .expect(200);
+
+
+    //get student id of the student not in the team
+    const sId_req = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    const pulloutReq = {
+      studentId: userIds[0],
+      reason: "",
+      replacedWith: sId_req.body.studentId,
+    };
+
+    await request(app)
+      .post(`/api/teams/createPullout/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .send(pulloutReq)
+      .expect(200);
+
+    const info_res = await request(app)
+      .get(`/api/teams/${team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+    expect(info_res).not.toBeNull();
+    expect(info_res.body.replacements).not.toBeNull();
+
+    //accept pullout request
+    const accepting = { accepting: true };
+
+    await request(app)
+      .put(`/api/teams/handlePullout/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .send(accepting)
+      .expect(200);
+
+    //get student details of the removed student
+    const lonely_student = await request(app)
+      .get(`/api/users/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //should b null
+    expect(lonely_student.body.team).toBeNull();
+
+    //get student details of the accepted replacement
+    const replacement_student = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+
+    expect(replacement_student.body.team).toEqual(info_res.body.name);
+
+  });
+
+  it("Should create and deny a pullout request", async () => {
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User3",
+        email: "testuser3@comp3900.com",
+        studentId: "z1234569",
+        password: "helloworld",
+        university: 1,
+      }),
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/users")
+        .send(student)
+        .expect(200);
+      const { id } = res.body;
+      userIds.push(id);
+    }
+
+    const req: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds.slice(0, -1), // dont take last member
+      flagged: false,
+      contest: contest.body.id,
+    };
+
+    const team_res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(req)
+      .expect(200);
+
+
+    //get student id of the student not in the team
+    const sId_req = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    const pulloutReq = {
+      studentId: userIds[0],
+      reason: "",
+      replacedWith: sId_req.body.studentId,
+    };
+
+    await request(app)
+      .post(`/api/teams/createPullout/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .send(pulloutReq)
+      .expect(200);
+
+    const info_res = await request(app)
+      .get(`/api/teams/${team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+    expect(info_res).not.toBeNull();
+    expect(info_res.body.replacements).not.toBeNull();
+
+    //deny pullout request
+    const accepting = { accepting: false };
+
+    await request(app)
+      .put(`/api/teams/handlePullout/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .send(accepting)
+      .expect(200);
+
+    //get student details of the student whos pullout got denied
+    const lonely_student = await request(app)
+      .get(`/api/users/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //should not have changed
+    expect(lonely_student.body.team).toEqual(info_res.body.name);
+
+    //get student details of the accepted replacement
+    const replacement_student = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    expect(replacement_student.body.team).toBeNull();
+
+    const newInfo_res = await request(app)
+      .get(`/api/teams/${team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+    expect(newInfo_res).not.toBeNull();
+    expect(newInfo_res.body.replacements.length).toBe(0);
+
+  });
+
+  it("Should replacement a student in a team with a student not in a team", async () => {
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User3",
+        email: "testuser3@comp3900.com",
+        studentId: "z1234569",
+        password: "helloworld",
+        university: 1,
+      }),
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/users")
+        .send(student)
+        .expect(200);
+      const { id } = res.body;
+      userIds.push(id);
+    }
+
+    const req: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds.slice(0, -1), // dont take last member
+      flagged: false,
+      contest: contest.body.id,
+    };
+
+    const team_res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(req)
+      .expect(200);
+
+    //Team info
+    const info_res = await request(app)
+      .get(`/api/teams/${team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+
+    //get student id of the student not in the team
+    const sId_req = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //Replace the first student with one not in a team
+    const replacementReq = {
+      team: team_res.body.teamId,
+      replacedWith: sId_req.body.studentId,
+      student: userIds[0],
+    };
+
+    await request(app)
+      .put(`/api/teams/handleReplacement`)
+      .set("Cookie", cookies)
+      .send(replacementReq)
+      .expect(200);
+
+    //get student details of the student whos pullout got denied
+    const lonely_student = await request(app)
+      .get(`/api/users/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //should be null
+    expect(lonely_student.body.team).toBeNull();
+
+    //get student details of the accepted replacement
+    const replacement_student = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    expect(replacement_student.body.team).toEqual(info_res.body.name);
+
+  });
+
+  it("Should replacement a student in a team with a student in another team", async () => {
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User3",
+        email: "testuser3@comp3900.com",
+        studentId: "z1234569",
+        password: "helloworld",
+        university: 1,
+      }),
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/users")
+        .send(student)
+        .expect(200);
+      const { id } = res.body;
+      userIds.push(id);
+    }
+
+    const req: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds.slice(0, -1), // dont take last member
+      flagged: false,
+      contest: contest.body.id,
+    };
+
+    const team_res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(req)
+      .expect(200);
+
+    const alt_req: CreateTeamRequest = {
+      name: "cringeTeam",
+      university: 1,
+      memberIds: userIds.slice(3), // only last member
+      flagged: false,
+      contest: contest.body.id,
+    };
+
+    const alt_team_res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(alt_req)
+      .expect(200);
+
+    //Team info
+    const info_res = await request(app)
+      .get(`/api/teams/${team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //Team info
+    const alt_info_res = await request(app)
+      .get(`/api/teams/${alt_team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+
+    //get student id of the student not in the team
+    const sId_req = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //Replace the first student with one not in a team
+    const replacementReq = {
+      team: team_res.body.teamId,
+      replacedWith: sId_req.body.studentId,
+      student: userIds[0],
+    };
+
+    await request(app)
+      .put(`/api/teams/handleReplacement`)
+      .set("Cookie", cookies)
+      .send(replacementReq)
+      .expect(200);
+
+    //get student details of the student whos pullout got denied
+    const lonely_student = await request(app)
+      .get(`/api/users/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //should be null
+    expect(lonely_student.body.team).toEqual(alt_info_res.body.name);
+
+    //get student details of the accepted replacement
+    const replacement_student = await request(app)
+      .get(`/api/users/${userIds[3]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    expect(replacement_student.body.team).toEqual(info_res.body.name);
+
+  });
+
+  it("Should create and accept a pullout request without a replacement", async () => {
+    const students = [
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Adrian",
+        familyName: "Balbalosa",
+        email: "adrianbalbs@comp3900.com",
+        studentId: "z5397730",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User",
+        email: "testuser@comp3900.com",
+        studentId: "z1234567",
+        password: "helloworld",
+        university: 1,
+      }),
+      generateCreateUserFixture({
+        role: "Student",
+        givenName: "Test",
+        familyName: "User2",
+        email: "testuser2@comp3900.com",
+        studentId: "z1234568",
+        password: "helloworld",
+        university: 1,
+      }),
+    ];
+
+    const userIds: string[] = [];
+    for (const student of students) {
+      const res = await request(app)
+        .post("/api/users")
+        .send(student)
+        .expect(200);
+      const { id } = res.body;
+      userIds.push(id);
+    }
+
+    const req: CreateTeamRequest = {
+      name: "epicTeam",
+      university: 1,
+      memberIds: userIds,
+      flagged: false,
+      contest: contest.body.id,
+    };
+
+    const team_res = await request(app)
+      .post("/api/teams/register")
+      .set("Cookie", cookies)
+      .send(req)
+      .expect(200);
+
+
+    const pulloutReq = {
+      studentId: userIds[0],
+      reason: "",
+      replacedWith: "",
+    };
+
+    await request(app)
+      .post(`/api/teams/createPullout/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .send(pulloutReq)
+      .expect(200);
+
+    const info_res = await request(app)
+      .get(`/api/teams/${team_res.body.teamId}`)
+      .set("Cookie", cookies)
+      .expect(200);
+    expect(info_res).not.toBeNull();
+    expect(info_res.body.replacements).not.toBeNull();
+
+    //accept pullout request
+    const accepting = { accepting: true };
+
+    await request(app)
+      .put(`/api/teams/handlePullout/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .send(accepting)
+      .expect(200);
+
+    //get student details of the removed student
+    const lonely_student = await request(app)
+      .get(`/api/users/${userIds[0]}`)
+      .set("Cookie", cookies)
+      .expect(200);
+
+    //should b null
+    expect(lonely_student.body.team).toBeNull();
+  });
+
 });

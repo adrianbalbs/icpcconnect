@@ -1,13 +1,13 @@
 import authStyles from "@/styles/Auth.module.css";
 import React, { Dispatch, SetStateAction } from "react";
 
-interface StepTwoProps {
+interface DeclareEligibilityProps {
   setEligibility: Dispatch<SetStateAction<boolean>>;
   handleBack: () => void;
   handleNext: () => Promise<void>;
 }
 
-export const StepTwo: React.FC<StepTwoProps> = ({
+export const DeclareEligibility: React.FC<DeclareEligibilityProps> = ({
   setEligibility,
   handleBack,
   handleNext,

@@ -13,6 +13,7 @@ import {
   users,
   languagesSpokenByStudent,
   contests,
+  teams,
   coursesCompletedByStudent,
   registrationDetails,
 } from "./schema.js";
@@ -36,6 +37,7 @@ type StudentTable = UserTable & {
   team: string | null;
   pronouns: string;
   studentId: string;
+  profile_pic: string,
   photoConsent: boolean;
   languagesSpoken: SpokenLanguage[];
   level: Level;
@@ -66,6 +68,7 @@ const addStudent = async (
     team,
     pronouns,
     studentId,
+    profile_pic,
     photoConsent,
     languagesSpoken,
     level,
@@ -107,6 +110,7 @@ const addStudent = async (
         pronouns,
         studentId,
         photoConsent,
+        profile_pic,
         level,
         contestExperience,
         codeforcesRating,
@@ -233,8 +237,9 @@ export const seed = async (db: DatabaseConnection) => {
 
   logger.info("Seeding contests");
   const allContests = data.default.contests;
+  const userService = new UserService(db);
   const jobQueue = new JobQueue(
-    new AlgorithmService(db, new UserService(db), new TeamService(db)),
+    new AlgorithmService(db, userService, new TeamService(db, userService)),
   );
   for (const contest of allContests) {
     const { id, name, site } = contest;
@@ -275,6 +280,12 @@ export const seed = async (db: DatabaseConnection) => {
   for (const siteCoordinator of siteCoordinators) {
     await addSiteCoordinator(db, siteCoordinator);
   }
+  
+  // logger.info("Seeding Team Information");
+  // await db
+  //   .insert(teams)
+  //   .values(data.default.teams)
+  //   .onConflictDoNothing();
 
   logger.info("Adding default admin");
   const admins = data.default.admins as UserTable[];

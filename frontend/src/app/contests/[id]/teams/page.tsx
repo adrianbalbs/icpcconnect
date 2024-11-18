@@ -14,11 +14,6 @@ import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
 import SortBy from "@/components/utils/SortBy";
 import { getInfo } from "@/utils/profileInfo";
-// const statusStrings = [
-//   "Waiting for students to register...",
-//   "Waiting for all teams to be allocated...",
-//   "All teams",
-// ];
 
 const Teams: React.FC = () => {
   // Status Key
@@ -30,6 +25,7 @@ const Teams: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [sort, setSort] = useState("Default");
   const { id } = useParams<{ id: string }>();
+
   const {
     userSession: { id: userId, role },
   } = useAuth();
@@ -116,7 +112,9 @@ const Teams: React.FC = () => {
           <CircularProgress />
         </div>
       )}
-      {status === 2 && <TeamsList teams={teams} role={role} />}
+      {status === 2 && (
+        <TeamsList teams={teams} role={role} id={id} fetchTeams={fetchTeams} />
+      )}
     </>
   );
 };

@@ -13,12 +13,20 @@ import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { useParams } from "next/navigation";
 import { ContestResponse } from "@/contests/page";
 import StudentWaitingScreen from "@/components/waiting-screen/StudentWaitingScreen";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, IconButton, Modal } from "@mui/material";
+import WarningIcon from "@mui/icons-material/WarningRounded";
+import CloseBtn from "@/components/utils/CloseBtn";
+import memberStyles from "@/styles/Members.module.css";
 
 type TeamInfo = {
   id: string;
   name: string;
   members: MemberProps[];
+  replacements: {
+    reason: string;
+    leavingUserId: string;
+    replacementStudentId: string;
+  }[];
 };
 
 const Team: React.FC = () => {
@@ -28,15 +36,21 @@ const Team: React.FC = () => {
   const [uni, setUni] = useState("");
   const [contest, setContest] = useState<ContestResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [openPullOut, setOpenPullOut] = useState(false);
   const [team, setTeam] = useState<TeamInfo>({
     id: "",
     name: "",
     members: [],
+    replacements: [],
   });
   const {
     userSession: { id },
   } = useAuth();
   const params = useParams<{ id: string }>();
+
+  const pendingPullOut = () => {
+    return team.replacements.map((member) => member.leavingUserId).includes(id);
+  };
 
   const fetchContest = useCallback(async () => {
     try {
@@ -110,6 +124,18 @@ const Team: React.FC = () => {
     }
   }, [id, params.id]);
 
+  const deletePullOut = async () => {
+    try {
+      await axios.delete(`${SERVER_URL}/api/teams/deletePullout/${id}`, {
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    getTeam();
+    setOpenPullOut(false);
+  };
+
   const renderStatusContent = () => {
     switch (status) {
       case "unregistered":
@@ -128,7 +154,13 @@ const Team: React.FC = () => {
           />
         );
       case "assigned":
-        return <Assigned members={team.members} />;
+        return (
+          <Assigned
+            members={team.members}
+            getTeam={getTeam}
+            pendingPullOut={pendingPullOut}
+          />
+        );
       default:
         return null;
     }
@@ -154,10 +186,96 @@ const Team: React.FC = () => {
       <h1 className={teamStyles["team-heading"]}>
         Team:
         <StatusDisplay status={status} teamName={team.name} />
+        {pendingPullOut() && (
+          <IconButton
+            onClick={() => setOpenPullOut(true)}
+            color="warning"
+            aria-label="warning"
+            sx={{ padding: "0", marginBottom: "3px", marginLeft: "3px" }}
+          >
+            <WarningIcon
+              sx={{
+                height: "20px",
+                width: "20px",
+                color: "rgb(245, 187, 68)",
+              }}
+            />
+          </IconButton>
+        )}
       </h1>
       <p className={teamStyles.university}>{uni}</p>
       {status !== "assigned" && <hr className={pageStyles.divider} />}
       {renderStatusContent()}
+      <Modal open={openPullOut} onClose={() => setOpenPullOut(false)}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            backgroundColor: "white",
+            position: "absolute",
+            boxShadow: "10px solid black",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            maxHeight: "70%",
+            padding: "50px",
+            width: "35%",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <h2 style={{ textAlign: "center" }}>
+              Cancel Pending Pull Out Request
+            </h2>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "20px",
+                width: "100%",
+                justifyContent: "center",
+              }}
+            >
+              <p style={{ textAlign: "center" }}>
+                You have requested to pull out from the contest.
+                <br />
+                <br />
+                Would you like to cancel the pending pull out request?
+              </p>
+            </div>
+            <CloseBtn handleClose={() => setOpenPullOut(false)}></CloseBtn>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-around",
+              }}
+            >
+              <button
+                className={memberStyles.pullout}
+                onClick={deletePullOut}
+                style={{ marginTop: "30px" }}
+              >
+                Yes
+              </button>
+              <button
+                className={memberStyles.pullout}
+                onClick={() => setOpenPullOut(false)}
+                style={{ marginTop: "30px" }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
     </>
   );
 };

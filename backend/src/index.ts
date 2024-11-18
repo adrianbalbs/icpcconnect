@@ -44,7 +44,7 @@ await runMigrations(dbConn);
 await seed(dbConn);
 
 const userService = new UserService(dbConn);
-const teamService = new TeamService(dbConn);
+const teamService = new TeamService(dbConn, userService);
 const authService = new AuthService(dbConn);
 const codesService = new CodesService(dbConn);
 const adminService = new AdminService(dbConn);
