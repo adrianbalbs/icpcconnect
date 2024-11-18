@@ -2,7 +2,7 @@
 
 A website for students to be allocated a team to compete in the ICPC
 
-## Running Locally
+## Running on Docker
 
 1. Make sure you have a `.env` file containing the relevant secrets as
    per the installation manual
