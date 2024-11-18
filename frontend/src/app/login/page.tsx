@@ -53,7 +53,7 @@ export default function Login() {
             }}
             onChange={(e) => setEmail(e.target.value)}
             error={error}
-            id="password-error"
+            id="email-error"
             fullWidth
           />
           <TextField

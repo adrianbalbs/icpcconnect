@@ -46,7 +46,7 @@ export const NavContextProvider = ({
   return (
     <NavContext.Provider value={{ navInfo, storeNavInfo }}>
       {!isLoading && userSession.id && !pathname.includes("404") && <Navbar />}
-      {!isLoading && children}
+      {children}
     </NavContext.Provider>
   );
 };
