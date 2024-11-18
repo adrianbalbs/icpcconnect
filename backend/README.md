@@ -19,13 +19,21 @@ To run the integration tests, make an `.env` folder in the root directory of thi
 following environment variables:
 
 ```txt
-PG_TEST_USER=testuser
-PG_TEST_HOST=localhost
-PG_TEST_PW=testpassword
-PG_TEST_DB=testdb
-PG_TEST_PORT=5556
-REDIS_HOST=localhost
-REDIS_PORT=6379
+export NODE_ENV=test
+export LOG_LEVEL=info
+export SMTP_SERVER=smtp.ethereal.email
+export EMAIL_USER=rebeca.auer@ethereal.email
+export EMAIL_PASSWORD=gpYtdgMPkywbQek1Gb
+export EMAIL_PORT=587
+export JWT_SECRET=test-secret
+export REFRESH_TOKEN_SECRET=refresh-test-secret
+export PG_TEST_USER=testuser
+export PG_TEST_HOST=localhost
+export PG_TEST_PW=testpassword
+export PG_TEST_DB=testdb
+export PG_TEST_PORT=5556
+export REDIS_HOST=localhost
+export REDIS_PORT=6379
 ```
 
 Then you can run

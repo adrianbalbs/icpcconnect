@@ -1,3 +1,4 @@
+import useUniversities from "@/hooks/useUniversities";
 import authStyles from "@/styles/Auth.module.css";
 import React, { Dispatch, SetStateAction } from "react";
 
@@ -28,6 +29,8 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
   handleBack,
   handleNext,
 }) => {
+  const { universities } = useUniversities();
+
   return (
     <>
       <h1 className={authStyles.h1}>Enter your details</h1>
@@ -46,10 +49,11 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
         <option value={0} disabled selected>
           Select University
         </option>
-        <option value={1}>UNSW</option>
-        <option value={2}>University of Sydney</option>
-        <option value={3}>University of Technology Sydney</option>
-        <option value={4}>Macquarie University</option>
+        {universities.map((university) => (
+          <option key={university.id} value={university.id}>
+            {university.name}
+          </option>
+        ))}
       </select>
       {roleName === "Student" ? (
         <form className={authStyles["form-container"]}>

@@ -33,12 +33,19 @@ jobs:
           - 6379:6379
     env:
       NODE_ENV: test
+      LOG_LEVEL: info
       TEST_DB: postgres://postgres:postgres@localhost:5432/postgres
       PG_TEST_HOST: localhost
       PG_TEST_USER: postgres
       PG_TEST_PW: postgres
       PG_TEST_DB: postgres
       PG_TEST_PORT: 5432
+      JWT_SECRET: secret-token
+      REFRESH_TOKEN_SECRET: refresh-token-secret
+      SMTP_SERVER: smtp.ethereal.email
+      EMAIL_USER: rebeca.auer@ethereal.email # we dont have access to secrets
+      EMAIL_PASSWORD: gpYtdgMPkywbQek1Gb
+      EMAIL_PORT: 587
       REDIS_HOST: localhost
       REDIS_PORT: 6379
     steps:

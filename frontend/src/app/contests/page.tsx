@@ -31,6 +31,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import InviteCode from "@/components/utils/InviteCode";
+import useUniversities from "@/hooks/useUniversities";
 
 export type ContestResponse = {
   id: string;
@@ -41,13 +42,6 @@ export type ContestResponse = {
   siteId: number;
   site: string;
 };
-
-const universities = [
-  { id: 1, label: "University of New South Wales" },
-  { id: 2, label: "University of Sydney" },
-  { id: 3, label: "University of Technology Sydney" },
-  { id: 4, label: "Macquarie University" },
-];
 
 type DeleteContestDialogProps = {
   open: boolean;
@@ -135,6 +129,8 @@ export default function Contests() {
     }
   };
 
+  const { universities } = useUniversities();
+
   useEffect(() => {
     setDataGridLoading(true);
     fetchContests();
@@ -164,9 +160,10 @@ export default function Contests() {
       await axios.delete(`${SERVER_URL}/api/contests/${deleteId}`, {
         withCredentials: true,
       });
+
+      await fetchContests();
       setDeleteId(null);
       setDeleteDialogOpen(false);
-      fetchContests();
     } catch (err) {
       console.log(err);
     }
@@ -194,7 +191,7 @@ export default function Contests() {
           },
         );
       }
-      fetchContests();
+      await fetchContests();
       handleDialogClose();
     } catch (err) {
       console.error("Error:", err);
