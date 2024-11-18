@@ -248,7 +248,9 @@ export const coursesCompletedByStudentRelations = relations(
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }).notNull(),
-  university: integer("university").references(() => universities.id).notNull(),
+  university: integer("university")
+    .references(() => universities.id)
+    .notNull(),
   contest: uuid("contest")
     .references(() => contests.id, {
       onDelete: "cascade",

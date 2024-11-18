@@ -37,4 +37,4 @@ export type RunAlgoResponse = {
 
 export type TeamId = {
   teamId: string;
-}
+};

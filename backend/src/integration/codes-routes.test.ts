@@ -90,10 +90,7 @@ describe("contestRegistrationRouter tests", () => {
     expect(res2.body).not.toBeNull();
     expect(res2.body[0].role).toEqual(role.coach);
     expect(res2.body[0].code).toEqual(res.body.code);
-
-    
   });
-
 
   it("should create a new site-coord code, return that code, and have it be in the db", async () => {
     const res = await request(app)

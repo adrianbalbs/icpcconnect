@@ -103,4 +103,3 @@ export async function sendEmail(
 
   return sendHtmlEmail(userName, userEmailAddress, emailTitle, content);
 }
-

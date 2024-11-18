@@ -25,18 +25,18 @@ export class TeamService {
   }
 
   /*
-  * Create a team of students
-  *
-  * @param req - CreateTeamRequest
-  *   req.name - name of team
-  *   req.university - University-id that team is associated with
-  *   req.memberIds - Array of user-ids corresponding to the team-members
-  *   req.flagged - Team is flagged for potential student conflicts
-  * 
-  * @returns CreateTeamResponse
-  *   CreateTeamResponse.teamId - Id of team created
-  * 
-  */
+   * Create a team of students
+   *
+   * @param req - CreateTeamRequest
+   *   req.name - name of team
+   *   req.university - University-id that team is associated with
+   *   req.memberIds - Array of user-ids corresponding to the team-members
+   *   req.flagged - Team is flagged for potential student conflicts
+   *
+   * @returns CreateTeamResponse
+   *   CreateTeamResponse.teamId - Id of team created
+   *
+   */
   async createTeam(req: CreateTeamRequest): Promise<CreateTeamResponse> {
     const { name, university, memberIds, contest, flagged } = req;
 
@@ -64,21 +64,21 @@ export class TeamService {
   }
 
   /*
-  * Get the details of a team, given it's id
-  *
-  * @param teamId - id of team specified
-  *  
-  * @returns TeamDTO
-  *   TeamDTO.id   - internal id of team
-  *   TeamDTO.name - name of team
-  *   TeamDTO.university - university team is associated with
-  *   TeamDTO.contest - contest team is signed up for
-  *   TeamDTO.flagged - flagged for potential violation of exclusion-prefs
-  *   TeamDTO.members - array of members in team
-  * 
-  * @throws BadRequest
-  *   - If team-id doesn't correspond to a team
-  */
+   * Get the details of a team, given it's id
+   *
+   * @param teamId - id of team specified
+   *
+   * @returns TeamDTO
+   *   TeamDTO.id   - internal id of team
+   *   TeamDTO.name - name of team
+   *   TeamDTO.university - university team is associated with
+   *   TeamDTO.contest - contest team is signed up for
+   *   TeamDTO.flagged - flagged for potential violation of exclusion-prefs
+   *   TeamDTO.members - array of members in team
+   *
+   * @throws BadRequest
+   *   - If team-id doesn't correspond to a team
+   */
   async getTeam(teamId: string): Promise<TeamDTO> {
     const [team] = await this.db
       .select({
@@ -116,22 +116,22 @@ export class TeamService {
   }
 
   /*
-  * Get the details of a team, given it's id
-  *
-  * @param studentId - user-id of specified student
-  * @param contestId - contest-id of specified contest
-  *  
-  * @returns TeamDTO
-  *   TeamDTO.id   - internal id of team
-  *   TeamDTO.name - name of team
-  *   TeamDTO.university - university team is associated with
-  *   TeamDTO.contest - contest team is signed up for
-  *   TeamDTO.flagged - flagged for potential violation of exclusion-prefs
-  *   TeamDTO.members - array of members in team
-  * 
-  * @throws BadRequest
-  *   - If user-id+contest-id doesn't match a given team
-  */
+   * Get the details of a team, given it's id
+   *
+   * @param studentId - user-id of specified student
+   * @param contestId - contest-id of specified contest
+   *
+   * @returns TeamDTO
+   *   TeamDTO.id   - internal id of team
+   *   TeamDTO.name - name of team
+   *   TeamDTO.university - university team is associated with
+   *   TeamDTO.contest - contest team is signed up for
+   *   TeamDTO.flagged - flagged for potential violation of exclusion-prefs
+   *   TeamDTO.members - array of members in team
+   *
+   * @throws BadRequest
+   *   - If user-id+contest-id doesn't match a given team
+   */
   async getTeamByStudentAndContest(
     studentId: string,
     contestId: string,
@@ -174,21 +174,20 @@ export class TeamService {
     return { ...team, members };
   }
 
-
   /*
-  * Get the details of all teams
-  *
-  * @param contest - Optional, gets all teams for a given contest
-  *  
-  * @returns TeamDTO[]
-  *   TeamDTO.id   - internal id of team
-  *   TeamDTO.name - name of team
-  *   TeamDTO.university - university team is associated with
-  *   TeamDTO.contest - contest team is signed up for
-  *   TeamDTO.flagged - flagged for potential violation of exclusion-prefs
-  *   TeamDTO.members - array of members in team
-  * 
-  */
+   * Get the details of all teams
+   *
+   * @param contest - Optional, gets all teams for a given contest
+   *
+   * @returns TeamDTO[]
+   *   TeamDTO.id   - internal id of team
+   *   TeamDTO.name - name of team
+   *   TeamDTO.university - university team is associated with
+   *   TeamDTO.contest - contest team is signed up for
+   *   TeamDTO.flagged - flagged for potential violation of exclusion-prefs
+   *   TeamDTO.members - array of members in team
+   *
+   */
   async getAllTeams(contest?: string): Promise<{ allTeams: TeamDTO[] }> {
     const query = this.db
       .select({
@@ -229,25 +228,28 @@ export class TeamService {
   }
 
   /*
-  * Update the details of a given team
-  *
-  * @remarks
-  * Expects all team-members to be sent
-  * And unsets 'old' team-members
-  *
-  * @param teamId - Id of associated team
-  * @param updatedDetails - UpdateTeamRequest
-  *   updatedDetails.name       - name of the team
-  *   updatedDetails.university - university-id
-  *   updatedDetails.contest   - Contest team is associated with
-  *   updatedDetails.flagged   - Whether team is flagged for potential violations of exclusion-prefs  
-  *   updatedDetails.memberIds - User-ids of the members 
-  *  
-  * @returns UpdateTeamResponse
-  * 
-  * 
-  */
-  async updateTeam(teamId: string, updatedDetails: UpdateTeamRequest): Promise<UpdateTeamResponse> {
+   * Update the details of a given team
+   *
+   * @remarks
+   * Expects all team-members to be sent
+   * And unsets 'old' team-members
+   *
+   * @param teamId - Id of associated team
+   * @param updatedDetails - UpdateTeamRequest
+   *   updatedDetails.name       - name of the team
+   *   updatedDetails.university - university-id
+   *   updatedDetails.contest   - Contest team is associated with
+   *   updatedDetails.flagged   - Whether team is flagged for potential violations of exclusion-prefs
+   *   updatedDetails.memberIds - User-ids of the members
+   *
+   * @returns UpdateTeamResponse
+   *
+   *
+   */
+  async updateTeam(
+    teamId: string,
+    updatedDetails: UpdateTeamRequest,
+  ): Promise<UpdateTeamResponse> {
     const { memberIds, ...rest } = updatedDetails;
 
     const cleanedTeamUpdates = Object.fromEntries(
@@ -297,13 +299,13 @@ export class TeamService {
   }
 
   /*
-  * Deletes a given team
-  *
-  * @param teamId - id of the specified team
-  *  
-  * @throws BadRequest
-  *   - If team-id doesn't  correspond to a valid team 
-  */
+   * Deletes a given team
+   *
+   * @param teamId - id of the specified team
+   *
+   * @throws BadRequest
+   *   - If team-id doesn't  correspond to a valid team
+   */
   async deleteTeam(teamId: string): Promise<DeleteResponse> {
     const [team] = await this.db
       .select({ teamId: teams.id })

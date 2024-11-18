@@ -15,16 +15,16 @@ export class CodesService {
   }
 
   /*
-  * Enters an invite-code into the right db table, for a specified role
-  *
-  * @param req - 
-  *   req.code - the code to be used
-  *   req.role - role this code is associated with
-  * 
-  * @returns CodeResponse
-  *   CodeResponse.code - the code to be used
-  * 
-  */
+   * Enters an invite-code into the right db table, for a specified role
+   *
+   * @param req -
+   *   req.code - the code to be used
+   *   req.role - role this code is associated with
+   *
+   * @returns CodeResponse
+   *   CodeResponse.code - the code to be used
+   *
+   */
   async createRoleCode(req: CreateRoleCodeRequest): Promise<CodeResponse> {
     const { code, role } = req;
 
@@ -37,15 +37,15 @@ export class CodesService {
   }
 
   /*
-  * Enters an auth-code into the right db table, for a specified user
-  *
-  * @param req - 
-  *   req.code - the code to be used
-  *   req.email - email this code is associated with
-  * 
-  * @returns CodeResponse
-  *   CodeResponse.code - the code to be used
-  */
+   * Enters an auth-code into the right db table, for a specified user
+   *
+   * @param req -
+   *   req.code - the code to be used
+   *   req.email - email this code is associated with
+   *
+   * @returns CodeResponse
+   *   CodeResponse.code - the code to be used
+   */
   async createAuthCode(req: CreateAuthCodeRequest): Promise<CodeResponse> {
     const { code, email } = req;
 
@@ -58,25 +58,25 @@ export class CodesService {
   }
 
   /*
-  * Get all auth-codes from db
-  *
-  * @returns AuthCodeInfo[]
-  *   AuthCodeInfo.code - auth code
-  *   AuthCodeInfo.email - users email
-  *   AuthCodeInfo.createdAt - when we entered this code into db
-  */
+   * Get all auth-codes from db
+   *
+   * @returns AuthCodeInfo[]
+   *   AuthCodeInfo.code - auth code
+   *   AuthCodeInfo.email - users email
+   *   AuthCodeInfo.createdAt - when we entered this code into db
+   */
   async getAllAuthCodes(): Promise<AuthCodeInfo[]> {
     return await this.db.select().from(authCodes);
   }
 
   /*
-  * Get all role-codes from db
-  *
-  * @returns RoleCodeInfo[]
-  *   RoleCodeInfo.code - auth code
-  *   RoleCodeInfo.role - role code is associated with (e.g Coach, SiteCoordinator)
-  *   RoleCodeInfo.createdAt - when we entered this code into db
-  */
+   * Get all role-codes from db
+   *
+   * @returns RoleCodeInfo[]
+   *   RoleCodeInfo.code - auth code
+   *   RoleCodeInfo.role - role code is associated with (e.g Coach, SiteCoordinator)
+   *   RoleCodeInfo.createdAt - when we entered this code into db
+   */
   async getAllRoleCodes(): Promise<RoleCodeInfo[]> {
     return await this.db.select().from(inviteCodes);
   }

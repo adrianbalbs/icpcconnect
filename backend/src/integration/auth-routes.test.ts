@@ -21,7 +21,10 @@ beforeAll(async () => {
     .use(express.json())
     .use(cookieParser())
     .use("/api/auth", authRouter(authService))
-    .use("/api/users", userRouter(new UserService(db), authService, codesService));
+    .use(
+      "/api/users",
+      userRouter(new UserService(db), authService, codesService),
+    );
 });
 
 afterAll(async () => {

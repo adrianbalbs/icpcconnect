@@ -18,13 +18,13 @@ export enum role {
 
 /**
  * Creates a random 6 digit long code
- * 
+ *
  * @returns number
  */
 export function generateSixDigitCode(): number {
-    const min = 100000;
-    const max = 999999;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  const min = 100000;
+  const max = 999999;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**
@@ -102,7 +102,9 @@ export async function checkCoachCode(
 ): Promise<boolean> {
   const codes: InviteCodes[] = await codesService.getAllRoleCodes();
 
-  if (checkCode === undefined) { return false }
+  if (checkCode === undefined) {
+    return false;
+  }
 
   for (const code of codes) {
     if (code.code === Number(checkCode) && code.role === role.coach) {
@@ -137,7 +139,9 @@ export async function checkSiteCoordCode(
 ): Promise<boolean> {
   const codes: InviteCodes[] = await codesService.getAllRoleCodes();
 
-  if (checkCode === undefined) { return false }
+  if (checkCode === undefined) {
+    return false;
+  }
 
   for (const code of codes) {
     if (code.code === Number(checkCode) && code.role === role.site_coord) {

@@ -12,7 +12,7 @@ export const UserAuthInfoSchema = z.object({
   givenName: z.string(),
   familyName: z.string(),
   refreshTokenVersion: z.number(),
-  email : z.string(),
+  email: z.string(),
   role: UserRoleEnum,
   id: z.string(),
 });
