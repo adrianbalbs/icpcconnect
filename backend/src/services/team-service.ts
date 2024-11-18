@@ -7,7 +7,6 @@ import {
   users,
   universities,
   contests,
-  replacementRelations,
 } from "../db/index.js";
 import { UserService } from "./index.js";
 import {

@@ -13,7 +13,6 @@ import {
   users,
   languagesSpokenByStudent,
   contests,
-  teams,
   coursesCompletedByStudent,
   registrationDetails,
 } from "./schema.js";
@@ -37,7 +36,7 @@ type StudentTable = UserTable & {
   team: string | null;
   pronouns: string;
   studentId: string;
-  profile_pic: string,
+  profile_pic: string;
   photoConsent: boolean;
   languagesSpoken: SpokenLanguage[];
   level: Level;
@@ -280,7 +279,7 @@ export const seed = async (db: DatabaseConnection) => {
   for (const siteCoordinator of siteCoordinators) {
     await addSiteCoordinator(db, siteCoordinator);
   }
-  
+
   // logger.info("Seeding Team Information");
   // await db
   //   .insert(teams)
