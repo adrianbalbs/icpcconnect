@@ -1,17 +1,14 @@
 import jwt from "jsonwebtoken";
 import { __prod__ } from "./constants.js";
 import { Response } from "express";
-
-export const SECRET_KEY = process.env.JWT_SECRET || "placeholder-key";
-export const REFRESH_TOKEN_SECRET =
-  process.env.REFRESH_TOKEN_SECRET || "another-placeholder-key";
+import { env } from "../env.js";
 
 const revokeCookieOpts = {
   httpOnly: true,
   secure: __prod__,
   sameSite: "lax",
   path: "/",
-  domain: __prod__ ? `.${process.env.DOMAIN}` : "",
+  domain: "",
 } as const;
 
 const setCookieOpts = {
@@ -24,13 +21,17 @@ export function createAuthTokens(
   role: string,
   refreshTokenVersion: number,
 ) {
-  const token = jwt.sign({ id, role }, SECRET_KEY, {
+  const token = jwt.sign({ id, role }, env.JWT_SECRET, {
     expiresIn: "15min",
   });
 
-  const refresh = jwt.sign({ id, refreshTokenVersion }, REFRESH_TOKEN_SECRET, {
-    expiresIn: "30d",
-  });
+  const refresh = jwt.sign(
+    { id, refreshTokenVersion },
+    env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: "30d",
+    },
+  );
 
   return { token, refresh };
 }
