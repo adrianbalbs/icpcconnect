@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 import { DatabaseConnection, users } from "../db/index.js";
 import { DeleteResponse, UserProfileResponse } from "../types/api-res.js";
-import { HTTPError, badRequest } from "../utils/errors.js";
+import { HTTPError, badRequest, unauthorizedError } from "../utils/errors.js";
+import { passwordUtils } from "src/utils/encrypt.js";
 
 export type AdminProfileUpdateResponse = UserProfileResponse;
 
@@ -48,5 +49,21 @@ export class AdminService {
 
     await this.db.delete(users).where(eq(users.id, userId));
     return { status: "OK" };
+  }
+
+  async verifyAdmin(userId: string, password: string): Promise<boolean> {
+    const admin = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId));
+
+    if (!admin.length) {
+      throw new HTTPError(unauthorizedError);
+    }
+
+    // Compare the provided password with the stored hash
+    const storedHash = admin[0].password;
+    const isPasswordValid = await passwordUtils().compare(password, storedHash);
+    return isPasswordValid;
   }
 }

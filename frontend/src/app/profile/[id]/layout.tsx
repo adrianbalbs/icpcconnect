@@ -62,7 +62,9 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
             className={profileStyles.role}
           >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
           {checkView() && <Sidebar id={params.id} role={info.role} />}
-          {userSession.role === "Admin" && <DeleteAccount />}
+          {userSession.role === "Admin" && (
+            <DeleteAccount id={userSession.id} />
+          )}
         </div>
         <Tooltip title="Back">
           <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>

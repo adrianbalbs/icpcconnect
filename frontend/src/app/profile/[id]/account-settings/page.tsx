@@ -7,7 +7,7 @@ import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { Button } from "@mui/material";
-import ChangePasswordModal from "@/components/settings/ChangePasswordModal";
+import ChangePasswordModal from "@/components/profile/ChangePasswordModal";
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
 import { ProfileProps } from "../page";
 // import Error from "next/error";

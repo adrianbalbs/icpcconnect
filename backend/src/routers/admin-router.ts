@@ -6,7 +6,12 @@ import {
   authorise,
 } from "../middleware/index.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
-import { AlgorithmRequest, AlgorithmRequestSchema } from "../schemas/index.js";
+import {
+  AlgorithmRequest,
+  AlgorithmRequestSchema,
+  VerifyPassword,
+  VerifyPasswordSchema,
+} from "../schemas/index.js";
 
 export function adminRouter(
   adminService: AdminService,
@@ -28,6 +33,24 @@ export function adminRouter(
           const { contestId } = req.body;
           const success = await algorithmService.callAlgorithm(contestId);
           res.status(200).json(success);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .post(
+      "/verify",
+      authorise(["Admin"]),
+      validateData(VerifyPasswordSchema, "body"),
+      async (
+        req: Request<unknown, unknown, VerifyPassword>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        try {
+          const { id, password } = req.body;
+          const result = await adminService.verifyAdmin(id, password);
+          res.status(200).json(result);
         } catch (err) {
           next(err);
         }
