@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { UserDTO } from "./user-schema.js";
+export type UpdateTeamRequestSID = UpdateTeamRequest;
+export type UpdateTeamResponseSID = UpdateTeamRequest;
 
 //How do model the students??
 export const CreateTeamRequestSchema = z.object({

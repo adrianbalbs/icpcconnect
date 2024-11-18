@@ -33,6 +33,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
   const [substitute, setSubstitute] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [newMember, setNewMember] = useState("");
 
   const replacementArr: string[] = new Array(team.members.length).fill("");
 
@@ -78,13 +79,25 @@ const TeamCard: React.FC<TeamCardProps> = ({
             },
             { withCredentials: true },
           );
-          fetchTeams();
         } catch (err) {
           console.log(err);
         }
       }
       replacementArr[i] = "";
     }
+    if (newMember !== "") {
+      await axios.put(
+        `${SERVER_URL}/api/teams/update/sids/${team.id}`,
+        {
+          memberIds: [
+            ...team.members.map((member) => member.studentId),
+            newMember,
+          ],
+        },
+        { withCredentials: true },
+      );
+    }
+    fetchTeams();
     setOpenEdit(false);
   };
 
@@ -185,7 +198,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
             transform: "translate(-50%, -50%)",
             maxHeight: "70%",
             padding: "50px",
-            width: "35%",
+            width: "50%",
           }}
         >
           <div style={{ width: "100%" }}>
@@ -207,18 +220,52 @@ const TeamCard: React.FC<TeamCardProps> = ({
                 width: "100%",
               }}
             >
-              <div
-                className={memberStyles["member-name"]}
-              >{`${member.givenName} ${member.familyName}`}</div>
+              <div className={memberStyles["member-name"]}>
+                {`${member.givenName} ${member.familyName}`}{" "}
+                {replacedIds.includes(member.id) && (
+                  <IconButton
+                    onClick={() =>
+                      handleClick(
+                        member,
+                        replacements[replacedIds.indexOf(member.id)],
+                      )
+                    }
+                    color="warning"
+                    aria-label="warning"
+                    sx={{
+                      padding: "0",
+                      marginBottom: "3px",
+                      marginLeft: "3px",
+                    }}
+                  >
+                    <WarningIcon
+                      sx={{
+                        height: "14px",
+                        width: "14px",
+                        color: "rgb(245, 187, 68)",
+                      }}
+                    />
+                  </IconButton>
+                )}
+              </div>
               <input
                 className={memberStyles["member-edit"]}
                 placeholder="Replace with..."
                 onChange={(e) => handleReplace(index, e.target.value)}
                 onFocus={(e) => (e.target.placeholder = "")}
                 onBlur={(e) => (e.target.placeholder = "Replace with...")}
-              ></input>
+              />
             </div>
           ))}
+          {team.members.length !== 3 && (
+            <input
+              className={memberStyles["member-add"]}
+              placeholder="Add new member..."
+              onChange={(e) => setNewMember(e.target.value)}
+              onFocus={(e) => (e.target.placeholder = "")}
+              onBlur={(e) => (e.target.placeholder = "Add new member...")}
+            />
+          )}
           <hr className={pageStyles["divider"]}></hr>
           <div
             style={{
@@ -227,13 +274,23 @@ const TeamCard: React.FC<TeamCardProps> = ({
               justifyContent: "center",
             }}
           >
-            <button
-              className={memberStyles.pullout}
-              onClick={handleEdit}
-              style={{ marginTop: "30px" }}
-            >
-              Done
-            </button>
+            {replacements.length === 0 && (
+              <button
+                className={memberStyles.pullout}
+                onClick={handleEdit}
+                style={{ marginTop: "30px" }}
+              >
+                Done
+              </button>
+            )}
+            {replacements.length !== 0 && (
+              <button
+                className={memberStyles["pullout-disabled"]}
+                style={{ marginTop: "30px" }}
+              >
+                Pending Pull Out Request
+              </button>
+            )}
           </div>
           <CloseBtn handleClose={() => setOpenEdit(false)}></CloseBtn>
         </Box>
@@ -253,7 +310,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
             transform: "translate(-50%, -50%)",
             maxHeight: "70%",
             padding: "50px",
-            width: "35%",
+            width: "50%",
           }}
         >
           <div style={{ width: "100%" }}>

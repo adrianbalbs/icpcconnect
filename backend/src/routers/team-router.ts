@@ -15,6 +15,7 @@ import {
   ReplacementRequestSchema,
   PulloutRequest,
   PulloutRequestSchema,
+  UpdateTeamRequestSID,
 } from "../schemas/index.js";
 import { AuthService, TeamService } from "../services/index.js";
 
@@ -205,5 +206,26 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
             next(err);
           }
         },
+    ).put(
+      "/update/sids/:id",
+      [
+        authorise(["Admin", "Coach"]),
+        validateData(UpdateTeamRequestSchema, "body"),
+      ],
+      async (
+        req: Request<{ id: string }, unknown, UpdateTeamRequestSID>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        const { id } = req.params;
+        const teamDetails = req.body;
+        try {
+          const team = teamService.updateTeamSID(id, teamDetails);
+          res.status(200).json(team);
+        } catch (err) {
+          next(err);
+        }
+      },
     );
+    
 }

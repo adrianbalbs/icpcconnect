@@ -17,6 +17,8 @@ import {
   UpdateTeamRequest,
   CreateTeamResponse,
   UpdateTeamResponse,
+  UpdateTeamRequestSID,
+  UpdateTeamResponseSID,
 } from "../schemas/index.js";
 import { badRequest, HTTPError, notFoundError } from "../utils/errors.js";
 import { DeleteResponse } from "../types/api-res.js";
@@ -314,6 +316,73 @@ export class TeamService {
             .update(studentDetails)
             .set({ team: teamId })
             .where(eq(studentDetails.userId, member.id));
+        }
+      }
+
+      if (Object.keys(cleanedTeamUpdates).length > 0) {
+        await tx
+          .update(teams)
+          .set(cleanedTeamUpdates)
+          .where(eq(teams.id, teamId));
+      }
+
+      return { ...rest, memberIds };
+    });
+
+    return result;
+  }
+
+  /*
+  * Update the details of a given team
+  *
+  * @remarks
+  * Same as 'updateTeam' but uses studentIds
+  *
+  * @param teamId - Id of associated team
+  * @param updatedDetailsSID - UpdateTeamRequest
+  *   updatedDetails.name       - name of the team
+  *   updatedDetails.university - university-id
+  *   updatedDetails.contest   - Contest team is associated with
+  *   updatedDetails.flagged   - Whether team is flagged for potential violations of exclusion-prefs  
+  *   updatedDetails.memberIds - student-ids of the members 
+  *  
+  * @returns UpdateTeamResponse
+  * 
+  * 
+  */
+  async updateTeamSID(teamId: string, updatedDetails: UpdateTeamRequestSID): Promise<UpdateTeamResponseSID> {
+    const { memberIds, ...rest } = updatedDetails;
+
+    const cleanedTeamUpdates = Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined),
+    );
+
+    const result = await this.db.transaction(async (tx) => {
+      if (memberIds) {
+        //Unset old team-members
+        {
+          const members = await tx.query.studentDetails.findMany({
+            where: eq(studentDetails.team, teamId),
+          });
+
+          for (const member of members) {
+            await tx
+              .update(studentDetails)
+              .set({ team: null })
+              .where(eq(studentDetails.studentId, member.studentId));
+          }
+        }
+
+        //Set team-id for new members
+        const members = await tx.query.studentDetails.findMany({
+          where: inArray(studentDetails.studentId, memberIds),
+        });
+
+        for (const member of members) {
+          await tx
+            .update(studentDetails)
+            .set({ team: teamId })
+            .where(eq(studentDetails.studentId, member.studentId));
         }
       }
 
