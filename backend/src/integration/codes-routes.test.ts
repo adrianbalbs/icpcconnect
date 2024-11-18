@@ -15,6 +15,7 @@ import {
 } from "vitest";
 import { setupTestDatabase, dropTestDatabase } from "./db-test-helpers.js";
 import cookieParser from "cookie-parser";
+import { env } from "../env.js";
 
 describe("contestRegistrationRouter tests", () => {
   let db: DatabaseConnection;
@@ -36,8 +37,8 @@ describe("contestRegistrationRouter tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];
@@ -90,10 +91,7 @@ describe("contestRegistrationRouter tests", () => {
     expect(res2.body).not.toBeNull();
     expect(res2.body[0].role).toEqual(role.coach);
     expect(res2.body[0].code).toEqual(res.body.code);
-
-    
   });
-
 
   it("should create a new site-coord code, return that code, and have it be in the db", async () => {
     const res = await request(app)

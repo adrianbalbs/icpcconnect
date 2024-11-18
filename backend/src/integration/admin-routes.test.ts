@@ -1,7 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
 import request from "supertest";
 import express from "express";
-import { AdminService, AuthService, CodesService, UserService } from "../services/index.js";
+import {
+  AdminService,
+  AuthService,
+  CodesService,
+  TeamService,
+  UserService,
+} from "../services/index.js";
 import { adminRouter, authRouter, userRouter } from "../routers/index.js";
 import { DatabaseConnection, users } from "../db/index.js";
 import {
@@ -17,6 +23,7 @@ import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
 import { AlgorithmService } from "../services/algorithm-service.js";
 import { generateCreateUserFixture } from "./fixtures.js";
+import { env } from "../env.js";
 
 let db: DatabaseConnection;
 let adminApp: ReturnType<typeof express>;
@@ -27,14 +34,23 @@ beforeAll(async () => {
   db = dbSetup.db;
   const authService = new AuthService(db);
   const codesService = new CodesService(db);
+  const userService = new UserService(db);
+  const teamService = new TeamService(db, userService);
   adminApp = express()
     .use(express.json())
     .use(cookieParser())
     .use("/api/auth", authRouter(authService))
-    .use("/api/users", userRouter(new UserService(db), authService, codesService))
+    .use(
+      "/api/users",
+      userRouter(new UserService(db), authService, codesService),
+    )
     .use(
       "/api/admin",
-      adminRouter(new AdminService(db), authService, new AlgorithmService(db)),
+      adminRouter(
+        new AdminService(db),
+        authService,
+        new AlgorithmService(userService, teamService),
+      ),
     );
 });
 
@@ -42,8 +58,8 @@ beforeEach(async () => {
   const loginRes = await request(adminApp)
     .post("/api/auth/login")
     .send({
-      email: "admin@comp3900.com",
-      password: "tomatofactory",
+      email: env.ADMIN_EMAIL,
+      password: env.ADMIN_PASSWORD,
     })
     .expect(200);
   cookies = loginRes.headers["set-cookie"];
@@ -55,7 +71,7 @@ afterAll(async () => {
 
 describe("adminRouter tests", () => {
   afterEach(async () => {
-    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+    await db.delete(users).where(not(eq(users.email, env.ADMIN_EMAIL)));
   });
   it("should remove the admin itself", async () => {
     const req = generateCreateUserFixture({

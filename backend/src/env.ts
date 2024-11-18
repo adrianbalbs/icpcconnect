@@ -13,6 +13,8 @@ const BaseEnvSchema = z.object({
   EMAIL_PORT: z.string().transform(Number).pipe(z.number().min(0).max(65535)),
   JWT_SECRET: z.string(),
   REFRESH_TOKEN_SECRET: z.string(),
+  ADMIN_EMAIL: z.string().email(),
+  ADMIN_PASSWORD: z.string().min(10),
 });
 
 const ProdEnvSchema = BaseEnvSchema.extend({

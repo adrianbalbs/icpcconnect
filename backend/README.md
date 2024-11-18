@@ -34,6 +34,8 @@ export PG_TEST_DB=testdb
 export PG_TEST_PORT=5556
 export REDIS_HOST=localhost
 export REDIS_PORT=6379
+export ADMIN_EMAIL=admin@comp3900.com
+export ADMIN_PASSWORD=tomatofactory
 ```
 
 Then you can run

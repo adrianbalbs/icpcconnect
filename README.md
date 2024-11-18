@@ -2,8 +2,9 @@
 
 A website for students to be allocated a team to compete in the ICPC
 
-## Running Locally
+## Running on Docker
 
-1. Run `docker compose build` to first build the project
+1. Make sure you have a `.env` file containing the relevant secrets as
+   per the installation manual
 2. Run `docker compose up` to start the project
 3. Access the front end via `localhost:3000`

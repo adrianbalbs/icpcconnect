@@ -32,6 +32,7 @@ import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
 import { generateCreateUserFixture } from "./fixtures.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
+import { env } from "../env.js";
 
 describe("TeamService tests", () => {
   let db: DatabaseConnection;
@@ -46,7 +47,8 @@ describe("TeamService tests", () => {
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
     userService = new UserService(db);
-    const algorithmService = new AlgorithmService(db);
+    const teamService = new TeamService(db, userService);
+    const algorithmService = new AlgorithmService(userService, teamService);
     app = express()
       .use(express.json())
       .use(cookieParser())
@@ -55,7 +57,7 @@ describe("TeamService tests", () => {
         "/api/users",
         userRouter(new UserService(db), authService, codesService),
       )
-      .use("/api/teams", teamRouter(new TeamService(db, userService), authService))
+      .use("/api/teams", teamRouter(teamService, authService))
 
       .use(
         "/api/contests",
@@ -71,8 +73,8 @@ describe("TeamService tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];
@@ -99,7 +101,7 @@ describe("TeamService tests", () => {
   });
 
   afterEach(async () => {
-    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+    await db.delete(users).where(not(eq(users.email, env.ADMIN_EMAIL)));
   });
 
   afterAll(async () => {
@@ -420,7 +422,6 @@ describe("TeamService tests", () => {
       .send(req)
       .expect(200);
 
-
     //get student id of the student not in the team
     const sId_req = await request(app)
       .get(`/api/users/${userIds[3]}`)
@@ -511,7 +512,6 @@ describe("TeamService tests", () => {
       .send(req)
       .expect(200);
 
-
     //get student id of the student not in the team
     const sId_req = await request(app)
       .get(`/api/users/${userIds[3]}`)
@@ -561,9 +561,7 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(200);
 
-
     expect(replacement_student.body.team).toEqual(info_res.body.name);
-
   });
 
   it("Should create and deny a pullout request", async () => {
@@ -630,7 +628,6 @@ describe("TeamService tests", () => {
       .send(req)
       .expect(200);
 
-
     //get student id of the student not in the team
     const sId_req = await request(app)
       .get(`/api/users/${userIds[3]}`)
@@ -688,7 +685,6 @@ describe("TeamService tests", () => {
       .expect(200);
     expect(newInfo_res).not.toBeNull();
     expect(newInfo_res.body.replacements.length).toBe(0);
-
   });
 
   it("Should replacement a student in a team with a student not in a team", async () => {
@@ -761,7 +757,6 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(200);
 
-
     //get student id of the student not in the team
     const sId_req = await request(app)
       .get(`/api/users/${userIds[3]}`)
@@ -797,7 +792,6 @@ describe("TeamService tests", () => {
       .expect(200);
 
     expect(replacement_student.body.team).toEqual(info_res.body.name);
-
   });
 
   it("Should replacement a student in a team with a student in another team", async () => {
@@ -890,7 +884,6 @@ describe("TeamService tests", () => {
       .set("Cookie", cookies)
       .expect(200);
 
-
     //get student id of the student not in the team
     const sId_req = await request(app)
       .get(`/api/users/${userIds[3]}`)
@@ -926,7 +919,6 @@ describe("TeamService tests", () => {
       .expect(200);
 
     expect(replacement_student.body.team).toEqual(info_res.body.name);
-
   });
 
   it("Should create and accept a pullout request without a replacement", async () => {
@@ -984,7 +976,6 @@ describe("TeamService tests", () => {
       .send(req)
       .expect(200);
 
-
     const pulloutReq = {
       studentId: userIds[0],
       reason: "",
@@ -1022,5 +1013,4 @@ describe("TeamService tests", () => {
     //should b null
     expect(lonely_student.body.team).toBeNull();
   });
-
 });

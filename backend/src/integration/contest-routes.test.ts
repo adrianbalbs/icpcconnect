@@ -14,14 +14,17 @@ import { authRouter, contestRouter } from "../routers";
 import {
   AuthService,
   ContestService,
-  CreateContest,
   JobQueue,
+  TeamService,
+  UserService,
 } from "../services";
 import { dropTestDatabase, setupTestDatabase } from "./db-test-helpers";
 import { errorHandlerMiddleware } from "../middleware";
 import { contests, DatabaseConnection } from "../db";
 import { v4 } from "uuid";
 import { AlgorithmService } from "../services/algorithm-service";
+import { CreateContest } from "../schemas";
+import { env } from "../env";
 
 describe("contestRouter tests", () => {
   let db: DatabaseConnection;
@@ -32,6 +35,8 @@ describe("contestRouter tests", () => {
     const dbSetup = await setupTestDatabase();
     db = dbSetup.db;
     const authService = new AuthService(db);
+    const userService = new UserService(db);
+    const teamService = new TeamService(db, userService);
     app = express()
       .use(express.json())
       .use(cookieParser())
@@ -39,7 +44,10 @@ describe("contestRouter tests", () => {
       .use(
         "/api/contests",
         contestRouter(
-          new ContestService(db, new JobQueue(new AlgorithmService(db))),
+          new ContestService(
+            db,
+            new JobQueue(new AlgorithmService(userService, teamService)),
+          ),
           authService,
         ),
       )
@@ -50,8 +58,8 @@ describe("contestRouter tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];

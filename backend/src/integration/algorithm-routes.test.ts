@@ -39,6 +39,7 @@ import { AlgorithmService } from "../services/algorithm-service.js";
 import cookieParser from "cookie-parser";
 import { eq, not } from "drizzle-orm";
 import { generateCreateUserFixture } from "./fixtures.js";
+import { env } from "../env.js";
 
 describe("Algorithm Tests", () => {
   let db: DatabaseConnection;
@@ -51,8 +52,8 @@ describe("Algorithm Tests", () => {
     db = dbSetup.db;
     const authService = new AuthService(db);
     const userService = new UserService(db);
-    const teamService = new TeamService(db);
-    const algorithmService = new AlgorithmService(db, userService, teamService);
+    const teamService = new TeamService(db, userService);
+    const algorithmService = new AlgorithmService(userService, teamService);
     const codesService = new CodesService(db);
     app = express()
       .use(express.json())
@@ -78,8 +79,8 @@ describe("Algorithm Tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];
