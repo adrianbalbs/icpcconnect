@@ -9,7 +9,7 @@ import teamStyles from "@/styles/Teams.module.css";
 import Assigned from "@/components/team/Assigned";
 import TeamRegistration from "@/components/team/TeamRegistration";
 import { MemberProps } from "@/components/team/Member";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useParams } from "next/navigation";
 import { ContestResponse } from "@/contests/page";
 import StudentWaitingScreen from "@/components/waiting-screen/StudentWaitingScreen";

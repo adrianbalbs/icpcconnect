@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { ContestResponse } from "@/contests/page";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { Team } from "@/types/teams";
 import AdminWaitingScreen from "@/components/waiting-screen/AdminWaitingScreen";
 import SortBy from "@/components/utils/SortBy";
@@ -34,15 +34,21 @@ const Teams: React.FC = () => {
 
   const getTimeDiff = () => {
     if (!contest) return "";
+    const d0 = new Date(contest?.earlyBirdDate);
     const d1 = new Date();
     const d2 = new Date(contest?.cutoffDate);
 
-    const numMs = Math.abs(d2.getTime() - d1.getTime());
+    // Determine whether coach review has opened or not
+    const suffix = d1 < d0 ? "opening" : "closing";
+    const numMs =
+      d1 < d0
+        ? Math.abs(d0.getTime() - d1.getTime())
+        : Math.abs(d2.getTime() - d1.getTime());
     const numHours = Math.floor(numMs / (1000 * 60 * 60));
     const days = Math.floor(numHours / 24);
     const hours = numHours % 24;
 
-    return `${days} day${days === 1 ? "" : "s"} ${hours} hour${hours === 1 ? "" : "s"} left`;
+    return `${days} day${days === 1 ? "" : "s"} ${hours} hour${hours === 1 ? "" : "s"} before ${suffix}`;
   };
 
   const fetchContest = useCallback(async () => {

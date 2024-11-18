@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Divider, Menu, MenuItem } from "@mui/material";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 import { menuBtn } from "@/styles/sxStyles";
 
 interface DropdownProps {

@@ -11,7 +11,7 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { Edit } from "@/components/profile/Edit";
 import { useProfile } from "./layout";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { cancelProfileBtn, saveProfileBtn } from "@/styles/sxStyles";
 
 export interface ProfileProps {
@@ -87,6 +87,12 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     }
   };
 
+  const checkView = () => {
+    return (
+      "Admin Coach".includes(userSession.role) || userSession.id === params.id
+    );
+  };
+
   useEffect(() => {
     storeInfo();
   }, [params.id]);
@@ -95,7 +101,7 @@ const Profile: React.FC<ProfileProps> = ({ params }) => {
     <div className={profileStyles["inner-screen"]}>
       <div className={profileStyles.title}>
         <h3>Profile</h3>
-        {(userSession.role === "Admin" || userSession.id === params.id) &&
+        {checkView() &&
           (isEditing ? (
             <ButtonGroup sx={{ ml: "auto" }}>
               <Button sx={saveProfileBtn} onClick={handleSaveClick}>

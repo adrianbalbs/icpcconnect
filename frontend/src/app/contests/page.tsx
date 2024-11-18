@@ -27,7 +27,7 @@ import {
   GridRenderCellParams,
   GridToolbar,
 } from "@mui/x-data-grid";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { CreateContestSchema } from "@/types/contests";

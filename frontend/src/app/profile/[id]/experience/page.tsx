@@ -12,7 +12,7 @@ import CoursesExperience from "@/components/experience/CoursesExperience";
 import { ProfileProps } from "../page";
 import ContestExperience from "@/components/experience/ContestExperience";
 import { User } from "@/types/users";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { useRouter } from "next/navigation";
 

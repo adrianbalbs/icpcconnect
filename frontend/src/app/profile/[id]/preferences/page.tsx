@@ -9,7 +9,7 @@ import PreferenceModal from "@/components/preferences/PreferenceModal";
 import ExclusionPreference from "@/components/preferences/ExclusionPreference";
 import InclusionPreference from "@/components/preferences/InclusionPreference";
 import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { useRouter } from "next/navigation";
 

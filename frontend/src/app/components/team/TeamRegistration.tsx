@@ -5,7 +5,7 @@ import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
 import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 import { getPreferences } from "@/utils/preferenceInfo";
 import { Button, Stack } from "@mui/material";
 import { User } from "@/types/users";

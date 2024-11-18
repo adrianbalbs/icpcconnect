@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import Navbar from "../bar/Navbar";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "./AuthProvider";
 import { usePathname } from "next/navigation";
 import { getInfo } from "@/utils/profileInfo";
 

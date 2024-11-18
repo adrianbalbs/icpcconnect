@@ -4,7 +4,7 @@ import styles from "@/styles/Auth.module.css";
 import Image from "next/image";
 import logo from "../assets/logo.png";
 import { useState } from "react";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 
 export default function Login() {
   const [email, setEmail] = useState("");

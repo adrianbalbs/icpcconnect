@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteExclusion from "./modalInput/EditExclusion";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 
 interface ExclusionProps {
   id: string;

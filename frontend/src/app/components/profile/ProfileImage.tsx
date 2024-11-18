@@ -17,10 +17,21 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { useNav } from "../context-provider/NavProvider";
 
-const ProfileImage = ({ id }: { id: string }) => {
+const ProfileImage = ({ id, ownId }: { id: string; ownId: string }) => {
   const [image, setImage] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const { navInfo, storeNavInfo } = useNav();
+  const { storeNavInfo } = useNav();
+
+  const fetchImage = async () => {
+    try {
+      const res = await axios.get(`${SERVER_URL}/api/users/${id}`, {
+        withCredentials: true,
+      });
+      setImage(res.data.profilePic);
+    } catch (error) {
+      console.log(`Get profile image error: ${error}`);
+    }
+  };
 
   const updateImage = async (profilePic: string) => {
     try {
@@ -29,7 +40,7 @@ const ProfileImage = ({ id }: { id: string }) => {
         { profilePic },
         { withCredentials: true },
       );
-      storeNavInfo();
+      if (id === ownId) storeNavInfo();
     } catch (error) {
       console.log(`Upload profile image error: ${error}`);
     }
@@ -67,8 +78,8 @@ const ProfileImage = ({ id }: { id: string }) => {
   };
 
   useEffect(() => {
-    setImage(navInfo.pfp);
-  }, [navInfo]);
+    fetchImage();
+  }, []);
 
   return (
     <Box sx={{ position: "relative", width: "218px", height: "218px" }}>

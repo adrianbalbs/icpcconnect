@@ -7,7 +7,7 @@ import Sidebar from "@/components/bar/Sidebar";
 import { getInfo } from "@/utils/profileInfo";
 import { IconButton, Tooltip } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import ProfileImage from "@/components/profile/ProfileImage";
 import DeleteAccount from "@/components/profile/DeleteAccount";
 
@@ -56,7 +56,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
     <ProfileContext.Provider value={{ info, storeProfileInfo: storeInfo }}>
       <div className={profileStyles.screen}>
         <div className={profileStyles["side-screen"]}>
-          <ProfileImage id={params.id} />
+          <ProfileImage id={params.id} ownId={userSession.id} />
           <h1 className={profileStyles.name}>{info.name}</h1>
           <p
             className={profileStyles.role}

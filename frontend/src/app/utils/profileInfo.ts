@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SERVER_URL } from "./constants";
 import { StudentInfo } from "@/components/members/Students";
-import { UserSession } from "@/components/AuthProvider/AuthProvider";
+import { UserSession } from "@/components/context-provider/AuthProvider";
 
 export interface EditInfo {
   givenName: string;

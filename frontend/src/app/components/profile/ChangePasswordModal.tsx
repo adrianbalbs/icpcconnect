@@ -5,7 +5,7 @@ import { addBtn, addModal, modalInputBox } from "@/styles/sxStyles";
 import pageStyles from "@/styles/Page.module.css";
 import { Box, Button, Paper } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 import ModalInput from "../utils/ModalInput";
 
 interface Errors {

@@ -5,7 +5,7 @@ import { Box, Modal } from "@mui/material";
 import { useState } from "react";
 import CloseBtn from "../utils/CloseBtn";
 import axios from "axios";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 import { SERVER_URL } from "@/utils/constants";
 
 interface AssignedProps {

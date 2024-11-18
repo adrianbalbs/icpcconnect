@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { sidebarBtn } from "@/styles/sxStyles";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 
 interface SidebarProps {
   id: string;

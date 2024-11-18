@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import SiteCoordinators from "@/components/members/SiteCoordinators";
 import Coaches from "@/components/members/Coaches";
 import Students from "@/components/members/Students";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useEffect, useState } from "react";
 import { Alert, Snackbar } from "@mui/material";
 

@@ -1,6 +1,6 @@
 import { IconButton, Tooltip } from "@mui/material";
 import { GridDeleteIcon } from "@mui/x-data-grid";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 
 interface BtnProps {
   id: string;
