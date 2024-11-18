@@ -7,8 +7,6 @@ import pageStyles from "@/styles/Page.module.css";
 import memberStyles from "@/styles/Members.module.css";
 import Student, { StudentProps } from "./Student";
 import SortBy from "../utils/SortBy";
-import { useAuth } from "../context-provider/AuthProvider";
-import { getInfo } from "@/utils/profileInfo";
 import { siteToUniversity } from "@/utils/university";
 
 export interface StudentInfo {

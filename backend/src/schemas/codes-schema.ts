@@ -24,7 +24,7 @@ export type CreateAuthCodeRouteRequest = z.infer<
 
 export const CodeResponseSchema = z.object({
   code: z.number(),
-})
+});
 
 export type CodeResponse = z.infer<typeof CodeResponseSchema>;
 

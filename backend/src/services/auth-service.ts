@@ -3,7 +3,7 @@ import { DatabaseConnection } from "../db/database.js";
 import { users } from "../db/schema.js";
 import { passwordUtils } from "../utils/encrypt.js";
 import { createAuthTokens } from "../utils/jwt.js";
-import { LoginRequest, UserAuthInfo, LoginResponse, } from "../schemas/index.js";
+import { LoginRequest, UserAuthInfo, LoginResponse } from "../schemas/index.js";
 import {
   HTTPError,
   notFoundError,
@@ -20,19 +20,19 @@ export class AuthService {
   }
 
   /*
-  * Attempts to log in a given user
-  *
-  * @param req - 
-  *   req.email - email of account
-  *   req.password - password of account
-  * 
-  * @returns LoginResponse
-  *   LoginResponse.userInfo - the auth info about the user
-  * 
-  * @throws UnauthorizedError -
-  *   If user doesn't exist
-  *   If password doesn't match user's password
-  */
+   * Attempts to log in a given user
+   *
+   * @param req -
+   *   req.email - email of account
+   *   req.password - password of account
+   *
+   * @returns LoginResponse
+   *   LoginResponse.userInfo - the auth info about the user
+   *
+   * @throws UnauthorizedError -
+   *   If user doesn't exist
+   *   If password doesn't match user's password
+   */
   async login(req: LoginRequest): Promise<LoginResponse> {
     const { email, password } = req;
 
@@ -71,15 +71,15 @@ export class AuthService {
   }
 
   /*
-  * Gets the authorisation info of a given user
-  *
-  * @param userId - the internal user-id of the user
-  * 
-  * @returns UserAuthInfo - authorisation info about the specified user
-  * 
-  * @throws NotFoundError -
-  *   If user doesn't exist
-  */
+   * Gets the authorisation info of a given user
+   *
+   * @param userId - the internal user-id of the user
+   *
+   * @returns UserAuthInfo - authorisation info about the specified user
+   *
+   * @throws NotFoundError -
+   *   If user doesn't exist
+   */
   async getUserAuthInfo(userId: string): Promise<UserAuthInfo> {
     const [user] = await this.db
       .select()

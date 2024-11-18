@@ -1,5 +1,4 @@
-export const group_arranged_email_content = 
-`<!DOCTYPE html>
+export const group_arranged_email_content = `<!DOCTYPE html>
 <!-- Feel free to modify style things of the email content in this file. -->
 <html lang="en">
 <head>
