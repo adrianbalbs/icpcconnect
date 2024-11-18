@@ -282,15 +282,7 @@ export class AlgorithmService {
           tempQueue.push(potential);
         }
 
-        // There is no more students to process, so remaining students wanting a pair must now be individual
-        if (pq.size() === 0 && !compatibleFound) {
-          pq.addAll(tempQueue);
-          const remainingStudents = studentsWithPairs.slice(
-            studentsWithPairs.indexOf(student),
-          );
-          remainingStudents.forEach((s) => pq.push(s));
-          break;
-        }
+        // No compatible student was found, students will form a pair
         teamIds.push(student.id);
         teams.push({ ids: teamIds, flagged });
       } else {

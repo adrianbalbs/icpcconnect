@@ -61,6 +61,7 @@ describe("Algorithm Service Tests", () => {
     dietaryRequirements: "",
     photoConsent: false,
     tshirtSize: "",
+    profile_pic: "",
   });
 
   const service = new AlgorithmService(
@@ -314,7 +315,7 @@ describe("Algorithm Service Tests", () => {
     expect(teams).toHaveLength(1);
   });
 
-  it("should not form team from pair if third students are incompatable", () => {
+  it("should form a team of 2 students who have signed up as a pair if the third is incompatable", () => {
     const users = [
       createUser({
         id: "1",
@@ -336,17 +337,10 @@ describe("Algorithm Service Tests", () => {
         familyName: "Shen",
         languagesSpoken: [{ code: "fr", name: "French" }],
       }),
-      createUser({
-        id: "4",
-        studentId: "4",
-        givenName: "Zac",
-        familyName: "Ecob",
-        languagesSpoken: [{ code: "fr", name: "French" }],
-      }),
     ];
 
     const teams = service.processStudents(users);
-    expect(teams).toHaveLength(0);
+    expect(teams).toHaveLength(1);
   });
 
   it("should not form a team if there is not enough people to form a pair", () => {
