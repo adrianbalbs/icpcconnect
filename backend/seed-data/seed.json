@@ -396,6 +396,466 @@
       "name": "Macquarie University",
       "id": 4,
       "hostedAt": 1
+    },
+    {
+      "name": "Australian Catholic University",
+      "id": 5,
+      "hostedAt": 1
+    },
+    {
+      "name": "Australian National University",
+      "id": 6,
+      "hostedAt": 1
+    },
+    {
+      "name": "Avondale University",
+      "id": 7,
+      "hostedAt": 1
+    },
+    {
+      "name": "Bond University",
+      "id": 8,
+      "hostedAt": 1
+    },
+    {
+      "name": "Charles Darwin University",
+      "id": 9,
+      "hostedAt": 1
+    },
+    {
+      "name": "Charles Sturt University",
+      "id": 10,
+      "hostedAt": 1
+    },
+    {
+      "name": "CQ University",
+      "id": 11,
+      "hostedAt": 1
+    },
+    {
+      "name": "Curtin University",
+      "id": 12,
+      "hostedAt": 1
+    },
+    {
+      "name": "Deakin University",
+      "id": 13,
+      "hostedAt": 1
+    },
+    {
+      "name": "Edith Cowan University",
+      "id": 14,
+      "hostedAt": 1
+    },
+    {
+      "name": "Federation University of Australia",
+      "id": 15,
+      "hostedAt": 1
+    },
+    {
+      "name": "Flinders University",
+      "id": 16,
+      "hostedAt": 1
+    },
+    {
+      "name": "Griffith University",
+      "id": 17,
+      "hostedAt": 1
+    },
+    {
+      "name": "James Cook University",
+      "id": 18,
+      "hostedAt": 1
+    },
+    {
+      "name": "Latrobe University",
+      "id": 19,
+      "hostedAt": 1
+    },
+    {
+      "name": "Monash University",
+      "id": 20,
+      "hostedAt": 1
+    },
+    {
+      "name": "Murdoch University",
+      "id": 21,
+      "hostedAt": 1
+    },
+    {
+      "name": "Queensland University of Technology",
+      "id": 22,
+      "hostedAt": 1
+    },
+    {
+      "name": "RMIT University",
+      "id": 23,
+      "hostedAt": 1
+    },
+    {
+      "name": "Southern Cross University",
+      "id": 24,
+      "hostedAt": 1
+    },
+    {
+      "name": "Swinburne University of Technology",
+      "id": 25,
+      "hostedAt": 1
+    },
+    {
+      "name": "Torrens University Australia",
+      "id": 26,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Adelaide",
+      "id": 27,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Canberra",
+      "id": 28,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Divinity",
+      "id": 29,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Melbourne",
+      "id": 30,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of New England",
+      "id": 31,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Newcastle",
+      "id": 32,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Notre Dame Australia",
+      "id": 33,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Queensland",
+      "id": 34,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of South Australia",
+      "id": 35,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Southern Queensland",
+      "id": 36,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Tasmania",
+      "id": 37,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of the Sunshine Coast",
+      "id": 38,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Western Australia",
+      "id": 39,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of Wollongong",
+      "id": 40,
+      "hostedAt": 1
+    },
+    {
+      "name": "Victoria University",
+      "id": 41,
+      "hostedAt": 1
+    },
+    {
+      "name": "Western Sydney University",
+      "id": 42,
+      "hostedAt": 1
+    },
+    {
+      "name": "University of the South Pacific",
+      "id": 43,
+      "hostedAt": 43
+    },
+    {
+      "name": "University at Atenisi Institute",
+      "id": 44,
+      "hostedAt": 43
+    },
+    {
+      "name": "Hango Agricultural College",
+      "id": 45,
+      "hostedAt": 43
+    },
+    {
+      "name": "King's International University",
+      "id": 46,
+      "hostedAt": 43
+    },
+    {
+      "name": "Tonga Institute of Science and Technology",
+      "id": 47,
+      "hostedAt": 43
+    },
+    {
+      "name": "Tupou College",
+      "id": 48,
+      "hostedAt": 43
+    },
+    {
+      "name": "University of the Nations",
+      "id": 49,
+      "hostedAt": 43
+    },
+    {
+      "name": "National University of Samoa",
+      "id": 50,
+      "hostedAt": 43
+    },
+    {
+      "name": "Oceania University of Medicine",
+      "id": 51,
+      "hostedAt": 43
+    },
+    {
+      "name": "Piula Theological College",
+      "id": 52,
+      "hostedAt": 43
+    },
+    {
+      "name": "Malua Theological College",
+      "id": 53,
+      "hostedAt": 43
+    },
+    {
+      "name": "Lord Liverpool University",
+      "id": 54,
+      "hostedAt": 43
+    },
+    {
+      "name": "Royal Academy of Fine Arts (Det Jyske Kunstakademi)",
+      "id": 55,
+      "hostedAt": 43
+    },
+    {
+      "name": "St. Clements University",
+      "id": 56,
+      "hostedAt": 43
+    },
+    {
+      "name": "Ara Institute of Canterbury",
+      "id": 57,
+      "hostedAt": 43
+    },
+    {
+      "name": "Eastern Institute of Technology (EIT)",
+      "id": 58,
+      "hostedAt": 43
+    },
+    {
+      "name": "Manukau Institute of Technology (MIT)",
+      "id": 59,
+      "hostedAt": 43
+    },
+    {
+      "name": "Nelson Marlborough Institute of Technology (NMIT)",
+      "id": 60,
+      "hostedAt": 43
+    },
+    {
+      "name": "NorthTec, formerly Northland Polytechnic",
+      "id": 61,
+      "hostedAt": 43
+    },
+    {
+      "name": "Otago Polytechnic (Dunedin)",
+      "id": 62,
+      "hostedAt": 43
+    },
+    {
+      "name": "Southern Institute of Technology (SIT)",
+      "id": 63,
+      "hostedAt": 43
+    },
+    {
+      "name": "Tai Poutini Polytechnic (Greymouth)",
+      "id": 64,
+      "hostedAt": 43
+    },
+    {
+      "name": "The Open Polytechnic of New Zealand",
+      "id": 65,
+      "hostedAt": 43
+    },
+    {
+      "name": "Toi Ohomai Institute of Technology",
+      "id": 66,
+      "hostedAt": 43
+    },
+    {
+      "name": "UCOL (Universal College of Learning)",
+      "id": 67,
+      "hostedAt": 43
+    },
+    {
+      "name": "Unitec Institute of Technology",
+      "id": 68,
+      "hostedAt": 43
+    },
+    {
+      "name": "Waikato Institute of Technology (Wintec)",
+      "id": 69,
+      "hostedAt": 43
+    },
+    {
+      "name": "Wellington Institute of Technology (WelTec)",
+      "id": 70,
+      "hostedAt": 43
+    },
+    {
+      "name": "Western Institute of Technology at Taranaki",
+      "id": 71,
+      "hostedAt": 43
+    },
+    {
+      "name": "Whitireia Community Polytechnic (WCP)",
+      "id": 72,
+      "hostedAt": 43
+    },
+    {
+      "name": "University of New Caledonia, Noumea",
+      "id": 73,
+      "hostedAt": 43
+    },
+    {
+      "name": "South Pacific School of Management and Business (EGC)",
+      "id": 74,
+      "hostedAt": 43
+    },
+    {
+      "name": "Institute of Economic and Accounting Techniques (INTEC)",
+      "id": 75,
+      "hostedAt": 43
+    },
+    {
+      "name": "Technical Institute for the Sea (INTECHMER)",
+      "id": 76,
+      "hostedAt": 43
+    },
+    {
+      "name": "New Caledonia Institute of Labour Relations (IRS)",
+      "id": 77,
+      "hostedAt": 43
+    },
+    {
+      "name": "New Caledonia Graduate School of Banking (ESB)",
+      "id": 78,
+      "hostedAt": 43
+    },
+    {
+      "name": "Conservatoire National des Arts et Métiers de Polynésie Française",
+      "id": 79,
+      "hostedAt": 43
+    },
+    {
+      "name": "ECT Business School",
+      "id": 80,
+      "hostedAt": 43
+    },
+    {
+      "name": "Cours Bufflier College",
+      "id": 81,
+      "hostedAt": 43
+    },
+    {
+      "name": "University of French Polynesia",
+      "id": 82,
+      "hostedAt": 43
+    },
+    {
+      "name": "Catholic University of the West in the Pacific",
+      "id": 83,
+      "hostedAt": 43
+    },
+    {
+      "name": "Takamoa Theological College",
+      "id": 84,
+      "hostedAt": 43
+    },
+    {
+      "name": "American Samoa Community College",
+      "id": 85,
+      "hostedAt": 43
+    },
+    {
+      "name": "National University of Vanuatu",
+      "id": 86,
+      "hostedAt": 43
+    },
+    {
+      "name": "Matevulu College",
+      "id": 87,
+      "hostedAt": 43
+    },
+    {
+      "name": "Port Vila School of Nursing",
+      "id": 88,
+      "hostedAt": 43
+    },
+    {
+      "name": "Revans University",
+      "id": 89,
+      "hostedAt": 43
+    },
+    {
+      "name": "Tagabe Agricultural School",
+      "id": 90,
+      "hostedAt": 43
+    },
+    {
+      "name": "Talua Ministry Training Centre",
+      "id": 91,
+      "hostedAt": 43
+    },
+    {
+      "name": "University of the South Pacific",
+      "id": 92,
+      "hostedAt": 43
+    },
+    {
+      "name": "Vanuatu Agriculture College",
+      "id": 93,
+      "hostedAt": 43
+    },
+    {
+      "name": "Vanuatu Institute of Teacher Education",
+      "id": 94,
+      "hostedAt": 43
+    },
+    {
+      "name": "Vanuatu Institute of Technology",
+      "id": 95,
+      "hostedAt": 43
+    },
+    {
+      "name": "Vanuatu Maritime College",
+      "id": 96,
+      "hostedAt": 43
     }
   ],
   "courses": [
