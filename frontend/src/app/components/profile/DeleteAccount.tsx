@@ -13,7 +13,15 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 
-const DeleteAccount = ({ id, user }: { id: string; user: string }) => {
+interface DeleteProps {
+  id: string;
+  user: {
+    id: string;
+    name: string;
+  };
+}
+
+const DeleteAccount = ({ id, user }: DeleteProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(1);
@@ -42,9 +50,11 @@ const DeleteAccount = ({ id, user }: { id: string; user: string }) => {
 
   const deleteAccount = async () => {
     try {
-      await axios.delete(`${SERVER_URL}/api/admin/${user}`, {
+      await axios.delete(`${SERVER_URL}/api/admin/${user.id}`, {
         withCredentials: true,
       });
+      localStorage.setItem("accountDeleted", user.name);
+      console.log(localStorage.getItem("accountDeleted"));
       router.back();
     } catch (err) {
       console.log(`Admin account-deletion user error: ${err}`);
@@ -60,7 +70,7 @@ const DeleteAccount = ({ id, user }: { id: string; user: string }) => {
           width: "218px",
           textTransform: "none",
           fontSize: "15px",
-          bgcolor: "#DF7981",
+          bgcolor: "#d15c65",
         }}
         onClick={() => setOpen(true)}
       >
@@ -117,7 +127,7 @@ const DeleteAccount = ({ id, user }: { id: string; user: string }) => {
               >
                 <Button
                   variant="contained"
-                  sx={{ ...deleteAccBtn, bgcolor: "#DF7981" }}
+                  sx={{ ...deleteAccBtn, bgcolor: "#d15c65" }}
                   onClick={deleteAccount}
                 >
                   Yes

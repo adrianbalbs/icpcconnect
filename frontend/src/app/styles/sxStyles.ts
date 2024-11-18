@@ -96,7 +96,7 @@ export const menuBtn = {
 };
 
 export const deleteBtn = {
-  backgroundColor: "#DF7981",
+  backgroundColor: "#d15c65",
   color: "white",
   textTransform: "none",
   boxShadow: "none",
