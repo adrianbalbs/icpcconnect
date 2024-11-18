@@ -14,7 +14,7 @@ export async function sendHtmlEmail(
   htmlContent: string,
 ): Promise<string> {
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: env.SMTP_SERVER,
     port: env.EMAIL_PORT,
     secure: false, // true for 465, false for other ports
     auth: {
