@@ -36,6 +36,13 @@ export function userRouter(
       }),
     )
     .get(
+      "/universities",
+      handle(async (_req, res) => {
+        const universities = await userService.getAllUniversities();
+        res.status(200).send(universities);
+      }),
+    )
+    .get(
       "/",
       [
         authenticate,
@@ -188,14 +195,22 @@ export function userRouter(
       ],
       handle(
         async (
-          req: Request<{ id: string }, unknown, { oldPassword: string, newPassword: string }>,
+          req: Request<
+            { id: string },
+            unknown,
+            { oldPassword: string; newPassword: string }
+          >,
           res,
         ) => {
           const { id } = req.params;
           const {
             body: { oldPassword, newPassword },
           } = req;
-          const result = await userService.updatePassword(id, oldPassword, newPassword);
+          const result = await userService.updatePassword(
+            id,
+            oldPassword,
+            newPassword,
+          );
           res.status(200).send(result);
         },
       ),

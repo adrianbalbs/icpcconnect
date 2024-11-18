@@ -1,3 +1,4 @@
+import useUniversities from "@/hooks/useUniversities";
 import authStyles from "@/styles/Auth.module.css";
 import {
   FormControl,
@@ -64,6 +65,8 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
     }
   };
 
+  const { universities } = useUniversities();
+
   return (
     <>
       <h1 className={authStyles.h1}>Enter your details</h1>
@@ -76,16 +79,15 @@ export const EnterDetails: React.FC<EnterDetailsProps> = ({
         <Select
           value={university}
           onChange={(e) => setUniversity(Number(e.target.value))}
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
         >
           <MenuItem sx={{ color: "#777777" }} value={0}>
             <p style={{ color: "#BBBBBB" }}>Enter University</p>
           </MenuItem>
-          <MenuItem value={1}>UNSW</MenuItem>
-          <MenuItem value={2}>University of Sydney</MenuItem>
-          <MenuItem value={3}>University of Technology Sydney</MenuItem>
-          <MenuItem value={4}>Macquarie University</MenuItem>
+          {universities.map((university) => (
+            <MenuItem key={university.id} value={university.id}>
+              {university.name}
+            </MenuItem>
+          ))}
         </Select>
         {uniError && (
           <FormHelperText>Please select a university.</FormHelperText>

@@ -5,10 +5,11 @@ import jwt from "jsonwebtoken";
 import { createAuthenticationMiddleware } from "./authenticate.ts";
 import { unauthorizedError } from "../utils/errors.ts";
 import { AuthService } from "../services/auth-service.ts";
+import { env } from "../env.ts";
 
 describe("authentication middleware", () => {
-  const JWT_SECRET = "placeholder-key";
-  const REFRESH_TOKEN_SECRET = "another-placeholder-key";
+  const JWT_SECRET = env.JWT_SECRET;
+  const REFRESH_TOKEN_SECRET = env.REFRESH_TOKEN_SECRET;
   const userId = v4();
   const validAccessToken = jwt.sign(
     { id: userId, role: "student" },

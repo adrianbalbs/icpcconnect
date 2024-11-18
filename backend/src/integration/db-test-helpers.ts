@@ -3,32 +3,27 @@ import * as schema from "../db/schema.js";
 import { v4 as uuidv4 } from "uuid";
 import pg from "pg";
 import { runMigrations } from "../db/migrate.js";
-import dotenv from "dotenv";
 import { seedTest } from "../db/index.js";
+import { env, getDbConfig, isTestEnv } from "../env.js";
 const { Pool } = pg;
 
-dotenv.config();
 async function createTestDatabase(dbName: string) {
-  const pool = new Pool({
-    user: process.env.PG_TEST_USER,
-    host: process.env.PG_TEST_HOST,
-    password: process.env.PG_TEST_PW,
-    database: process.env.PG_TEST_DB,
-    port: process.env.PG_TEST_PORT as number | undefined,
-  });
+  if (!isTestEnv(env)) {
+    throw new Error("Cannot create test database in a non-test environment");
+  }
+
+  const pool = new Pool(getDbConfig(env));
 
   await pool.query(`CREATE DATABASE ${dbName} WITH TEMPLATE template1`);
   await pool.end();
 }
 
 export async function dropTestDatabase() {
-  const pool = new Pool({
-    user: process.env.PG_TEST_USER,
-    host: process.env.PG_TEST_HOST,
-    password: process.env.PG_TEST_PW,
-    database: process.env.PG_TEST_DB,
-    port: process.env.PG_TEST_PORT as number | undefined,
-  });
+  if (!isTestEnv(env)) {
+    throw new Error("Cannot drop test database in a non-test environment");
+  }
+
+  const pool = new Pool(getDbConfig(env));
 
   // this causes an error where the db is being used, not too sure of a fix yet
   // await pool.query(`DROP DATABASE IF EXISTS ${dbName}`);
@@ -36,16 +31,14 @@ export async function dropTestDatabase() {
 }
 
 export async function setupTestDatabase() {
+  if (!isTestEnv(env)) {
+    throw new Error("Cannot drop test database in a non-test environment");
+  }
+
   const testDbName = `test_db_${uuidv4()}`.replace(/-/g, "_");
   await createTestDatabase(testDbName);
 
-  const pool = new pg.Pool({
-    user: process.env.PG_TEST_USER,
-    host: process.env.PG_TEST_HOST,
-    password: process.env.PG_TEST_PW,
-    database: testDbName,
-    port: process.env.PG_TEST_PORT as number | undefined,
-  });
+  const pool = new pg.Pool(getDbConfig(env, testDbName));
 
   const db = drizzle(pool, { schema });
   await runMigrations(db);
