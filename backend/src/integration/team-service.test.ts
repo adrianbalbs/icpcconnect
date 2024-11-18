@@ -101,7 +101,7 @@ describe("TeamService tests", () => {
   });
 
   afterEach(async () => {
-    await db.delete(users).where(not(eq(users.email, "admin@comp3900.com")));
+    await db.delete(users).where(not(eq(users.email, env.ADMIN_EMAIL)));
   });
 
   afterAll(async () => {
