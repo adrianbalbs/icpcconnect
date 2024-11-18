@@ -219,9 +219,6 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         ) => {
           //The *internal* id of the student whose pullout we wish to delete
           const { userId } = req.params;
-          const {
-            body: {},
-          } = req;
 
           try {
             const result = await teamService.deletePulloutReq(userId);
