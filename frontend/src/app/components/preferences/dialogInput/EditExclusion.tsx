@@ -7,6 +7,10 @@ interface EditProps {
   setSelected: Dispatch<SetStateAction<string[]>>;
 }
 
+/**
+ * Edit Exclusion component
+ * - renders checkboxes to edit exclusions
+ */
 const EditExclusion = ({ original, selected, setSelected }: EditProps) => {
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,

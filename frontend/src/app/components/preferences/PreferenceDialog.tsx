@@ -14,20 +14,26 @@ import {
 } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
 import { PreferenceType } from "@/profile/[id]/preferences/page";
-import TeamInput from "./modalInput/TeamInput";
-import PairInput from "./modalInput/PairInput";
-import ExclusionInput from "./modalInput/ExclusionInput";
-import TeamPairAlert from "./modalInput/TeamPairAlert";
+import TeamInput from "./dialogInput/TeamInput";
+import PairInput from "./dialogInput/PairInput";
+import ExclusionInput from "./dialogInput/ExclusionInput";
+import TeamPairAlert from "./dialogInput/TeamPairAlert";
 import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
 
-interface ModalProps {
+interface DialogProps {
   id: string;
   added: PreferenceType;
   setAdded: Dispatch<SetStateAction<PreferenceType>>;
   setMsg: (msg: string) => void;
 }
 
-const PreferenceModal: React.FC<ModalProps> = ({
+/**
+ * Add Preference dialog component
+ * - renders select dropdown to choose preference type
+ * - includes:
+ *    - pair, team, exclusion
+ */
+const PreferenceDialog: React.FC<DialogProps> = ({
   id,
   added,
   setAdded,
@@ -192,4 +198,4 @@ const PreferenceModal: React.FC<ModalProps> = ({
   );
 };
 
-export default PreferenceModal;
+export default PreferenceDialog;

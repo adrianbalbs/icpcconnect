@@ -8,6 +8,13 @@ import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useEffect, useState } from "react";
 import { Alert, Snackbar } from "@mui/material";
 
+/**
+ * Members Page - /contests/:id/members
+ * - student has no access
+ * - coach: views students
+ * - site coordinators: views students and coaches
+ * - admin: views students, coaches and site coordinators
+ */
 const Members: React.FC = () => {
   const {
     userSession: { role },

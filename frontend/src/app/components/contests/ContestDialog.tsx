@@ -42,6 +42,15 @@ interface ContestDialogProps {
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+/**
+ * Contest Form component
+ * - renders a modal that contains inputs for
+ *    - contest name
+ *    - early bird date (date where coach review opens)
+ *    - cutoff date (date where final team allocation releases)
+ *    - contest date
+ *    - site (location that contest is hosted in)
+ */
 const ContestDialog: React.FC<ContestDialogProps> = ({
   open,
   onClose,
@@ -99,10 +108,11 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
       site: selectedUniversity?.id,
     };
 
+    const msg = mode === "create" ? "New Contest Created" : "Contest Updated";
     onSubmit(formData);
     setNotif({
       type: "create",
-      message: `New Contest Created: ${contestName}`,
+      message: `${msg}: ${contestName}`,
     });
   };
 

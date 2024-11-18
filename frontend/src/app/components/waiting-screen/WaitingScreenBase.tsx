@@ -6,6 +6,10 @@ interface WaitingScreenBaseProps {
   children?: React.ReactNode;
 }
 
+/**
+ * Base Waiting Screen
+ * - shared basic waiting screen for all roles
+ */
 const WaitingScreenBase: React.FC<WaitingScreenBaseProps> = ({
   contest,
   children,

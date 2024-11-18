@@ -9,6 +9,10 @@ interface PairProps {
   setPref: (pref: string) => void;
 }
 
+/**
+ * Add Pair component
+ * - renders input to add new teammate preference by student id
+ */
 const PairInput = ({ setDisable, alert, setPref }: PairProps) => {
   const [teammate, setTeammate] = useState("");
 

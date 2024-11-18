@@ -12,6 +12,10 @@ import { EnterDetails } from "@/components/register/EnterDetails";
 import { EnterCode } from "@/components/register/EnterCode";
 import { CreatePassword } from "@/components/register/CreatePassword";
 
+/**
+ * Register Page
+ * - register as: student, coach or site coordinator
+ */
 export default function Register() {
   const router = useRouter();
   const [step, setStep] = useState(1);

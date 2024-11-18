@@ -25,6 +25,10 @@ interface TshirtProps {
   setTshirtSize: (e: SelectChangeEvent<string>) => void;
 }
 
+/**
+ * T-shirt Selection component
+ * - renders selection box for t-shirt sizes
+ */
 export const TshirtSize = ({ tshirtSize, setTshirtSize }: TshirtProps) => {
   return (
     <>

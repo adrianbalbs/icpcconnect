@@ -16,6 +16,10 @@ export function useNav() {
   return context;
 }
 
+/**
+ * Nav Context component
+ * - provides context for navbar elements ie. profile pic, name, role
+ */
 export const NavContextProvider = ({
   children,
 }: {

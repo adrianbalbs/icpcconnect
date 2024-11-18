@@ -18,6 +18,12 @@ type TeamRegistrationProps = {
   setMsg: (msg: string) => void;
 };
 
+/**
+ * Team Registration Page
+ * - when student is not enroled in a team yet and registration is still open,
+ *   students can complete steps to fill in their profile details
+ * - once all details have been completed, student may enrol to be in contest
+ */
 const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   contestId,
   cutoffDate,

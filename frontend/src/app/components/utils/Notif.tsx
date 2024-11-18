@@ -13,6 +13,12 @@ interface NotifProps {
   setNotif: (value: NotifType) => void;
 }
 
+/**
+ * Notif component
+ * - renders snackbar with two colours
+ *    - green: create, add, update, edit, success
+ *    - red: delete, fail
+ */
 const Notif: React.FC<NotifProps> = ({ notif, setNotif }) => {
   const onClose = () => {
     setNotif({ type: "", message: "" });

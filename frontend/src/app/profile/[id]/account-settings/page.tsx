@@ -7,11 +7,15 @@ import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { Button } from "@mui/material";
-import ChangePasswordModal from "@/components/profile/ChangePasswordModal";
+import ChangePasswordDialog from "@/components/profile/ChangePasswordDialog";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { ProfileProps } from "../page";
 import Notif from "@/components/utils/Notif";
 
+/**
+ * Account Settings Page
+ * - button and dialog to change password
+ */
 const AccountSettings: React.FC<ProfileProps> = ({ params }) => {
   const [open, setOpen] = useState(false);
   const { userSession } = useAuth();
@@ -47,7 +51,7 @@ const AccountSettings: React.FC<ProfileProps> = ({ params }) => {
             Change Password
           </Button>
         ) : (
-          <ChangePasswordModal setOpen={setOpen} setMsg={setMsg} />
+          <ChangePasswordDialog setOpen={setOpen} setMsg={setMsg} />
         )}
       </div>
       {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}

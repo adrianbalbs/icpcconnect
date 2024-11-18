@@ -14,6 +14,10 @@ interface AssignedProps {
   pendingPullOut: () => boolean;
 }
 
+/**
+ * Team Page
+ * - renders team of a student once teams are allocated
+ */
 const Assigned: React.FC<AssignedProps> = ({
   members,
   getTeam,

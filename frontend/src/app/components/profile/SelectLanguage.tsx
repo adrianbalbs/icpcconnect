@@ -34,6 +34,10 @@ function getStyles(name: string, languages: readonly string[], theme: Theme) {
   };
 }
 
+/**
+ * Language Selection component
+ * - renders selection box which allows multiple select of languages
+ */
 export const SelectLanguage = ({ languages, setLanguages }: LanguageProps) => {
   const theme = useTheme();
 

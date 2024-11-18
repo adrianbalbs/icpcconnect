@@ -12,6 +12,12 @@ interface AdminWaitingScreenProps {
   onTeamsAllocated: () => Promise<void>;
 }
 
+/**
+ * Admin Waiting Screen
+ * - renders waiting screen for admins during contest registration period
+ * - screen that is shown when no teams have been allocated
+ * - allocate team button: allocates team on click
+ */
 const AdminWaitingScreen: React.FC<AdminWaitingScreenProps> = ({
   contest,
   role,

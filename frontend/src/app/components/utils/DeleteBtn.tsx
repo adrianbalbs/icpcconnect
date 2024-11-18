@@ -7,6 +7,10 @@ interface BtnProps {
   handleDelete: () => Promise<void>;
 }
 
+/**
+ * Delete Button component
+ * - renders a bin button to delete experiences / preferences
+ */
 const DeleteBtn = ({ id, handleDelete }: BtnProps) => {
   const { userSession } = useAuth();
   if (userSession.id === id || userSession.role === "Admin")

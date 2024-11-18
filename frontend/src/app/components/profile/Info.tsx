@@ -6,6 +6,10 @@ interface InfoProps {
   value: string | number;
 }
 
+/**
+ * Info component
+ * - renders a given info field matched by name and value
+ */
 const Info: React.FC<InfoProps> = ({ name, value }) => {
   return (
     <>

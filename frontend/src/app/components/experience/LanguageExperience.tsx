@@ -15,6 +15,14 @@ interface LanguageProps extends Experiences {
   setMsg: (msg: string) => void;
 }
 
+/**
+ * Render Language Experience component
+ * - renders language proficiency experiences on page
+ * - languages include:
+ *    - c, cpp, java, python
+ * - proficiencies include:
+ *    - none, some, prof
+ */
 const LanguageExperience = (props: LanguageProps) => {
   const [languages, setLanguages] = useState({
     c: "none",

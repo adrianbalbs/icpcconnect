@@ -17,6 +17,10 @@ interface CoachInfo {
   university: string;
 }
 
+/**
+ * Coaches component
+ * - renders list of coaches
+ */
 const Coaches = () => {
   const [coaches, setCoaches] = useState<StaffProps[]>([]);
   const [sort, setSort] = useState("Default");

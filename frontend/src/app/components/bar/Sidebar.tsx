@@ -12,6 +12,15 @@ interface SidebarProps {
   role: string;
 }
 
+/**
+ * Sidebar component
+ * - renders a user's profile image, name, role and pronouns on left of screen
+ * - renders a side bar containing buttons that may navigate to
+ *    - Profile page
+ *    - Experience page (student only)
+ *    - Preference page (student only)
+ *    - Account Settings page
+ */
 const Sidebar: React.FC<SidebarProps> = ({ id, role }) => {
   const router = useRouter();
   const pathname = usePathname();

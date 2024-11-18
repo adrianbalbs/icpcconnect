@@ -5,6 +5,11 @@ import { Avatar, IconButton, Tooltip } from "@mui/material";
 import Dropdown from "../profile/Dropdown";
 import { useNav } from "../context-provider/NavProvider";
 
+/**
+ * Navbar component
+ * - renders website name in top left corner
+ * - renders a user's name, role and profile image in top right corner
+ */
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

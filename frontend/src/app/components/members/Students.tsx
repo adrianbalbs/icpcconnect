@@ -29,6 +29,10 @@ type StudentsProps = {
   contest?: string;
 };
 
+/**
+ * Students component
+ * - renders list of students
+ */
 const Students: React.FC<StudentsProps> = ({ contest }) => {
   const [students, setStudents] = useState<StudentProps[]>([]);
   const [sort, setSort] = useState("Default");
@@ -63,29 +67,6 @@ const Students: React.FC<StudentsProps> = ({ contest }) => {
   };
 
   useEffect(() => {
-    // setStudents([
-    //   {
-    //     id: "w",
-    //     name: "nadrew",
-    //     team: "sub",
-    //     institution: "12312",
-    //     email: "andrew@gmail.com",
-    //   },
-    //   {
-    //     id: "string",
-    //     name: "aaron",
-    //     team: "hub",
-    //     institution: "12312",
-    //     email: "ah@gmail.com",
-    //   },
-    //   {
-    //     id: "e",
-    //     name: "teehee",
-    //     team: "ssfgk",
-    //     institution: "12312",
-    //     email: "teeheews@gmail.com",
-    //   },
-    // ]);
     getStudents();
   }, [sort]);
 

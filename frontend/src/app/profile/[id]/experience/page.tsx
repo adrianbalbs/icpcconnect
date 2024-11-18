@@ -6,7 +6,7 @@ import { SERVER_URL } from "@/utils/constants";
 import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { Box } from "@mui/material";
-import ExperienceModal from "@/components/experience/ExperienceModal";
+import ExperienceDialog from "@/components/experience/ExperienceDialog";
 import LanguageExperience from "@/components/experience/LanguageExperience";
 import CoursesExperience from "@/components/experience/CoursesExperience";
 import { ProfileProps } from "../page";
@@ -37,6 +37,10 @@ export interface Experiences {
   coursesCompleted: number[];
 }
 
+/**
+ * Experiences Page
+ * - buttons and dialog to add / edit / remove experiences
+ */
 const Experience: React.FC<ProfileProps> = ({ params }) => {
   // Object containing types of experiences added to page
   const [added, setAdded] = useState<ExperienceType>({
@@ -168,7 +172,7 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
           />
         )}
         {userSession.id === params.id && (
-          <ExperienceModal
+          <ExperienceDialog
             id={params.id}
             added={added}
             experience={experience}

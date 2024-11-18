@@ -5,6 +5,10 @@ interface FunctionProps {
   handleClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+/**
+ * Close Button component
+ * - renders an "x" to close modals and dialogs
+ */
 const CloseBtn: React.FC<FunctionProps> = ({ handleClose }) => {
   return (
     <IconButton

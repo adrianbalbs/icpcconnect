@@ -8,6 +8,10 @@ interface ExclusionProps {
   setPref: (pref: string) => void;
 }
 
+/**
+ * Add Exclusion component
+ * - renders input to add new student exclusion
+ */
 const ExclusionInput = ({ setDisable, setPref }: ExclusionProps) => {
   const [student, setStudent] = useState("");
 

@@ -16,6 +16,10 @@ interface CheckboxProps {
   setExperience: Dispatch<SetStateAction<Experiences>>;
 }
 
+/**
+ * Add Course Experience component
+ * - renders a checkbox selection for relevant course experience
+ */
 const CourseCheckbox: React.FC<CheckboxProps> = ({
   setDisable,
   experience,

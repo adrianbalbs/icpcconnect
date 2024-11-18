@@ -13,7 +13,17 @@ interface Errors {
   new?: string;
 }
 
-const ChangePasswordModal = ({
+/**
+ * Change Password dialog component
+ * - renders three input boxes:
+ *    - old password
+ *    - new password
+ *    - confirm password
+ * - errors:
+ *    - old password is incorrect
+ *    - confirm password does not match with new password
+ */
+const ChangePasswordDialog = ({
   setOpen,
   setMsg,
 }: {
@@ -97,4 +107,4 @@ const ChangePasswordModal = ({
   );
 };
 
-export default ChangePasswordModal;
+export default ChangePasswordDialog;

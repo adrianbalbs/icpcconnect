@@ -11,6 +11,15 @@ interface DropdownProps {
   handleClose: () => void;
 }
 
+/**
+ * Navbar Profile Dropdown component
+ * - renders a dropdown when profile icon in navbar is clicked
+ * - includes:
+ *    - profile
+ *    - experiences (student only)
+ *    - preferences (student only)
+ *    - account settings
+ */
 const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
   const router = useRouter();
   const { logout, userSession } = useAuth();

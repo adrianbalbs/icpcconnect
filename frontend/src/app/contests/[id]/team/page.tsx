@@ -30,6 +30,11 @@ type TeamInfo = {
   }[];
 };
 
+/**
+ * Team Page - /contests/:id/team
+ * - student only
+ * - renders either registration page, waiting screen or actual team
+ */
 const Team: React.FC = () => {
   const [status, setStatus] = useState<
     "unregistered" | "awaiting" | "assigned"

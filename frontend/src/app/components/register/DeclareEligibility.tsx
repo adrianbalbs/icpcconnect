@@ -7,6 +7,11 @@ interface DeclareEligibilityProps {
   setStep: Dispatch<SetStateAction<number>>;
 }
 
+/**
+ * Account Registration - Eligibility
+ * - student only
+ * - confirm eligibility to partake in ICPC
+ */
 export const DeclareEligibility: React.FC<DeclareEligibilityProps> = ({
   eligibility,
   setEligibility,

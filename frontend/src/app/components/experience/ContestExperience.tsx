@@ -23,6 +23,13 @@ interface ContestProps {
   setMsg: (msg: string) => void;
 }
 
+/**
+ * Render Contest Experience component
+ * - renders the added contest experiences on page as list
+ * - includes:
+ *    - number of past contests
+ *    - leetcode / codeforces rating
+ */
 const ContestExperience = ({
   id,
   added,

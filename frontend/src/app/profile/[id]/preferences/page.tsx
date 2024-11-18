@@ -5,7 +5,7 @@ import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { ProfileProps } from "../page";
 import { Box } from "@mui/material";
-import PreferenceModal from "@/components/preferences/PreferenceModal";
+import PreferenceDialog from "@/components/preferences/PreferenceDialog";
 import ExclusionPreference from "@/components/preferences/ExclusionPreference";
 import InclusionPreference from "@/components/preferences/InclusionPreference";
 import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
@@ -31,6 +31,10 @@ export interface PreferenceInput {
   exclusions: string[];
 }
 
+/**
+ * Preferences Page
+ * - buttons and dialog to add / edit / remove preferences
+ */
 const Preferences: React.FC<ProfileProps> = ({ params }) => {
   const [added, setAdded] = useState<PreferenceType>({
     team: false,
@@ -90,7 +94,7 @@ const Preferences: React.FC<ProfileProps> = ({ params }) => {
           setMsg={setMsg}
         />
         {userSession.id === params.id && (
-          <PreferenceModal
+          <PreferenceDialog
             id={params.id}
             added={added}
             setAdded={setAdded}

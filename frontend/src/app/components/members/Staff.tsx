@@ -9,6 +9,10 @@ export interface StaffProps {
   email: string;
 }
 
+/**
+ * Staff component
+ * - renders shared components of coach and site coordinator
+ */
 const Staff: React.FC<StaffProps> = ({ id, name, institution, email }) => {
   const router = useRouter();
 

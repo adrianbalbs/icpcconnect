@@ -47,6 +47,10 @@ const defaultSession: UserSession = {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 const publicRoutes = ["/login", "/register", "/forgot-password"];
 
+/**
+ * Auth Context component
+ * - provides context ie. user session details and public routes
+ */
 export function AuthContextProvider({
   children,
 }: {

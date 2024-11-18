@@ -7,6 +7,11 @@ import { useState } from "react";
 import { useAuth } from "@/components/context-provider/AuthProvider";
 import { TextField } from "@mui/material";
 
+/**
+ * Login Page
+ * - login through email and password
+ * - error: email or password incorrect
+ */
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

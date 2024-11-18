@@ -10,6 +10,10 @@ interface Props {
   added: boolean;
 }
 
+/**
+ * Tile component
+ * - renders options that students should complete before contest registration
+ */
 const Tile: React.FC<Props> = ({
   title,
   description,

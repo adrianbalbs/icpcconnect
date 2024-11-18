@@ -19,6 +19,10 @@ interface RegisterRoleProps {
   setStep: Dispatch<SetStateAction<number>>;
 }
 
+/**
+ * Account Registration - First Step - Basic Details
+ * - user enters: first / last name, role they wish to register as
+ */
 export const RegisterRole: React.FC<RegisterRoleProps> = ({
   givenName,
   setGivenName,

@@ -19,6 +19,14 @@ interface InviteCodeProps {
   setNotif: Dispatch<SetStateAction<NotifType>>;
 }
 
+/**
+ * Invite Code component
+ * - renders button that opens up modal
+ *    - selection box for coach / site coordinator
+ *    - button:
+ *      - pressed once generates code
+ *      - pressed second time copies code and closes modal
+ */
 const InviteCode: React.FC<InviteCodeProps> = ({ setNotif }) => {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("Generate");

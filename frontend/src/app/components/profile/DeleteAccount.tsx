@@ -21,6 +21,13 @@ interface DeleteProps {
   };
 }
 
+/**
+ * Delete Account modal component
+ * - state 1: admin password verification
+ * - state 2: confirm account deletion
+ * note: only admins are allowed this functionality
+ *      (however admins cannot delete their own account)
+ */
 const DeleteAccount = ({ id, user }: DeleteProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);

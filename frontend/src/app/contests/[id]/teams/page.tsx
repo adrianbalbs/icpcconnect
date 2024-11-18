@@ -16,6 +16,13 @@ import SortBy from "@/components/utils/SortBy";
 import { getInfo } from "@/utils/profileInfo";
 import { Typography } from "@mui/material";
 
+/**
+ * Teams Page - /contests/:id/teams
+ * - student has no access
+ * - coach: views all teams of their university - has editing rights
+ * - site coordinators: views all teams of their site - has viewing rights
+ * - admin: views all teams in contest - has editing rights
+ */
 const Teams: React.FC = () => {
   // Status Key
   // 0: before early bird registration closes

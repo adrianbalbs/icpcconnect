@@ -10,6 +10,11 @@ export interface MemberProps {
   email: string;
 }
 
+/**
+ * Team Member component
+ * - renders a member in a team
+ * - includes: student name, student id, email
+ */
 const Member: React.FC<MemberProps> = ({
   id,
   givenName,

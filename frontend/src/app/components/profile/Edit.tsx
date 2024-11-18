@@ -12,6 +12,10 @@ interface EditProps {
   setEditInfo: (value: EditInfo) => void;
 }
 
+/**
+ * Edit Profile component
+ * - renders input boxes and selection boxes to change user details
+ */
 export const Edit: React.FC<EditProps> = ({ role, editInfo, setEditInfo }) => {
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     setEditInfo({ ...editInfo, photoConsent: e.target.value === "yes" });

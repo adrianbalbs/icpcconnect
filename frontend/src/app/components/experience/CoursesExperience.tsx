@@ -22,6 +22,15 @@ export const valueToText = [
   "Programming Challenges",
 ];
 
+/**
+ * Render Course Experience component
+ * - renders relevant course experiences added on page as list
+ * - includes:
+ *    - programming fundamentals
+ *    - data structures and algorithms
+ *    - algorithmic design
+ *    - programming challenges
+ */
 const CoursesExperience = ({
   id,
   coursesTaken,

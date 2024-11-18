@@ -21,6 +21,10 @@ export interface ProfileProps {
   };
 }
 
+/**
+ * Profile Page
+ * - button to edit profile
+ */
 const Profile: React.FC<ProfileProps> = ({ params }) => {
   const [profileInfo, setProfileInfo] = useState<[string, string | number][]>(
     [],

@@ -23,6 +23,12 @@ interface TeamCardProps {
   fetchTeams: () => Promise<void>;
 }
 
+/**
+ * Team Card component
+ * - renders a given team
+ * - includes:
+ *    - team name, institution, members list
+ */
 const TeamCard: React.FC<TeamCardProps> = ({
   team,
   canEdit,

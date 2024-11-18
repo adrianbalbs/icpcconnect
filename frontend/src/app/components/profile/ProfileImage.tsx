@@ -18,6 +18,13 @@ import { SERVER_URL } from "@/utils/constants";
 import { useNav } from "../context-provider/NavProvider";
 import Notif from "../utils/Notif";
 
+/**
+ * Profile Image component
+ * - renders the side screen profile image
+ * - pencil edit button overlapped on top - on click brings up:
+ *    - upload (add new image)
+ *    - remove (delete existing)
+ */
 const ProfileImage = ({ id, ownId }: { id: string; ownId: string }) => {
   const [image, setImage] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

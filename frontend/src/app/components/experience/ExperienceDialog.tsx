@@ -15,10 +15,10 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
-import LanguageSlider from "./modalInput/LanguageSlider";
+import LanguageSlider from "./dialogInput/LanguageSlider";
 import { Experiences, ExperienceType } from "@/profile/[id]/experience/page";
-import NumberInput from "./modalInput/NumberInput";
-import CourseCheckbox from "./modalInput/CourseCheckbox";
+import NumberInput from "./dialogInput/NumberInput";
+import CourseCheckbox from "./dialogInput/CourseCheckbox";
 
 interface ModalProps {
   id: string;
@@ -28,7 +28,16 @@ interface ModalProps {
   setMsg: (msg: string) => void;
 }
 
-const ExperienceModal: React.FC<ModalProps> = ({
+/**
+ * Add Experience dialog component
+ * - renders select dropdown to choose experience type
+ * - includes:
+ *    - programming language experience
+ *    - relevant courses
+ *    - number of past contests
+ *    - leetcode / codeforces rating
+ */
+const ExperienceDialog: React.FC<ModalProps> = ({
   id,
   added,
   experience,
@@ -225,4 +234,4 @@ const ExperienceModal: React.FC<ModalProps> = ({
   );
 };
 
-export default ExperienceModal;
+export default ExperienceDialog;

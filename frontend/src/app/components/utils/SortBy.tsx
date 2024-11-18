@@ -23,6 +23,10 @@ const list = {
   teamsAll: ["Default", "Team Name", "Institution"],
 };
 
+/**
+ * Sort By Dropdown component
+ * - renders dropdowns that contain different options to sort by
+ */
 const SortBy = ({ type, sort, setSort }: SortByProps) => {
   const [open, setOpen] = useState(false);
 

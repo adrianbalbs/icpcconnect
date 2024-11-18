@@ -16,6 +16,13 @@ interface InclusionProps {
   setMsg: (msg: string) => void;
 }
 
+/**
+ * Render Pair / Team component
+ * - renders pair / team preference on page
+ * - includes: teammate(s) name and student id
+ * - note: when a teammate preferenced is not yet registered,
+ *         their name renders as "(Not registered yet)"
+ */
 const InclusionPreference = ({
   id,
   added,

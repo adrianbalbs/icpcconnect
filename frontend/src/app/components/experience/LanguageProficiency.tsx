@@ -12,6 +12,10 @@ export const textToValue: Record<string, number> = {
   prof: 100,
 };
 
+/**
+ * Language Profiency bar component
+ * - renders a given language proficiency
+ */
 const LanguageProficiency: React.FC<ProficiencyProps> = ({
   language,
   proficiency,

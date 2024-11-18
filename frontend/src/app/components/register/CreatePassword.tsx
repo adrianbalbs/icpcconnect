@@ -14,6 +14,11 @@ interface CreatePasswordProps {
   submitForm: () => Promise<void>;
 }
 
+/**
+ * Account Registration - Last Step - Password
+ * - user input: password, confirm password
+ * - error: password !== confirm password
+ */
 export const CreatePassword: React.FC<CreatePasswordProps> = ({
   roleName,
   password,

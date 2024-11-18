@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import DeleteExclusion from "./modalInput/EditExclusion";
+import DeleteExclusion from "./dialogInput/EditExclusion";
 import { useAuth } from "../context-provider/AuthProvider";
 
 interface ExclusionProps {
@@ -26,6 +26,11 @@ interface ExclusionProps {
   setMsg: (msg: string) => void;
 }
 
+/**
+ * Render Exclusion component
+ * - renders exclusion preferences on page
+ * - includes: list of student names separated by commas
+ */
 const ExclusionPreference = ({
   id,
   changed,
