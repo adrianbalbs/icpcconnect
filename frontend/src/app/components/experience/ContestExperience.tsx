@@ -6,13 +6,37 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { Experiences, ExperienceType } from "@/profile/[id]/experience/page";
 import { useEffect, useState } from "react";
+import DeleteBtn from "../utils/DeleteBtn";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/constants";
+import {
+  experienceIcon,
+  experienceItem,
+  experienceItemText,
+} from "@/styles/sxStyles";
 
 interface ContestProps {
+  id: string;
   added: ExperienceType;
   experience: Experiences;
+  update: () => Promise<void>;
+  setMsg: (msg: string) => void;
 }
 
-const ContestExperience = ({ added, experience }: ContestProps) => {
+/**
+ * Render Contest Experience component
+ * - renders the added contest experiences on page as list
+ * - includes:
+ *    - number of past contests
+ *    - leetcode / codeforces rating
+ */
+const ContestExperience = ({
+  id,
+  added,
+  experience,
+  update,
+  setMsg,
+}: ContestProps) => {
   const [contestAdded, setContestAdded] = useState({
     codeforcesRating: false,
     contestExperience: false,
@@ -24,6 +48,25 @@ const ContestExperience = ({ added, experience }: ContestProps) => {
     contestExperience: 0,
     leetcodeRating: 0,
   });
+
+  const remove = async (type: string) => {
+    try {
+      await axios.patch(
+        `${SERVER_URL}/api/users/${id}/student-details`,
+        { [type]: 0 },
+        { withCredentials: true },
+      );
+      update();
+      if (type.includes("Rating")) {
+        const msg = type === "codeforcesRating" ? "Codeforces" : "LeetCode";
+        setMsg(`${msg} Rating Deleted!`);
+      } else {
+        setMsg("Past Contest Experience Deleted!");
+      }
+    } catch (error) {
+      console.log(`Delete ${type} experience error: ${error}`);
+    }
+  };
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -39,47 +82,56 @@ const ContestExperience = ({ added, experience }: ContestProps) => {
     <>
       <h3 className={experienceStyles.heading}>Competitive Experience</h3>
       <hr className={pageStyles.divider} />
-      <List sx={{ m: "12px 40px 0", p: 0, width: "100%", maxWidth: 360 }}>
+      <List sx={{ m: "12px 32px 0 40px", p: 0 }}>
         {contestAdded.contestExperience && (
-          <ListItem sx={{ padding: "5px" }}>
-            <ListItemIcon sx={{ color: "#444444" }}>
-              <PublicIcon />
+          <ListItem sx={experienceItem}>
+            <ListItemIcon>
+              <PublicIcon sx={experienceIcon} />
             </ListItemIcon>
             <ListItemText
               primary="Past Contest(s) Completed"
-              sx={{ fontSize: "14px", color: "#333333" }}
+              sx={experienceItemText}
             />
             <div className={experienceStyles.numbers}>
               {contestExp.contestExperience}
             </div>
+            <DeleteBtn
+              id={id}
+              handleDelete={() => remove("contestExperience")}
+            />
           </ListItem>
         )}
         {contestAdded.leetcodeRating && (
-          <ListItem sx={{ padding: "5px" }}>
-            <ListItemIcon sx={{ color: "#444444" }}>
-              <TerminalIcon />
+          <ListItem sx={experienceItem}>
+            <ListItemIcon>
+              <TerminalIcon sx={experienceIcon} />
             </ListItemIcon>
             <ListItemText
               primary="LeetCode Contest Rating"
-              sx={{ fontSize: "14px", color: "#333333" }}
+              sx={experienceItemText}
             />
             <div className={experienceStyles.numbers}>
               {contestExp.leetcodeRating}
             </div>
+            <DeleteBtn id={id} handleDelete={() => remove("leetcodeRating")} />
           </ListItem>
         )}
         {contestAdded.codeforcesRating && (
-          <ListItem sx={{ padding: "5px" }}>
-            <ListItemIcon sx={{ color: "#444444" }}>
-              <LeaderboardIcon />
+          <ListItem sx={experienceItem}>
+            <ListItemIcon>
+              <LeaderboardIcon sx={experienceIcon} />
             </ListItemIcon>
             <ListItemText
               primary="Codeforces Contest Rating"
-              sx={{ fontSize: "14px", color: "#333333" }}
+              sx={experienceItemText}
             />
             <div className={experienceStyles.numbers}>
               {contestExp.codeforcesRating}
             </div>
+            <DeleteBtn
+              id={id}
+              handleDelete={() => remove("codeforcesRating")}
+            />
           </ListItem>
         )}
       </List>

@@ -9,7 +9,7 @@ import teamStyles from "@/styles/Teams.module.css";
 import Assigned from "@/components/team/Assigned";
 import TeamRegistration from "@/components/team/TeamRegistration";
 import { MemberProps } from "@/components/team/Member";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useParams } from "next/navigation";
 import { ContestResponse } from "@/contests/page";
 import StudentWaitingScreen from "@/components/waiting-screen/StudentWaitingScreen";
@@ -17,6 +17,7 @@ import { Box, CircularProgress, IconButton, Modal } from "@mui/material";
 import WarningIcon from "@mui/icons-material/WarningRounded";
 import CloseBtn from "@/components/utils/CloseBtn";
 import memberStyles from "@/styles/Members.module.css";
+import Notif from "@/components/utils/Notif";
 
 type TeamInfo = {
   id: string;
@@ -29,6 +30,11 @@ type TeamInfo = {
   }[];
 };
 
+/**
+ * Team Page - /contests/:id/team
+ * - student only
+ * - renders either registration page, waiting screen or actual team
+ */
 const Team: React.FC = () => {
   const [status, setStatus] = useState<
     "unregistered" | "awaiting" | "assigned"
@@ -47,6 +53,7 @@ const Team: React.FC = () => {
     userSession: { id },
   } = useAuth();
   const params = useParams<{ id: string }>();
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
   const pendingPullOut = () => {
     return team.replacements.map((member) => member.leavingUserId).includes(id);
@@ -88,6 +95,7 @@ const Team: React.FC = () => {
         { withCredentials: true },
       );
       setStatus("unregistered");
+      setMsg("Withdrawn From Contest Successfully!");
     } catch (err) {
       console.error(err);
     }
@@ -112,18 +120,6 @@ const Team: React.FC = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await Promise.all([getTeam(), fetchContest(), fetchEnrollment()]);
-      setLoading(false);
-    };
-
-    if (id) {
-      fetchData();
-    }
-  }, [id, params.id]);
-
   const deletePullOut = async () => {
     try {
       await axios.delete(`${SERVER_URL}/api/teams/deletePullout/${id}`, {
@@ -136,6 +132,22 @@ const Team: React.FC = () => {
     setOpenPullOut(false);
   };
 
+  const setMsg = (msg: string) => {
+    setNotif({ type: "enrol", message: msg });
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await Promise.all([getTeam(), fetchContest(), fetchEnrollment()]);
+      setLoading(false);
+    };
+
+    if (id) {
+      fetchData();
+    }
+  }, [id, params.id]);
+
   const renderStatusContent = () => {
     switch (status) {
       case "unregistered":
@@ -144,6 +156,7 @@ const Team: React.FC = () => {
             contestId={params.id}
             cutoffDate={contest?.cutoffDate}
             fetchEnrollment={fetchEnrollment}
+            setMsg={setMsg}
           />
         );
       case "awaiting":
@@ -276,6 +289,7 @@ const Team: React.FC = () => {
           </div>
         </Box>
       </Modal>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </>
   );
 };

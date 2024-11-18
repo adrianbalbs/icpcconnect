@@ -25,6 +25,10 @@ const marks = [
   },
 ];
 
+/**
+ * Add Language Experience component
+ * - renders a slider selection for relevant language experience
+ */
 const LanguageSlider: React.FC<SliderProps> = ({
   type,
   experience,

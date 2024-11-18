@@ -21,6 +21,7 @@ import {
   UpdateUser,
   UserDTO,
   UserRole,
+  Pullout,
 } from "../schemas/index.js";
 import { DeleteResponse } from "../types/api-res.js";
 import { passwordUtils } from "../utils/encrypt.js";
@@ -566,8 +567,11 @@ export class UserService {
 
     const preferencesReturn: PreferencesResponse[] = [];
 
-    if (p.preferences.length === 0 || p.preferences === "none") {
+    if (p.preferences.length === 0) {
       return { preferences: preferencesReturn };
+    } else if (p.preferences === "none") {
+      console.log("yaa");
+      return { preferences: [{ studentId: "none", name: "" }] };
     }
 
     const prefArr = p.preferences.split(", ");

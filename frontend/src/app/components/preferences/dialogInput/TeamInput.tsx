@@ -9,6 +9,10 @@ interface TeamProps {
   setPref: (pref: string) => void;
 }
 
+/**
+ * Add Team component
+ * - renders input to add two teammates by their student id's
+ */
 const TeamInput = ({ setDisable, alert, setPref }: TeamProps) => {
   const [teammates, setTeammates] = useState({ one: "", two: "" });
 

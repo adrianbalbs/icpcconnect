@@ -164,28 +164,28 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
     )
     .put(
       "/handlePullout/:studentId",
-      [
-        authenticate,
-        authorise(["Admin", "Coach"]),
-      ],
-        async (
-          req: Request<{ studentId: string }, unknown, { accepting: boolean }>,
-          res: Response,
-          next: NextFunction,
-        ) => {
-          //The *internal* id of the student we wish to remove from the team
-          const { studentId } = req.params;
-          const {
-            body: { accepting },
-          } = req;
+      [authenticate, authorise(["Admin", "Coach"])],
+      async (
+        req: Request<{ studentId: string }, unknown, { accepting: boolean }>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        //The *internal* id of the student we wish to remove from the team
+        const { studentId } = req.params;
+        const {
+          body: { accepting },
+        } = req;
 
-          try {
-            const result = await teamService.handlePulloutReq(studentId, accepting);
-            res.status(200).send(result);
-          } catch (err) {
-            next(err);
-          }
-        },
+        try {
+          const result = await teamService.handlePulloutReq(
+            studentId,
+            accepting,
+          );
+          res.status(200).send(result);
+        } catch (err) {
+          next(err);
+        }
+      },
     )
     .put(
       "/handleReplacement",
@@ -194,40 +194,39 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         authorise(["Admin", "Coach"]),
         validateData(ReplacementRequestSchema, "body"),
       ],
-        async (
-          req: Request<{ studentId: string }, unknown, ReplacementRequest>,
-          res: Response,
-          next: NextFunction,
-        ) => {
-          try {
-            const result = await teamService.handleReplacement(req.body);
-            res.status(200).send(result);
-          } catch (err) {
-            next(err);
-          }
-        },
-    ).delete(
+      async (
+        req: Request<{ studentId: string }, unknown, ReplacementRequest>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        try {
+          const result = await teamService.handleReplacement(req.body);
+          res.status(200).send(result);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .delete(
       "/deletePullout/:userId",
-      [
-        authenticate,
-        authorise(["Student", "Admin"]),
-      ],
-        async (
-          req: Request<{ userId: string }, unknown>,
-          res: Response,
-          next: NextFunction,
-        ) => {
-          //The *internal* id of the student whose pullout we wish to delete
-          const { userId } = req.params;
+      [authenticate, authorise(["Student", "Admin"])],
+      async (
+        req: Request<{ userId: string }, unknown>,
+        res: Response,
+        next: NextFunction,
+      ) => {
+        //The *internal* id of the student whose pullout we wish to delete
+        const { userId } = req.params;
 
-          try {
-            const result = await teamService.deletePulloutReq(userId);
-            res.status(200).send(result);
-          } catch (err) {
-            next(err);
-          }
-        },
-    ).put(
+        try {
+          const result = await teamService.deletePulloutReq(userId);
+          res.status(200).send(result);
+        } catch (err) {
+          next(err);
+        }
+      },
+    )
+    .put(
       "/update/sids/:id",
       [
         authorise(["Admin", "Coach"]),
@@ -248,5 +247,4 @@ export function teamRouter(teamService: TeamService, authService: AuthService) {
         }
       },
     );
-    
 }

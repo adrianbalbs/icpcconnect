@@ -5,13 +5,22 @@ import { usePathname, useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { sidebarBtn } from "@/styles/sxStyles";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 
 interface SidebarProps {
   id: string;
   role: string;
 }
 
+/**
+ * Sidebar component
+ * - renders a user's profile image, name, role and pronouns on left of screen
+ * - renders a side bar containing buttons that may navigate to
+ *    - Profile page
+ *    - Experience page (student only)
+ *    - Preference page (student only)
+ *    - Account Settings page
+ */
 const Sidebar: React.FC<SidebarProps> = ({ id, role }) => {
   const router = useRouter();
   const pathname = usePathname();

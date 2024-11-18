@@ -5,7 +5,7 @@ import { addBtn, addModal, modalInputBox } from "@/styles/sxStyles";
 import pageStyles from "@/styles/Page.module.css";
 import { Box, Button, Paper } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 import ModalInput from "../utils/ModalInput";
 
 interface Errors {
@@ -13,10 +13,22 @@ interface Errors {
   new?: string;
 }
 
-const ChangePasswordModal = ({
+/**
+ * Change Password dialog component
+ * - renders three input boxes:
+ *    - old password
+ *    - new password
+ *    - confirm password
+ * - errors:
+ *    - old password is incorrect
+ *    - confirm password does not match with new password
+ */
+const ChangePasswordDialog = ({
   setOpen,
+  setMsg,
 }: {
   setOpen: (open: boolean) => void;
+  setMsg: (msg: string) => void;
 }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -40,6 +52,7 @@ const ChangePasswordModal = ({
       );
       setOpen(false);
       setErrors({});
+      setMsg("Password Updated Successfully!");
     } catch (error) {
       console.log(`Change password error: ${error}`);
       setErrors({ old: "Old password is incorrect." });
@@ -94,4 +107,4 @@ const ChangePasswordModal = ({
   );
 };
 
-export default ChangePasswordModal;
+export default ChangePasswordDialog;

@@ -15,9 +15,11 @@ import { z } from "zod";
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { CreateContestSchema } from "@/types/contests";
 import { ContestResponse } from "@/contests/page";
+import { editContestBtn } from "@/styles/sxStyles";
+import { NotifType } from "../utils/Notif";
 import { University } from "@/types/users";
 
 interface ContestDialogProps {
@@ -34,11 +36,21 @@ interface ContestDialogProps {
   errors: z.inferFlattenedErrors<typeof CreateContestSchema>;
   mode: "create" | "edit";
   contestData?: ContestResponse | null;
+  setNotif: (value: SetStateAction<NotifType>) => void;
 }
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+/**
+ * Contest Form component
+ * - renders a modal that contains inputs for
+ *    - contest name
+ *    - early bird date (date where coach review opens)
+ *    - cutoff date (date where final team allocation releases)
+ *    - contest date
+ *    - site (location that contest is hosted in)
+ */
 const ContestDialog: React.FC<ContestDialogProps> = ({
   open,
   onClose,
@@ -47,6 +59,7 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
   errors,
   mode,
   contestData,
+  setNotif,
 }) => {
   const [contestName, setContestName] = useState("");
   const [earlyBirdDate, setEarlyBirdDate] = useState<Dayjs | null>(null);
@@ -95,7 +108,12 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
       site: selectedUniversity?.id,
     };
 
+    const msg = mode === "create" ? "New Contest Created" : "Contest Updated";
     onSubmit(formData);
+    setNotif({
+      type: "create",
+      message: `${msg}: ${contestName}`,
+    });
   };
 
   const dialogTitle = mode === "create" ? "Create Contest" : "Edit Contest";
@@ -188,9 +206,13 @@ const ContestDialog: React.FC<ContestDialogProps> = ({
             />
           </Stack>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit">{submitButtonText}</Button>
+        <DialogActions sx={{ p: "5px 24px 25px" }}>
+          <Button onClick={onClose} sx={editContestBtn}>
+            Cancel
+          </Button>
+          <Button type="submit" sx={editContestBtn}>
+            {submitButtonText}
+          </Button>
         </DialogActions>
       </form>
     </Dialog>

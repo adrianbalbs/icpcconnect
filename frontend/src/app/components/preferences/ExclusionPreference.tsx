@@ -12,19 +12,31 @@ import {
   Button,
   ButtonGroup,
   IconButton,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import DeleteExclusion from "./modalInput/EditExclusion";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import DeleteExclusion from "./dialogInput/EditExclusion";
+import { useAuth } from "../context-provider/AuthProvider";
 
 interface ExclusionProps {
   id: string;
   changed: boolean;
   complete: (type: string) => void;
+  setMsg: (msg: string) => void;
 }
 
-const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
+/**
+ * Render Exclusion component
+ * - renders exclusion preferences on page
+ * - includes: list of student names separated by commas
+ */
+const ExclusionPreference = ({
+  id,
+  changed,
+  complete,
+  setMsg,
+}: ExclusionProps) => {
   const [studentString, setStudentString] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
@@ -41,9 +53,11 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
 
   const saveEdit = async () => {
     const newPref = selected.length > 0 ? selected.join(", ") : "";
+    const msg = newPref.length > 0 ? "Updated" : "Deleted";
     await updatePreferences(id, "exclusions", newPref);
     setStudentString(newPref);
     setOpenEdit(false);
+    setMsg(`Exclusion Preference ${msg}!`);
   };
 
   const cancelEdit = () => {
@@ -73,17 +87,19 @@ const ExclusionPreference = ({ id, changed, complete }: ExclusionProps) => {
         >
           <Typography sx={experienceHeading}>Student Names</Typography>
           {!openEdit && checkPerms() && (
-            <IconButton
-              sx={{
-                height: "21px",
-                width: "25px",
-                borderRadius: "5px",
-                justifySelf: "end",
-              }}
-              onClick={() => setOpenEdit(true)}
-            >
-              <EditNoteIcon sx={{ fontSize: "23px" }} />
-            </IconButton>
+            <Tooltip title="Edit Exclusions" placement="left">
+              <IconButton
+                sx={{
+                  height: "21px",
+                  width: "25px",
+                  borderRadius: "5px",
+                  justifySelf: "end",
+                }}
+                onClick={() => setOpenEdit(true)}
+              >
+                <EditNoteIcon sx={{ fontSize: "23px" }} />
+              </IconButton>
+            </Tooltip>
           )}
           {openEdit && checkPerms() && (
             <ButtonGroup>

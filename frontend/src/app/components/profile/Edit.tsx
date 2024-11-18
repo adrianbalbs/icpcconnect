@@ -3,16 +3,19 @@ import pageStyles from "@/styles/Page.module.css";
 import { SelectLanguage } from "./SelectLanguage";
 import { EditInput } from "./EditInput";
 import { EditInfo } from "@/utils/profileInfo";
-import { Dispatch, SetStateAction } from "react";
 import { TshirtSize } from "./TshirtSize";
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 interface EditProps {
   role: string;
   editInfo: EditInfo;
-  setEditInfo: Dispatch<SetStateAction<EditInfo>>;
+  setEditInfo: (value: EditInfo) => void;
 }
 
+/**
+ * Edit Profile component
+ * - renders input boxes and selection boxes to change user details
+ */
 export const Edit: React.FC<EditProps> = ({ role, editInfo, setEditInfo }) => {
   const handleSelectChange = (e: SelectChangeEvent<string>) => {
     setEditInfo({ ...editInfo, photoConsent: e.target.value === "yes" });

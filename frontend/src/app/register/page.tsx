@@ -12,6 +12,10 @@ import { EnterDetails } from "@/components/register/EnterDetails";
 import { EnterCode } from "@/components/register/EnterCode";
 import { CreatePassword } from "@/components/register/CreatePassword";
 
+/**
+ * Register Page
+ * - register as: student, coach or site coordinator
+ */
 export default function Register() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -44,15 +48,12 @@ export default function Register() {
             : {}),
           ...(roleName === "Student" ? { studentId } : {}),
         };
-        const valid: { id: string } = await axios.post(
-          `${SERVER_URL}/api/users`,
-          payload,
-        );
+        const valid = await axios.post(`${SERVER_URL}/api/users`, payload);
         // Checking whether the invite code they entered was valid
-        if (valid.id === "INVALID") {
+        if (valid.data.id === "INVALID") {
           alert("Registration failed: Invalid Invite Code Entered");
         } else {
-          router.push("/login");
+          router.push("/contests");
         }
       } else if (password !== confirmPassword) {
         console.log("Passwords do not match");
@@ -61,6 +62,9 @@ export default function Register() {
       }
     } catch (error) {
       console.error("Registration failed:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        alert("Registration failed");
+      }
     }
   };
 

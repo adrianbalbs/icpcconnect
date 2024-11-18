@@ -1,49 +1,48 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect } from "react";
-import styled from "@emotion/styled";
 import Alert from "@mui/material/Alert";
+import { Snackbar } from "@mui/material";
 
 export interface NotifType {
   type: string;
-  name: string;
+  message: string;
 }
 
 interface NotifProps {
-  visible: boolean;
-  notif: {
-    type: string;
-    name: string;
-  };
-  setNotif: Dispatch<SetStateAction<NotifType>>;
+  notif: NotifType;
+  setNotif: (value: NotifType) => void;
 }
 
-const LongAlert = styled(Alert)<{ visible: boolean }>`
-  display: ${(props) => (props.visible ? "flex" : "none")};
-  margin-top: 60px;
-  margin-bottom: -60px;
-`;
-
-const Notif: React.FC<NotifProps> = ({ visible, notif, setNotif }) => {
-  useEffect(() => {
-    if (notif !== undefined && notif.type !== "") {
-      const timeout = setTimeout(() => {
-        setNotif({ type: "", name: "" });
-      }, 2000);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [visible]);
+/**
+ * Notif component
+ * - renders snackbar with two colours
+ *    - green: create, add, update, edit, success
+ *    - red: delete, fail
+ */
+const Notif: React.FC<NotifProps> = ({ notif, setNotif }) => {
+  const onClose = () => {
+    setNotif({ type: "", message: "" });
+  };
 
   return (
-    <LongAlert
-      visible={visible}
-      severity={notif.type === "invite" ? "success" : "error"}
+    <Snackbar
+      open={notif.type !== ""}
+      autoHideDuration={3000}
+      onClose={onClose}
     >
-      {notif.type === "invite"
-        ? `New ${notif.name} invite code copied to clipboard successfully`
-        : `${notif.name}'s account deleted successfully`}
-    </LongAlert>
+      <Alert
+        severity={notif.type === "delete" ? "error" : "success"}
+        variant="filled"
+        onClose={onClose}
+        sx={{
+          height: "50px",
+          width: "100%",
+          bgcolor: notif.type === "delete" ? "#d15c65" : "#7BA381",
+        }}
+      >
+        {notif.message}
+      </Alert>
+    </Snackbar>
   );
 };
 

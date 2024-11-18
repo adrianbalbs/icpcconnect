@@ -4,9 +4,14 @@ import styles from "@/styles/Auth.module.css";
 import Image from "next/image";
 import logo from "../assets/logo.png";
 import { useState } from "react";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { TextField } from "@mui/material";
 
+/**
+ * Login Page
+ * - login through email and password
+ * - error: email or password incorrect
+ */
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +53,7 @@ export default function Login() {
             }}
             onChange={(e) => setEmail(e.target.value)}
             error={error}
-            id="password-error"
+            id="email-error"
             fullWidth
           />
           <TextField

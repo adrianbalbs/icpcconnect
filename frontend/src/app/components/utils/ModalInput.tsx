@@ -17,6 +17,10 @@ interface InputProps {
   errorMsg?: string;
 }
 
+/**
+ * Modal input component
+ * - helper component to render repeated input boxes
+ */
 const ModalInput = ({
   label,
   type,

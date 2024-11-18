@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Divider, Menu, MenuItem } from "@mui/material";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 import { menuBtn } from "@/styles/sxStyles";
 
 interface DropdownProps {
@@ -11,6 +11,15 @@ interface DropdownProps {
   handleClose: () => void;
 }
 
+/**
+ * Navbar Profile Dropdown component
+ * - renders a dropdown when profile icon in navbar is clicked
+ * - includes:
+ *    - profile
+ *    - experiences (student only)
+ *    - preferences (student only)
+ *    - account settings
+ */
 const Dropdown: React.FC<DropdownProps> = ({ anchorEl, open, handleClose }) => {
   const router = useRouter();
   const { logout, userSession } = useAuth();

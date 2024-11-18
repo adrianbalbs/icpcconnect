@@ -7,26 +7,33 @@ import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { Button } from "@mui/material";
-import ChangePasswordModal from "@/components/settings/ChangePasswordModal";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import ChangePasswordDialog from "@/components/profile/ChangePasswordDialog";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { ProfileProps } from "../page";
-// import Error from "next/error";
+import Notif from "@/components/utils/Notif";
 
+/**
+ * Account Settings Page
+ * - button and dialog to change password
+ */
 const AccountSettings: React.FC<ProfileProps> = ({ params }) => {
   const [open, setOpen] = useState(false);
   const { userSession } = useAuth();
   const router = useRouter();
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
-  // if (!checkViewingPermissions(params.id, userSession)) {
-  //   return <Error statusCode={404} />;
-  // }
+  const setMsg = (msg: string) => {
+    setNotif({ type: "update", message: msg });
+  };
 
-  // Redirect user to 404 page not found if they don't have permission to view route
   useEffect(() => {
-    if (!checkViewingPermissions(params.id, userSession)) {
+    if (
+      userSession.id !== "" &&
+      !checkViewingPermissions(params.id, userSession)
+    ) {
       router.replace("/404");
     }
-  }, []);
+  }, [userSession]);
 
   return (
     <div className={profileStyles["inner-screen"]}>
@@ -44,9 +51,10 @@ const AccountSettings: React.FC<ProfileProps> = ({ params }) => {
             Change Password
           </Button>
         ) : (
-          <ChangePasswordModal setOpen={setOpen} />
+          <ChangePasswordDialog setOpen={setOpen} setMsg={setMsg} />
         )}
       </div>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </div>
   );
 };

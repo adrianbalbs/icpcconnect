@@ -7,6 +7,10 @@ interface EditProps {
   onChange: (newValue: string, field: string) => void;
 }
 
+/**
+ * Edit input component
+ * - renders text box input for fields such as pronouns
+ */
 export const EditInput: React.FC<EditProps> = ({ name, value, onChange }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (name.includes("Name")) {

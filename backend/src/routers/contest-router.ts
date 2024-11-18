@@ -8,9 +8,7 @@ import {
   CreateContestSchema,
   UpdateContestSchema,
 } from "../schemas/index.js";
-import {
-  ContestService
-} from "../services/index.js";
+import { ContestService } from "../services/index.js";
 
 export function contestRouter(
   contestService: ContestService,

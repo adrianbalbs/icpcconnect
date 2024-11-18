@@ -64,12 +64,13 @@ export const sidebarBtn = {
   fontSize: "15px",
   color: "#4E5C88",
   textTransform: "none",
-  "&:hover": {
+  "&.Mui-selected": {
     color: "#4E5C88",
+  },
+  "&:hover": {
     bgcolor: "#9fb9d65c",
   },
   "&:active": {
-    color: "#4E5C88",
     bgcolor: "#8094ab61",
   },
 };
@@ -96,14 +97,14 @@ export const menuBtn = {
 };
 
 export const deleteBtn = {
-  backgroundColor: "#ea6968",
+  backgroundColor: "#d15c65",
   color: "white",
   textTransform: "none",
   boxShadow: "none",
 };
 
 export const editBtn = {
-  backgroundColor: "#f592b3",
+  backgroundColor: "#E99FB7",
   color: "white",
   textTransform: "none",
   boxShadow: "none",
@@ -128,6 +129,9 @@ export const saveExclBtn = {
   color: "white",
   borderColor: "#444444",
   bgcolor: "#444444",
+  "&:hover": {
+    opacity: "90%",
+  },
 };
 
 export const cancelExclBtn = {
@@ -139,8 +143,68 @@ export const cancelExclBtn = {
   borderColor: "#444444",
 };
 
+export const saveProfileBtn = {
+  height: "30px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "white",
+  borderColor: "#444444",
+  bgcolor: "#444444",
+  "&:hover": {
+    opacity: "90%",
+  },
+};
+
+export const cancelProfileBtn = {
+  height: "30px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "none",
+  color: "#444444",
+  borderColor: "#444444",
+};
+
 export const modalInputBox = { m: "30px 35px", width: "calc(100% - 70px)" };
 
 export const sortIcons = {
   fontSize: "20px",
+};
+
+export const experienceItem = {
+  display: "grid",
+  gridTemplateColumns: "1fr 5fr 1fr 12fr",
+  p: "5px",
+};
+
+export const experienceItemText = {
+  "& .MuiTypography-root": {
+    fontSize: "14px",
+  },
+  color: "#333333",
+};
+
+export const experienceIcon = { fontSize: "21px", color: "#444444" };
+
+export const imageEditBtn = {
+  width: "100px",
+  p: "10px 14px",
+  fontSize: "14px",
+  textTransform: "none",
+  color: "#7D84AF",
+};
+
+export const deleteAccBtn = {
+  mx: "20px",
+  p: "2px 5px",
+  textTransform: "none",
+  fontSize: "13px",
+};
+
+export const editContestBtn = {
+  px: "20px",
+  color: "#5c69ab",
+  textTransform: "none",
+  fontWeight: "bold",
+  border: "0.5px solid #5c69ab",
 };

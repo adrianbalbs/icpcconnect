@@ -5,7 +5,7 @@ import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
 import Tile from "./Tile";
 import { getInfo } from "@/utils/profileInfo";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../context-provider/AuthProvider";
 import { getPreferences } from "@/utils/preferenceInfo";
 import { Button, Stack } from "@mui/material";
 import { User } from "@/types/users";
@@ -15,12 +15,20 @@ type TeamRegistrationProps = {
   contestId: string;
   cutoffDate?: string;
   fetchEnrollment: () => void;
+  setMsg: (msg: string) => void;
 };
 
+/**
+ * Team Registration Page
+ * - when student is not enroled in a team yet and registration is still open,
+ *   students can complete steps to fill in their profile details
+ * - once all details have been completed, student may enrol to be in contest
+ */
 const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   contestId,
   cutoffDate,
   fetchEnrollment,
+  setMsg,
 }) => {
   const [completed, setCompleted] = useState(0);
   const [added, setAdded] = useState({
@@ -72,7 +80,11 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
   const checkPreference = useCallback(async () => {
     try {
       const preference = await getPreferences(id, "preferences");
-      if (preference && preference.length !== 0) {
+      const exclusion = await getPreferences(id, "exclusions");
+      if (
+        (preference && preference.length > 0) ||
+        (exclusion && exclusion.length > 0)
+      ) {
         setAdded((prev) => ({ ...prev, preference: true }));
       }
     } catch (err) {
@@ -91,6 +103,7 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
         { withCredentials: true },
       );
       fetchEnrollment();
+      setMsg("Enrolled For Contest Successfully!");
     } catch (err) {
       console.error(err);
     }
@@ -144,7 +157,6 @@ const TeamRegistration: React.FC<TeamRegistrationProps> = ({
           added={added.preference}
         />
       </div>
-      {/* TODO: Once preferences is merged, have disabled state linked to completed tasks */}
       <Stack justifyContent="center">
         <Button
           disabled={isAfterCutoffDate(cutoffDate) || completed < 3}

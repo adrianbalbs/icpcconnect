@@ -1,8 +1,12 @@
 "use client";
 
-import { purpleBtn, deleteBtn, editBtn } from "@/styles/sxStyles";
 import {
-  Alert,
+  purpleBtn,
+  deleteBtn,
+  editBtn,
+  editContestBtn,
+} from "@/styles/sxStyles";
+import {
   Button,
   Container,
   Dialog,
@@ -11,7 +15,6 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
@@ -22,7 +25,7 @@ import {
   GridRenderCellParams,
   GridToolbar,
 } from "@mui/x-data-grid";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { CreateContestSchema } from "@/types/contests";
@@ -31,7 +34,10 @@ import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import InviteCode from "@/components/utils/InviteCode";
-import useUniversities from "@/hooks/useUniversities";
+import Notif from "@/components/utils/Notif";
+import { useSites } from "@/utils/university";
+import { universityToSiteId } from "@/utils/university";
+import { getInfo } from "@/utils/profileInfo";
 
 export type ContestResponse = {
   id: string;
@@ -41,6 +47,11 @@ export type ContestResponse = {
   contestDate: string;
   siteId: number;
   site: string;
+};
+
+type ContestDelete = {
+  id: string;
+  name: string;
 };
 
 type DeleteContestDialogProps = {
@@ -69,9 +80,11 @@ const DeleteContestDialog: React.FC<DeleteContestDialogProps> = ({
             teams for this contest.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={handleDelete} autoFocus>
+        <DialogActions sx={{ p: "0 24px 25px" }}>
+          <Button onClick={onClose} sx={editContestBtn}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} sx={editContestBtn} autoFocus>
             Delete
           </Button>
         </DialogActions>
@@ -91,51 +104,56 @@ type FormData = {
 export default function Contests() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [selectDelete, setSelectDelete] = useState<ContestDelete | null>(null);
   const [selectedContest, setSelectedContest] =
     useState<ContestResponse | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
   const [contests, setContests] = useState<ContestResponse[]>([]);
   const [dataGridLoading, setDataGridLoading] = useState(true);
-  const [notif, setNotif] = useState({ type: "", name: "" });
+  const [notif, setNotif] = useState({ type: "", message: "" });
 
   const [errors, setErrors] = useState<
     z.inferFlattenedErrors<typeof CreateContestSchema>
   >({ formErrors: [], fieldErrors: {} });
 
   const {
-    userSession: { role },
+    userSession: { id, role },
   } = useAuth();
 
   const router = useRouter();
   const fetchContests = async () => {
     try {
+      const ownData = await getInfo(id);
       const res = await axios.get<{ allContests: ContestResponse[] }>(
         `${SERVER_URL}/api/contests`,
         {
           withCredentials: true,
         },
       );
-      setContests(
-        res.data.allContests.map((c) => ({
-          ...c,
-          earlyBirdDate: c.earlyBirdDate.split("T")[0],
-          cutoffDate: c.cutoffDate.split("T")[0],
-          contestDate: c.contestDate.split("T")[0],
-        })),
-      );
+      let filtered = res.data.allContests.map((c) => ({
+        ...c,
+        earlyBirdDate: c.earlyBirdDate.split("T")[0],
+        cutoffDate: c.cutoffDate.split("T")[0],
+        contestDate: c.contestDate.split("T")[0],
+      }));
+      if (ownData && role !== "Admin") {
+        const currSite = await universityToSiteId(ownData.university);
+        console.log(filtered);
+        filtered = filtered.filter((s) => s.siteId === currSite);
+      }
+      setContests(filtered);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const { universities } = useUniversities();
+  const { universities } = useSites();
 
   useEffect(() => {
     setDataGridLoading(true);
     fetchContests();
     setDataGridLoading(false);
-  }, []);
+  }, [id]);
 
   const handleCreate = () => {
     setDialogMode("create");
@@ -157,13 +175,17 @@ export default function Contests() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${SERVER_URL}/api/contests/${deleteId}`, {
+      await axios.delete(`${SERVER_URL}/api/contests/${selectDelete?.id}`, {
         withCredentials: true,
       });
 
       await fetchContests();
-      setDeleteId(null);
+      setSelectDelete(null);
       setDeleteDialogOpen(false);
+      setNotif({
+        type: "delete",
+        message: `Contest Deleted: ${selectDelete?.name}`,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -199,11 +221,11 @@ export default function Contests() {
   };
 
   const columns: GridColDef[] = [
-    { field: "name", headerName: "Name", width: 400 },
+    { field: "name", headerName: "Name", width: 380 },
     { field: "earlyBirdDate", headerName: "Early Bird Date", width: 150 },
     { field: "cutoffDate", headerName: "Cutoff Date", width: 150 },
     { field: "contestDate", headerName: "Start Date", width: 150 },
-    { field: "site", headerName: "Site", width: 370 },
+    { field: "site", headerName: "Site", width: 349 },
     {
       field: "actions",
       headerName: "Actions",
@@ -235,7 +257,7 @@ export default function Contests() {
                 variant="contained"
                 sx={{ ...deleteBtn, ml: 1 }}
                 onClick={() => {
-                  setDeleteId(params.row.id);
+                  setSelectDelete({ id: params.row.id, name: params.row.name });
                   setDeleteDialogOpen(true);
                 }}
               >
@@ -249,9 +271,12 @@ export default function Contests() {
   ];
 
   return (
-    <Container sx={{ mt: 15 }} maxWidth="xl">
-      <Stack>
-        <Typography variant="h5" fontWeight="bold">
+    <Container
+      sx={{ mt: 15, mx: "3vw", px: "0", width: "94vw" }}
+      disableGutters
+    >
+      <Stack sx={{ width: "94vw" }}>
+        <Typography variant="h5" fontWeight="bold" color="rgb(69, 70, 94)">
           Contests
         </Typography>
         <Divider sx={{ mt: 1 }} />
@@ -284,6 +309,21 @@ export default function Contests() {
               variant: "skeleton",
               noRowsVariant: "skeleton",
             },
+            toolbar: {
+              sx: {
+                ".MuiButton-root": { color: "#5c69ab" },
+              },
+            },
+            pagination: {
+              sx: {
+                ".MuiTablePagination-selectLabel": {
+                  py: "4.56px",
+                },
+                ".MuiSelect-select": {
+                  p: "5.3px 24px 3.7px 8px",
+                },
+              },
+            },
           }}
           sx={{ mt: 2 }}
         />
@@ -296,33 +336,17 @@ export default function Contests() {
         errors={errors}
         mode={dialogMode}
         contestData={selectedContest}
+        setNotif={setNotif}
       />
       <DeleteContestDialog
         open={deleteDialogOpen}
         onClose={() => {
-          setDeleteId(null);
+          setSelectDelete(null);
           setDeleteDialogOpen(false);
         }}
         handleDelete={handleDelete}
       />
-      <Snackbar
-        open={notif.type !== ""}
-        autoHideDuration={2000}
-        onClose={() => {
-          setNotif({ type: "", name: "" });
-        }}
-      >
-        <Alert
-          onClose={() => {
-            setNotif({ type: "", name: "" });
-          }}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Invite Code Copied!
-        </Alert>
-      </Snackbar>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </Container>
   );
 }

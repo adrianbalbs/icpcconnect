@@ -81,12 +81,8 @@
           "name": "contests_university_universities_id_fk",
           "tableFrom": "contests",
           "tableTo": "universities",
-          "columnsFrom": [
-            "university"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["university"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -140,12 +136,8 @@
           "name": "courses_completed_by_student_student_id_student_details_id_fk",
           "tableFrom": "courses_completed_by_student",
           "tableTo": "student_details",
-          "columnsFrom": [
-            "student_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["student_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -153,12 +145,8 @@
           "name": "courses_completed_by_student_course_id_courses_id_fk",
           "tableFrom": "courses_completed_by_student",
           "tableTo": "courses",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -166,10 +154,7 @@
       "compositePrimaryKeys": {
         "courses_completed_by_student_student_id_course_id_pk": {
           "name": "courses_completed_by_student_student_id_course_id_pk",
-          "columns": [
-            "student_id",
-            "course_id"
-          ]
+          "columns": ["student_id", "course_id"]
         }
       },
       "uniqueConstraints": {}
@@ -248,12 +233,8 @@
           "name": "languages_spoken_by_student_student_id_student_details_id_fk",
           "tableFrom": "languages_spoken_by_student",
           "tableTo": "student_details",
-          "columnsFrom": [
-            "student_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["student_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -261,12 +242,8 @@
           "name": "languages_spoken_by_student_language_code_languages_code_fk",
           "tableFrom": "languages_spoken_by_student",
           "tableTo": "languages",
-          "columnsFrom": [
-            "language_code"
-          ],
-          "columnsTo": [
-            "code"
-          ],
+          "columnsFrom": ["language_code"],
+          "columnsTo": ["code"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -274,10 +251,7 @@
       "compositePrimaryKeys": {
         "languages_spoken_by_student_student_id_language_code_pk": {
           "name": "languages_spoken_by_student_student_id_language_code_pk",
-          "columns": [
-            "student_id",
-            "language_code"
-          ]
+          "columns": ["student_id", "language_code"]
         }
       },
       "uniqueConstraints": {}
@@ -312,12 +286,8 @@
           "name": "registration_details_student_users_id_fk",
           "tableFrom": "registration_details",
           "tableTo": "users",
-          "columnsFrom": [
-            "student"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["student"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -325,12 +295,8 @@
           "name": "registration_details_contest_contests_id_fk",
           "tableFrom": "registration_details",
           "tableTo": "contests",
-          "columnsFrom": [
-            "contest"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["contest"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -338,10 +304,7 @@
       "compositePrimaryKeys": {
         "registration_details_student_contest_pk": {
           "name": "registration_details_student_contest_pk",
-          "columns": [
-            "student",
-            "contest"
-          ]
+          "columns": ["student", "contest"]
         }
       },
       "uniqueConstraints": {}
@@ -384,12 +347,8 @@
           "name": "replacements_team_id_teams_id_fk",
           "tableFrom": "replacements",
           "tableTo": "teams",
-          "columnsFrom": [
-            "team_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -537,12 +496,8 @@
           "name": "student_details_id_users_id_fk",
           "tableFrom": "student_details",
           "tableTo": "users",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -550,12 +505,8 @@
           "name": "student_details_team_teams_id_fk",
           "tableFrom": "student_details",
           "tableTo": "teams",
-          "columnsFrom": [
-            "team"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -606,12 +557,8 @@
           "name": "teams_university_universities_id_fk",
           "tableFrom": "teams",
           "tableTo": "universities",
-          "columnsFrom": [
-            "university"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["university"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -619,12 +566,8 @@
           "name": "teams_contest_contests_id_fk",
           "tableFrom": "teams",
           "tableTo": "contests",
-          "columnsFrom": [
-            "contest"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["contest"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -722,12 +665,8 @@
           "name": "users_university_universities_id_fk",
           "tableFrom": "users",
           "tableTo": "universities",
-          "columnsFrom": [
-            "university"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["university"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -737,9 +676,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       }
     },
@@ -786,9 +723,7 @@
         "verify_emails_code_unique": {
           "name": "verify_emails_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       }
     }
@@ -807,29 +742,17 @@
     "public.language_experience": {
       "name": "language_experience",
       "schema": "public",
-      "values": [
-        "none",
-        "some",
-        "prof"
-      ]
+      "values": ["none", "some", "prof"]
     },
     "public.level": {
       "name": "level",
       "schema": "public",
-      "values": [
-        "A",
-        "B"
-      ]
+      "values": ["A", "B"]
     },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "Student",
-        "Coach",
-        "Site Coordinator",
-        "Admin"
-      ]
+      "values": ["Student", "Coach", "Site Coordinator", "Admin"]
     }
   },
   "schemas": {},

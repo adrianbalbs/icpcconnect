@@ -1,5 +1,4 @@
-export const forget_password_email_content = 
-`<!DOCTYPE html>
+export const forget_password_email_content = `<!DOCTYPE html>
 <!-- Feel free to modify style things of the email content in this file. -->
 <html lang="en">
 <head>

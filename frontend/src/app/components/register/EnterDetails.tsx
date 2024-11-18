@@ -1,4 +1,4 @@
-import useUniversities from "@/hooks/useUniversities";
+import { useUniversities } from "@/utils/university";
 import authStyles from "@/styles/Auth.module.css";
 import {
   FormControl,
@@ -24,6 +24,12 @@ interface EnterDetailsProps {
   setEligibility: Dispatch<SetStateAction<boolean>>;
 }
 
+/**
+ * Account Registration - Further Details
+ * - student enters: university, student id, email
+ * - coach / site coordinator enters: university, invite code, email
+ * note: invite codes are given by admin accounts only
+ */
 export const EnterDetails: React.FC<EnterDetailsProps> = ({
   roleName,
   university,

@@ -79,7 +79,7 @@ export const studentDetails = pgTable("student_details", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   studentId: text("student_id").notNull().default(""),
-  profile_pic: text("profile_picture").notNull().default(""),
+  profilePic: text("profile_picture").notNull().default(""),
   pronouns: text("pronouns").notNull().default(""),
   dietaryRequirements: text("dietary_requirements").notNull().default(""),
   tshirtSize: text("tshirt_size").notNull().default(""),
@@ -249,7 +249,9 @@ export const coursesCompletedByStudentRelations = relations(
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }).notNull(),
-  university: integer("university").references(() => universities.id).notNull(),
+  university: integer("university")
+    .references(() => universities.id)
+    .notNull(),
   contest: uuid("contest")
     .references(() => contests.id, {
       onDelete: "cascade",
@@ -263,13 +265,13 @@ export const replacements = pgTable("replacements", {
   leavingInternalId: text("leaving_id").notNull().default(""),
   replacementStudentId: text("student_id").notNull().default(""),
   reason: text("reason").notNull().default(""),
-})
+});
 
-export const replacementRelations = relations(replacements, ({one}) => ({
+export const replacementRelations = relations(replacements, ({ one }) => ({
   associated_team: one(teams, {
     fields: [replacements.associated_team],
     references: [teams.id],
-  })
+  }),
 }));
 
 export const teamRelations = relations(teams, ({ many, one }) => ({

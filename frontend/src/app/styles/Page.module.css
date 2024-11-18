@@ -37,7 +37,7 @@
   padding: 0 3vw;
   height: 60px;
   width: 100vw;
-  background-color: #e4eeff;
+  background-color: #eff3f9;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
@@ -48,7 +48,7 @@
   justify-content: center;
   align-items: center;
   row-gap: 10px;
-  height: calc(100vh - 250px);
+  height: calc(100vh - 300px);
 }
 
 .code {
@@ -59,12 +59,14 @@
   font-weight: lighter;
   color: #4b4b4b;
   background-color: #e5eaf3;
+  border: 0.5px solid #aaaaaa;
+  border-radius: 5px;
 }
 
 .website {
   margin: 14px 0 13.5px;
   font-size: 28px;
-  color: #415478;
+  color: #6179ac;
 }
 
 .timeline {

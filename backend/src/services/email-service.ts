@@ -32,13 +32,13 @@ export class EmailService {
   }
 
   /*
-  * Check whether a given code exists in the db/has a matching verification-request
-  *
-  * @param code - the code we are checking
-  *
-  * @returns boolean - whether code exists in the entry-db
-  * 
-  */
+   * Check whether a given code exists in the db/has a matching verification-request
+   *
+   * @param code - the code we are checking
+   *
+   * @returns boolean - whether code exists in the entry-db
+   *
+   */
   private async codeExists(code: number): Promise<boolean> {
     const existingCode = await this.db
       .select({ code: verifyEmail.code })
@@ -48,11 +48,11 @@ export class EmailService {
   }
 
   /*
-  * Remove a given email's requests (verification/forgot password) from the db
-  *
-  * @param email - email whose requests we are removing from db
-  *
-  */
+   * Remove a given email's requests (verification/forgot password) from the db
+   *
+   * @param email - email whose requests we are removing from db
+   *
+   */
   private async finishVerification(email: string): Promise<void> {
     const target = await this.db
       .select({ email: verifyEmail.email })
@@ -67,33 +67,32 @@ export class EmailService {
   }
 
   /*
-  * Generates a six-digit code
-  *
-  * @returns number - the code
-  */ 
+   * Generates a six-digit code
+   *
+   * @returns number - the code
+   */
   private generateSixDigitCode(): number {
     const min = 100000;
     const max = 999999;
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-
   /*
-  * Generate a unique six-digit code
-  *
-  * @remarks
-  * If the email already has a request, just returns that requests details
-  * For forgot-password requests, id equals the user-id, because the user has an account
-  * For verification-code requests, id equals the email, because they dont have an account yet
-  *
-  * @param   email - email we are generating code for
-  *  
-  * @returns GenerateEmailVerificationCodeResponse
-  *   id   - Either the user-id of the user, or the email
-  *   code - the six-digit code we generated 
-  *   name - the email we entered 
-  * 
-  */ 
+   * Generate a unique six-digit code
+   *
+   * @remarks
+   * If the email already has a request, just returns that requests details
+   * For forgot-password requests, id equals the user-id, because the user has an account
+   * For verification-code requests, id equals the email, because they dont have an account yet
+   *
+   * @param   email - email we are generating code for
+   *
+   * @returns GenerateEmailVerificationCodeResponse
+   *   id   - Either the user-id of the user, or the email
+   *   code - the six-digit code we generated
+   *   name - the email we entered
+   *
+   */
   private async generateUniqueCode(
     email: string,
   ): Promise<GenerateEmailVerificationCodeResponse> {
@@ -156,13 +155,13 @@ export class EmailService {
   }
 
   /*
-  * Check that a given email is a valid university email.
-  * 
-  * @param   email   - the email we are validating
-  *  
-  * @returns boolean - whether it is valid
-  * 
-  */ 
+   * Check that a given email is a valid university email.
+   *
+   * @param   email   - the email we are validating
+   *
+   * @returns boolean - whether it is valid
+   *
+   */
   public isValidUniversityEmail(email: string): boolean {
     const regex =
       /^[\w!#$%&'*+=?^`{|}~-]+(?:\.[\w!#$%&'*+=?^`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(\.(edu|edu\.au|ac|ac\.uk|edu\.ca|edu\.cn|edu\.sg|edu\.nz|edu\.in|edu\.jp|ac\.nz|ac\.fj))$/;
@@ -171,13 +170,13 @@ export class EmailService {
   }
 
   /*
-  * Check that a given email is not already associated with a user
-  * 
-  * @param   email   - the email we are checking
-  *  
-  * @returns boolean - email has not yet been registered
-  * 
-  */ 
+   * Check that a given email is not already associated with a user
+   *
+   * @param   email   - the email we are checking
+   *
+   * @returns boolean - email has not yet been registered
+   *
+   */
   public async isNewRegisteredEmail(email: string): Promise<boolean> {
     try {
       const existingUser = await this.db
@@ -192,21 +191,21 @@ export class EmailService {
   }
 
   /*
-  * Sends a verification code to the provided email so that the user can verify his/her email box.
-  *
-  * @remarks
-  * Note that the email address provided should be valid: I.e, no previous user uses the same email.
-  * 
-  * @param   req - SendEmailVerificationCodeRequest
-  *   req.email - Email we are sending verification code to
-  *   req.isNormalVerificationEmail - Whether we are a normal email - e.g we wish to validate it is a university email
-  *  
-  * @returns string - The verification code generated
-  * 
-  * @throws BadRequest
-  *   - If we are verifying a email that should be from a university and the email is not a university email
-  *   - If email is already in use
-  */ 
+   * Sends a verification code to the provided email so that the user can verify his/her email box.
+   *
+   * @remarks
+   * Note that the email address provided should be valid: I.e, no previous user uses the same email.
+   *
+   * @param   req - SendEmailVerificationCodeRequest
+   *   req.email - Email we are sending verification code to
+   *   req.isNormalVerificationEmail - Whether we are a normal email - e.g we wish to validate it is a university email
+   *
+   * @returns string - The verification code generated
+   *
+   * @throws BadRequest
+   *   - If we are verifying a email that should be from a university and the email is not a university email
+   *   - If email is already in use
+   */
   public async sendEmailVerificationCode(
     req: SendEmailVerificationCodeRequest,
   ): Promise<string> {
@@ -229,19 +228,19 @@ export class EmailService {
   }
 
   /*
-  * Sends a link to the provided email so that the user can use to reset their password
-  *
-  * @remarks
-  * Note that the email address provided should be already created/registered by user before.
-  * 
-  * @param   req - SendEmailForgotPasswordRequest
-  *   req.email - Email we are sending reset-link / code to
-  *  
-  * @returns string - The code to validate the user when resetting password
-  * 
-  * @throws BadRequest
-  *   - If email is not associated with a user
-  */ 
+   * Sends a link to the provided email so that the user can use to reset their password
+   *
+   * @remarks
+   * Note that the email address provided should be already created/registered by user before.
+   *
+   * @param   req - SendEmailForgotPasswordRequest
+   *   req.email - Email we are sending reset-link / code to
+   *
+   * @returns string - The code to validate the user when resetting password
+   *
+   * @throws BadRequest
+   *   - If email is not associated with a user
+   */
   public async sendEmailForgotPasswordCode(
     req: SendEmailForgotPasswordCodeRequest,
   ): Promise<string> {
@@ -266,19 +265,19 @@ export class EmailService {
   }
 
   /*
-  * Function for handling user entering their verification code, and handling 
-  * finishing verification, or rejecting invalid codes 
-  *
-  * @param   req - PassRegisterEmailVerificationCode
-  *   req.email - Email we are trying to verify
-  *   req.userProvidedCode - Code user has entered client-side
-  *  
-  * @returns boolean - whether the code provided matches the one generated
-  * 
-  * @throws BadRequest
-  *   - if there is not a verification code associated with the given email
-  *   - If the verification code provided doesn't match the one stored in the db
-  */ 
+   * Function for handling user entering their verification code, and handling
+   * finishing verification, or rejecting invalid codes
+   *
+   * @param   req - PassRegisterEmailVerificationCode
+   *   req.email - Email we are trying to verify
+   *   req.userProvidedCode - Code user has entered client-side
+   *
+   * @returns boolean - whether the code provided matches the one generated
+   *
+   * @throws BadRequest
+   *   - if there is not a verification code associated with the given email
+   *   - If the verification code provided doesn't match the one stored in the db
+   */
   public async passRegisterEmailVerification(
     req: PassRegisterEmailVerificationRequest,
   ): Promise<boolean> {
@@ -308,15 +307,15 @@ export class EmailService {
   }
 
   /*
-  * @param   req - PassForgotPasswordVerificationCode
-  *   req.id - the user-id of the user whose password we are resetting
-  *   req.authenticationCode - Code user has entered client-side
-  *  
-  * @returns boolean - whether the code provided matches the one generated
-  * 
-  * @throws BadRequest
-  *   - if there is not a forgot-password code associated with the given user
-  */ 
+   * @param   req - PassForgotPasswordVerificationCode
+   *   req.id - the user-id of the user whose password we are resetting
+   *   req.authenticationCode - Code user has entered client-side
+   *
+   * @returns boolean - whether the code provided matches the one generated
+   *
+   * @throws BadRequest
+   *   - if there is not a forgot-password code associated with the given user
+   */
   public async passForgotPasswordVerification(
     req: PassForgotPasswordVerificationRequest,
   ): Promise<boolean> {
@@ -349,23 +348,23 @@ export class EmailService {
   }
 
   /*
-  * Resets the users password, and invalidates the entry related to the reset-password request in the db
-  * 
-  * @remarks
-  * Must pass the 'forgot-password' verification before being allowed to change password
-  * Note that this function won't check the verification code is correct - that is for passForgotPasswordVerificaiton
-  * We do check that the 'isVerified' field is true though
-  *
-  * @param   req - ForgotPasswordResetPasswordRequest
-  *   req.id - the user-id of the user whose password we are resetting
-  *   req.newPassword - New password for users account
-  *  
-  * @returns boolean - whether the code provided matches the one generated
-  * 
-  * @throws BadRequest
-  *   - if there is not a forgot-password entry associated with the user
-  *   - if the user has not passed the verification yet (e.g sending the forgot-email code to us)
-  */ 
+   * Resets the users password, and invalidates the entry related to the reset-password request in the db
+   *
+   * @remarks
+   * Must pass the 'forgot-password' verification before being allowed to change password
+   * Note that this function won't check the verification code is correct - that is for passForgotPasswordVerificaiton
+   * We do check that the 'isVerified' field is true though
+   *
+   * @param   req - ForgotPasswordResetPasswordRequest
+   *   req.id - the user-id of the user whose password we are resetting
+   *   req.newPassword - New password for users account
+   *
+   * @returns boolean - whether the code provided matches the one generated
+   *
+   * @throws BadRequest
+   *   - if there is not a forgot-password entry associated with the user
+   *   - if the user has not passed the verification yet (e.g sending the forgot-email code to us)
+   */
   public async forgotPasswordChangePassword(
     req: ForgotPasswordResetPasswordRequest,
   ): Promise<boolean> {
@@ -403,14 +402,14 @@ export class EmailService {
   }
 
   /*
-  * Once the team-matching algo of a given contest has run, email students about their teams/team-members
-  *
-  * @param contestId - contest-id of the contest who we want to send out emails for
-  *  
-  * 
-  * @throws InternalServerError
-  *   - MemberIds of a given team do not correspond to actual users
-  */ 
+   * Once the team-matching algo of a given contest has run, email students about their teams/team-members
+   *
+   * @param contestId - contest-id of the contest who we want to send out emails for
+   *
+   *
+   * @throws InternalServerError
+   *   - MemberIds of a given team do not correspond to actual users
+   */
   async sendTeamMemberInfo(contestId: string): Promise<void> {
     const allTeams = await this.db.query.teams.findMany({
       where: eq(teams.contest, contestId),

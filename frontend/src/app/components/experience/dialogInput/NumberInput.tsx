@@ -22,6 +22,10 @@ const typeToQuestion = [
   "What is your Codeforces contest rating?",
 ];
 
+/**
+ * Add Contest/Rating Experience component
+ * - renders a numbered input for past contests and leetcode/codeforces rating
+ */
 const NumberInput: React.FC<InputProps> = ({
   type,
   setDisable,

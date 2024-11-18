@@ -8,6 +8,12 @@ interface StudentWaitingScreenProps {
   onWithdraw: () => void;
 }
 
+/**
+ * Student Waiting Screen
+ * - renders waiting screen for students during contest registration period
+ * - screen that is shown when no teams have been allocated
+ * - withdraw button: pulls out from contest enrolment
+ */
 const StudentWaitingScreen: React.FC<StudentWaitingScreenProps> = ({
   contest,
   onWithdraw,

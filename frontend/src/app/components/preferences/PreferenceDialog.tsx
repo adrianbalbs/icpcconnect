@@ -14,23 +14,35 @@ import {
 } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
 import { PreferenceType } from "@/profile/[id]/preferences/page";
-import TeamInput from "./modalInput/TeamInput";
-import PairInput from "./modalInput/PairInput";
-import ExclusionInput from "./modalInput/ExclusionInput";
-import TeamPairAlert from "./modalInput/TeamPairAlert";
+import TeamInput from "./dialogInput/TeamInput";
+import PairInput from "./dialogInput/PairInput";
+import ExclusionInput from "./dialogInput/ExclusionInput";
+import TeamPairAlert from "./dialogInput/TeamPairAlert";
 import { getPreferences, updatePreferences } from "@/utils/preferenceInfo";
 
-interface ModalProps {
+interface DialogProps {
   id: string;
   added: PreferenceType;
   setAdded: Dispatch<SetStateAction<PreferenceType>>;
+  setMsg: (msg: string) => void;
 }
 
-const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
+/**
+ * Add Preference dialog component
+ * - renders select dropdown to choose preference type
+ * - includes:
+ *    - pair, team, exclusion
+ */
+const PreferenceDialog: React.FC<DialogProps> = ({
+  id,
+  added,
+  setAdded,
+  setMsg,
+}) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
-  const [disable, setDisable] = useState(false);
+  const [disable, setDisable] = useState(true);
   const [alert, setAlert] = useState({ old: "", curr: "" });
   const [include, setInclude] = useState("");
   const [exclude, setExclude] = useState("");
@@ -68,8 +80,10 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   };
 
   const addPreference = async () => {
+    let success: boolean | undefined = false;
     if (type === "team" || type === "pair") {
-      await updatePreferences(id, "preferences", include);
+      success = await updatePreferences(id, "preferences", include);
+      if (success) setMsg(`New ${capitalise(type)} Preference Added!`);
     } else if (type === "exclusions") {
       // Capitalise first and last names
       const names = exclude.split(" ").map((n) => capitalise(n));
@@ -81,9 +95,14 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
       }
       // Sort exclusions alphabetically
       const sorted = exclusions.split(", ").sort().join(", ");
-      await updatePreferences(id, type, sorted);
+      success = await updatePreferences(id, type, sorted);
+      if (success) setMsg("New Exclusion Preference Added!");
     }
-    setAdded({ ...added, [type]: true });
+    if (success) {
+      setAdded({ ...added, [type]: true });
+    } else {
+      setMsg("New Preference Was Not Added Successfully!");
+    }
     handleClose();
   };
 
@@ -179,4 +198,4 @@ const PreferenceModal: React.FC<ModalProps> = ({ id, added, setAdded }) => {
   );
 };
 
-export default PreferenceModal;
+export default PreferenceDialog;

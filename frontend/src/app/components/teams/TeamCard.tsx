@@ -1,5 +1,6 @@
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
+import { Tooltip, tooltipClasses } from "@mui/material";
 import { Member, Team } from "@/types/teams";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import { Box, IconButton, Modal } from "@mui/material";
@@ -22,6 +23,12 @@ interface TeamCardProps {
   fetchTeams: () => Promise<void>;
 }
 
+/**
+ * Team Card component
+ * - renders a given team
+ * - includes:
+ *    - team name, institution, members list
+ */
 const TeamCard: React.FC<TeamCardProps> = ({
   team,
   canEdit,
@@ -61,15 +68,9 @@ const TeamCard: React.FC<TeamCardProps> = ({
   };
 
   const handleEdit = async () => {
-    console.log(replacementArr);
     for (const i in replacementArr) {
       if (replacementArr[i] != "") {
         try {
-          console.log({
-            team: team.id,
-            student: team.members[i].id,
-            replacedWith: replacementArr[i],
-          });
           await axios.put(
             `${SERVER_URL}/api/teams/handleReplacement/`,
             {
@@ -138,17 +139,44 @@ const TeamCard: React.FC<TeamCardProps> = ({
   return (
     <div className={teamStyles["team-container"]}>
       <div className={teamStyles.team}>
-        <p>
-          <span className={pageStyles.bold}>Team Name:</span> {team.name}{" "}
-          {
-            <IconButton
-              onClick={handleOpenEdit}
-              sx={{ padding: "0", marginBottom: "3px", marginLeft: "3px" }}
-            >
-              {canEdit && <DriveFileRenameOutlineOutlinedIcon />}
-            </IconButton>
-          }
-        </p>
+        <Tooltip
+          title={team.name}
+          placement="top-end"
+          slotProps={{
+            popper: {
+              sx: {
+                [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
+                  {
+                    marginBottom: "2px",
+                  },
+              },
+            },
+          }}
+        >
+          <Box display="grid" mb="8px" gridTemplateColumns="9fr 1fr">
+            <span className={teamStyles.overflow}>
+              <b>Team Name:&nbsp;</b>
+              {`${team.name}`}
+            </span>
+            {
+              <IconButton
+                onClick={handleOpenEdit}
+                sx={{
+                  p: "1px",
+                  width: "15px",
+                  height: "15px",
+                  justifySelf: "end",
+                }}
+              >
+                {canEdit && (
+                  <DriveFileRenameOutlineOutlinedIcon
+                    sx={{ fontSize: "18px" }}
+                  />
+                )}
+              </IconButton>
+            }
+          </Box>
+        </Tooltip>
         <p>
           <span className={pageStyles.bold}>Institution:</span>{" "}
           {team.university}

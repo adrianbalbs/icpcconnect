@@ -4,26 +4,41 @@ import { getPreferences } from "@/utils/preferenceInfo";
 import pageStyles from "@/styles/Page.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { experienceHeading } from "@/styles/sxStyles";
-import { Box, IconButton, Typography } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography } from "@mui/material";
 import { PreferenceType, Teammate } from "@/profile/[id]/preferences/page";
 import { updatePreferences } from "@/utils/preferenceInfo";
-import { useAuth } from "../AuthProvider/AuthProvider";
+import DeleteBtn from "../utils/DeleteBtn";
 
 interface InclusionProps {
   id: string;
   added: PreferenceType;
   setAdded: Dispatch<SetStateAction<PreferenceType>>;
+  setMsg: (msg: string) => void;
 }
 
-const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
+/**
+ * Render Pair / Team component
+ * - renders pair / team preference on page
+ * - includes: teammate(s) name and student id
+ * - note: when a teammate preferenced is not yet registered,
+ *         their name renders as "(Not registered yet)"
+ */
+const InclusionPreference = ({
+  id,
+  added,
+  setAdded,
+  setMsg,
+}: InclusionProps) => {
   const [type, setType] = useState("");
   const [inclusion, setInclusion] = useState<Teammate[]>([]);
-  const { userSession } = useAuth();
 
   const getStudents = async () => {
     const preference = await getPreferences(id, "preferences");
-    if (preference && preference.length > 0) {
+    if (
+      preference &&
+      preference.length > 0 &&
+      preference[0].studentId !== "none"
+    ) {
       setInclusion(preference);
       setType(preference.length > 1 ? "team" : "pair");
     }
@@ -34,6 +49,7 @@ const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
     setType("");
     setInclusion([]);
     setAdded({ ...added, [type]: false });
+    setMsg(`${capitalise(type)} Preference Deleted!`);
   };
 
   useEffect(() => {
@@ -56,19 +72,7 @@ const InclusionPreference = ({ id, added, setAdded }: InclusionProps) => {
         >
           <Typography sx={experienceHeading}>Student Id</Typography>
           <Typography sx={experienceHeading}>Student Name</Typography>
-          {(userSession.id === id || userSession.role === "Admin") && (
-            <IconButton
-              sx={{
-                height: "21px",
-                width: "25px",
-                borderRadius: "5px",
-                justifySelf: "end",
-              }}
-              onClick={deletePreference}
-            >
-              <DeleteIcon sx={{ fontSize: "21px" }} />
-            </IconButton>
-          )}
+          <DeleteBtn id={id} handleDelete={deletePreference} />
         </Box>
         <hr className={pageStyles.divider} />
         {inclusion.map((i) => (

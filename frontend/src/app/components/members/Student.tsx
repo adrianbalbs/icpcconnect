@@ -10,6 +10,12 @@ export interface StudentProps {
   email: string;
 }
 
+/**
+ * Student component
+ * - renders a given student
+ * - includes:
+ *    - student name, team name, institution / university, email
+ */
 const Student: React.FC<StudentProps> = ({
   id,
   name,

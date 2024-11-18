@@ -10,6 +10,11 @@ type TeamsListProps = {
   id: string;
   fetchTeams: () => Promise<void>;
 };
+
+/**
+ * Team List component
+ * - renders a list of Team Cards
+ */
 const TeamsList = ({ teams, role, id, fetchTeams }: TeamsListProps) => {
   const [canEdit, setCanEdit] = useState(false);
 

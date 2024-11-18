@@ -1,8 +1,20 @@
 {
   "contests": [
-    { "id": "40cfb102-6226-46f5-8e1b-a6b5d082989f", "name": "Epic Contest", "site": 1 },
-    { "id": "d62a328a-f1b4-4de1-a44f-15fc0301463a", "name": "ICPC Regionals", "site": 1 },
-    { "id": "5931d4e5-483f-4887-a0ee-2ef7377fa8db" , "name": "ICPC Preliminary Contest", "site": 1 }
+    {
+      "id": "40cfb102-6226-46f5-8e1b-a6b5d082989f",
+      "name": "Epic Contest",
+      "site": 1
+    },
+    {
+      "id": "d62a328a-f1b4-4de1-a44f-15fc0301463a",
+      "name": "ICPC Regionals",
+      "site": 1
+    },
+    {
+      "id": "5931d4e5-483f-4887-a0ee-2ef7377fa8db",
+      "name": "ICPC Preliminary Contest",
+      "site": 1
+    }
   ],
   "students": [
     {
@@ -15,10 +27,8 @@
       "university": 1,
       "studentId": "z5397730",
       "pronouns": "he/him",
-	  "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "photoConsent": true,
       "level": "B",
@@ -29,7 +39,7 @@
       "cExperience": "some",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3],
+      "coursesTaken": [1, 2, 3],
       "preferences": "z5418213, z5421467"
     },
     {
@@ -39,14 +49,12 @@
       "password": "test2",
       "email": "student_2@ad.com",
       "role": "Student",
-	  "profile_pic": "",
+      "profile_pic": "",
       "university": 1,
       "studentId": "z5418213",
       "pronouns": "she/her",
       "photoConsent": true,
-      "languagesSpoken": [
-        "en"
-      ],
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 1,
@@ -56,7 +64,7 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4],
+      "coursesTaken": [1, 2, 3, 4],
       "preferences": ""
     },
     {
@@ -70,10 +78,8 @@
       "studentId": "z5421467",
       "pronouns": "he/him",
       "photoConsent": true,
-	  "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 1,
@@ -83,7 +89,7 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3],
+      "coursesTaken": [1, 2, 3],
       "preferences": ""
     },
     {
@@ -97,10 +103,8 @@
       "studentId": "z5419703",
       "pronouns": "he/him",
       "photoConsent": true,
-	  "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 1,
@@ -110,7 +114,7 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3],
+      "coursesTaken": [1, 2, 3],
       "preferences": ""
     },
     {
@@ -124,10 +128,8 @@
       "studentId": "z5354052",
       "pronouns": "he/him",
       "photoConsent": true,
-	  "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 1,
@@ -137,7 +139,7 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4],
+      "coursesTaken": [1, 2, 3, 4],
       "preferences": ""
     },
     {
@@ -151,10 +153,8 @@
       "studentId": "z1342356",
       "pronouns": "he/him",
       "photoConsent": true,
-	  "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 5,
@@ -164,7 +164,7 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2],
+      "coursesTaken": [1, 2],
       "preferences": ""
     },
     {
@@ -178,10 +178,8 @@
       "studentId": "z1334567",
       "pronouns": "he/him",
       "photoConsent": true,
-	  "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 5,
@@ -191,7 +189,7 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4],
+      "coursesTaken": [1, 2, 3, 4],
       "preferences": ""
     },
     {
@@ -205,10 +203,8 @@
       "studentId": "z2324535",
       "pronouns": "he/him",
       "photoConsent": true,
-	    "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 5,
@@ -218,7 +214,7 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4],
+      "coursesTaken": [1, 2, 3, 4],
       "preferences": ""
     },
     {
@@ -232,10 +228,8 @@
       "studentId": "z8534085",
       "pronouns": "he/him",
       "photoConsent": true,
-	    "profile_pic": "",
-      "languagesSpoken": [
-        "en"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["en"],
       "team": null,
       "level": "B",
       "contestExperience": 5,
@@ -245,7 +239,7 @@
       "cExperience": "prof",
       "javaExperience": "prof",
       "pythonExperience": "prof",
-      "coursesTaken": [1,2,3,4],
+      "coursesTaken": [1, 2, 3, 4],
       "preferences": ""
     },
     {
@@ -259,10 +253,8 @@
       "studentId": "z2382031",
       "pronouns": "he/him",
       "photoConsent": true,
-	    "profile_pic": "",
-      "languagesSpoken": [
-        "ja"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["ja"],
       "team": null,
       "level": "B",
       "contestExperience": 5,
@@ -272,7 +264,7 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2],
+      "coursesTaken": [1, 2],
       "preferences": ""
     },
     {
@@ -286,10 +278,8 @@
       "studentId": "z2023419",
       "pronouns": "he/him",
       "photoConsent": true,
-	    "profile_pic": "",
-      "languagesSpoken": [
-        "ja"
-      ],
+      "profile_pic": "",
+      "languagesSpoken": ["ja"],
       "team": null,
       "level": "B",
       "contestExperience": 5,
@@ -299,7 +289,7 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2],
+      "coursesTaken": [1, 2],
       "preferences": ""
     },
     {
@@ -313,9 +303,7 @@
       "studentId": "z9876543",
       "pronouns": "he/him",
       "photoConsent": true,
-      "languagesSpoken": [
-        "ja"
-      ],
+      "languagesSpoken": ["ja"],
       "team": null,
       "level": "B",
       "contestExperience": 5,
@@ -325,7 +313,7 @@
       "cExperience": "prof",
       "javaExperience": "none",
       "pythonExperience": "none",
-      "coursesTaken": [1,2],
+      "coursesTaken": [1, 2],
       "preferences": ""
     }
   ],

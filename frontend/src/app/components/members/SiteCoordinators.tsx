@@ -17,6 +17,10 @@ interface SiteCoordInfo {
   university: string;
 }
 
+/**
+ * Site Coordinators component
+ * - renders list of site coordinators
+ */
 const SiteCoordinators = () => {
   const [siteCoords, setSiteCoords] = useState<StaffProps[]>([]);
   const [sort, setSort] = useState("Default");

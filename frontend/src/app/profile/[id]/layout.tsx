@@ -1,15 +1,15 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import profileStyles from "@/styles/Profile.module.css";
-import image from "@/assets/image.png";
 import Sidebar from "@/components/bar/Sidebar";
 import { getInfo } from "@/utils/profileInfo";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
+import ProfileImage from "@/components/profile/ProfileImage";
+import DeleteAccount from "@/components/profile/DeleteAccount";
 
 interface ProfileLayoutProps {
   children: React.ReactNode;
@@ -56,16 +56,24 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
     <ProfileContext.Provider value={{ info, storeProfileInfo: storeInfo }}>
       <div className={profileStyles.screen}>
         <div className={profileStyles["side-screen"]}>
-          <Image src={image} alt="pfp" className={profileStyles.pfp} />
+          <ProfileImage id={params.id} ownId={userSession.id} />
           <h1 className={profileStyles.name}>{info.name}</h1>
           <p
             className={profileStyles.role}
           >{`${info.role}${info.pronouns ? ` • ${info.pronouns}` : ""}`}</p>
           {checkView() && <Sidebar id={params.id} role={info.role} />}
+          {userSession.role === "Admin" && info.role !== "Admin" && (
+            <DeleteAccount
+              id={userSession.id}
+              user={{ id: params.id, name: info.name }}
+            />
+          )}
         </div>
-        <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
-          <ArrowBackIosIcon />
-        </IconButton>
+        <Tooltip title="Back">
+          <IconButton sx={{ marginTop: "40px" }} onClick={() => router.back()}>
+            <ArrowBackIosIcon />
+          </IconButton>
+        </Tooltip>
         {children}
       </div>
     </ProfileContext.Provider>

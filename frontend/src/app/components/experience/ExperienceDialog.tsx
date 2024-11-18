@@ -15,29 +15,40 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import CloseBtn from "../utils/CloseBtn";
-import LanguageSlider from "./modalInput/LanguageSlider";
+import LanguageSlider from "./dialogInput/LanguageSlider";
 import { Experiences, ExperienceType } from "@/profile/[id]/experience/page";
-import NumberInput from "./modalInput/NumberInput";
-import CourseCheckbox from "./modalInput/CourseCheckbox";
+import NumberInput from "./dialogInput/NumberInput";
+import CourseCheckbox from "./dialogInput/CourseCheckbox";
 
 interface ModalProps {
   id: string;
   added: ExperienceType;
   experience: Experiences;
   getExperience: () => void;
+  setMsg: (msg: string) => void;
 }
 
-const ExperienceModal: React.FC<ModalProps> = ({
+/**
+ * Add Experience dialog component
+ * - renders select dropdown to choose experience type
+ * - includes:
+ *    - programming language experience
+ *    - relevant courses
+ *    - number of past contests
+ *    - leetcode / codeforces rating
+ */
+const ExperienceDialog: React.FC<ModalProps> = ({
   id,
   added,
   experience,
   getExperience,
+  setMsg,
 }) => {
   const hrRef = useRef<HTMLHRElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
-  const [disable, setDisable] = useState(false);
+  const [disable, setDisable] = useState(true);
   const [newExperience, setNewExperience] = useState<Experiences>(experience);
 
   const renderButton = () => {
@@ -73,6 +84,7 @@ const ExperienceModal: React.FC<ModalProps> = ({
         { withCredentials: true },
       );
       getExperience();
+      setMsg("Experiences Updated!");
     } catch (error) {
       console.log(`Update experience error: ${error}`);
     }
@@ -90,6 +102,17 @@ const ExperienceModal: React.FC<ModalProps> = ({
       buttonRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [type]);
+
+  useEffect(() => {
+    if (type === "language") {
+      setDisable(
+        newExperience.cExperience === "none" &&
+          newExperience.cppExperience === "none" &&
+          newExperience.pythonExperience === "none" &&
+          newExperience.javaExperience === "none",
+      );
+    }
+  }, [newExperience]);
 
   return (
     <div className={experienceStyles.modal}>
@@ -211,4 +234,4 @@ const ExperienceModal: React.FC<ModalProps> = ({
   );
 };
 
-export default ExperienceModal;
+export default ExperienceDialog;

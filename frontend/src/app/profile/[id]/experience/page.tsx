@@ -6,15 +6,16 @@ import { SERVER_URL } from "@/utils/constants";
 import profileStyles from "@/styles/Profile.module.css";
 import experienceStyles from "@/styles/Experience.module.css";
 import { Box } from "@mui/material";
-import ExperienceModal from "@/components/experience/ExperienceModal";
+import ExperienceDialog from "@/components/experience/ExperienceDialog";
 import LanguageExperience from "@/components/experience/LanguageExperience";
 import CoursesExperience from "@/components/experience/CoursesExperience";
 import { ProfileProps } from "../page";
 import ContestExperience from "@/components/experience/ContestExperience";
 import { User } from "@/types/users";
-import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { useAuth } from "@/components/context-provider/AuthProvider";
 import { checkViewingPermissions } from "@/utils/profileInfo";
 import { useRouter } from "next/navigation";
+import Notif from "@/components/utils/Notif";
 
 export interface ExperienceType {
   codeforcesRating: boolean;
@@ -36,6 +37,10 @@ export interface Experiences {
   coursesCompleted: number[];
 }
 
+/**
+ * Experiences Page
+ * - buttons and dialog to add / edit / remove experiences
+ */
 const Experience: React.FC<ProfileProps> = ({ params }) => {
   // Object containing types of experiences added to page
   const [added, setAdded] = useState<ExperienceType>({
@@ -60,6 +65,14 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
 
   const { userSession } = useAuth();
   const router = useRouter();
+  const [notif, setNotif] = useState({ type: "", message: "" });
+
+  const setMsg = (msg: string) => {
+    setNotif({
+      type: msg.includes("Deleted") ? "delete" : "add",
+      message: msg,
+    });
+  };
 
   // Fetch experience data from backend
   const getExperience = useCallback(async () => {
@@ -118,11 +131,11 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
 
     if (checkViewingPermissions(params.id, userSession)) {
       initialisePage();
-    } else {
+    } else if (userSession.id !== "") {
       // Redirect user to 404 page not found if they don't have permission to view route
       router.replace("/404");
     }
-  }, [getExperience]);
+  }, [getExperience, userSession]);
 
   return (
     <div className={profileStyles["inner-screen"]}>
@@ -131,24 +144,44 @@ const Experience: React.FC<ProfileProps> = ({ params }) => {
       </div>
       <hr className={experienceStyles.divider} />
       <Box sx={{ height: "calc(100% - 121px)", overflow: "scroll" }}>
-        {added.language && <LanguageExperience {...experience} />}
+        {added.language && (
+          <LanguageExperience
+            {...experience}
+            id={params.id}
+            update={getExperience}
+            setMsg={setMsg}
+          />
+        )}
         {added.coursesCompleted && (
-          <CoursesExperience coursesTaken={experience.coursesCompleted} />
+          <CoursesExperience
+            id={params.id}
+            coursesTaken={experience.coursesCompleted}
+            update={getExperience}
+            setMsg={setMsg}
+          />
         )}
         {(added.contestExperience ||
           added.leetcodeRating ||
           added.codeforcesRating) && (
-          <ContestExperience added={added} experience={experience} />
+          <ContestExperience
+            id={params.id}
+            added={added}
+            experience={experience}
+            update={getExperience}
+            setMsg={setMsg}
+          />
         )}
         {userSession.id === params.id && (
-          <ExperienceModal
+          <ExperienceDialog
             id={params.id}
             added={added}
             experience={experience}
             getExperience={getExperience}
+            setMsg={setMsg}
           />
         )}
       </Box>
+      {notif.type !== "" && <Notif notif={notif} setNotif={setNotif} />}
     </div>
   );
 };

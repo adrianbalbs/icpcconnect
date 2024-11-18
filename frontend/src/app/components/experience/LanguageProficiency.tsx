@@ -12,6 +12,10 @@ export const textToValue: Record<string, number> = {
   prof: 100,
 };
 
+/**
+ * Language Profiency bar component
+ * - renders a given language proficiency
+ */
 const LanguageProficiency: React.FC<ProficiencyProps> = ({
   language,
   proficiency,
@@ -20,7 +24,7 @@ const LanguageProficiency: React.FC<ProficiencyProps> = ({
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: "1fr 4fr",
+        gridTemplateColumns: "8fr 33fr 1fr",
         alignItems: "center",
         m: "20px 40px",
       }}
@@ -41,7 +45,7 @@ const LanguageProficiency: React.FC<ProficiencyProps> = ({
             width: "80%",
             backgroundColor: "#c8cce5",
             "& .MuiLinearProgress-bar": {
-              backgroundColor: "#969fdd",
+              backgroundColor: "#7079b5",
             },
           }}
         />

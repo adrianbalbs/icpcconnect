@@ -5,6 +5,10 @@ import axios from "axios";
 import { useState } from "react";
 import authStyles from "@/styles/Auth.module.css";
 
+/**
+ * Forget Password Page
+ * - user enters their email to prompt for reset password link
+ */
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

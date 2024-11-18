@@ -13,6 +13,11 @@ interface ResetPasswordProps {
   };
 }
 
+/**
+ * Reset Password Page
+ * - user is directed here through their email
+ * - can change password
+ */
 const ResetPassword: React.FC<ResetPasswordProps> = ({ params }) => {
   const router = useRouter();
   const [password, setPassword] = useState("");

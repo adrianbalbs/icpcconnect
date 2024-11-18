@@ -11,6 +11,10 @@ interface EnterCodeProps {
   sendEmail: () => Promise<void>;
 }
 
+/**
+ * Account Registration - Email verification
+ * - after email is sent to user, user enters verification code
+ */
 export const EnterCode: React.FC<EnterCodeProps> = ({
   roleName,
   verificationCode,
