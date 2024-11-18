@@ -1,17 +1,32 @@
 import authStyles from "@/styles/Auth.module.css";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 interface DeclareEligibilityProps {
+  eligibility: boolean;
   setEligibility: Dispatch<SetStateAction<boolean>>;
-  handleBack: () => void;
-  handleNext: () => Promise<void>;
+  setStep: Dispatch<SetStateAction<number>>;
 }
 
 export const DeclareEligibility: React.FC<DeclareEligibilityProps> = ({
+  eligibility,
   setEligibility,
-  handleBack,
-  handleNext,
+  setStep,
 }) => {
+  const [error, setError] = useState(true);
+
+  const handleConfirm = () => {
+    setEligibility(true);
+    setError(false);
+  };
+
+  const handleDeny = () => {
+    setEligibility(false);
+    setError(true);
+  };
+
+  const handleNext = () => {
+    !eligibility ? setError(true) : setStep(3);
+  };
   return (
     <>
       <h1 className={authStyles.h1}>Do you meet the ICPC eligibility rules?</h1>
@@ -52,7 +67,7 @@ export const DeclareEligibility: React.FC<DeclareEligibilityProps> = ({
             type="radio"
             name="eligibility"
             value="true"
-            onChange={() => setEligibility(true)}
+            onChange={handleConfirm}
           />
           &nbsp;Yes
         </label>
@@ -61,14 +76,23 @@ export const DeclareEligibility: React.FC<DeclareEligibilityProps> = ({
             type="radio"
             name="eligibility"
             value="false"
-            onChange={() => setEligibility(false)}
+            onChange={handleDeny}
           />
           &nbsp;No
         </label>
       </div>
+      <br />
+      {error && (
+        <>
+          <p style={{ color: "#d32f2f" }}>
+            You have not declared yourself eligible for the ICPC.
+          </p>
+          <br />
+        </>
+      )}
       <div className={authStyles["horizontal-container"]}>
         <button
-          onClick={handleBack}
+          onClick={() => setStep(1)}
           className={`${authStyles["auth-button"]} ${authStyles["white"]} ${authStyles["short"]}`}
         >
           Back

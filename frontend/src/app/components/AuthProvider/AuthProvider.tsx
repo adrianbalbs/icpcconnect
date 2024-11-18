@@ -3,6 +3,8 @@ import axios, { AxiosError } from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
+  Dispatch,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -27,7 +29,10 @@ export type AuthContextType = {
   isLoading: boolean;
   getSession: () => Promise<void>;
   logout: () => Promise<void>;
-  login: (credentials: LoginCredentials) => Promise<void>;
+  login: (
+    credentials: LoginCredentials,
+    setError: Dispatch<SetStateAction<boolean>>,
+  ) => Promise<void>;
 };
 
 const defaultSession: UserSession = {
@@ -93,7 +98,10 @@ export function AuthContextProvider({
     }
   };
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (
+    credentials: LoginCredentials,
+    setError: Dispatch<SetStateAction<boolean>>,
+  ) => {
     try {
       setIsLoading(true);
       const { data } = await axios.post<UserSession>(
@@ -104,7 +112,7 @@ export function AuthContextProvider({
       setUserSession(data);
       router.push("/contests");
     } catch (err) {
-      alert(err);
+      setError(true);
     } finally {
       setIsLoading(false);
     }
