@@ -3,6 +3,7 @@ import * as schema from "./schema.js";
 import pg from "pg";
 import dotenv from "dotenv";
 import { getLogger } from "../utils/logger.js";
+import { env, getDbConfig } from "../env.js";
 
 dotenv.config();
 
@@ -15,15 +16,12 @@ export interface Database {
 
 export class DevDatabase implements Database {
   private logger = getLogger();
-  private connectionString = process.env.DATABASE_URL;
   private pool: pg.Pool;
   private connection: DatabaseConnection;
 
   constructor() {
     this.logger.info("Establishing connection with Postgres");
-    this.pool = new pg.Pool({
-      connectionString: this.connectionString,
-    });
+    this.pool = new pg.Pool(getDbConfig(env));
     this.connection = drizzle(this.pool, { schema });
   }
 
