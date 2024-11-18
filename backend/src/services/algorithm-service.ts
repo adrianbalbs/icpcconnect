@@ -1,11 +1,8 @@
 import { Heap } from "heap-js";
-import { universities } from "../db/schema.js";
-import { DatabaseConnection } from "../db/database.js";
 import { TeamService } from "./team-service.js";
 import { UserService } from "./user-service.js";
 import { LanguageExperience, UserDTO } from "src/schemas/user-schema.js";
 import { CreateTeamRequest } from "src/schemas/team-schema.js";
-import { eq, not } from "drizzle-orm";
 
 type Student = Omit<
   UserDTO,
@@ -44,7 +41,6 @@ export class AlgorithmService {
   private readonly coursesWeight = 3;
 
   constructor(
-    private readonly db: DatabaseConnection,
     private readonly userService: UserService,
     private readonly teamService: TeamService,
   ) {}
@@ -254,7 +250,6 @@ export class AlgorithmService {
         } = this.combineStudentData(student, pref);
 
         const tempQueue: Student[] = [];
-        let compatibleFound = false;
         let flagged = false;
 
         while (pq.size() > 0) {
@@ -272,7 +267,6 @@ export class AlgorithmService {
               potential,
             )
           ) {
-            compatibleFound = true;
             teamIds.push(potential.id);
             flagged =
               this.checkExclusions([student, potential]) ||
