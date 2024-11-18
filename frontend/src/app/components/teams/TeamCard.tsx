@@ -1,5 +1,6 @@
 import pageStyles from "@/styles/Page.module.css";
 import teamStyles from "@/styles/Teams.module.css";
+import { Tooltip, tooltipClasses } from "@mui/material";
 // import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 
 interface TeamCardProps {
@@ -18,10 +19,25 @@ const TeamCard: React.FC<TeamCardProps> = ({
   return (
     <div className={teamStyles["team-container"]}>
       <div className={teamStyles.team}>
-        <p>
-          <span className={pageStyles.bold}>Team Name:</span> {name}{" "}
-          {/* {canEdit && <DriveFileRenameOutlineOutlinedIcon />} */}
-        </p>
+        <Tooltip
+          title={name}
+          placement="top-end"
+          slotProps={{
+            popper: {
+              sx: {
+                [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
+                  {
+                    marginBottom: "2px",
+                  },
+              },
+            },
+          }}
+        >
+          <p className={teamStyles.overflow}>
+            <span className={pageStyles.bold}>Team Name:</span> {name}{" "}
+            {/* {canEdit && <DriveFileRenameOutlineOutlinedIcon />} */}
+          </p>
+        </Tooltip>
         <p>
           <span className={pageStyles.bold}>Institution:</span> {university}
         </p>

@@ -20,9 +20,13 @@
   height: 100%;
   width: 100%;
   padding: 20px;
+  background-color: white;
+}
+
+.overflow {
   text-overflow: ellipsis;
   white-space: nowrap;
-  background-color: white;
+  overflow: hidden;
 }
 
 .team-heading {
