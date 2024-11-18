@@ -46,7 +46,7 @@ jobs:
       EMAIL_USER: rebeca.auer@ethereal.email # we dont have access to secrets
       EMAIL_PASSWORD: gpYtdgMPkywbQek1Gb
       ADMIN_EMAIL: testadmin@comp3900.com
-      ADMIN_PASSWORD: test
+      ADMIN_PASSWORD: my-test-password
       EMAIL_PORT: 587
       REDIS_HOST: localhost
       REDIS_PORT: 6379
