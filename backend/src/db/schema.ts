@@ -79,7 +79,7 @@ export const studentDetails = pgTable("student_details", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   studentId: text("student_id").notNull().default(""),
-  profile_pic: text("profile_picture").notNull().default(""),
+  profilePic: text("profile_picture").notNull().default(""),
   pronouns: text("pronouns").notNull().default(""),
   dietaryRequirements: text("dietary_requirements").notNull().default(""),
   tshirtSize: text("tshirt_size").notNull().default(""),

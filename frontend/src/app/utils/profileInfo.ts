@@ -23,6 +23,7 @@ interface Info {
   id: string;
   university: string;
   studentId: string;
+  profilePic: string;
   info: [string, string | number][];
   sideInfo: { name: string; role: string; pronouns: string };
   editInfo: EditInfo;
@@ -32,6 +33,7 @@ const current: Info = {
   id: "",
   university: "",
   studentId: "",
+  profilePic: "",
   info: [],
   sideInfo: {
     name: "",
@@ -58,6 +60,7 @@ export const getInfo = async (id: string | null | undefined) => {
     const data: StudentInfo = res.data;
     current.id = data.id;
     current.university = data.university;
+    current.profilePic = data.profilePic;
     current.sideInfo = {
       name: `${data.givenName} ${data.familyName}`,
       role: data.role,

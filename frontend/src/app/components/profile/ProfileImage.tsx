@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -13,39 +13,62 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { imageEditBtn } from "@/styles/sxStyles";
+import axios from "axios";
+import { SERVER_URL } from "@/utils/constants";
+import { useNav } from "../context-provider/NavProvider";
 
-const ProfileImage = () => {
+const ProfileImage = ({ id }: { id: string }) => {
   const [image, setImage] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const { navInfo, storeNavInfo } = useNav();
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(e.currentTarget);
-  };
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateImage = async (profilePic: string) => {
     try {
-      const file = e.target.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImage(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-      setAnchorEl(null);
+      await axios.patch(
+        `${SERVER_URL}/api/users/${id}/student-details`,
+        { profilePic },
+        { withCredentials: true },
+      );
+      storeNavInfo();
     } catch (error) {
       console.log(`Upload profile image error: ${error}`);
     }
   };
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+        updateImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+    setAnchorEl(null);
+  };
+
   const handleDelete = async () => {
     try {
+      await axios.patch(
+        `${SERVER_URL}/api/users/${id}/student-details`,
+        { profilePic: "" },
+        { withCredentials: true },
+      );
       setImage(null);
       setAnchorEl(null);
     } catch (error) {
       console.log(`Delete profile image error: ${error}`);
     }
   };
+
+  useEffect(() => {
+    setImage(navInfo.pfp);
+  }, [navInfo]);
 
   return (
     <Box sx={{ position: "relative", width: "218px", height: "218px" }}>

@@ -64,12 +64,13 @@ export const sidebarBtn = {
   fontSize: "15px",
   color: "#4E5C88",
   textTransform: "none",
-  "&:hover": {
+  "&.Mui-selected": {
     color: "#4E5C88",
+  },
+  "&:hover": {
     bgcolor: "#9fb9d65c",
   },
   "&:active": {
-    color: "#4E5C88",
     bgcolor: "#8094ab61",
   },
 };

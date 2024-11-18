@@ -56,7 +56,7 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, params }) => {
     <ProfileContext.Provider value={{ info, storeProfileInfo: storeInfo }}>
       <div className={profileStyles.screen}>
         <div className={profileStyles["side-screen"]}>
-          <ProfileImage />
+          <ProfileImage id={params.id} />
           <h1 className={profileStyles.name}>{info.name}</h1>
           <p
             className={profileStyles.role}

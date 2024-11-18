@@ -15,6 +15,7 @@ export type UserSession = {
   familyName: string;
   email: string;
   role: "Student" | "Site Coordinator" | "Coach" | "Admin";
+  pfp: string;
 };
 
 export type LoginCredentials = {
@@ -36,6 +37,7 @@ const defaultSession: UserSession = {
   familyName: "",
   email: "",
   role: "Student",
+  pfp: "",
 };
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 const publicRoutes = ["/login", "/register", "/forgot-password"];

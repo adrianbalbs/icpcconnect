@@ -22,6 +22,7 @@ export interface StudentInfo {
   dietaryRequirements: string;
   photoConsent: boolean;
   tshirtSize: string | null;
+  profilePic: string;
 }
 
 type StudentsProps = {

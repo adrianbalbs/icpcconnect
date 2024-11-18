@@ -314,7 +314,7 @@ export default function Contests() {
                   py: "4.56px",
                 },
                 ".MuiSelect-select": {
-                  p: "5.5px 24px 3.5px 8px",
+                  p: "5.3px 24px 3.7px 8px",
                 },
               },
             },

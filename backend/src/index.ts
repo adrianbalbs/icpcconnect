@@ -68,8 +68,8 @@ app
       credentials: true,
     }),
   )
-  .use(express.json())
-  .use(express.urlencoded({ extended: true }))
+  .use(express.json({ limit: "10mb" }))
+  .use(express.urlencoded({ limit: "10mb", extended: true }))
   .use(cookieParser())
   .use(loggingMiddlware)
   .use("/api/auth", authRouter(authService))
