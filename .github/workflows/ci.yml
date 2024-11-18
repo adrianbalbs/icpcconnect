@@ -45,6 +45,7 @@ jobs:
       SMTP_SERVER: smtp.ethereal.email
       EMAIL_USER: rebeca.auer@ethereal.email # we dont have access to secrets
       EMAIL_PASSWORD: gpYtdgMPkywbQek1Gb
+      EMAIL_PORT: 587
       REDIS_HOST: localhost
       REDIS_PORT: 6379
     steps:
