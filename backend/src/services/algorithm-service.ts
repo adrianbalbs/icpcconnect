@@ -50,24 +50,6 @@ export class AlgorithmService {
   ) {}
 
   /**
-   * Fetches a list of all universities excluding the "N/A University" option
-   *
-   * @returns {Promise<{ id: number; name: string }[]>} An array of university objects with ID and name.
-   */
-  private async getAllUniversities(): Promise<{ id: number; name: string }[]> {
-    // Ignore the N/A University
-    const allUniversities = await this.db
-      .select({
-        id: universities.id,
-        name: universities.name,
-      })
-      .from(universities)
-      .where(not(eq(universities.id, 0)));
-
-    return allUniversities;
-  }
-
-  /**
    * Converts a string (comma-separated) into a Set of items.
    *
    * @param {string} s The string to be converted.
@@ -427,9 +409,9 @@ export class AlgorithmService {
    * @returns {Promise<{ success: boolean }>} A promise that resolves with a success status.
    */
   async run(contestId: string): Promise<{ success: boolean }> {
-    const unis = await this.getAllUniversities();
+    const { allUnis } = await this.userService.getAllUniversities();
 
-    for (const { id, name } of unis) {
+    for (const { id, name } of allUnis) {
       const { allUsers } = await this.userService.getStudentsWithoutTeam(
         contestId,
         id,
