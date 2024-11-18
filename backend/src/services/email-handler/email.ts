@@ -5,7 +5,9 @@ import {
 } from "./email-template/index.js";
 import { group_arranged_email_content } from "./email-template/group-arranged-template.js";
 import { SendTeamAllocationEmail } from "../../schemas/index.js";
-import { env } from "../../env.js";
+import { env, isProdEnv } from "../../env.js";
+
+const frontendUrl = isProdEnv(env) ? env.FRONTEND_URL : "http://localhost:3000";
 
 export async function sendHtmlEmail(
   userName: string,
@@ -95,7 +97,7 @@ export async function sendEmail(
   } else {
     content = forget_password_email_content.replace(
       "<span> SWITCH_LINK <span>",
-      `http://localhost:3000/reset-password/${id}?q=${verificationCode}`,
+      `${frontendUrl}/reset-password/${id}?q=${verificationCode}`,
     );
   }
 
