@@ -24,6 +24,7 @@ import { contests, DatabaseConnection } from "../db";
 import { v4 } from "uuid";
 import { AlgorithmService } from "../services/algorithm-service";
 import { CreateContest } from "../schemas";
+import { env } from "../env";
 
 describe("contestRouter tests", () => {
   let db: DatabaseConnection;
@@ -57,8 +58,8 @@ describe("contestRouter tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];

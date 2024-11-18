@@ -32,6 +32,7 @@ import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
 import { generateCreateUserFixture } from "./fixtures.js";
 import { AlgorithmService } from "../services/algorithm-service.js";
+import { env } from "../env.js";
 
 describe("TeamService tests", () => {
   let db: DatabaseConnection;
@@ -72,8 +73,8 @@ describe("TeamService tests", () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({
-        email: "admin@comp3900.com",
-        password: "tomatofactory",
+        email: env.ADMIN_EMAIL,
+        password: env.ADMIN_PASSWORD,
       })
       .expect(200);
     cookies = loginRes.headers["set-cookie"];

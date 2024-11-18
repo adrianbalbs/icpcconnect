@@ -22,6 +22,7 @@ import {
   TeamService,
   UserService,
 } from "../services/index.js";
+import { env } from "../env.js";
 type UserTable = {
   id: string;
   givenName: string;
@@ -280,35 +281,22 @@ export const seed = async (db: DatabaseConnection) => {
     await addSiteCoordinator(db, siteCoordinator);
   }
 
-  // logger.info("Seeding Team Information");
-  // await db
-  //   .insert(teams)
-  //   .values(data.default.teams)
-  //   .onConflictDoNothing();
-
   logger.info("Adding default admin");
-  const admins = data.default.admins as UserTable[];
-  for (const admin of admins) {
-    const { id, givenName, familyName, password, email, role, university } =
-      admin;
-    const newPassword = await passwordUtils().hash(password);
-    await db
-      .insert(users)
-      .values({
-        id,
-        givenName,
-        familyName,
-        password: newPassword,
-        email,
-        role,
-        university,
-      })
-      .onConflictDoNothing();
-    await db
-      .insert(studentDetails)
-      .values({ userId: id })
-      .onConflictDoNothing();
-  }
+  const newPassword = await passwordUtils().hash(env.ADMIN_PASSWORD);
+  await db.delete(users).where(eq(users.role, "Admin"));
+  const [{ id }] = await db
+    .insert(users)
+    .values({
+      givenName: "Admin",
+      familyName: "User",
+      email: env.ADMIN_EMAIL,
+      password: newPassword,
+      role: "Admin",
+      university: 0,
+    })
+    .returning({ id: users.id })
+    .onConflictDoNothing();
+  await db.insert(studentDetails).values({ userId: id }).onConflictDoNothing();
 };
 
 export const seedTest = async (db: DatabaseConnection) => {
@@ -329,26 +317,19 @@ export const seedTest = async (db: DatabaseConnection) => {
     .values(data.default.languagesSpoken)
     .onConflictDoNothing();
 
-  const admins = data.default.admins as UserTable[];
-  for (const admin of admins) {
-    const { id, givenName, familyName, password, email, role, university } =
-      admin;
-    const newPassword = await passwordUtils().hash(password);
-    await db
-      .insert(users)
-      .values({
-        id,
-        givenName,
-        familyName,
-        password: newPassword,
-        email,
-        role,
-        university,
-      })
-      .onConflictDoNothing();
-    await db
-      .insert(studentDetails)
-      .values({ userId: id })
-      .onConflictDoNothing();
-  }
+  const newPassword = await passwordUtils().hash(env.ADMIN_PASSWORD);
+  await db.delete(users).where(eq(users.role, "Admin"));
+  const [{ id }] = await db
+    .insert(users)
+    .values({
+      givenName: "Admin",
+      familyName: "User",
+      email: env.ADMIN_EMAIL,
+      password: newPassword,
+      role: "Admin",
+      university: 0,
+    })
+    .returning({ id: users.id })
+    .onConflictDoNothing();
+  await db.insert(studentDetails).values({ userId: id }).onConflictDoNothing();
 };

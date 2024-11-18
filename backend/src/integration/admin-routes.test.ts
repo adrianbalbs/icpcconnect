@@ -23,6 +23,7 @@ import cookieParser from "cookie-parser";
 import { not, eq } from "drizzle-orm";
 import { AlgorithmService } from "../services/algorithm-service.js";
 import { generateCreateUserFixture } from "./fixtures.js";
+import { env } from "../env.js";
 
 let db: DatabaseConnection;
 let adminApp: ReturnType<typeof express>;
@@ -57,8 +58,8 @@ beforeEach(async () => {
   const loginRes = await request(adminApp)
     .post("/api/auth/login")
     .send({
-      email: "admin@comp3900.com",
-      password: "tomatofactory",
+      email: env.ADMIN_EMAIL,
+      password: env.ADMIN_PASSWORD,
     })
     .expect(200);
   cookies = loginRes.headers["set-cookie"];

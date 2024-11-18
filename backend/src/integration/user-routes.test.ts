@@ -35,6 +35,7 @@ describe("userRoutes tests", () => {
     const authService = new AuthService(db);
     const codesService = new CodesService(db);
     const userService = new UserService(db);
+    const teamService = new TeamService(db, userService);
     app = express()
       .use(express.json())
       .use(cookieParser())
