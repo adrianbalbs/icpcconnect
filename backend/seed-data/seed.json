@@ -360,17 +360,6 @@
       "university": 1
     }
   ],
-  "admins": [
-    {
-      "id": "d2985931-fb6a-49b0-9530-1238b3a5d305",
-      "givenName": "Admin",
-      "familyName": "Account",
-      "password": "tomatofactory",
-      "email": "admin@comp3900.com",
-      "role": "Admin",
-      "university": 0
-    }
-  ],
   "universities": [
     {
       "name": "N/A",
