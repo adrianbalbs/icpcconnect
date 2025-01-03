@@ -1,4 +1,4 @@
-# ICPCConnect (capstone-project-2024-t3-3900f15atomatofactory)
+# ICPCConnect
 
 A website for students to be allocated a team to compete in the ICPC
 
